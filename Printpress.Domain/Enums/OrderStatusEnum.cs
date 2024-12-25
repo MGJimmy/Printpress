@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain.Enums
 {
-    internal class FileName
+    public enum OrderStatusEnum
     {
+        New,
+        InProgress,
+        Completed,
+        Delivered
     }
 }
