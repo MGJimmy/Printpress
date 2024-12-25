@@ -5,13 +5,17 @@ VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Printpress.API", "Printpress.API\Printpress.API.csproj", "{CD0A7761-9920-4F30-9BB8-8E8F1965DE0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printpress.UI", "Printpress.UI\Printpress.UI.csproj", "{4C3B02E0-DC68-4152-8DCB-F069F8B13493}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Printpress.UI", "Printpress.UI\Printpress.UI.csproj", "{4C3B02E0-DC68-4152-8DCB-F069F8B13493}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printpress.Application", "Printpress.Application\Printpress.Application.csproj", "{532167CF-E878-489F-9336-F222C39D86F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Printpress.Application", "Printpress.Application\Printpress.Application.csproj", "{532167CF-E878-489F-9336-F222C39D86F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printpress.Infrastructure", "Printpress.Infrastructure\Printpress.Infrastructure.csproj", "{F27D7123-F5B8-4D25-B142-655EAF7A1792}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Printpress.Infrastructure", "Printpress.Infrastructure\Printpress.Infrastructure.csproj", "{F27D7123-F5B8-4D25-B142-655EAF7A1792}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printpress.Domain", "Printpress.Domain\Printpress.Domain.csproj", "{70C1B39F-571D-4928-912B-6F6F73A99BDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Printpress.Domain", "Printpress.Domain\Printpress.Domain.csproj", "{70C1B39F-571D-4928-912B-6F6F73A99BDF}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Printpress.Sql", "Printpress.Sql\Printpress.Sql.sqlproj", "{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{85376B86-04D3-485B-88A0-9E1BBA889B2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +43,23 @@ Global
 		{70C1B39F-571D-4928-912B-6F6F73A99BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70C1B39F-571D-4928-912B-6F6F73A99BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70C1B39F-571D-4928-912B-6F6F73A99BDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CD0A7761-9920-4F30-9BB8-8E8F1965DE0E} = {85376B86-04D3-485B-88A0-9E1BBA889B2B}
+		{4C3B02E0-DC68-4152-8DCB-F069F8B13493} = {85376B86-04D3-485B-88A0-9E1BBA889B2B}
+		{532167CF-E878-489F-9336-F222C39D86F1} = {85376B86-04D3-485B-88A0-9E1BBA889B2B}
+		{F27D7123-F5B8-4D25-B142-655EAF7A1792} = {85376B86-04D3-485B-88A0-9E1BBA889B2B}
+		{70C1B39F-571D-4928-912B-6F6F73A99BDF} = {85376B86-04D3-485B-88A0-9E1BBA889B2B}
+		{7EE3DC95-F20A-4389-8321-4E1ED61F0F8B} = {85376B86-04D3-485B-88A0-9E1BBA889B2B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40F0357B-CDEA-4874-B7A8-4956BDD56465}
