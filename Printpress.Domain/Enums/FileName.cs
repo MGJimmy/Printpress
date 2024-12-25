@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Printpress.Infrastructure.Repository
+namespace Printpress.Domain.Enums
 {
-    internal class Class1
+    internal class FileName
     {
     }
 }
