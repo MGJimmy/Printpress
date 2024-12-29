@@ -149,6 +149,10 @@ namespace Printpress.Infrastructure.Repository
         {
             return Context.Set<T>().Find(id);
         }
+        public async Task<T> FindAsync(params object[] id)
+        {
+            return await Context.Set<T>().FindAsync(id);
+        }
         public int Count()
         {
             return Context.Set<T>().Count();

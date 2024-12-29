@@ -16,11 +16,13 @@ namespace Printpress.Application
         PagedList<T> Filter(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null);
         PagedList<T> Filter(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null, params string[] includes);
         T Find(params object[] id);
+        Task<T> FindAsync(params object[] id);
         T FirstOrDefault(bool track = true);
         T FirstOrDefault(Expression<Func<T, bool>> query, bool track = true);
         T FirstOrDefault(Expression<Func<T, bool>> query, bool track = true, params string[] includes);
         T FirstOrDefault(Expression<Func<T, bool>> query, params string[] includes);
         void Remove(T entity);
         void RemoveAll(Expression<Func<T, bool>> query);
+
     }
 }
