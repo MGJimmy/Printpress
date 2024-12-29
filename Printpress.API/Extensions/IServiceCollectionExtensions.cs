@@ -21,6 +21,7 @@ public static class IServiceCollectionExtensions
         services.AddControllers(options =>
         {
             options.Filters.Add<ModelStateInvalidFilter>();
+            options.Filters.Add<ResponseWrapperFilter>();
         });
         services.Configure<ApiBehaviorOptions>(options =>
         {
