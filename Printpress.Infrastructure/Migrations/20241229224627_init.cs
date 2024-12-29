@@ -7,11 +7,26 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Printpress.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class order : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Clients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    Mobile = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    Address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clients", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Order",
                 columns: table => new
@@ -78,6 +93,9 @@ namespace Printpress.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderGroup");
+
+            migrationBuilder.DropTable(
+                name: "Clients");
         }
     }
 }

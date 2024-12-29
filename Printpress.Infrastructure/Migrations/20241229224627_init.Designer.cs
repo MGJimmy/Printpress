@@ -12,8 +12,8 @@ using Printpress.Infrastructure;
 namespace Printpress.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241225225519_order")]
-    partial class order
+    [Migration("20241229224627_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
