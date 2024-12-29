@@ -20,6 +20,22 @@ ngOnInit(): void {
   this.httpService.get('https://jsonplaceholder.typicode.com/posts').subscribe((res:any) => {
     this.data = res;
   });
+  this.httpService.get('https://jsonplaceholder.typicode.com/posts').subscribe((res:any) => {
+    
+  });
+  this.httpService.get('https://jsonplaceholder.typicode.com/posts').subscribe((res:any) => {
+    
+  });
+  this.httpService.get('https://jsonplaceholder.typicode.com/posts').subscribe((res:any) => {
+    
+  });
+  this.httpService.get('https://jsonplaceholder.typicode.com/posts').subscribe((res:any) => {
+    
+  });
+  this.httpService.get('https://jsonplaceholder.typicode.com/posts').subscribe((res:any) => {
+
+  });
+  
 
 }
 
