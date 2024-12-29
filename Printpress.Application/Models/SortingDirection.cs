@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Printpress.Infrastructure.Repository
+namespace Printpress.Application
 {
-    internal class FileName
+    public enum SortingDirection
     {
+        ASC,
+        DESC
     }
 }
