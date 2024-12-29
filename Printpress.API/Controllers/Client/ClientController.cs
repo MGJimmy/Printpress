@@ -9,7 +9,6 @@ public class ClientController(IClientService _IClientService) : ControllerBase
 {
     [HttpGet]
     [Route("getClientById")]
-    [SkipResponseWrapperFilter]
     public async Task<IActionResult> GetClientById(int id)
     {
         var result = await _IClientService.GetClientById(id);
