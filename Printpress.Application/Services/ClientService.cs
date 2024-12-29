@@ -1,25 +1,13 @@
-﻿using Printpress.Application;
+﻿namespace Printpress.Application;
 
-namespace Printpress.Application
+public class ClientService(IUnitOfWork _IUnitOfWork, ClientMapper _CientMapper) : IClientService
 {
-    public class ClientService : IClientService
+    public async Task<ClietntDto> GetClientById(int id)
     {
-        private readonly IUnitOfWork _IUnitOfWork;
-        private readonly ClientMapper _CientMapper;
-        public ClientService(IUnitOfWork unitOfWork, ClientMapper clientMapper)
-        {
-            _IUnitOfWork = unitOfWork;
-            _CientMapper = clientMapper;
-        }
+        var client = await _IUnitOfWork.ClientRepository.FindAsync(id);
 
-        public async Task<ClietntDto> GetClientById(int id)
-        {
-            var client = await _IUnitOfWork.ClientRepository.FindAsync(id);
+        if (client is null) throw new ValidationExeption("Client not found");
 
-            if (client is null) throw new ValidationExeption("Client not found");
-
-            return _CientMapper.MapFromSourceToDestination(client);
-
-        }
+        return _CientMapper.MapFromSourceToDestination(client);
     }
 }
