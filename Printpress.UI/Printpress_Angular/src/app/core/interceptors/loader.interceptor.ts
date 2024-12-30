@@ -22,7 +22,7 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
                     if (requests.length == 0) {
                         loaderService.hide();
                     }
-                }, 1000);
+                }, 100);
             }
         })
     );

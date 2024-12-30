@@ -1,34 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, Observable } from 'rxjs';
+import { HttpBackend, HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { Configuration } from '../models/configration.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ConfigurationService {
+  private configUrl = 'assets/configs/config.json';
+  private httpClient: HttpClient;
+  private configuration: Configuration | null = null;
 
-  private configUrl = 'assets/config.json';
-
-  private configuration :Configuration | null;
-
-  constructor(private http: HttpClient) {
-
-    this.configuration = null;
+  constructor(private handler: HttpBackend) {
+    this.httpClient = new HttpClient(handler);
   }
 
-  public async getConfiguration(): Promise<Configuration> {
-
-    if (this.configuration) return this.configuration;
-    
-    let result: Configuration = await firstValueFrom( this.http.get<Configuration>(this.getBaseUrl + this.configUrl));
-
-    this.configuration = result;    
-
-    return result;
+  public async loadConfiguration(): Promise<void> {
+    try {
+      this.configuration = await firstValueFrom(this.httpClient.get<Configuration>(this.getBaseUrl() + this.configUrl));
+    } catch (error) {
+      throw new Error('Configuration not found');
+    }
   }
 
-  public getBaseUrl() {
+  public getConfiguration(): Configuration {
+    if (!this.configuration) {
+      throw new Error('Configuration not loaded');
+    }
+    return this.configuration;
+  }
+
+  private getBaseUrl(): string {
     return document.getElementsByTagName('base')[0].href;
   }
+
+
 }

@@ -10,37 +10,39 @@ import { Configuration } from "../models/configration.model";
 })
 export class HttpService {
 
-    constructor(private http: HttpClient ,private configrationService:ConfigurationService) { }
+    private defaultHeaders : HttpHeaders;
 
-    private defaultHeaders = new HttpHeaders({
-        'showLoader': 'true'
-    });
+    constructor(private http: HttpClient ,private configrationService:ConfigurationService) {   
+        this.defaultHeaders = new HttpHeaders();
+        this.defaultHeaders = this.defaultHeaders.set('showLoader','true');
+     }
+
 
     public get<T>(url: string, queryParams?: { [param: string]: string | number | boolean }, headers?: HttpHeaders): Observable<T> {
         const requestHeaders = headers || this.defaultHeaders;
         const params = new HttpParams({ fromObject: queryParams || {} });
-        return this.http.get<T>(url, { params, headers: requestHeaders });
+        return this.http.get<T>(this.setUrl(url), { params, headers: requestHeaders });
     }
 
     public post<T>(url: string, body: any, headers?: HttpHeaders): Observable<T> {
         const requestHeaders = headers || this.defaultHeaders;
-        return this.http.post<T>(url, body, { headers: requestHeaders });
+        return this.http.post<T>(this.setUrl(url), body, { headers: requestHeaders });
     }
 
     public put<T>(url: string, body: any, headers?: HttpHeaders): Observable<T> {
         const requestHeaders = headers || this.defaultHeaders;
-        return this.http.put<T>(url, body, { headers: requestHeaders });
+        return this.http.put<T>(this.setUrl(url), body, { headers: requestHeaders });
     }
 
-    public delete<T>(url: string, headers?: HttpHeaders): Observable<T> {
+    public delete<T>(url: string, headers?: HttpHeaders): Observable<T> {      
         const requestHeaders = headers || this.defaultHeaders;
-        return this.http.delete<T>(url, { headers: requestHeaders });
+        return this.http.delete<T>(this.setUrl(url), { headers: requestHeaders });
     }
 
-    private async setUrl(url:string){
-
-       let configuration:Configuration = await this.configrationService.getConfiguration();
-       return configuration.apiUrl + url;
+    private setUrl(url:string){
+     return this.configrationService.getConfiguration().apiUrl + url;
     }
+
+  
 
 }

@@ -1,0 +1,23 @@
+const canvas = document.createElement('canvas');
+canvas.width = 300;
+canvas.height = 200;
+const ctx = canvas.getContext('2d');
+
+// Fill background
+ctx.fillStyle = '#f0f0f0';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+// Draw test pattern
+ctx.fillStyle = '#333333';
+ctx.font = '20px Arial';
+ctx.textAlign = 'center';
+ctx.fillText('Test Image', canvas.width/2, canvas.height/2);
+
+// Draw border
+ctx.strokeStyle = '#999999';
+ctx.lineWidth = 2;
+ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+// Convert to PNG
+const dataURL = canvas.toDataURL('image/png');
+// The dataURL can now be saved as test.png
