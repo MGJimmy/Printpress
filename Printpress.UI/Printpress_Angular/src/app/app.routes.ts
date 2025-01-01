@@ -1,11 +1,27 @@
 import { Routes } from '@angular/router';
-import { TestComponentComponent } from './features/order-feature/test-component/test-component.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'test',
-    loadComponent: () =>import('./features/order-feature/test-component/test-component.component')
-         .then((m) => m.TestComponentComponent),
+    loadComponent: () =>
+      import('./features/Customer/add-customer/add-customer.component').then(
+        (m) => m.AddCustomerComponent
+      ),
   },
+  {
+    path: 'add-customer',
+    loadComponent: () =>
+      import('./features/Customer/add-customer/add-customer.component').then(
+        (m) => m.AddCustomerComponent
+      ),
+  },
+  {
+    path: 'customers',
+    loadComponent: () =>
+      import('./features/Customer/customer-list/customer-list.component').then(
+        (m) => m.CustomerListComponent
+      ),
+  }
 ];
+
