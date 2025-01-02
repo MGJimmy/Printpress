@@ -29,10 +29,13 @@ export class ConfigurationService {
     }
     return this.configuration;
   }
-
-  private getBaseUrl(): string {
+//changed access modifier to public in order to be used in other services.
+  public getBaseUrl(): string {
     return document.getElementsByTagName('base')[0].href;
   }
-
+//switcher method to use mock data or not.
+  useMock(): boolean {
+    return true;
+  }
 
 }
