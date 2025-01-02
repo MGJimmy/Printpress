@@ -404,4 +404,4 @@ FodyWeavers.xsd
 .angular/
 
 # Custom igonre
-Printpress_Angular/.angular/
+**/.angular/
