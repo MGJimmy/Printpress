@@ -4,14 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CustomerService } from '../../../core/services/customer.service';
-import { Customer_interface } from '../../../core/models/Customer-interface';
-import { LoaderService } from '../../../core/services/loader.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { ErrorHandlingService } from '../../../core/helpers/error-handling.service';
+import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
 import { finalize, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { CustomerService } from '../../services/customer.service';
+import { LoaderService } from '../../../../core/services/loader.service';
+import { AlertService } from '../../../../core/services/alert.service';
+import { Customer_interface } from '../../models/Customer-interface';
 
 @Component({
   selector: 'app-add-customer',
@@ -39,7 +39,7 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private loaderService: LoaderService,
-    private notificationService: NotificationService,
+    private alertService: AlertService,
     private errorHandlingService: ErrorHandlingService
   ) {}
 
@@ -105,7 +105,7 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
   }
 
   private handleCustomerNotFound(): void {
-    this.notificationService.showError('Customer not found');
+    this.alertService.showError('Customer not found');
     this.router.navigate(['/customers']);
   }
 
@@ -129,14 +129,14 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: () => {
           let message = this.isEditMode ? 'Customer updated successfully' : 'Customer added successfully';
-          this.notificationService.showSuccess(message);
+          this.alertService.showSuccess(message);
           this.resetForm();
           this.router.navigate(['/customers']);
         },
         error: (error) => {
           this.errorHandlingService.handleError(error);
           let message = this.isEditMode ? 'Customer update failed' : 'Customer add failed';
-          this.notificationService.showError(message);
+          this.alertService.showError(message);
         }
       })
     );

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { orderGroupAddUpdateDto } from '../../../core/models/orderGroup/orderGroupAddUpdate.Dto';
+import { orderGroupAddUpdateDto } from '../../models/orderGroup/orderGroupAddUpdate.Dto';
 
 @Component({
   selector: 'app-order-group-add-update',

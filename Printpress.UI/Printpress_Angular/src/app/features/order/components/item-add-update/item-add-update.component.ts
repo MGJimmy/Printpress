@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, input, Output, output } from '@angular/core';
-import { orderGroupServiceAddUpdateDto } from '../../../core/models/orderGroupService/orderGroupServiceAddUpdate.Dto';
-import { itemAddUpdateDto } from '../../../core/models/item/itemAddUpdate.Dto';
+import { orderGroupServiceAddUpdateDto } from '../../models/orderGroupService/orderGroupServiceAddUpdate.Dto';
+import { itemAddUpdateDto } from '../../../../core/models/item/itemAddUpdate.Dto';
 
 @Component({
   selector: 'app-item-add-update',

@@ -5,14 +5,14 @@ export const routes: Routes = [
   {
     path: 'test',
     loadComponent: () =>
-      import('./features/Customer/add-customer/add-customer.component').then(
+      import('./features/customer/components/add-customer/add-customer.component').then(
         (m) => m.AddCustomerComponent
       ),
   },
   {
     path: 'add-customer',
     loadComponent: () =>
-      import('./features/Customer/add-customer/add-customer.component').then(
+      import('./features/customer/components/add-customer/add-customer.component').then(
         (m) => m.AddCustomerComponent
       ),
   },

@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConfigurationService } from './configration.service';
+import { ConfigurationService } from '../../../core/services/configration.service';
 import { CustomerMockService } from './customer-mock.service';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Customer_interface } from '../models/Customer-interface';
-import { ErrorHandlingService } from '../helpers/error-handling.service';
+import { ErrorHandlingService } from '../../../core/helpers/error-handling.service';
 
 @Injectable({
   providedIn: 'root'
