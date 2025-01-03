@@ -1,4 +1,4 @@
-﻿namespace Printpress.Domain.Enums;
+﻿namespace Printpress.Application;
 
 public enum ResponseStatus
 {
