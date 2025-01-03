@@ -16,12 +16,12 @@ export const routes: Routes = [
         (m) => m.AddCustomerComponent
       ),
   },
-  // {
-  //   path: 'customers',
-  //   loadComponent: () =>
-  //     import('./features/Customer/customer-list/customer-list.component').then(
-  //       (m) => m.CustomerListComponent
-  //     ),
-  // }
+  {
+    path: 'report-viewer',
+    loadComponent: () =>
+      import('./features/reportViewer/components/report-viewer/report-viewer.component').then(
+        (m) => m.ReportViewerComponent
+      ),
+  }
 ];
 

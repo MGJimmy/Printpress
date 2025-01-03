@@ -39,6 +39,12 @@ export class HttpService {
         return this.http.delete<T>(this.setUrl(url), { headers: requestHeaders });
     }
 
+   public getBlob(url: string, queryParams?: { [param: string]: string | number | boolean }, headers?: HttpHeaders): Observable<BlobPart> {
+        const requestHeaders = headers || this.defaultHeaders;
+        const params = new HttpParams({ fromObject: queryParams || {} });
+        return this.http.get(this.setUrl(url), { params, headers: requestHeaders, responseType: 'blob' });
+   }
+
     private setUrl(url:string){
      return this.configrationService.getConfiguration().apiUrl + url;
     }
