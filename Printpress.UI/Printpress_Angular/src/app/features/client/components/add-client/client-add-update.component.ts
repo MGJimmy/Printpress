@@ -8,13 +8,13 @@ import { ErrorHandlingService } from '../../../../core/helpers/error-handling.se
 import { finalize, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { CustomerService } from '../../services/customer.service';
+import { CleintService } from '../../services/client.service';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { Customer_interface } from '../../models/Customer-interface';
+import { ClientAddUpdateDto } from '../../models/ClientAddUpdate.Dto';
 
 @Component({
-  selector: 'app-add-customer',
+  selector: 'app-client-add-update',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -24,10 +24,10 @@ import { Customer_interface } from '../../models/Customer-interface';
     MatCardModule,
     CommonModule
   ],
-  templateUrl: './add-customer.component.html',
-  styleUrls: ['./add-customer.component.css']
+  templateUrl: './client-add-update.component.html',
+  styleUrls: ['./client-add-update.component.css']
 })
-export class AddCustomerComponent implements OnInit, OnDestroy {
+export class ClientAddUpdateComponent implements OnInit, OnDestroy {
   customerForm!: FormGroup;
   isEditMode: boolean = false;
   customerId!: number;
@@ -35,7 +35,7 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: NonNullableFormBuilder,
-    private customerService: CustomerService,
+    private customerService: CleintService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private loaderService: LoaderService,
@@ -59,9 +59,9 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
       number: ['', [Validators.required, Validators.pattern('^\\d+$'), Validators.minLength(11), Validators.maxLength(11)]],
       address: ['', [Validators.required, Validators.minLength(4)]]
     }) as FormGroup<{
-      name: FormControl<Customer_interface['name']>;
+      name: FormControl<ClientAddUpdateDto['name']>;
       number: FormControl<string>;
-      address: FormControl<Customer_interface['address']>;
+      address: FormControl<ClientAddUpdateDto['address']>;
     }>
   }
 
@@ -110,7 +110,7 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    const customerData: Customer_interface = {
+    const customerData: ClientAddUpdateDto = {
       id: this.customerId,
       name: this.customerForm.value.name,
       number: +this.customerForm.value.number,

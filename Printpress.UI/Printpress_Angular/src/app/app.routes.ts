@@ -3,17 +3,10 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
-    path: 'test',
+    path: 'add-client',
     loadComponent: () =>
-      import('./features/customer/components/add-customer/add-customer.component').then(
-        (m) => m.AddCustomerComponent
-      ),
-  },
-  {
-    path: 'add-customer',
-    loadComponent: () =>
-      import('./features/customer/components/add-customer/add-customer.component').then(
-        (m) => m.AddCustomerComponent
+      import('./features/client/components/add-client/client-add-update.component').then(
+        (m) => m.ClientAddUpdateComponent
       ),
   },
   {

@@ -1,4 +1,4 @@
-export interface Customer_interface{
+export interface ClientAddUpdateDto{
   id : number,
   name : string,
   number : number,
