@@ -1,6 +1,6 @@
 ﻿namespace Printpress.Application;
 
-public record ClietntDto
+public record ClientDto
 {
     public int Id { get; init; }
     public string Name { get; init; }

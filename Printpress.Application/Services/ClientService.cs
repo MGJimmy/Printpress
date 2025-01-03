@@ -2,7 +2,7 @@
 
 public class ClientService(IUnitOfWork _IUnitOfWork, ClientMapper _CientMapper) : IClientService
 {
-    public async Task<ClietntDto> GetClientById(int id)
+    public async Task<ClientDto> GetClientById(int id)
     {
 
         var client = await _IUnitOfWork.ClientRepository.FindAsync(id);

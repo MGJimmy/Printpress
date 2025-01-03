@@ -2,16 +2,16 @@
 
 namespace Printpress.Application
 {
-    public class ClientMapper : BaseMapper<Client, ClietntDto>
+    public class ClientMapper : BaseMapper<Client, ClientDto>
     {
-        public override Client MapFromDestinationToSource(ClietntDto destinationEntity)
+        public override Client MapFromDestinationToSource(ClientDto destinationEntity)
         {
             throw new NotImplementedException();
         }
 
-        public override ClietntDto MapFromSourceToDestination(Client entity)
+        public override ClientDto MapFromSourceToDestination(Client entity)
         {
-            return new ClietntDto
+            return new ClientDto
             {
                 Id = entity.Id,
                 Name = entity.Name,
