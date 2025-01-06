@@ -1,6 +1,6 @@
-import { orderAddUpdateDto } from "../order/orderAddUpdate.Dto";
+import { iObjectState } from "../../../../core/models/iObjectState";
 
-export interface orderGroupServiceAddUpdateDto{
+export interface orderGroupServiceAddUpdateDto extends iObjectState{
     ServiceId:number;
 }
 

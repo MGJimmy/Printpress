@@ -2,5 +2,5 @@
 
 public interface IClientService
 {
-    Task<ClietntDto> GetClientById(int id);
+    Task<ClientDto> GetClientById(int id);
 }
