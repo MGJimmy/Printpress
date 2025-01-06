@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain.Entities
 {
-    public class PrintingServiceDetails
+    public class PrintingServiceDetails : Entity
     {
         public int ServiceId { get; set; }
 

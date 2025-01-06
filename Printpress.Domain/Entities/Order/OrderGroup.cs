@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain.Entities
 {
-    public class OrderGroup
+    public class OrderGroup : Entity
     {
         public int Id { get; set; }
         public string Name { get; set; }
