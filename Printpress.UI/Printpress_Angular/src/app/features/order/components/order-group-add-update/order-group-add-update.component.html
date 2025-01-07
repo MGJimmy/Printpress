@@ -1,1 +1,76 @@
-<p>order-group-add-update works!</p>
+<div class="container-fluid p-5">
+    <div>
+        <h1>اضافة/ تعديل مجموعة</h1>
+        <div class="form-group">
+            <label for="groupName">اسم المجموعة</label>
+            <input id="groupName" class="form-control" [(ngModel)]="groupName" placeholder="اسم المجموعة">
+        </div>
+
+        <div>
+            <label>خدمات المجموعة:</label>
+            <button mat-icon-button>
+                <mat-icon>edit</mat-icon>
+            </button>
+            <div class="px-5">{{groupServices}}</div>
+        </div>
+    </div>
+    <div class="my-5">
+        <button mat-raised-button color="accent" (click)="addGroupItem()">إضافة عنصر</button>
+
+        <table mat-table [dataSource]="dataSource" class="custom-table">
+            <ng-container matColumnDef="index">
+                <th mat-header-cell *matHeaderCellDef>#</th>
+                <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>اسم العنصر</th>
+                <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+            <ng-container *ngIf="!isOuterItem" matColumnDef="numberOfPages">
+                <th mat-header-cell *matHeaderCellDef>عدد الصفحات</th>
+                <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+            <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef>الكمية</th>
+                <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+            <ng-container matColumnDef="itemPrice">
+                <th mat-header-cell *matHeaderCellDef>سعر العنصر</th>
+                <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+            <ng-container *ngIf="!isOuterItem" matColumnDef="stapledItemsCount">
+                <th mat-header-cell *matHeaderCellDef>عدد العناصر المدبسة</th>
+                <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+            <ng-container *ngIf="!isOuterItem" matColumnDef="printedItemsCount">
+                <th mat-header-cell *matHeaderCellDef>عدد العناصر المطبوعة</th>
+                <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>الإجمالي</th>
+                <td mat-cell *matCellDef="let element"> {{ element.price }} </td>
+            </ng-container>
+            <ng-container *ngIf="isOuterItem" matColumnDef="boughtItemsCount">
+                <th mat-header-cell *matHeaderCellDef>عدد العناصر المشتراه</th>
+                <td mat-cell *matCellDef="let element"> {{ element.price }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>اجراء</th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-icon-button color="warn" (click)="deleteItem(element)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <app-shared-pagination [totalItems]="10" (onPageChange)="onPageChangeClick($event)"></app-shared-pagination>
+
+        <button mat-raised-button color="primary" (click)="saveGroup()">حفظ</button>
+
+    </div>
+</div>
