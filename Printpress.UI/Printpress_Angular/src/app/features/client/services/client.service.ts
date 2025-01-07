@@ -41,7 +41,7 @@ export class CleintService {
       return this.customersMockService.getCustomerById(id);
     }
 
-    return this.httpService.get<ClientGetDto>(ApiUrlResource.ClientAPI.getClientById, {id:id})
+    return this.httpService.get<ClientGetDto>(ApiUrlResource.ClientAPI.getById, {id:id})
   }
 
   addCustomer(customer: ClientAddUpdateDto): Observable<ClientAddUpdateDto> {

@@ -8,7 +8,7 @@ namespace Printpress.API.Controllers;
 public class ClientController(IClientService _IClientService) : ControllerBase
 {
     [HttpGet]
-    [Route("GetById")]
+    [Route("getById")]
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _IClientService.GetClientById(id);
@@ -16,7 +16,7 @@ public class ClientController(IClientService _IClientService) : ControllerBase
     }
 
     [HttpPost]
-    [Route("Add")]
+    [Route("add")]
     public async Task<IActionResult> Add(ClientUpsertDto payload)
     {
         var result = await _IClientService.AddAsync(payload);
@@ -24,7 +24,7 @@ public class ClientController(IClientService _IClientService) : ControllerBase
     }
 
     [HttpPost]
-    [Route("Update/{id}")]
+    [Route("update/{id}")]
     public async Task<IActionResult> Update(int id, ClientUpsertDto payload)
     {
         var result = await _IClientService.UpdateAsync(id, payload);

@@ -3,7 +3,10 @@ export class ApiUrlResource {
 
   private static Cliet_URL = '/api/client';
   public static readonly ClientAPI = {
-    getClientById: ApiUrlResource.Cliet_URL + '/getClientById',
+    getById: ApiUrlResource.Cliet_URL + '/getById',
+    add: ApiUrlResource.Cliet_URL + '/add',
+    update: (id:number) => `${ApiUrlResource.Cliet_URL}/update/${id}`,
+    delete:(id:number) => `${ApiUrlResource.Cliet_URL}/delete/${id}`,
   };
 
   private static Order_URL = '/api/order';
