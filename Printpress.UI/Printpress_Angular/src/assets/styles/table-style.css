@@ -1,0 +1,30 @@
+.custom-table {
+    width: 100%;
+    overflow: hidden;
+}
+
+.custom-table th {
+    background-color: rgb(66, 129, 230) !important;
+    font-weight: bold;
+    /* color: white;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    padding: 10px; */
+}
+
+.custom-table td.mat-cell {
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+}
+
+.custom-table tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.custom-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.custom-table tr:last-child td {
+    border-bottom: none;
+}
