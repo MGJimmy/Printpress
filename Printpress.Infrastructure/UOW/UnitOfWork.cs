@@ -47,9 +47,9 @@ namespace Printpress.Infrastructure
    
     
     
-        public void SaveChanges()
+        public async Task SaveChangesAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

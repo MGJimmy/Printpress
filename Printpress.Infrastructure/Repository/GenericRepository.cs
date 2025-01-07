@@ -186,15 +186,18 @@ namespace Printpress.Infrastructure.Repository
             Context.ChangeTrackedEntityStates(entity);
         }
 
-        public void Add(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            Context.Add(entity);
+            await Context.AddAsync(entity);
+            return entity;
         }
 
-        public void Update(T entity)
+        public T Update(T entity)
         {
             Context.Attach(entity);
             Context.Entry(entity).State = EntityState.Modified;
+
+            return entity;
         }
 
     }

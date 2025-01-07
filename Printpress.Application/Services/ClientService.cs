@@ -9,7 +9,7 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
         var client = await _unitOfWork.ClientRepository.AddAsync(_clientMapper.MapFromDestinationToSource(payload));
 
 
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
 
         return _clientMapper.MapFromSourceToDestination(client);
     }
@@ -18,10 +18,15 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
     {
         // Make validation
 
-        var client = await _unitOfWork.ClientRepository.UpdateAsync(id, _clientMapper.MapFromDestinationToSource(id, payload));
+        if(!_unitOfWork.ClientRepository.Any(x=>x.Id == id))
+        {
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));  
+        }
+
+        var client = _unitOfWork.ClientRepository.Update(_clientMapper.MapFromDestinationToSource(id, payload));
 
 
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
 
         return _clientMapper.MapFromSourceToDestination(client);
     }
@@ -39,8 +44,15 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
 
     public async Task DeleteAsync(int id)
     {
-        await _unitOfWork.ClientRepository.Remove(id);
+        var entity = await _unitOfWork.ClientRepository.FindAsync(id);
+        
+        if (entity is null)
+        {
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
+        }
 
-        _unitOfWork.SaveChanges();
+        _unitOfWork.ClientRepository.Remove(entity);
+
+        await _unitOfWork.SaveChangesAsync();
     }
 }
