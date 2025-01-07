@@ -44,5 +44,12 @@ namespace Printpress.Infrastructure
                 return _orderRepository;
             }
         }
+   
+    
+    
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
+        }
     }
 }
