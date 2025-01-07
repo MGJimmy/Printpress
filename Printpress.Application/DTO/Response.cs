@@ -14,6 +14,10 @@ namespace Printpress.Application
         }
         public T Data { get; set; }
 
+        public Response<T> SuccessResponse(T data)
+        {
+            return new Response<T>(ResponseStatus.Success, ResponseMessage.Success, data);
+        }
     }
 
     public class Response
@@ -39,14 +43,5 @@ namespace Printpress.Application
         public string Message { get; set; }
         public bool IsSuccess => Status == ResponseStatus.Success;
         public List<string> Errors { get; set; }
-
     }
-
-    public static class ResponseMessage
-    {
-        public const string Success = "Request completed successfully.";
-        public const string InternalServerError = "Internal Server Error.";
-        public const string ValidationFailure = "One or more validation errors occurred.";
-    }
-
 }

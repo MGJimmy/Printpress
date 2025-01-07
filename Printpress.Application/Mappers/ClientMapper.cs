@@ -19,5 +19,22 @@ namespace Printpress.Application
                 Address = entity.Address
             };
         }
+
+        public Client MapFromDestinationToSource(int id, ClientUpsertDto destinationEntity)
+        {
+            var x = MapFromDestinationToSource(destinationEntity);
+            x.Id = id;
+            return x;
+        }
+
+        public Client MapFromDestinationToSource(ClientUpsertDto destinationEntity)
+        {
+            return new Client
+            {
+                Name = destinationEntity.Name,
+                Mobile = destinationEntity.Mobile,
+                Address = destinationEntity.Address
+            };
+        }
     }
 }
