@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { Configuration } from '../models/configration.model';
+import { ConfigurationModel } from '../models/configration.model';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +9,7 @@ import { Configuration } from '../models/configration.model';
 export class ConfigurationService {
   private configUrl = 'assets/configs/config.json';
   private httpClient: HttpClient;
-  private configuration: Configuration | null = null;
+  private configuration: ConfigurationModel | null = null;
 
   constructor(private handler: HttpBackend) {
     this.httpClient = new HttpClient(handler);
@@ -17,13 +17,13 @@ export class ConfigurationService {
 
   public async loadConfiguration(): Promise<void> {
     try {
-      this.configuration = await firstValueFrom(this.httpClient.get<Configuration>(this.getBaseUrl() + this.configUrl));
+      this.configuration = await firstValueFrom(this.httpClient.get<ConfigurationModel>(this.getBaseUrl() + this.configUrl));
     } catch (error) {
       throw new Error('Configuration not found');
     }
   }
 
-  public getConfiguration(): Configuration {
+  public getConfiguration(): ConfigurationModel {
     if (!this.configuration) {
       throw new Error('Configuration not loaded');
     }

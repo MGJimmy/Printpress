@@ -1,4 +1,4 @@
-export class Configuration {
+export class ConfigurationModel {
     public apiUrl: string = '';
   }
   

@@ -1,4 +1,4 @@
-export enum objectStateEnum{
+export enum ObjectStateEnum{
     unchanged,
     added,
     updated,

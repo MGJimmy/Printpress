@@ -1,4 +1,4 @@
-import { IObjectState } from "../../../../core/models/iObjectState";
+import { IObjectState } from "../../../../core/models/i-object-state";
 
 
 export interface ItemUpsertDto extends IObjectState{

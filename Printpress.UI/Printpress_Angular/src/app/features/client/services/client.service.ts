@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../../core/helpers/error-handling.service';
 import { HttpService } from '../../../core/services/http.service';
-import { ClientGetDto } from '../models/client-get.Dto';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { ClientUpsertDto } from '../models/client-upsert.Dto';
+import { ClientGetDto } from '../models/client-get.Dto';
 
 @Injectable({
   providedIn: 'root'

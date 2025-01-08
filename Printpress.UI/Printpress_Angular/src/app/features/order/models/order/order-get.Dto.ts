@@ -1,4 +1,4 @@
-import { OrderGroupUpsertDto } from "../orderGroup/order-group-upsert.Dto";
+import { OrderGroupUpsertDto } from "../orderGroup/order-group-upsert.dto";
 
 export interface OrderGetDto {
     id:number;

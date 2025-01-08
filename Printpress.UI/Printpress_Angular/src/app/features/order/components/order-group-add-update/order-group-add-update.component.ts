@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { OrderGroupUpsertDto } from '../../models/orderGroup/order-group-upsert.Dto';
+import { OrderGroupUpsertDto } from '../../models/orderGroup/order-group-upsert.dto';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {  MatTableModule } from '@angular/material/table';
 import {  MatIconModule } from '@angular/material/icon';

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, input, Output, output } from '@angular/core';
-import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order-group-service-upsert.Dto';
+import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order-group-service-upsert.dto';
 import { itemAddUpdateDto } from '../../../../core/models/item/itemAddUpdate.Dto';
 
 @Component({

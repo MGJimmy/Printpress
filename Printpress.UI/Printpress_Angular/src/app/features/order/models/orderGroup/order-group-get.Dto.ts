@@ -1,5 +1,5 @@
 import { ItemUpsertDto } from "../item/item-upsert.Dto";
-import { OrderGroupServiceUpsertDto } from "../orderGroupService/order-group-service-upsert.Dto";
+import { OrderGroupServiceUpsertDto } from "../orderGroupService/order-group-service-upsert.dto";
 
 export interface OrderGroupGetDto {
     id:number;
