@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { orderGroupAddUpdateDto } from '../../models/orderGroup/orderGroupAddUpdate.Dto';
+import { OrderGroupUpsertDto } from '../../models/orderGroup/order-group-upsert.Dto';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {  MatTableModule } from '@angular/material/table';
 import {  MatIconModule } from '@angular/material/icon';
@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './order-group-add-update.component.css'
 })
 export class OrderGroupAddUpdateComponent {
-  @Output() SaveOrderGroup = new EventEmitter<orderGroupAddUpdateDto>();
+  @Output() SaveOrderGroup = new EventEmitter<OrderGroupUpsertDto>();
   groupName: string = '';
   groupServices: string = '';
   displayedColumns: string[];

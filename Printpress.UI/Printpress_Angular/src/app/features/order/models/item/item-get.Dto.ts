@@ -1,4 +1,4 @@
-export interface itemGetDto {
+export interface ItemGetDto {
     id:number;
     name:string;
     quantity:number;

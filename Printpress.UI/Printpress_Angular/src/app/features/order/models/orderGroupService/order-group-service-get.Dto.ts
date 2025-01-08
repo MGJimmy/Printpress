@@ -1,4 +1,4 @@
-export interface orderGroupServiceGetDto {
+export interface OrderGroupServiceGetDto {
     id:number;
     ServiceId:number;
     OrderId:number;

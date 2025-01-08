@@ -4,11 +4,11 @@ import { ConfigurationService } from '../../../core/services/configration.servic
 import { ClientMockService } from './client-mock.service';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ClientAddUpdateDto } from '../models/ClientAddUpdate.Dto';
 import { ErrorHandlingService } from '../../../core/helpers/error-handling.service';
 import { HttpService } from '../../../core/services/http.service';
-import { ClientGetDto } from '../models/ClientGet.Dto';
+import { ClientGetDto } from '../models/client-get.Dto';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
+import { ClientUpsertDto } from '../models/client-upsert.Dto';
 
 @Injectable({
   providedIn: 'root'
@@ -27,16 +27,16 @@ export class CleintService {
     this.baseUrl = `${this.appConfig.getBaseUrl()}api/customers`;
   }
 
-  getCustomers(): Observable<ClientAddUpdateDto[]> {
+  getCustomers(): Observable<ClientUpsertDto[]> {
     if (this.appConfig.useMock()) {
       return this.customersMockService.getCustomers();
     }
-    return this.http.get<ClientAddUpdateDto[]>(this.baseUrl).pipe(
+    return this.http.get<ClientUpsertDto[]>(this.baseUrl).pipe(
       catchError((error) => this.errorHandler.handleError(error))
     );
   }
 
-  getCustomerById(id: number): Observable<ClientAddUpdateDto | undefined> {
+  getCustomerById(id: number): Observable<ClientUpsertDto | undefined> {
     if (this.appConfig.useMock()) {
       return this.customersMockService.getCustomerById(id);
     }
@@ -44,21 +44,21 @@ export class CleintService {
     return this.httpService.get<ClientGetDto>(ApiUrlResource.ClientAPI.getById, {id:id})
   }
 
-  addCustomer(customer: ClientAddUpdateDto): Observable<ClientAddUpdateDto> {
+  addCustomer(customer: ClientUpsertDto): Observable<ClientUpsertDto> {
     if (this.appConfig.useMock()) {
       return this.customersMockService.addCustomer(customer);
     }
-    return this.http.post<ClientAddUpdateDto>(this.baseUrl, customer).pipe(
+    return this.http.post<ClientUpsertDto>(this.baseUrl, customer).pipe(
       catchError((error) => this.errorHandler.handleError(error))
     );
   }
 
-  updateCustomer(customer: ClientAddUpdateDto, id: number): Observable<ClientAddUpdateDto> {
+  updateCustomer(customer: ClientUpsertDto, id: number): Observable<ClientUpsertDto> {
     const url = `${this.baseUrl}/${id}`;
     if (this.appConfig.useMock()) {
       return this.customersMockService.updateCustomer(customer, id);
     }
-    return this.http.put<ClientAddUpdateDto>(url, customer).pipe(
+    return this.http.put<ClientUpsertDto>(url, customer).pipe(
       catchError((error) => this.errorHandler.handleError(error))
     );
   }

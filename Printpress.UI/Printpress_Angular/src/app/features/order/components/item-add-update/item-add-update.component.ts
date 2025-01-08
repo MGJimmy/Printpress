@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, input, Output, output } from '@angular/core';
-import { orderGroupServiceAddUpdateDto } from '../../models/orderGroupService/orderGroupServiceAddUpdate.Dto';
+import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order-group-service-upsert.Dto';
 import { itemAddUpdateDto } from '../../../../core/models/item/itemAddUpdate.Dto';
 
 @Component({
@@ -11,7 +11,7 @@ import { itemAddUpdateDto } from '../../../../core/models/item/itemAddUpdate.Dto
 })
 export class ItemAddUpdateComponent {
 
-  @Input({ required: true })  orderGroupServices!: orderGroupServiceAddUpdateDto[];  // need this list to show and hide inputs depend on it 
+  @Input({ required: true })  orderGroupServices!: OrderGroupServiceUpsertDto[];  // need this list to show and hide inputs depend on it 
   @Output() SaveItem = new EventEmitter<itemAddUpdateDto>();
 
 }

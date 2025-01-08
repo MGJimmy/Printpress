@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { orderGroupServiceAddUpdateDto } from '../../models/orderGroupService/orderGroupServiceAddUpdate.Dto';
+import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order-group-service-upsert.Dto';
 
 @Component({
   selector: 'app-order-group-service-add-update',
@@ -9,5 +9,5 @@ import { orderGroupServiceAddUpdateDto } from '../../models/orderGroupService/or
   styleUrl: './order-group-service-add-update.component.css'
 })
 export class OrderGroupServiceAddUpdateComponent {
-  @Output() SaveOrderGroupService = new EventEmitter<orderGroupServiceAddUpdateDto>();
+  @Output() SaveOrderGroupService = new EventEmitter<OrderGroupServiceUpsertDto>();
 }
