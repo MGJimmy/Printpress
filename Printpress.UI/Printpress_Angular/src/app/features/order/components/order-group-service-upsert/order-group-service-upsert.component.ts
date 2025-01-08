@@ -5,9 +5,9 @@ import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order
   selector: 'app-order-group-service-add-update',
   standalone: true,
   imports: [],
-  templateUrl: './order-group-service-add-update.component.html',
-  styleUrl: './order-group-service-add-update.component.css'
+  templateUrl: './order-group-service-upsert.component.html',
+  styleUrl: './order-group-service-upsert.component.css'
 })
-export class OrderGroupServiceAddUpdateComponent {
+export class OrderGroupServiceUpsertComponent {
   @Output() SaveOrderGroupService = new EventEmitter<OrderGroupServiceUpsertDto>();
 }

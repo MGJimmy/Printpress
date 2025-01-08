@@ -11,7 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CleintService } from '../../services/client.service';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { ClientAddUpdateDto } from '../../models/ClientAddUpdate.Dto';
+import { ClientUpsertDto } from '../../models/client-upsert.dto';
 
 @Component({
   selector: 'app-client-add-update',
@@ -59,9 +59,9 @@ export class ClientAddUpdateComponent implements OnInit, OnDestroy {
       number: ['', [Validators.required, Validators.pattern('^\\d+$'), Validators.minLength(11), Validators.maxLength(11)]],
       address: ['', [Validators.required, Validators.minLength(4)]]
     }) as FormGroup<{
-      name: FormControl<ClientAddUpdateDto['name']>;
+      name: FormControl<ClientUpsertDto['name']>;
       number: FormControl<string>;
-      address: FormControl<ClientAddUpdateDto['address']>;
+      address: FormControl<ClientUpsertDto['address']>;
     }>
   }
 
@@ -110,8 +110,7 @@ export class ClientAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    const customerData: ClientAddUpdateDto = {
-      id: this.customerId,
+    const customerData: ClientUpsertDto = {
       name: this.customerForm.value.name,
       number: +this.customerForm.value.number,
       address: this.customerForm.value.address
