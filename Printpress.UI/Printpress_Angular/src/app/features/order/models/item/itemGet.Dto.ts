@@ -1,6 +1,7 @@
-import { itemAddUpdateDto } from "./itemAddUpdate.Dto";
-
-export interface itemGetDto extends itemAddUpdateDto{
+export interface itemGetDto {
     id:number;
+    name:string;
+    quantity:number;
+    price:number;
     groupId: number;
 }

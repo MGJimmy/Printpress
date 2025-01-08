@@ -1,5 +1,6 @@
-import { ClientAddUpdateDto } from "./ClientAddUpdate.Dto";
-
-export interface ClientGetDto extends ClientAddUpdateDto{
-  id : number
+export interface ClientGetDto {
+  id : number,
+  name : string,
+  number : number,
+  address : string
 }
