@@ -1,0 +1,14 @@
+==============
+Naming
+==============
+- all files (models - pipes - ...) named as kebab-case (lowercase with dashes) and end with the .typeName (.Dto, .model, .Service)
+	Ex: user-profile.dto.ts
+- class name named as Upper Snake Case (all uppercase with no spaces)
+	Ex: UserProfileDto
+
+
+
+==============
+General
+==============
+- any class has no methods only properties make it interface ex (DTOs, Models)

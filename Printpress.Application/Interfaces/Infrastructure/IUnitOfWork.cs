@@ -6,4 +6,6 @@ public interface IUnitOfWork
 {
     IGenericRepository<Client> ClientRepository { get; }
     IGenericRepository<Order> OrderRepository { get; }
+
+    Task SaveChangesAsync();
 }

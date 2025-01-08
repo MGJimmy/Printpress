@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Printpress.Application;
+using Printpress.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Printpress.Infrastructure.Repository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : Entity
     {
         public GenericRepository(ApplicationDbContext dbContext)
         {
@@ -180,5 +181,24 @@ namespace Printpress.Infrastructure.Repository
         {
             Context.Set<T>().Where(query).ExecuteDelete();
         }
+        public void AddOrUpdate(T entity)
+        {
+            Context.ChangeTrackedEntityStates(entity);
+        }
+
+        public async Task<T> AddAsync(T entity)
+        {
+            await Context.AddAsync(entity);
+            return entity;
+        }
+
+        public T Update(T entity)
+        {
+            Context.Attach(entity);
+            Context.Entry(entity).State = EntityState.Modified;
+
+            return entity;
+        }
+
     }
 }

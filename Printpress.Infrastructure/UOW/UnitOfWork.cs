@@ -44,5 +44,12 @@ namespace Printpress.Infrastructure
                 return _orderRepository;
             }
         }
+   
+    
+    
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

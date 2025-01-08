@@ -15,6 +15,13 @@ export const routes: Routes = [
       import('./features/Client/components/client-list/client-list.component').then(
         (m) => m.ClientListComponent
       ),
+  },
+  {
+    path: 'report-viewer',
+    loadComponent: () =>
+      import('./features/reportViewer/components/report-viewer/report-viewer.component').then(
+        (m) => m.ReportViewerComponent
+      ),
   }
 ];
 

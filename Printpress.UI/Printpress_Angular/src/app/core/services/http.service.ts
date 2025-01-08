@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { firstValueFrom, Observable } from "rxjs";
 import { ConfigurationService } from "./configuration.service";
-import { Configuration } from "../models/configration.model";
+import { ConfigurationModel } from "../models/configration.model";
 
 @Injectable({
     providedIn: 'root',
@@ -38,6 +38,12 @@ export class HttpService {
         const requestHeaders = headers || this.defaultHeaders;
         return this.http.delete<T>(this.setUrl(url), { headers: requestHeaders });
     }
+
+   public getBlob(url: string, queryParams?: { [param: string]: string | number | boolean }, headers?: HttpHeaders): Observable<BlobPart> {
+        const requestHeaders = headers || this.defaultHeaders;
+        const params = new HttpParams({ fromObject: queryParams || {} });
+        return this.http.get(this.setUrl(url), { params, headers: requestHeaders, responseType: 'blob' });
+   }
 
     private setUrl(url:string){
      return this.configrationService.getConfiguration().apiUrl + url;

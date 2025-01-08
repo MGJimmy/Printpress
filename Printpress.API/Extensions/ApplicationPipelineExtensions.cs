@@ -1,4 +1,6 @@
-﻿namespace Printpress.API;
+﻿using Rotativa.AspNetCore;
+
+namespace Printpress.API;
 
 public static class ApplicationPipelineExtensions
 {
@@ -11,11 +13,21 @@ public static class ApplicationPipelineExtensions
             app.UseSwaggerUI();
         }
 
+        app.UseCors("AllowAll");
+
+        app.UseStaticFiles();
+
+        app.UseRotativa();
+
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.MapDefaultControllerRoute();
+
+
 
 
         return app;

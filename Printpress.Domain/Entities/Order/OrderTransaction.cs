@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain.Entities
 {
-    public class OrderTransaction
+    public class OrderTransaction : Entity
     {
         public int Id { get; set; }
         public int OrderId { get; set; }

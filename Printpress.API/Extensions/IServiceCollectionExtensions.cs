@@ -15,6 +15,8 @@ public static class IServiceCollectionExtensions
         services.AddSwaggerGen();
         services.RegisterCompositionRootServices(configuration);
         services.AddExceptionHandler<GlobalExceptionMiddleWare>();
+        services.AddRazorPages().AddRazorRuntimeCompilation();
+        services.AddCros();
     }
     private static IServiceCollection AddControllers(this IServiceCollection services)
     {
@@ -62,4 +64,20 @@ public static class IServiceCollectionExtensions
 
         return services;
     }
+
+    private static IServiceCollection AddCros(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
+        return services;
+    }
+
 }
