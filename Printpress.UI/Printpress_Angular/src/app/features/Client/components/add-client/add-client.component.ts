@@ -8,10 +8,10 @@ import { ErrorHandlingService } from '../../../../core/helpers/error-handling.se
 import { finalize, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { CustomerService } from '../../services/customer.service';
+import { ClientService } from '../../services/client.service';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { Customer_interface } from '../../models/Customer-interface';
+import { Client_interface } from '../../models/Client-interface';
 
 @Component({
   selector: 'app-add-customer',
@@ -24,18 +24,18 @@ import { Customer_interface } from '../../models/Customer-interface';
     MatCardModule,
     CommonModule
   ],
-  templateUrl: './add-customer.component.html',
-  styleUrls: ['./add-customer.component.css']
+  templateUrl: './add-client.component.html',
+  styleUrls: ['./add-client.component.css']
 })
-export class AddCustomerComponent implements OnInit, OnDestroy {
-  customerForm!: FormGroup;
+export class AddClientComponent implements OnInit, OnDestroy {
+  clientForm!: FormGroup;
   isEditMode: boolean = false;
-  customerId!: number;
+  clientId!: number;
   private subscriptions: Subscription = new Subscription();
 
   constructor(
     private fb: NonNullableFormBuilder,
-    private customerService: CustomerService,
+    private clientService: ClientService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private loaderService: LoaderService,
@@ -54,88 +54,88 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
 
   //strongly typed form
   private initializeForm(): void {
-    this.customerForm = this.fb.group({
+    this.clientForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       number: ['', [Validators.required, Validators.pattern('^\\d+$'), Validators.minLength(11), Validators.maxLength(11)]],
       address: ['', [Validators.required, Validators.minLength(4)]]
     }) as FormGroup<{
-      name: FormControl<Customer_interface['name']>;
+      name: FormControl<Client_interface['name']>;
       number: FormControl<string>;
-      address: FormControl<Customer_interface['address']>;
+      address: FormControl<Client_interface['address']>;
     }>
   }
 
   private checkForEditMode(): void {
     this.subscriptions.add(
       this.activatedRoute.queryParams.subscribe((params) => {
-        this.customerId = +params['id'];
-        this.isEditMode = !!this.customerId;
+        this.clientId = +params['id'];
+        this.isEditMode = !!this.clientId;
 
         if (this.isEditMode) {
-          this.loadCustomerData(this.customerId);
+          this.loadClientData(this.clientId);
         }
       })
     );
   }
 
-  private loadCustomerData(id: number): void {
+  private loadClientData(id: number): void {
     this.loaderService.show();
 
     this.subscriptions.add(
-      this.customerService.getCustomerById(id).pipe(
+      this.clientService.getClientById(id).pipe(
         finalize(() => this.loaderService.hide())
       ).subscribe({
-        next: (customer) => {
-          if (customer) {
-            this.customerForm.patchValue({
-              name: customer.name,
-              number: customer.number,
-              address: customer.address
+        next: (client) => {
+          if (client) {
+            this.clientForm.patchValue({
+              name: client.name,
+              number: client.number,
+              address: client.address
             });
           } else {
-            this.handleCustomerNotFound();
+            this.handleClientNotFound();
           }
         },
         error: (error) => {
           this.errorHandlingService.handleError(error);
-          this.handleCustomerNotFound();
+          this.handleClientNotFound();
         }
       })
     );
   }
 
-  private handleCustomerNotFound(): void {
-    this.alertService.showError('Customer not found');
-    this.router.navigate(['/customers']);
+  private handleClientNotFound(): void {
+    this.alertService.showError('client not found');
+    this.router.navigate(['/clients']);
   }
 
   onSubmit(): void {
-    const customerData: Customer_interface = {
-      id: this.customerId,
-      name: this.customerForm.value.name,
-      number: +this.customerForm.value.number,
-      address: this.customerForm.value.address
+    const clientData: Client_interface = {
+      id: this.clientId,
+      name: this.clientForm.value.name,
+      number: +this.clientForm.value.number,
+      address: this.clientForm.value.address
     };
     this.loaderService.show();
     let request;
     if (this.isEditMode) {
-      request = this.customerService.updateCustomer(customerData, this.customerId);
+      request = this.clientService.updateClient(clientData, this.clientId);
     } else {
-      request = this.customerService.addCustomer(customerData);
+      request = this.clientService.addClient(clientData);
     }
     this.subscriptions.add(
       request.pipe(
         finalize(() => { this.loaderService.hide(); })
       ).subscribe({
         next: () => {
-          let message = this.isEditMode ? 'Customer updated successfully' : 'Customer added successfully';
+          let message = this.isEditMode ? 'Client updated successfully' : 'Client added successfully';
           this.alertService.showSuccess(message);
           this.resetForm();
-          this.router.navigate(['/customers']);
+          this.router.navigate(['/clients']);
         },
         error: (error) => {
           this.errorHandlingService.handleError(error);
-          let message = this.isEditMode ? 'Customer update failed' : 'Customer add failed';
+          let message = this.isEditMode ? 'Client update failed' : 'Client add failed';
           this.alertService.showError(message);
         }
       })
@@ -143,16 +143,16 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
   }
 
   resetForm(): void {
-    this.customerForm.reset({
+    this.clientForm.reset({
       name: '',
       number: '',
       address: '',
     });
-    this.customerId = 0;
+    this.clientId = 0;
     this.isEditMode = false;
   }
 
   onCancel(): void {
-    this.router.navigate(['/customers']);
+    this.router.navigate(['/clients']);
   }
 }

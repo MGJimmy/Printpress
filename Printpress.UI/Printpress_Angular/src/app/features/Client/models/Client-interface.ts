@@ -1,4 +1,4 @@
-export interface Customer_interface{
+export interface Client_interface{
   id : number,
   name : string,
   number : number,

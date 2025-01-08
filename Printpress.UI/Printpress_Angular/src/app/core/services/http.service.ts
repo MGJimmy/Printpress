@@ -1,18 +1,18 @@
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { firstValueFrom, Observable } from "rxjs";
-import { ConfigurationService } from "./configration.service";
+import { ConfigurationService } from "./configuration.service";
 import { Configuration } from "../models/configration.model";
 
 @Injectable({
     providedIn: 'root',
-    
+
 })
 export class HttpService {
 
     private defaultHeaders : HttpHeaders;
 
-    constructor(private http: HttpClient ,private configrationService:ConfigurationService) {   
+    constructor(private http: HttpClient ,private configrationService:ConfigurationService) {
         this.defaultHeaders = new HttpHeaders();
         this.defaultHeaders = this.defaultHeaders.set('showLoader','true');
      }
@@ -34,7 +34,7 @@ export class HttpService {
         return this.http.put<T>(this.setUrl(url), body, { headers: requestHeaders });
     }
 
-    public delete<T>(url: string, headers?: HttpHeaders): Observable<T> {      
+    public delete<T>(url: string, headers?: HttpHeaders): Observable<T> {
         const requestHeaders = headers || this.defaultHeaders;
         return this.http.delete<T>(this.setUrl(url), { headers: requestHeaders });
     }
@@ -43,6 +43,6 @@ export class HttpService {
      return this.configrationService.getConfiguration().apiUrl + url;
     }
 
-  
+
 
 }

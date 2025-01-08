@@ -1,27 +1,20 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  // { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
-    path: 'test',
+    path: 'add-clients',
     loadComponent: () =>
-      import('./features/customer/components/add-customer/add-customer.component').then(
-        (m) => m.AddCustomerComponent
+      import('./features/Client/components/add-client/add-client.component').then(
+        (m) => m.AddClientComponent
       ),
   },
   {
-    path: 'add-customer',
+    path: 'clients',
     loadComponent: () =>
-      import('./features/customer/components/add-customer/add-customer.component').then(
-        (m) => m.AddCustomerComponent
+      import('./features/Client/components/client-list/client-list.component').then(
+        (m) => m.ClientListComponent
       ),
-  },
-  // {
-  //   path: 'customers',
-  //   loadComponent: () =>
-  //     import('./features/Customer/customer-list/customer-list.component').then(
-  //       (m) => m.CustomerListComponent
-  //     ),
-  // }
+  }
 ];
 
