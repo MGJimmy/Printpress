@@ -6,7 +6,7 @@ Naming
 - class name named as Upper Snake Case (all uppercase with no spaces)
 	Ex: UserProfileDto
 
-
+- Name ang DTO or component used for add and update as (Upsert)
 
 ==============
 General
