@@ -1,4 +1,6 @@
-﻿namespace Printpress.Application;
+﻿using Printpress.Domain.Entities;
+
+namespace Printpress.Application;
 
 public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) : IClientService
 {
@@ -54,5 +56,22 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
         _unitOfWork.ClientRepository.Remove(entity);
 
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<PagedList<ClientDto>> GetByPage(int pageNumber, int pageSize)
+    {
+        Paging paging = new Paging
+        {
+            PageSize = pageSize,
+            PageNumber = pageNumber
+        };
+
+        PagedList<Client> pagedList = _unitOfWork.ClientRepository.All(paging);
+
+        // check if no data returned then return no data founds
+
+        var result = _clientMapper.MapFromSourceToDestination(pagedList);
+
+        return await Task.FromResult(result);
     }
 }

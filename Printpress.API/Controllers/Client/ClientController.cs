@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Printpress.Application;
+using Printpress.Domain.Entities;
 namespace Printpress.API.Controllers;
 
 
@@ -7,6 +8,14 @@ namespace Printpress.API.Controllers;
 [ApiController]
 public class ClientController(IClientService _IClientService) : ControllerBase
 {
+    [HttpGet]
+    [Route("getByPage")]
+    public async Task<IActionResult> GetByPage(int pageNumber, int pageSize)
+    {
+        PagedList<ClientDto> result = await _IClientService.GetByPage(pageNumber, pageSize);
+        return Ok(result);
+    }
+
     [HttpGet]
     [Route("getById")]
     public async Task<IActionResult> GetById(int id)

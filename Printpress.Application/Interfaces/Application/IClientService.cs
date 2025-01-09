@@ -6,4 +6,5 @@ public interface IClientService
     Task<ClientDto> UpdateAsync(int id, ClientUpsertDto payload);
     Task<ClientDto> GetClientById(int id);
     Task DeleteAsync(int id);
+    Task<PagedList<ClientDto>> GetByPage(int pageNumber, int pageSize);
 }

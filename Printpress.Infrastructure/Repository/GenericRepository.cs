@@ -41,7 +41,7 @@ namespace Printpress.Infrastructure.Repository
 
             return new PagedList<T>
             {
-                Items = Items.ToList(),
+                Items = Items.AsEnumerable(),
                 TotalCount = Count(),
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize

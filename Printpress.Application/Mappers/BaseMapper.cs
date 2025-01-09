@@ -1,8 +1,26 @@
 ﻿namespace Printpress.Application;
 
-public abstract class BaseMapper <TSource, TDestination>
+public abstract class BaseMapper <TSource, TDestination> where TDestination : class where TSource : class
 {
-    public List<TSource> MapFromDestinationToSource(List<TDestination> destinationEntities)
+    public PagedList<TDestination> MapFromSourceToDestination(PagedList<TSource> destinationEntities)
+    {
+        if (destinationEntities is null)
+        {
+            return new PagedList<TDestination>();
+        }
+
+        return new PagedList<TDestination>
+        {
+            PageNumber = destinationEntities.PageNumber,
+            PageSize = destinationEntities.PageSize,
+            TotalCount = destinationEntities.TotalCount,
+            Items = MapFromSourceToDestination(destinationEntities.Items)
+        }; ;
+        
+
+    }
+
+    public List<TSource> MapFromDestinationToSource(IEnumerable<TDestination> destinationEntities)
     {
         if (destinationEntities is null)
         {
@@ -26,7 +44,7 @@ public abstract class BaseMapper <TSource, TDestination>
         
     }
 
-    public List<TDestination> MapFromSourceToDestination(List<TSource> sourceEntities)
+    public List<TDestination> MapFromSourceToDestination(IEnumerable<TSource> sourceEntities)
     {
         if (sourceEntities is null)
         {
