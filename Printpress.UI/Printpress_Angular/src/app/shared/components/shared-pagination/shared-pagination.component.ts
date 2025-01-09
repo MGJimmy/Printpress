@@ -10,7 +10,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 })
 export class SharedPaginationComponent {
   @Input() totalItems!: number;
-  @Output() onPageChange: any = new EventEmitter();
+  @Output() onPageChange: EventEmitter<PageEvent> = new EventEmitter();
 
   protected pageSizeOptions: number[];
   protected showFirstLastButtons: boolean;
@@ -23,5 +23,4 @@ export class SharedPaginationComponent {
   onPageChangeClick(event: PageEvent) {
     this.onPageChange.emit(event);
   }
-  
 }
