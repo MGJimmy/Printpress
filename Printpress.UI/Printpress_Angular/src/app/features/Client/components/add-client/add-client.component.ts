@@ -8,20 +8,13 @@ import { ErrorHandlingService } from '../../../../core/helpers/error-handling.se
 import { finalize, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-<<<<<<<< HEAD:Printpress.UI/Printpress_Angular/src/app/features/Client/components/add-client/add-client.component.ts
 import { ClientService } from '../../services/client.service';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { Client_interface } from '../../models/Client-interface';
-========
-import { CleintService } from '../../services/client.service';
-import { LoaderService } from '../../../../core/services/loader.service';
-import { AlertService } from '../../../../core/services/alert.service';
-import { ClientUpsertDto } from '../../models/client-upsert.dto';
->>>>>>>> 1455938220098d3bd1e13b2e174271a09353a795:Printpress.UI/Printpress_Angular/src/app/features/client/components/add-client/client-add-update.component.ts
+import { ClientUpsertDto } from '../../models/client-upsert.Dto';
 
 @Component({
-  selector: 'app-client-add-update',
+  selector: 'app-add-customer',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -31,30 +24,18 @@ import { ClientUpsertDto } from '../../models/client-upsert.dto';
     MatCardModule,
     CommonModule
   ],
-<<<<<<<< HEAD:Printpress.UI/Printpress_Angular/src/app/features/Client/components/add-client/add-client.component.ts
   templateUrl: './add-client.component.html',
   styleUrls: ['./add-client.component.css']
 })
 export class AddClientComponent implements OnInit, OnDestroy {
   clientForm!: FormGroup;
-========
-  templateUrl: './client-add-update.component.html',
-  styleUrls: ['./client-add-update.component.css']
-})
-export class ClientAddUpdateComponent implements OnInit, OnDestroy {
-  customerForm!: FormGroup;
->>>>>>>> 1455938220098d3bd1e13b2e174271a09353a795:Printpress.UI/Printpress_Angular/src/app/features/client/components/add-client/client-add-update.component.ts
   isEditMode: boolean = false;
   clientId!: number;
   private subscriptions: Subscription = new Subscription();
 
   constructor(
     private fb: NonNullableFormBuilder,
-<<<<<<<< HEAD:Printpress.UI/Printpress_Angular/src/app/features/Client/components/add-client/add-client.component.ts
     private clientService: ClientService,
-========
-    private customerService: CleintService,
->>>>>>>> 1455938220098d3bd1e13b2e174271a09353a795:Printpress.UI/Printpress_Angular/src/app/features/client/components/add-client/client-add-update.component.ts
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private loaderService: LoaderService,
@@ -78,15 +59,9 @@ export class ClientAddUpdateComponent implements OnInit, OnDestroy {
       number: ['', [Validators.required, Validators.pattern('^\\d+$'), Validators.minLength(11), Validators.maxLength(11)]],
       address: ['', [Validators.required, Validators.minLength(4)]]
     }) as FormGroup<{
-<<<<<<<< HEAD:Printpress.UI/Printpress_Angular/src/app/features/Client/components/add-client/add-client.component.ts
-      name: FormControl<Client_interface['name']>;
-      number: FormControl<string>;
-      address: FormControl<Client_interface['address']>;
-========
       name: FormControl<ClientUpsertDto['name']>;
       number: FormControl<string>;
       address: FormControl<ClientUpsertDto['address']>;
->>>>>>>> 1455938220098d3bd1e13b2e174271a09353a795:Printpress.UI/Printpress_Angular/src/app/features/client/components/add-client/client-add-update.component.ts
     }>
   }
 
@@ -107,7 +82,7 @@ export class ClientAddUpdateComponent implements OnInit, OnDestroy {
     this.loaderService.show();
 
     this.subscriptions.add(
-      this.clientService.getClientById(id).pipe(
+      this.clientService.getById(id).pipe(
         finalize(() => this.loaderService.hide())
       ).subscribe({
         next: (client) => {
@@ -135,25 +110,17 @@ export class ClientAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-<<<<<<<< HEAD:Printpress.UI/Printpress_Angular/src/app/features/Client/components/add-client/add-client.component.ts
-    const clientData: Client_interface = {
-      id: this.clientId,
+    const clientData: ClientUpsertDto = {
       name: this.clientForm.value.name,
       number: +this.clientForm.value.number,
       address: this.clientForm.value.address
-========
-    const customerData: ClientUpsertDto = {
-      name: this.customerForm.value.name,
-      number: +this.customerForm.value.number,
-      address: this.customerForm.value.address
->>>>>>>> 1455938220098d3bd1e13b2e174271a09353a795:Printpress.UI/Printpress_Angular/src/app/features/client/components/add-client/client-add-update.component.ts
     };
     this.loaderService.show();
     let request;
     if (this.isEditMode) {
-      request = this.clientService.updateClient(clientData, this.clientId);
+      request = this.clientService.update(clientData, this.clientId);
     } else {
-      request = this.clientService.addClient(clientData);
+      request = this.clientService.add(clientData);
     }
     this.subscriptions.add(
       request.pipe(

@@ -10,11 +10,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 import { debounceTime, Subject } from 'rxjs';
-import { ClientService } from '../../services/client.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { Router } from '@angular/router';
+import { ClientService } from '../../services/client.service';
 
 @Component({
   selector: 'app-client-list',
@@ -58,7 +58,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
   }
 
   fetchClients(): void {
-    const fetchSub = this.clientService.getClients().subscribe({
+    const fetchSub = this.clientService.getByPage(1,10).subscribe({
       next: (data) => {
         this.clients.data = data;
       },
@@ -94,7 +94,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
     const dialogSub = this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
       if (confirmed) {
-        const deleteSub = this.clientService.deleteClient(id).subscribe({
+        const deleteSub = this.clientService.delete(id).subscribe({
           next: () => {
             this.alertService.showSuccess('تم حذف العميل بنجاح!');
             this.fetchClients();

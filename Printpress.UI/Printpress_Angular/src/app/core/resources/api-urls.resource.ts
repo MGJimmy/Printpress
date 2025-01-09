@@ -4,6 +4,7 @@ export class ApiUrlResource {
   private static Cliet_URL = '/api/client';
   public static readonly ClientAPI = {
     getById: ApiUrlResource.Cliet_URL + '/getById',
+    getByPage: ApiUrlResource.Cliet_URL + '/getByPage',
     add: ApiUrlResource.Cliet_URL + '/add',
     update: (id:number) => `${ApiUrlResource.Cliet_URL}/update/${id}`,
     delete:(id:number) => `${ApiUrlResource.Cliet_URL}/delete/${id}`,
@@ -19,5 +20,5 @@ export class ApiUrlResource {
     OrderReport: ApiUrlResource.Report_URL + '/orderReport',
   };
 
-  
+
 }
