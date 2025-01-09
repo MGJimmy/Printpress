@@ -14,7 +14,8 @@ export class DialogService {
     return this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data : data,
-      disableClose: true, // Prevent closing by clicking outside
+      disableClose: true, // Prevent closing by clicking outside,
+      ariaLabel: data?.title || 'Confirmation Dialog',
     }).afterClosed(); // Emits the result (true/false)
   }
 }
