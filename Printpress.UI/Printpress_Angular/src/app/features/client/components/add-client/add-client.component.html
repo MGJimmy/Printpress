@@ -1,0 +1,45 @@
+<mat-card class="form-container rtl">
+  <mat-card-title class="text-center">{{isEditMode ? 'تعديل بيانات العميل' : 'اضافة بيانات العميل'}}</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>الاسم</mat-label>
+        <input type="text" matInput formControlName="name" />
+        <mat-error *ngIf="clientForm.get('name')?.hasError('required') && clientForm.get('name')?.touched">
+          الاسم مطلوب
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>رقم الموبايل</mat-label>
+        <input type="number" matInput formControlName="number"/>
+        <mat-error *ngIf="clientForm.get('number')?.hasError('required') && clientForm.get('number')?.touched">
+          رقم الموبايل مطلوب
+        </mat-error>
+        <mat-error *ngIf="clientForm.get('number')?.hasError('pattern') && clientForm.get('number')?.touched">
+          يجب أن يحتوي على أرقام فقط
+        </mat-error>
+        <mat-error *ngIf="clientForm.get('number')?.hasError('minlength')  && clientForm.get('number')?.hasError('maxlength') && clientForm.get('number')?.touched">
+        يجب أن يتكون من 11 رقم
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>العنوان</mat-label>
+        <input type="text" matInput formControlName="address" />
+        <mat-error *ngIf="clientForm.get('address')?.hasError('required') && clientForm.get('address')?.touched">
+          العنوان مطلوب
+        </mat-error>
+      </mat-form-field>
+
+      <div class="text-center d-flex justify-content-center">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!clientForm.valid">
+          {{ isEditMode ? 'تحديث' : 'إضافة' }}
+        </button>
+        <button mat-flat-button class="cancel-button" type="button" (click)="onCancel()" >
+          إلغاء
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
