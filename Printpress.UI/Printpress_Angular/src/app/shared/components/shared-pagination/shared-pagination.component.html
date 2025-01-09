@@ -1,6 +1,10 @@
 <hr>
 <div class="custom-paginator-container">
-    <mat-paginator class="paginator-background" [length]="totalItems" [pageSizeOptions]="pageSizeOptions" (page)="onPageChangeClick($event)"
-        showFirstLastButtons="showFirstLastButtons">
+    <mat-paginator
+          class="paginator-background"
+          [length]="totalItems"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onPageChangeClick($event)"
+          [showFirstLastButtons]="showFirstLastButtons">
     </mat-paginator>
 </div>

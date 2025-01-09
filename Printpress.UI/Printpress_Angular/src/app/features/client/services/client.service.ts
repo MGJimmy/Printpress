@@ -4,8 +4,10 @@ import { catchError } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../../core/helpers/error-handling.service';
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
-import { ClientGetDto } from '../models/client-get.Dto';
+import { ClientGetDto } from '../models/client-get.dto';
 import { ClientUpsertDto } from '../models/client-upsert.Dto';
+import { ConfigurationService } from '../../../core/services/configuration.service';
+import { ClientMockService } from './client-mock.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,27 +15,46 @@ import { ClientUpsertDto } from '../models/client-upsert.Dto';
 export class ClientService {
 
   constructor(
-    private httpService:HttpService
+    private httpService:HttpService,
+
+
+    private configurationService : ConfigurationService,
+    private clientMockService: ClientMockService
   ) {
   }
 
   getByPage(pageNumber:number, pageSize:number): Observable<ClientGetDto[]> {
+    if(this.configurationService.useMock()){
+      return this.clientMockService.getCustomers();
+    }else
     return this.httpService.get<ClientGetDto[]>(ApiUrlResource.ClientAPI.getByPage, {pageNumber:pageNumber, pageSize:pageSize});
   }
 
   getById(id: number): Observable<ClientGetDto> {
+    if(this.configurationService.useMock()){
+      return this.clientMockService.getCustomerById(id);
+    }else
     return this.httpService.get<ClientGetDto>(ApiUrlResource.ClientAPI.getById, {id:id})
   }
 
   add(client: ClientUpsertDto): Observable<ClientUpsertDto> {
+    if(this.configurationService.useMock()){
+      return this.clientMockService.addCustomer(client);
+    }else
     return this.httpService.post<ClientUpsertDto>(ApiUrlResource.ClientAPI.add, client);
   }
 
   update(client: ClientUpsertDto, id: number): Observable<ClientUpsertDto> {
+    if(this.configurationService.useMock()){
+      return this.clientMockService.updateCustomer(client, id);
+    }else
     return this.httpService.put<ClientUpsertDto>(ApiUrlResource.ClientAPI.update(id), client);
   }
 
   delete(id: number): Observable<string> {
+    if(this.configurationService.useMock()){
+      return this.clientMockService.deleteCustomer(id);
+    }else
     return this.httpService.delete(ApiUrlResource.ClientAPI.delete(id))
    }
 }

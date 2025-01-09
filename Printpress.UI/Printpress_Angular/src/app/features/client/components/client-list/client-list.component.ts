@@ -1,15 +1,14 @@
 import {AfterViewInit, Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import { MatCardModule } from '@angular/material/card';
+import { SampleTableComponent } from '../../../../shared/components/sample-table/sample-table.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
-import { debounceTime, Subject } from 'rxjs';
+import { debounceTime, BehaviorSubject } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
@@ -22,23 +21,29 @@ import { ClientService } from '../../services/client.service';
   styleUrls: ['./client-list.component.css'],
   standalone: true,
   imports: [
-    MatPaginator,
-    MatPaginatorModule,
-    MatTableModule,
-    MatCardModule,
+    SampleTableComponent,
     CommonModule,
     FormsModule,
     MatInputModule,
+    MatCardModule,
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
   ],
 })
 export class ClientListComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['id', 'name', 'number', 'address', 'actions'];
-  clients = new MatTableDataSource<any>([]);
+  columnDefs = [
+    { header: 'رقم', field: 'id' },
+    { header: 'الاسم', field: 'name' },
+    { header: 'رقم الموبايل', field: 'number' },
+    { header: 'العنوان', field: 'address' },
+  ];
+  displayedColumns = ['id', 'name', 'number', 'address', 'actions'];
+  originalSource : any[] = [];
+  filteredSource: any[] = [];
   private subscriptions: Subscription = new Subscription();
-  searchSubject = new Subject<string>();
+  searchSubject = new BehaviorSubject<string>('');
+  searchText : string = '';
 
   constructor(
     private clientService: ClientService,
@@ -60,7 +65,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
   fetchClients(): void {
     const fetchSub = this.clientService.getByPage(1,10).subscribe({
       next: (data) => {
-        this.clients.data = data;
+        this.originalSource = data;
+        this.filteredSource = data;
       },
       error: (err) => {
         this.errorHandlingService.handleError(err);
@@ -71,18 +77,36 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
   setupSearch(): void {
     const searchSub = this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
-      this.clients.filter = searchTerm.trim().toLowerCase();
+      this.filterClients(searchTerm);
     });
     this.subscriptions.add(searchSub);
   }
 
+  filterClients(searchTerm: string): void {
+    const lowerCaseTerm = searchTerm.trim().toLowerCase();
+    if (lowerCaseTerm) {
+      this.filteredSource = this.originalSource.filter((client) =>
+        client.name.toLowerCase().includes(lowerCaseTerm)
+      );
+    } else {
+      this.filteredSource = [...this.originalSource];
+    }
+  }
+
+
+
   onAddClient(): void {
-    this.router.navigate(['/add-clients']);
+    this.router.navigate(['client/add']);
   }
 
   onEditClient(id: number): void {
-    this.router.navigate(['/add-clients'], { queryParams: { id } });
+    if (id) {
+      this.router.navigate(['client/add'], { queryParams: { id } });
+    } else {
+      this.alertService.showError('حدث خطأ أثناء تحميل البيانات');
+    }
   }
+
 
   onDeleteClient(id: number): void {
     const dialogData = {
@@ -116,6 +140,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
   }
 
   clearSearch(): void {
+    this.searchText = '';
     this.searchSubject.next('');
   }
 }

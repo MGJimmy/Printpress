@@ -127,14 +127,14 @@ export class AddClientComponent implements OnInit, OnDestroy {
         finalize(() => { this.loaderService.hide(); })
       ).subscribe({
         next: () => {
-          let message = this.isEditMode ? 'Client updated successfully' : 'Client added successfully';
+          let message = this.isEditMode ? 'تم تحديث بيانات العميل' : 'تم إضافة العميل بنجاح';
           this.alertService.showSuccess(message);
           this.resetForm();
           this.router.navigate(['/clients']);
         },
         error: (error) => {
           this.errorHandlingService.handleError(error);
-          let message = this.isEditMode ? 'Client update failed' : 'Client add failed';
+          let message = this.isEditMode ? 'تعذر تديث بيانات العميل' : 'تعذر إضافة العميل';
           this.alertService.showError(message);
         }
       })
