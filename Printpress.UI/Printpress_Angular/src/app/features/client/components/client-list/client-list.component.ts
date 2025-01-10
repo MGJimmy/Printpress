@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import { SampleTableComponent } from '../../../../shared/components/sample-table/sample-table.component';
+import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -22,7 +22,7 @@ import { TableColDefinitionModel } from '../../../../shared/models/table-col-def
   styleUrls: ['./client-list.component.css'],
   standalone: true,
   imports: [
-    SampleTableComponent,
+    TableTemplateComponent,
     CommonModule,
     FormsModule,
     MatInputModule,
@@ -38,7 +38,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
     { headerName: 'رقم الموبايل', column: 'number' },
     { headerName: 'العنوان', column: 'address' },
   ];
-  
+
   originalSource : any[] = [];
   filteredSource: any[] = [];
   private subscriptions: Subscription = new Subscription();

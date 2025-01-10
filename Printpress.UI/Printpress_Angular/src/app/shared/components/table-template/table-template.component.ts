@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { TableColDefinitionModel } from '../../models/table-col-definition.model';
 
 @Component({
-  selector: 'app-sample-table',
+  selector: 'app-table-template',
   standalone: true,
   imports: [
     SharedPaginationComponent,
@@ -18,10 +18,10 @@ import { TableColDefinitionModel } from '../../models/table-col-definition.model
     MatTableModule,
     CommonModule
   ],
-  templateUrl: './sample-table.component.html',
-  styleUrls: ['./sample-table.component.css'],
+  templateUrl: './table-template.component.html',
+  styleUrls: ['./table-template.component.css'],
 })
-export class SampleTableComponent implements OnInit{
+export class TableTemplateComponent implements OnInit{
 
   @Output() editClicked: EventEmitter<number> = new EventEmitter<number>();
   @Output() deleteClicked: EventEmitter<number> = new EventEmitter<number>();

@@ -13,11 +13,11 @@
     </div>
 
     <!-- Shared Sample Table Component -->
-    <app-sample-table
+    <app-table-template
       [columnDefs]="columnDefs"
       [originalSource]="filteredSource"
       (editClicked)="onEditClient($event)"
       (deleteClicked)="onDeleteClient($event)">
-    </app-sample-table>
+    </app-table-template>
   </mat-card-content>
 </mat-card>
