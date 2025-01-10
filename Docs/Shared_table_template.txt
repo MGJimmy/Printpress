@@ -1,0 +1,3 @@
+- use data source properties name as column definition and displayed columns 
+- show actions by true false input parameter in the component
+- don't use id for column No. use the array index cuz id not always sequence

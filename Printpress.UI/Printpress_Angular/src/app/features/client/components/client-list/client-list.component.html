@@ -15,10 +15,9 @@
     <!-- Shared Sample Table Component -->
     <app-sample-table
       [columnDefs]="columnDefs"
-      [displayedColumns]="displayedColumns"
       [originalSource]="filteredSource"
-      (onEditClick)="onEditClient($event)"
-      (onDeleteClick)="onDeleteClient($event)">
+      (editClicked)="onEditClient($event)"
+      (deleteClicked)="onDeleteClient($event)">
     </app-sample-table>
   </mat-card-content>
 </mat-card>
