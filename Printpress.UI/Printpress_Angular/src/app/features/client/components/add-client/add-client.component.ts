@@ -11,7 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { ClientService } from '../../services/client.service';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { ClientUpsertDto } from '../../models/client-upsert.Dto';
+import { ClientUpsertDto } from '../../models/client-upsert.dto';
 
 @Component({
   selector: 'app-add-customer',

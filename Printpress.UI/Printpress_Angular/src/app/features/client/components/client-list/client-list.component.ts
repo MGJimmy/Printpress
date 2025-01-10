@@ -75,25 +75,6 @@ export class ClientListComponent implements OnInit, OnDestroy {
     this.subscriptions.add(fetchSub);
   }
 
-  setupSearch(): void {
-    const searchSub = this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
-      this.filterClients(searchTerm);
-    });
-    this.subscriptions.add(searchSub);
-  }
-
-  filterClients(searchTerm: string): void {
-    const lowerCaseTerm = searchTerm.trim().toLowerCase();
-    if (lowerCaseTerm) {
-      this.filteredSource = this.originalSource.filter((client) =>
-        client.name.toLowerCase().includes(lowerCaseTerm)
-      );
-    } else {
-      this.filteredSource = [...this.originalSource];
-    }
-  }
-
-
 
   onAddClient(): void {
     this.router.navigate(['client/add']);
@@ -132,6 +113,27 @@ export class ClientListComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(dialogSub);
+  }
+
+
+
+
+  setupSearch(): void {
+    const searchSub = this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
+      this.filterClients(searchTerm);
+    });
+    this.subscriptions.add(searchSub);
+  }
+
+  filterClients(searchTerm: string): void {
+    const lowerCaseTerm = searchTerm.trim().toLowerCase();
+    if (lowerCaseTerm) {
+      this.filteredSource = this.originalSource.filter((client) =>
+        client.name.toLowerCase().includes(lowerCaseTerm)
+      );
+    } else {
+      this.filteredSource = [...this.originalSource];
+    }
   }
 
   applyFilter(event: Event): void {

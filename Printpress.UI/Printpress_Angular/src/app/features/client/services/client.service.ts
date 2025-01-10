@@ -5,7 +5,7 @@ import { ErrorHandlingService } from '../../../core/helpers/error-handling.servi
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { ClientGetDto } from '../models/client-get.dto';
-import { ClientUpsertDto } from '../models/client-upsert.Dto';
+import { ClientUpsertDto } from '../models/client-upsert.dto';
 import { ConfigurationService } from '../../../core/services/configuration.service';
 import { ClientMockService } from './client-mock.service';
 
