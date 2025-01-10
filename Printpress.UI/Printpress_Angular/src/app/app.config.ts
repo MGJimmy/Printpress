@@ -7,6 +7,8 @@ import { loaderInterceptor } from './core/interceptors/loader.interceptor';
 import { ConfigurationService } from './core/services/configuration.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { getArabicPaginatorIntl } from './shared/components/shared-pagination/arabic-paginator-intl';
 
 
 export const appConfig: ApplicationConfig = {
@@ -25,7 +27,11 @@ export const appConfig: ApplicationConfig = {
       timeOut: 2000,
       positionClass: 'toast-top-right',
       preventDuplicates: true
-    })
+    }),
+ 
+      { provide: MatPaginatorIntl,
+       useValue: getArabicPaginatorIntl() 
+      }  
     ],
 
 };
