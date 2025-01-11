@@ -1,0 +1,26 @@
+<div id="sidebar-wrapper" [class.toggled]="toggled" [attr.aria-expanded]="toggled">
+  <div class="sidebar-heading">القائمة</div>
+  <div class="list-group list-group-flush">
+    <a
+      routerLink="/clients"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="list-group-item list-group-item-action"
+    >
+      <fa-icon [icon]="faUserGroup" class="fa-icon mx-2"></fa-icon>
+      <span>قائمة العملاء</span>
+    </a>
+  </div>
+
+  <div class="logout-section list-group-item list-group-item-action"
+  >
+    <button (click)="handleLoginLogout()" class="logout-btn">
+      <fa-icon class="mx-2" [icon]="isLoggedIn ? faSignOutAlt : faSignInAlt"></fa-icon>
+      <span>{{ isLoggedIn ? 'تسجيل الخروج' : 'تسجيل الدخول' }}</span>
+    </button>
+  </div>
+
+  <button (click)="toggleSidebar()" class="toggle-btn" aria-label="Toggle Sidebar">
+    <fa-icon [icon]="toggled ? faTimes : faBars"></fa-icon>
+  </button>
+</div>

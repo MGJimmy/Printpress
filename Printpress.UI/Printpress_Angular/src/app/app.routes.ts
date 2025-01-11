@@ -22,6 +22,13 @@ export const routes: Routes = [
       import('./features/reportViewer/components/report-viewer/report-viewer.component').then(
         (m) => m.ReportViewerComponent
       ),
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./shared/components/login/login.component').then(
+        (m) => m.LoginComponent
+      ),
   }
 ];
 
