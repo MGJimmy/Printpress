@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Printpress.Application;
-using Printpress.Domain.Entities;
-namespace Printpress.API.Controllers;
+namespace Printpress.API;
 
 
 [Route("api/[controller]")]

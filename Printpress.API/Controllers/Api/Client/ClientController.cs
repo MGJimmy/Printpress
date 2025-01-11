@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Printpress.Application;
-using Printpress.Domain.Entities;
-namespace Printpress.API.Controllers;
+namespace Printpress.API;
 
 
 [Route("api/[controller]")]
@@ -21,7 +20,7 @@ public class ClientController(IClientService _IClientService) : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _IClientService.GetClientById(id);
-        return Ok(result);  
+        return Ok(result);
     }
 
     [HttpPost]

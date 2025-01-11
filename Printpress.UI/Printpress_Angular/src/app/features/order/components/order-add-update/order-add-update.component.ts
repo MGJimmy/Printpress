@@ -17,9 +17,7 @@ export class OrderAddUpdateComponent implements OnInit {
   dataSource = new MatTableDataSource<OrderGroupGridViewModel>(ELEMENT_DATA);
 
   constructor(private router: Router) {
-
     this.componentMode = new ComponentMode(router);
-
   }
 
   ngOnInit(): void {
