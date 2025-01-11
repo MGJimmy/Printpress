@@ -22,6 +22,18 @@ export const routes: Routes = [
       import('./features/reportViewer/components/report-viewer/report-viewer.component').then(
         (m) => m.ReportViewerComponent
       ),
+  }, {
+    path: 'group/add',
+    loadComponent: () =>
+      import('./features/order/components/order-group-add-update/order-group-add-update.component').then(
+        (m) => m.OrderGroupAddUpdateComponent
+      ),
+  }, {
+    path: 'group/edit/:id',
+    loadComponent: () =>
+      import('./features/order/components/order-group-add-update/order-group-add-update.component').then(
+        (m) => m.OrderGroupAddUpdateComponent
+      ),
   }
 ];
 
