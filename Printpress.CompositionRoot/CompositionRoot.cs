@@ -21,7 +21,7 @@ namespace Printpress.CompositionRoot
             return services.AddDbContext<ApplicationDbContext>(option =>
             {
                 option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-                option.LogTo((log) => Console.Write(log),LogLevel.Debug);
+                option.LogTo((log) => Console.Write(log),LogLevel.Information);
             });
         }
 
