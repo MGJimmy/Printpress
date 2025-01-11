@@ -29,6 +29,7 @@ namespace Printpress.CompositionRoot
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<IOrderTransactionService, OrderTransactionService>();
 
 
             return services;
@@ -37,6 +38,7 @@ namespace Printpress.CompositionRoot
         public static IServiceCollection RegisterMappers(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ClientMapper>();
+            services.AddScoped<OrderTransactionMapper>();
 
             return services;
         }

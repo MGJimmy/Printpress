@@ -18,6 +18,7 @@ namespace Printpress.Infrastructure
         private IGenericRepository<Order> _orderRepository;
 
         private IGenericRepository<Client> _clientRepository;
+        private IGenericRepository<OrderTransaction> _orderTransactionRepository;
 
         public IGenericRepository<Client> ClientRepository
         {
@@ -44,9 +45,22 @@ namespace Printpress.Infrastructure
                 return _orderRepository;
             }
         }
-   
-    
-    
+
+        public IGenericRepository<OrderTransaction> OrderTransactionRepository
+        {
+            get
+            {
+                if (_orderTransactionRepository == null)
+                {
+                    _orderTransactionRepository = new GenericRepository<OrderTransaction>(_context);
+                }
+
+                return _orderTransactionRepository;
+            }
+        }
+
+
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
