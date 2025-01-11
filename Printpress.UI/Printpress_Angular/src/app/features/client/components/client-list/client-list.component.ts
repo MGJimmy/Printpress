@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import { SampleTableComponent } from '../../../../shared/components/sample-table/sample-table.component';
+import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,7 @@ import { ErrorHandlingService } from '../../../../core/helpers/error-handling.se
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { Router } from '@angular/router';
 import { ClientService } from '../../services/client.service';
+import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 
 @Component({
   selector: 'app-client-list',
@@ -21,7 +22,7 @@ import { ClientService } from '../../services/client.service';
   styleUrls: ['./client-list.component.css'],
   standalone: true,
   imports: [
-    SampleTableComponent,
+    TableTemplateComponent,
     CommonModule,
     FormsModule,
     MatInputModule,
@@ -32,13 +33,12 @@ import { ClientService } from '../../services/client.service';
   ],
 })
 export class ClientListComponent implements OnInit, OnDestroy {
-  columnDefs = [
-    { header: 'رقم', field: 'id' },
-    { header: 'الاسم', field: 'name' },
-    { header: 'رقم الموبايل', field: 'number' },
-    { header: 'العنوان', field: 'address' },
+  columnDefs:TableColDefinitionModel[] = [
+    { headerName: 'الاسم', column: 'name' },
+    { headerName: 'رقم الموبايل', column: 'number' },
+    { headerName: 'العنوان', column: 'address' },
   ];
-  displayedColumns = ['id', 'name', 'number', 'address', 'actions'];
+
   originalSource : any[] = [];
   filteredSource: any[] = [];
   private subscriptions: Subscription = new Subscription();

@@ -1,0 +1,41 @@
+<div class="table-container">
+  <table mat-table [dataSource]="dataSource" class="custom-table" aria-label="Periodic Table of Elements">
+
+    <!-- dynamic loopbable number of columns -->
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+      <th mat-header-cell *matHeaderCellDef> {{ getColumnHeaderName(column) }} </th>
+      <td mat-cell *matCellDef="let element"> 
+        <span *ngIf="column != actionColumn">
+            <ng-container *ngTemplateOutlet="dataTemplate; context:{element, column}"></ng-container>
+        </span>
+        <span *ngIf="column === actionColumn">
+          <ng-container *ngTemplateOutlet="actionTemplate; context:{element}"></ng-container>
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Table rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+
+
+  <!-- Shared Pagination Component conditionally rendered -->
+  <app-shared-pagination *ngIf = "conditionalPagination"
+    [totalItems]="originalSource.length"
+    (onPageChange)="onPageChangeClick($event)">
+  </app-shared-pagination>
+</div>
+
+
+<ng-template #actionTemplate let-element = "element">
+  <button *ngIf="isShowEditButton" 
+    class="mx-3" mat-raised-button color="primary" (click)="onEdit(element)">تعديل</button>
+  <button *ngIf="isShowDeleteButton" 
+    class="mx-3" mat-raised-button color="warn" (click)="onDelete(element)">حذف</button>
+</ng-template>
+
+<ng-template #dataTemplate let-element = "element" let-column = "column">
+  {{element[column]}}
+</ng-template>
