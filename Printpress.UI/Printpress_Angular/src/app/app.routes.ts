@@ -1,7 +1,37 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // { path: '', redirectTo: 'home', pathMatch: 'full' },
+
+  { path: '', redirectTo: 'order', pathMatch: 'full' },
+
+  {
+   path:'order',
+   loadComponent:()=>import('./features/order/components/order-list/order-list.component').then(m=>m.OrderListComponent)
+
+  },
+
+  {
+    path:'order/view/:id',
+    loadComponent:()=>import('./features/order/components/order-add-update/order-add-update.component').then(m=>m.OrderAddUpdateComponent)
+ 
+   },
+ 
+   {
+    path:"order/edit/:id",
+    loadComponent:()=>import('./features/order/components/order-add-update/order-add-update.component').then(
+      m=>m.OrderAddUpdateComponent
+    ),
+
+  },
+
+  {
+    path:"order/add",
+    loadComponent:()=>import('./features/order/components/order-add-update/order-add-update.component').then(
+      m=>m.OrderAddUpdateComponent
+    ),
+
+  },
+
   {
     path: 'client/add',
     loadComponent: () =>
@@ -22,6 +52,7 @@ export const routes: Routes = [
       import('./features/reportViewer/components/report-viewer/report-viewer.component').then(
         (m) => m.ReportViewerComponent
       ),
-  }
+  },
+
 ];
 
