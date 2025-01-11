@@ -14,6 +14,6 @@ namespace Printpress.Domain.Entities
         public string Key { get; set; }
         public string Value { get; set; }
 
-        public Item Item { get; set; }
+        public virtual Item Item { get; set; }
     }
 }

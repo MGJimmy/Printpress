@@ -14,7 +14,7 @@ namespace Printpress.Domain.Entities
         public decimal? Price { get; set; }
 
 
-        public Order Order { get; set; }
-        public Service Service { get; set; }
+        public virtual Order Order { get; set; }
+        public virtual Service Service { get; set; }
     }
 }

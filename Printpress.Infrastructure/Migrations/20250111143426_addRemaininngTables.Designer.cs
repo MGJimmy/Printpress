@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Printpress.Infrastructure;
@@ -11,9 +12,11 @@ using Printpress.Infrastructure;
 namespace Printpress.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250111143426_addRemaininngTables")]
+    partial class addRemaininngTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Client", (string)null);
+                    b.ToTable("Client");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>
@@ -68,7 +71,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("OrderGroupId");
 
-                    b.ToTable("Item", (string)null);
+                    b.ToTable("Item");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ItemDetails", b =>
@@ -92,7 +95,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("ItemDetails", (string)null);
+                    b.ToTable("ItemDetails");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Order", b =>
@@ -124,7 +127,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroup", b =>
@@ -159,7 +162,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderGroup", (string)null);
+                    b.ToTable("OrderGroup");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroupService", b =>
@@ -182,7 +185,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("OrderGroupService", (string)null);
+                    b.ToTable("OrderGroupService");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderService", b =>
@@ -208,7 +211,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("OrderService", (string)null);
+                    b.ToTable("OrderService");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderTransaction", b =>
@@ -239,7 +242,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderTransaction", (string)null);
+                    b.ToTable("OrderTransaction");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.PrintingServiceDetails", b =>
@@ -267,7 +270,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ServiceId1");
 
-                    b.ToTable("PrintingServiceDetails", (string)null);
+                    b.ToTable("PrintingServiceDetails");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.PrintingType", b =>
@@ -284,7 +287,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PrintingType", (string)null);
+                    b.ToTable("PrintingType");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ProductStock", b =>
@@ -307,7 +310,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductStock", (string)null);
+                    b.ToTable("ProductStock");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Service", b =>
@@ -330,7 +333,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Service", (string)null);
+                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>

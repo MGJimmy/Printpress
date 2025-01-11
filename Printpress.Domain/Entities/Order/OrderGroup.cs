@@ -19,6 +19,7 @@ namespace Printpress.Domain.Entities
         public OrderStatusEnum Status { get; set; }
 
 
-        public virtual Client Client { get; set; }
+        public virtual Order Order { get; set; }
+        public virtual List<OrderGroupService> Services { get; set; }
     }
 }

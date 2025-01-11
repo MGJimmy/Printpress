@@ -19,5 +19,8 @@ namespace Printpress.Domain.Entities
 
 
         public virtual Client Client { get; set; }
+        public virtual List<OrderTransaction> Transactions { get; set; }
+        public virtual List<OrderGroup> OrderGroups { get; set; }
+        public virtual List<OrderService> Services { get; set; }
     }
 }

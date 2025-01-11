@@ -14,8 +14,8 @@ namespace Printpress.Domain.Entities
 
         public int ProductStockId { get; set; }
 
-        public Service Service { get; set; }
-        public PrintingType PrintingType { get; set; }
-        public ProductStock ProductStock { get; set; }
+        public virtual Service Service { get; set; }
+        public virtual PrintingType PrintingType { get; set; }
+        public virtual ProductStock ProductStock { get; set; }
     }
 }

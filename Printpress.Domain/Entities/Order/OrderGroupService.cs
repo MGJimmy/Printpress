@@ -13,7 +13,7 @@ namespace Printpress.Domain.Entities
         public int ServiceId { get; set; }
 
 
-        public OrderGroup OrderGroup { get; set; }
-        public Service Service { get; set; }
+        public virtual OrderGroup OrderGroup { get; set; }
+        public virtual Service Service { get; set; }
     }
 }
