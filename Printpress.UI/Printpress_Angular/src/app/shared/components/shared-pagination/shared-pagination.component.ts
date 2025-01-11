@@ -16,7 +16,7 @@ export class SharedPaginationComponent {
   protected showFirstLastButtons: boolean;
 
   constructor() {
-    this.pageSizeOptions = [5, 10, 25, 100];
+    this.pageSizeOptions = [5, 10, 25];
     this.showFirstLastButtons = true;
   }
 

@@ -1,6 +1,8 @@
 <div class="container-fluid p-5">
     <div>
-        <h1>اضافة/ تعديل مجموعة</h1>
+        <h1 *ngIf="isEdit">تعديل مجموعة</h1>
+        <h1 *ngIf="!isEdit">إضافة مجموعة</h1>
+        <hr>
         <div class="form-group">
             <label for="groupName">اسم المجموعة</label>
             <input id="groupName" class="form-control" [(ngModel)]="groupName" placeholder="اسم المجموعة">
@@ -8,7 +10,7 @@
 
         <div>
             <label>خدمات المجموعة:</label>
-            <button mat-icon-button>
+            <button mat-icon-button (click)="editGroupService_Click()">
                 <mat-icon>edit</mat-icon>
             </button>
             <div class="px-5">{{groupServices}}</div>
@@ -17,7 +19,7 @@
     <div class="my-5">
         <button mat-raised-button color="accent" (click)="addGroupItem()">إضافة عنصر</button>
 
-        <table mat-table [dataSource]="dataSource" class="custom-table">
+        <table mat-table [dataSource]="groupItems" class="custom-table">
             <ng-container matColumnDef="index">
                 <th mat-header-cell *matHeaderCellDef>#</th>
                 <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>

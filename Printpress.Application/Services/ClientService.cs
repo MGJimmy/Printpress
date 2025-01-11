@@ -1,4 +1,5 @@
 ﻿using Printpress.Domain.Entities;
+using System.Collections.Specialized;
 
 namespace Printpress.Application;
 
@@ -33,7 +34,6 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
         return _clientMapper.MapFromSourceToDestination(client);
     }
 
-
     public async Task<ClientDto> GetClientById(int id)
     {
 
@@ -66,7 +66,13 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
             PageNumber = pageNumber
         };
 
-        PagedList<Client> pagedList = _unitOfWork.ClientRepository.All(paging);
+        Sorting sorting = new Sorting
+        {
+            Dir = SortingDirection.ASC,
+            Field = nameof(ClientDto.Name),
+        };
+
+        PagedList<Client> pagedList = _unitOfWork.ClientRepository.All(paging,sorting);
 
         // check if no data returned then return no data founds
 

@@ -1,1 +1,118 @@
-<p>order-add-update works!</p>
+<div class="container mt-5 rtl">
+
+    <div class="text-center mb-5 border-bottom pb-3 text-primary">
+        <h1> أضافة \ تعديل الطلبيه</h1>
+    </div>
+
+    <div *ngIf="componentMode.isViewMode" clas="border border-primary">
+        <div class="row ">
+            <button class="col-3 m-2 " mat-raised-button color="primary">التحويلات الماليه</button>
+            <button class="col-3 m-2" mat-raised-button color="primary">تحديث العناصر المنتهيه </button>
+            <button class="col-3 m-2" mat-raised-button color="primary">أصدار فاتوره </button>
+        </div>
+    
+        <div class="row">
+            <label class="col-3 m-2 "> الاجمالي : 3000</label>
+            <label class="col-3 m-2"> المدفوع : 3000</label>
+            <label class="col-3 m-2"> الباقي : 3000</label>
+        </div>
+    
+        <div class="row">
+            <label class="col-3 m-2 "> أسم ألطلبيه: طلبه واحد</label>
+            <label class="col-3 m-2"> أسم العميل: عميل واحد</label>
+            <label class="col-3 m-2"> حالة الطلبيه: غير منتهيه </label>
+        </div>  
+    </div>
+
+    <div *ngIf="componentMode.isEditMode||componentMode.isaddMode" class="m-1">
+        <form class="row g-3">
+            <!-- Order Name -->
+            <div class="col-md-3 ">
+                <label for="orderName" class="form-label">اسم الطلبيه</label>
+                <input type="text" class="form-control" id="orderName" required>
+            </div>
+
+            <!-- Order Status -->
+            <div class="col-md-3 ">
+                <label for="orderStatus" class="form-label">حالة الطلبيه</label>
+                <select class="form-select" id="orderStatus" required>
+                    <option selected disabled value="">اختر حالة الطلبيه...</option>
+                    <option value="1">خيار 1</option>
+                    <option value="2">خيار 2</option>
+                    <option value="3">خيار 3</option>
+                </select>
+            </div>
+
+            <!-- Customer Name with Add Button -->
+            <div class="col-md-4 ">
+                <label for="customerName" class="form-label">اسم العميل</label>
+                <div class="row input-group">
+                    <select class="form-select col-7" id="customerName" required>
+                        <option selected disabled value="">اختر العميل ...</option>
+                        <option value="1">خيار 1</option>
+                        <option value="2">خيار 2</option>
+                        <option value="3">خيار 3</option>
+                    </select>
+                    <div class="col-1"></div>
+                    <button class="col-4" mat-raised-button color="primary" routerlink="client/add">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        اضافة عميل
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="mt-5">
+        <mat-card>
+            <mat-card-header class="text-center">
+                <div class="text-center">
+                    <mat-card-title>أضافة تعديل الطلبيه</mat-card-title>
+                </div>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="mt-4">
+                    <div class="custom-table">
+                        <table mat-table [dataSource]="dataSource">
+                            <!-- Position Column -->
+                            <ng-container matColumnDef="no">
+                                <th mat-header-cell *matHeaderCellDef> </th>
+                                <td mat-cell *matCellDef="let element"> {{element.no}} </td>
+                            </ng-container>
+
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef> اسم المجموعه </th>
+                                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                            </ng-container>
+
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="deliveryDate">
+                                <th mat-header-cell *matHeaderCellDef> تاريخ التسليم</th>
+                                <td mat-cell *matCellDef="let element"> {{element.deliveryDate}} </td>
+                            </ng-container>
+
+
+                            <ng-container matColumnDef="action">
+                                <th mat-header-cell *matHeaderCellDef> أجراء </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <button class="mx-3" mat-raised-button color="primary">تعديل</button>
+                                    <button class="mx-3" mat-raised-button color="warn">حذف</button>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                        </table>
+
+                        <app-shared-pagination class="ltr" [totalItems]="10"> </app-shared-pagination>
+                    </div>
+
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+</div>
