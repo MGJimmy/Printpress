@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Printpress.Application;
 using Printpress.Infrastructure;
 
@@ -18,9 +19,10 @@ namespace Printpress.CompositionRoot
         public static IServiceCollection RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             return services.AddDbContext<ApplicationDbContext>(option =>
-
-                option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-             );
+            {
+                option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+                option.LogTo((log) => Console.Write(log),LogLevel.Debug);
+            });
         }
 
 
