@@ -63,6 +63,7 @@
 
         </form>
     </div>
+    <button mat-raised-button color="primary" routerLink="/order/group/add">إضافة مجموعة جديد</button>
 
     <div class="mt-5">
         <mat-card>
@@ -97,7 +98,7 @@
                             <ng-container matColumnDef="action">
                                 <th mat-header-cell *matHeaderCellDef> أجراء </th>
                                 <td mat-cell *matCellDef="let element">
-                                    <button class="mx-3" mat-raised-button color="primary">تعديل</button>
+                                    <button class="mx-3" mat-raised-button color="primary" routerlink="group/add">تعديل</button>
                                     <button class="mx-3" mat-raised-button color="warn">حذف</button>
                                 </td>
                             </ng-container>

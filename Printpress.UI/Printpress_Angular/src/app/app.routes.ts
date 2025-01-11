@@ -1,40 +1,17 @@
 import { Routes } from '@angular/router';
+import { OrderAddUpdateComponent } from './features/order/components/order-add-update/order-add-update.component';
+import { OrderGroupAddUpdateComponent } from './features/order/components/order-group-add-update/order-group-add-update.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'order', pathMatch: 'full' },
+  { path: '', redirectTo: 'orderlist', pathMatch: 'full' },
 
   {
-    path: 'order',
+    path: 'orderlist',
     loadComponent: () =>
       import(
         './features/order/components/order-list/order-list.component'
       ).then((m) => m.OrderListComponent),
   },
-
-  {
-    path: 'order/view/:id',
-    loadComponent: () =>
-      import(
-        './features/order/components/order-add-update/order-add-update.component'
-      ).then((m) => m.OrderAddUpdateComponent),
-  },
-
-  {
-    path: 'order/edit/:id',
-    loadComponent: () =>
-      import(
-        './features/order/components/order-add-update/order-add-update.component'
-      ).then((m) => m.OrderAddUpdateComponent),
-  },
-
-  {
-    path: 'order/add',
-    loadComponent: () =>
-      import(
-        './features/order/components/order-add-update/order-add-update.component'
-      ).then((m) => m.OrderAddUpdateComponent),
-  },
-
   {
     path: 'client/add',
     loadComponent: () =>
@@ -57,17 +34,17 @@ export const routes: Routes = [
       ).then((m) => m.ReportViewerComponent),
   },
   {
-    path: 'group/add',
+    path: 'order',
     loadComponent: () =>
       import(
-        './features/order/components/order-group-add-update/order-group-add-update.component'
-      ).then((m) => m.OrderGroupAddUpdateComponent),
-  },
-  {
-    path: 'group/edit/:id',
-    loadComponent: () =>
-      import(
-        './features/order/components/order-group-add-update/order-group-add-update.component'
-      ).then((m) => m.OrderGroupAddUpdateComponent),
-  },
+        './features/order/components/order-container/order-container.component'
+      ).then((m) => m.OrderContainerComponent),
+    children: [
+      { path: 'add', component: OrderAddUpdateComponent },
+      { path: 'edit/:id', component: OrderAddUpdateComponent },
+      { path: 'view/:id', component: OrderAddUpdateComponent },
+      { path: 'group/add', component: OrderGroupAddUpdateComponent },
+      { path: 'group/edit/:id', component: OrderGroupAddUpdateComponent },
+    ]
+  }
 ];

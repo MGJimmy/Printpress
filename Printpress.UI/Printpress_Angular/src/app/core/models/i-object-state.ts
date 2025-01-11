@@ -1,5 +1,5 @@
 import { ObjectStateEnum } from "./object-state.enum";
 
-export interface IObjectState{
-    objectState: ObjectStateEnum;
+export class IObjectState {
+    objectState!: ObjectStateEnum;
 }

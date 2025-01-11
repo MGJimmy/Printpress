@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { OrderGroupUpsertDto } from '../../models/orderGroup/order-group-upsert.dto';
+import { OrderGroupUpsertDto } from '../../models/orderGroup/order-group-upsert.Dto';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { OrderGroupServiceUpsertComponent } from '../order-group-service-upsert/order-group-service-upsert.component';
 import { OrderGroupService } from "../../services/order-group.service";
+import { OrderSharedDataService } from '../../services/order-shared-data.service';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -44,7 +45,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private orderGroupService: OrderGroupService
+    private orderGroupService: OrderGroupService,
+    private OrderSharedService: OrderSharedDataService
   ) {
     if (!this.isOuterItem) {
       this.displayedColumns = ['index', 'name', 'numberOfPages', 'quantity',
@@ -62,6 +64,10 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       })
       // get group items from API
     }
+
+    console.log(this.OrderSharedService.getOrderGroup());
+
+    // this.inputObject = this.OrderSharedService.orderObject.orderGroups.filter(x => x.id == this.groupId);
   }
 
   private setGroupId(): void {

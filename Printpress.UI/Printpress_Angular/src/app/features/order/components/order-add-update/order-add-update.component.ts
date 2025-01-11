@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { imports } from './order-add-update.imports';
+import { OrderSharedDataService } from '../../services/order-shared-data.service';
 
 @Component({
   selector: 'app-order-add-update',
@@ -12,22 +13,25 @@ import { imports } from './order-add-update.imports';
 })
 export class OrderAddUpdateComponent implements OnInit {
 
-  public componentMode :ComponentMode;
+  public componentMode: ComponentMode;
   displayedColumns = ['no', 'name', 'deliveryDate', 'action'];
   dataSource = new MatTableDataSource<OrderGroupGridViewModel>(ELEMENT_DATA);
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+    private OrderSharedService: OrderSharedDataService
+  ) {
     this.componentMode = new ComponentMode(router);
   }
 
   ngOnInit(): void {
+    console.log(this.OrderSharedService.getOrderGroup());
 
   }
 }
 
 export interface OrderGroupGridViewModel {
   no: number;
-  name: string; 
+  name: string;
   deliveryDate: number;
 }
 const ELEMENT_DATA: OrderGroupGridViewModel[] = [
@@ -36,7 +40,7 @@ const ELEMENT_DATA: OrderGroupGridViewModel[] = [
   { no: 3, name: 'Lithium', deliveryDate: 6.941 },
 ];
 
-export class ComponentMode{
+export class ComponentMode {
   public isEditMode: boolean;
   public isViewMode: boolean;
   public isaddMode: boolean;

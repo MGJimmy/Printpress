@@ -1,9 +1,11 @@
 import { IObjectState } from "../../../../core/models/i-object-state";
-import { OrderGroupUpsertDto } from "../orderGroup/order-group-upsert.dto";
+import { OrderGroupUpsertDto } from "../orderGroup/order-group-upsert.Dto";
 
-export interface OrderUpsertDto  extends IObjectState{
-    name:string;
-    clientId:number;
+export class OrderUpsertDto extends IObjectState {
 
-    orderGroups: OrderGroupUpsertDto[];
+    constructor(public id: number, public name: string, public clientId: number, public orderGroups: OrderGroupUpsertDto[]) {
+        super();
+        console.log(orderGroups);
+
+    }
 }
