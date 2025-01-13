@@ -8,7 +8,10 @@ export class ClientMockService {
   private customersArray: any[] = [
     {id: 1,  name: 'Ali', number: 1234567890, address: '123 Main St' },
     {id:2,  name: 'Mohammed', number: 9876543210, address: '456 Elm St' },
-    {id: 3,  name: 'Khalid', number: 5555555555, address: '789 Oak St' }
+    {id: 3,  name: 'Khalid', number: 5555555555, address: '789 Oak St' },
+    {id: 4,  name: 'Kareem', number: 1234567890, address: '123 Main St' },
+    {id:5,  name: 'Sayed', number: 9876543210, address: '456 Elm St' },
+    {id: 6,  name: 'Mona', number: 5555555555, address: '789 Oak St' }
   ];
 
   constructor() {}

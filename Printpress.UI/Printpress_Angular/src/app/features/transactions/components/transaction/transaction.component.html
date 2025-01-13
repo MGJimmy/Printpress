@@ -1,0 +1,39 @@
+<mat-card class="transaction-container rtl">
+  <mat-card-title class="text-center">التحويلات المالية</mat-card-title>
+  <mat-card-content>
+    <div class="header d-flex justify-content-between">
+      <div class="client-info d-flex w-100 justify-content-around my-3">
+        <p><strong>اسم العميل:</strong> مدرسة دريم</p>
+        <p><strong>اسم الطلبية:</strong> ترم أول 2024</p>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="pay">
+        <strong class="ms-3">المبلغ</strong>
+        <mat-form-field appearance="outline">
+          <mat-label>المبلغ</mat-label>
+          <input matInput [(ngModel)]="amount" placeholder="أدخل المبلغ">
+        </mat-form-field>
+      </div>
+
+      <div class="note">
+        <strong class="ms-3">ملحوظة</strong>
+        <mat-form-field appearance="outline">
+          <mat-label>ملاحظة</mat-label>
+          <input matInput [(ngModel)]="note" placeholder="أدخل الملحوظة">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button mat-raised-button style="background-color: green; color: white;" (click)="onPay()">دفع</button>
+      <button mat-raised-button color="warn" (click)="onRefund()">استرداد</button>
+    </div>
+
+    <app-table-template
+      [columnDefs]="columnDefs"
+      [originalSource]="originalSource">
+    </app-table-template>
+  </mat-card-content>
+</mat-card>

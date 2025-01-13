@@ -53,6 +53,13 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'transaction',
+    loadComponent: ()=>
+      import(
+        './features/transactions/components/transaction/transaction.component'
+      ).then((m)=> m.TransactionComponent)
+  },
+  {
     path: 'login',
     loadComponent: ()=>
       import(
