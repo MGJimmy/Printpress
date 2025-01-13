@@ -4,7 +4,7 @@
     <!-- dynamic loopbable number of columns -->
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
       <th mat-header-cell *matHeaderCellDef> {{ getColumnHeaderName(column) }} </th>
-      <td mat-cell *matCellDef="let element"> 
+      <td mat-cell *matCellDef="let element">
         <span *ngIf="column != actionColumn">
             <ng-container *ngTemplateOutlet="dataTemplate; context:{element, column}"></ng-container>
         </span>
@@ -16,7 +16,12 @@
 
     <!-- Table rows -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns;"
+      [attr.data-id]="row.id"
+      [ngClass]="{ 'highlight': row.isHighlighted }">
+    </tr>
   </table>
 
 
@@ -30,9 +35,9 @@
 
 
 <ng-template #actionTemplate let-element = "element">
-  <button *ngIf="isShowEditButton" 
+  <button *ngIf="isShowEditButton"
     class="mx-3" mat-raised-button color="primary" (click)="onEdit(element)">تعديل</button>
-  <button *ngIf="isShowDeleteButton" 
+  <button *ngIf="isShowDeleteButton"
     class="mx-3" mat-raised-button color="warn" (click)="onDelete(element)">حذف</button>
 </ng-template>
 

@@ -1,12 +1,14 @@
 <app-loader></app-loader>
 
-<div *ngIf="isAuthenticated" class="list-container" [class.toggled]="isSidebarToggled">
+<div *ngIf="isAuthenticated" class="app-container" [class.toggled]="isSidebarToggled">
   <div class="sidebar" [class.toggled]="isSidebarToggled">
     <app-sidebar
       [toggled]="isSidebarToggled"
       [isLoggedIn] = "isLoggedIn"
       (toggle)="toggleSidebar()"
-      (logout)="onLogout()">
+      (logout)="onLogout()"
+      (login)="onLoginSuccess()"
+      >
     </app-sidebar>
   </div>
   <div class="main-content">

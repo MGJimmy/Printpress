@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth-guard.guard';
 import { OrderAddUpdateComponent } from './features/order/components/order-add-update/order-add-update.component';
 import { OrderGroupAddUpdateComponent } from './features/order/components/order-group-add-update/order-group-add-update.component';
 
@@ -11,6 +12,7 @@ export const routes: Routes = [
       import(
         './features/order/components/order-list/order-list.component'
       ).then((m) => m.OrderListComponent),
+    canActivate: [authGuard],
   },
   {
     path: 'client/add',
@@ -18,6 +20,7 @@ export const routes: Routes = [
       import(
         './features/client/components/add-client/add-client.component'
       ).then((m) => m.AddClientComponent),
+    canActivate: [authGuard],
   },
   {
     path: 'clients',
@@ -25,6 +28,7 @@ export const routes: Routes = [
       import(
         './features/client/components/client-list/client-list.component'
       ).then((m) => m.ClientListComponent),
+    canActivate: [authGuard],
   },
   {
     path: 'report-viewer',
@@ -32,6 +36,7 @@ export const routes: Routes = [
       import(
         './features/reportViewer/components/report-viewer/report-viewer.component'
       ).then((m) => m.ReportViewerComponent),
+    canActivate: [authGuard],
   },
   {
     path: 'order',
@@ -46,5 +51,12 @@ export const routes: Routes = [
       { path: 'group/add', component: OrderGroupAddUpdateComponent },
       { path: 'group/edit/:id', component: OrderGroupAddUpdateComponent },
     ]
+  },
+  {
+    path: 'login',
+    loadComponent: ()=>
+      import(
+        './shared/components/login/login.component'
+      ).then((m)=> m.LoginComponent)
   }
 ];

@@ -24,13 +24,14 @@ export class AppComponent implements OnInit {
   title = 'Printpress_Angular';
 
   isSidebarToggled: boolean = false;
-  isAuthenticated = true;
+  isAuthenticated = false;
   isLoggedIn: boolean = false;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.isAuthenticated = this.authService.isLoggedIn();
+    this.isLoggedIn = this.isAuthenticated;
   }
 
   toggleSidebar() {

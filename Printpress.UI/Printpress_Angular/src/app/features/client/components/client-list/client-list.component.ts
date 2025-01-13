@@ -37,6 +37,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
     { headerName: 'الاسم', column: 'name' },
     { headerName: 'رقم الموبايل', column: 'number' },
     { headerName: 'العنوان', column: 'address' },
+    { headerName: 'الإجراء', column: 'action' },
   ];
 
   originalSource : any[] = [];

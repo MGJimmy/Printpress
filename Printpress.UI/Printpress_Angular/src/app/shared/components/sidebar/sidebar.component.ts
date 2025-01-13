@@ -6,6 +6,7 @@ import { DialogService } from '../../services/dialog.service';
 import { ConfirmDialogModel } from '../../../core/models/confirm-dialog.model';
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 import {
   faBars,
@@ -13,6 +14,7 @@ import {
   faUserGroup,
   faSignOutAlt,
   faSignInAlt,
+  faCartArrowDown
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -38,10 +40,15 @@ export class SidebarComponent implements OnDestroy {
   faUserGroup = faUserGroup;
   faSignOutAlt = faSignOutAlt;
   faSignInAlt = faSignInAlt;
+  faCartArrowDown = faCartArrowDown
 
   private subscriptions: Subscription = new Subscription();
 
-  constructor(private router: Router, private dialogService: DialogService) {}
+  constructor(
+    private router: Router,
+    private dialogService: DialogService,
+    private authService: AuthService
+  ) {}
 
   toggleSidebar(): void {
     this.toggled = !this.toggled;
@@ -70,7 +77,8 @@ export class SidebarComponent implements OnDestroy {
       .subscribe((confirmed) => {
         if (confirmed) {
           this.logout.emit();
-          this.router.navigate(['/login']);
+          this.authService.clearToken();
+          this.router.navigate(['login']);
         }
       });
 

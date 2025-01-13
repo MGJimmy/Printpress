@@ -10,6 +10,15 @@
       <fa-icon [icon]="faUserGroup" class="fa-icon mx-2"></fa-icon>
       <span>قائمة العملاء</span>
     </a>
+    <a
+      routerLink="/orderlist"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="list-group-item list-group-item-action"
+    >
+      <fa-icon [icon]="faCartArrowDown" class="fa-icon mx-2"></fa-icon>
+      <span>قائمة الطلبات</span>
+    </a>
   </div>
 
   <div class="logout-section list-group-item list-group-item-action"
@@ -21,6 +30,6 @@
   </div>
 
   <button (click)="toggleSidebar()" class="toggle-btn" aria-label="Toggle Sidebar">
-    <fa-icon [icon]="toggled ? faTimes : faBars"></fa-icon>
+    <fa-icon [icon]="toggled ? faBars : faTimes"></fa-icon>
   </button>
 </div>

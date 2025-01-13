@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Output, Input, OnInit, input } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { SharedPaginationComponent } from '../shared-pagination/shared-pagination.component';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule} from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { TableColDefinitionModel } from '../../models/table-col-definition.model';
 
@@ -16,7 +17,7 @@ import { TableColDefinitionModel } from '../../models/table-col-definition.model
     MatIconModule,
     MatButtonModule,
     MatTableModule,
-    CommonModule
+    CommonModule,
   ],
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.css'],
@@ -28,11 +29,11 @@ export class TableTemplateComponent implements OnInit{
 
   @Input() columnDefs: TableColDefinitionModel[] = [];
   @Input() originalSource: any[] = [];
-  @Input() isShowEditButton: boolean = true;
-  @Input() isShowDeleteButton: boolean = true;
+  @Input() isShowEditButton: boolean = false;
+  @Input() isShowDeleteButton: boolean = false;
 
   displayedColumns: string[] = [];
-  dataSource: any[] = [];
+  dataSource = new MatTableDataSource<any>([]);
   pageSize = 5;
 
   actionColumn: string = 'action';
@@ -46,13 +47,13 @@ export class TableTemplateComponent implements OnInit{
   constructor() {}
 
   ngOnInit(): void {
-    this.loadPageData(0, this.pageSize);
-    
+    this.dataSource.data = this.originalSource.slice(0, this.pageSize);
+
     this.displayedColumns = Object.keys(this.originalSource[0])
 
     this.pushSharedColumns();
 
-    
+
     console.log(this.displayedColumns)
   }
 
@@ -73,7 +74,7 @@ export class TableTemplateComponent implements OnInit{
 
   loadPageData(pageIndex: number, pageSize: number): void {
     const startIndex = pageIndex * pageSize;
-    this.dataSource = this.originalSource.slice(startIndex, startIndex + pageSize);
+    this.dataSource.data = this.originalSource.slice(startIndex, startIndex + pageSize);
   }
 
   onEdit(element: any): void {
