@@ -56,7 +56,7 @@ export const routes: Routes = [
     path: 'transaction',
     loadComponent: ()=>
       import(
-        './features/transactions/components/transaction/transaction.component'
+        './features/order/components/transaction/transaction.component'
       ).then((m)=> m.TransactionComponent)
   },
   {
