@@ -11,7 +11,7 @@ namespace Printpress.Application
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
-        public TransactionType TransactionType { get; set; }
+        public string TransactionType { get; set; }
         public decimal Amount { get; set; }
         public DateTime CreatedOn { get; set; }
     }

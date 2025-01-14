@@ -1,4 +1,5 @@
 ﻿using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application
 {
@@ -10,7 +11,7 @@ namespace Printpress.Application
             {
                 OrderId = destinationEntity.OrderId,
                 Amount = destinationEntity.Amount,
-                TransactionType = destinationEntity.TransactionType
+                TransactionType = EnumHelper.MapStringToEnum<TransactionType>(destinationEntity.TransactionType)
             };
         }
 
@@ -21,7 +22,7 @@ namespace Printpress.Application
                 Id = entity.Id,
                 OrderId = entity.OrderId,
                 Amount = entity.Amount,
-                TransactionType = entity.TransactionType
+                TransactionType = entity.TransactionType.ToString()
             };
         }
 
@@ -31,7 +32,7 @@ namespace Printpress.Application
             {
                 OrderId = destinationEntity.OrderId,
                 Amount = destinationEntity.Amount,
-                TransactionType = destinationEntity.TransactionType
+                TransactionType = EnumHelper.MapStringToEnum<TransactionType>(destinationEntity.TransactionType)
             };
         }
     }

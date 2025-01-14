@@ -7,6 +7,7 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
     public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload)
     {
         // Make validation
+        // validate tranactiontype string is valid enum value by enum helper
 
         var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
 
@@ -24,7 +25,13 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
             PageNumber = pageNumber
         };
 
-        PagedList<OrderTransaction> pagedList = _unitOfWork.OrderTransactionRepository.All(paging);
+        Sorting sorting = new Sorting
+        {
+            Field = "Id",
+            Dir = SortingDirection.DESC 
+        };
+
+        PagedList<OrderTransaction> pagedList = _unitOfWork.OrderTransactionRepository.All(paging, sorting);
 
         // check if no data returned then return no data founds
 

@@ -8,7 +8,7 @@ namespace Printpress.Domain.Enums
 {
     public enum TransactionType
     {
-        Payment,
-        Refund
+        Payment = 1,
+        Refund = 2
     }
 }
