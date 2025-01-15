@@ -5,11 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
-import { finalize, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { ClientService } from '../../services/client.service';
-import { LoaderService } from '../../../../core/services/loader.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ClientUpsertDto } from '../../models/client-upsert.dto';
 
@@ -38,7 +37,6 @@ export class AddClientComponent implements OnInit, OnDestroy {
     private clientService: ClientService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private loaderService: LoaderService,
     private alertService: AlertService,
     private errorHandlingService: ErrorHandlingService
   ) {}
@@ -48,8 +46,8 @@ export class AddClientComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.checkForEditMode();
     this.initializeForm();
+    this.checkForEditMode();
   }
 
   //strongly typed form
@@ -69,6 +67,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.activatedRoute.queryParams.subscribe((params) => {
         this.clientId = +params['id'];
+        console.log('Client ID:', this.clientId);
         this.isEditMode = !!this.clientId;
 
         if (this.isEditMode) {
@@ -79,13 +78,10 @@ export class AddClientComponent implements OnInit, OnDestroy {
   }
 
   private loadClientData(id: number): void {
-    this.loaderService.show();
-
     this.subscriptions.add(
-      this.clientService.getById(id).pipe(
-        finalize(() => this.loaderService.hide())
-      ).subscribe({
+      this.clientService.getById(id).subscribe({
         next: (client) => {
+          console.log('Client data:', client);
           if (client) {
             this.clientForm.patchValue({
               name: client.name,
@@ -115,7 +111,6 @@ export class AddClientComponent implements OnInit, OnDestroy {
       number: +this.clientForm.value.number,
       address: this.clientForm.value.address
     };
-    this.loaderService.show();
     let request;
     if (this.isEditMode) {
       request = this.clientService.update(clientData, this.clientId);
@@ -123,9 +118,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
       request = this.clientService.add(clientData);
     }
     this.subscriptions.add(
-      request.pipe(
-        finalize(() => { this.loaderService.hide(); })
-      ).subscribe({
+      request.subscribe({
         next: () => {
           let message = this.isEditMode ? 'تم تحديث بيانات العميل' : 'تم إضافة العميل بنجاح';
           this.alertService.showSuccess(message);

@@ -83,11 +83,15 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
   onEditClient(id: number): void {
     if (id) {
-      this.router.navigate(['client/add'], { queryParams: { id } });
+      this.router.navigate(['client/add'], { queryParams: { id } }).catch((err) => {
+        this.alertService.showError('تعذر التنقل إلى صفحة التعديل. يرجى المحاولة لاحقًا.');
+        this.errorHandlingService.handleError(err);
+      });
     } else {
       this.alertService.showError('حدث خطأ أثناء تحميل البيانات');
     }
   }
+
 
 
   onDeleteClient(id: number): void {
@@ -106,6 +110,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
             this.fetchClients();
           },
           error: (err) => {
+            this.alertService.showError('حدث خطأ أثناء حذف العميل. يرجى المحاولة مرة أخرى.');
             this.errorHandlingService.handleError(err);
           },
         });
