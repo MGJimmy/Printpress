@@ -20,5 +20,10 @@ export class ApiUrlResource {
     OrderReport: ApiUrlResource.Report_URL + '/orderReport',
   };
 
+  private static OrderTransaction_URL = '/api/OrderTransaction';
+  public static readonly OrderTransactionAPI = {
+    getByPage: ApiUrlResource.OrderTransaction_URL + '/getByPage',
+    add: ApiUrlResource.OrderTransaction_URL + '/add'
+  };
 
 }

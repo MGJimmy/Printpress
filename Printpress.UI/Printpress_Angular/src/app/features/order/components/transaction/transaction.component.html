@@ -31,9 +31,9 @@
       <button mat-raised-button color="warn" (click)="onRefund()">استرداد</button>
     </div>
 
-    <app-table-template
+    <app-table-template class="m-5" *ngIf="transactions"
       [columnDefs]="columnDefs"
-      [originalSource]="originalSource">
+      [originalSource]="transactions">
     </app-table-template>
   </mat-card-content>
 </mat-card>

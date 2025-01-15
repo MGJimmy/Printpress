@@ -9,7 +9,7 @@ public class OrderTransactionController(IOrderTransactionService _orderTransacti
 {
     [HttpGet]
     [Route("getByPage")]
-    public async Task<IActionResult> GetByPage(int pageNumber, int pageSize)
+    public async Task<IActionResult> GetByPage(int orderId, int pageNumber, int pageSize)
     {
         PagedList<OrderTransactionDto> result = await _orderTransactionService.GetByPage(pageNumber, pageSize);
         return Ok(result);
