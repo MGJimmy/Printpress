@@ -1,0 +1,16 @@
+.container {
+  max-width: 80%;
+  margin: auto;
+}
+
+.row {
+  margin-top: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+button {
+  width: 100px;
+}
