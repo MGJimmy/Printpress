@@ -65,5 +65,12 @@ export const routes: Routes = [
       import(
         './shared/components/login/login.component'
       ).then((m)=> m.LoginComponent)
+  },
+  {
+    path: 'item',
+    loadComponent: ()=>
+      import(
+        './features/order/components/item-add-update/item-add-update.component'
+      ).then((m)=> m.ItemAddUpdateComponent)
   }
 ];
