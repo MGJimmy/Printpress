@@ -7,6 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { TableColDefinitionModel } from '../../models/table-col-definition.model';
+import { PageChangedModel } from '../../models/page-changed.model';
 
 @Component({
   selector: 'app-table-template',
@@ -26,28 +27,27 @@ export class TableTemplateComponent implements OnInit{
 
   @Output() editClicked: EventEmitter<number> = new EventEmitter<number>();
   @Output() deleteClicked: EventEmitter<number> = new EventEmitter<number>();
+  @Output() pageChanged: EventEmitter<PageChangedModel> = new EventEmitter<PageChangedModel>();
 
   @Input() columnDefs: TableColDefinitionModel[] = [];
   @Input() originalSource: any[] = [];
+  @Input() totalItemsCount!: number ;
   @Input() isShowEditButton: boolean = false;
   @Input() isShowDeleteButton: boolean = false;
 
   displayedColumns: string[] = [];
-  dataSource = new MatTableDataSource<any>([]);
-  pageSize = 5;
-
+  pageSize:number = 5;
   actionColumn: string = 'action';
   sequenceColumn: string = 'sequence';
 
 
   get conditionalPagination(): boolean {
-    return this.originalSource.length > this.pageSize;
+    return this.totalItemsCount > this.pageSize;
   }
 
   constructor() {}
 
   ngOnInit(): void {
-    this.dataSource.data = this.originalSource.slice(0, this.pageSize);
 
     this.displayedColumns = Object.keys(this.originalSource[0])
 
@@ -58,7 +58,7 @@ export class TableTemplateComponent implements OnInit{
   }
 
   pushSharedColumns() {
-    this.columnDefs.push({ headerName: 'م', column: this.sequenceColumn });
+    this.columnDefs.unshift({ headerName: 'م', column: this.sequenceColumn });
     this.displayedColumns.unshift(this.sequenceColumn);
     this.displayedColumns.push(this.actionColumn);
   }
@@ -68,13 +68,12 @@ export class TableTemplateComponent implements OnInit{
   }
 
   onPageChangeClick(event: PageEvent): void {
-    const { pageSize, pageIndex } = event;
-    this.loadPageData(pageIndex, pageSize);
-  }
+    let pageChangedModel: PageChangedModel = {
+      currentPage: event.pageIndex + 1,
+      pageSize: event.pageSize
+    }
 
-  loadPageData(pageIndex: number, pageSize: number): void {
-    const startIndex = pageIndex * pageSize;
-    this.dataSource.data = this.originalSource.slice(startIndex, startIndex + pageSize);
+    this.pageChanged.emit(pageChangedModel);
   }
 
   onEdit(element: any): void {

@@ -1,5 +1,5 @@
 <div class="table-container">
-  <table mat-table [dataSource]="dataSource" class="custom-table" aria-label="Periodic Table of Elements">
+  <table mat-table [dataSource]="originalSource" class="custom-table" aria-label="Periodic Table of Elements">
 
     <!-- dynamic loopbable number of columns -->
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
@@ -28,7 +28,7 @@
 
   <!-- Shared Pagination Component conditionally rendered -->
   <app-shared-pagination *ngIf = "conditionalPagination"
-    [totalItems]="originalSource.length"
+    [totalItems]="totalItemsCount"
     (onPageChange)="onPageChangeClick($event)">
   </app-shared-pagination>
 </div>

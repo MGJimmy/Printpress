@@ -3,6 +3,7 @@
     <mat-paginator
           class="paginator-background"
           [length]="totalItems"
+          [pageSize]="pageSize"
           [pageSizeOptions]="pageSizeOptions"
           (page)="onPageChangeClick($event)"
           [showFirstLastButtons]="showFirstLastButtons">
