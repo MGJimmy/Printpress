@@ -16,8 +16,6 @@ export class ClientService {
 
   constructor(
     private httpService:HttpService,
-
-
     private configurationService : ConfigurationService,
     private clientMockService: ClientMockService
   ) {

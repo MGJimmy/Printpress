@@ -13,6 +13,7 @@ import { OrderTransactionService } from '../../services/order-transaction.servic
 import { OrderTransactionAddDto } from '../../models/order-transaction/order-transaction-add.dto';
 import { OrderTransactionGetDto } from '../../models/order-transaction/order-transaction-get.dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { PageChangedModel } from '../../../../shared/models/page-changed.model';
 @Component({
   selector: 'app-transaction',
   templateUrl: './transaction.component.html',
@@ -29,6 +30,7 @@ import { AlertService } from '../../../../core/services/alert.service';
   ],
 })
 export class TransactionComponent implements OnInit {
+  
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'المبلغ المدفوع', column: 'amount' },
     { headerName: 'نوع المعاملة', column: 'transactionType' },
@@ -39,8 +41,12 @@ export class TransactionComponent implements OnInit {
   transactions!:  OrderTransactionGetDto[];
   amount: number | null = null;
   note: string = '';
+
+  pageSize: number = 5;
+  currentPage: number = 1;
   
   orderId: number = 1; // this should be passed from the parent component
+  totalItemsCount!: number;
 
   constructor(
     private orderTransactionService: OrderTransactionService,
@@ -61,7 +67,7 @@ export class TransactionComponent implements OnInit {
 
   onRefund(): void {
     if (this.amount) {
-      this.addTransaction(this.amount, TransactionTypeEnum.Payment, this.note);
+      this.addTransaction(this.amount, TransactionTypeEnum.Refund, this.note);
     }
   }
 
@@ -87,11 +93,12 @@ export class TransactionComponent implements OnInit {
   }
 
   private fetchTransactions(): void {
-    this.orderTransactionService.getTransactions(this.orderId, 1, 10)
+    this.orderTransactionService.getTransactions(this.orderId, this.currentPage, this.pageSize)
     .subscribe({
       next: (response) => {
         console.log(response);
-        this.transactions = response.data.items;
+        this.transactions = MapArabicValues(response.data.items);
+        this.totalItemsCount = response.data.totalCount;
       },
       error: (error) => {
        console.error(error);
@@ -103,4 +110,20 @@ export class TransactionComponent implements OnInit {
     this.amount = null;
     this.note = '';
   }
+
+
+  onPageChanged($event: PageChangedModel) {
+    this.currentPage = $event.currentPage;
+    this.pageSize = $event.pageSize;
+    this.fetchTransactions();
+  }
 }
+function MapArabicValues(items: OrderTransactionGetDto[]): OrderTransactionGetDto[] {
+  return items.map((item) => {
+    return {
+      ...item,
+      transactionType: item.transactionType === TransactionTypeEnum.Payment ? 'دفع' : 'استرجاع'
+    }
+  });
+}
+

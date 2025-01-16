@@ -33,7 +33,9 @@
 
     <app-table-template class="m-5" *ngIf="transactions"
       [columnDefs]="columnDefs"
-      [originalSource]="transactions">
+      [originalSource]="transactions"
+      [totalItemsCount]="totalItemsCount"
+      (pageChanged)="onPageChanged($event)">
     </app-table-template>
   </mat-card-content>
 </mat-card>

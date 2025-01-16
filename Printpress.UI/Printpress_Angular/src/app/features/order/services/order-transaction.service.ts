@@ -19,6 +19,6 @@ export class OrderTransactionService {
   }
 
   getTransactions(orderId: number, pageNumber:number, pageSize:number): Observable<ApiDataResponseDto<PagingListDto<OrderTransactionGetDto>>> {
-    return this.httpService.get<ApiDataResponseDto<PagingListDto<OrderTransactionGetDto>>>(ApiUrlResource.OrderTransactionAPI.getByPage, {orderId: orderId, pageNumber:pageNumber, pageSize:pageSize});
+    return this.httpService.get<ApiDataResponseDto<PagingListDto<OrderTransactionGetDto>>>(ApiUrlResource.OrderTransactionAPI.getByPage, {orderId: orderId, pageNumber: pageNumber, pageSize: pageSize});
   }
 }
