@@ -97,7 +97,7 @@ export class TransactionComponent implements OnInit {
     .subscribe({
       next: (response) => {
         console.log(response);
-        this.transactions = MapArabicValues(response.data.items);
+        this.transactions = this.MapArabicValues(response.data.items);
         this.totalItemsCount = response.data.totalCount;
       },
       error: (error) => {
@@ -117,13 +117,14 @@ export class TransactionComponent implements OnInit {
     this.pageSize = $event.pageSize;
     this.fetchTransactions();
   }
-}
-function MapArabicValues(items: OrderTransactionGetDto[]): OrderTransactionGetDto[] {
-  return items.map((item) => {
-    return {
-      ...item,
-      transactionType: item.transactionType === TransactionTypeEnum.Payment ? 'دفع' : 'استرجاع'
-    }
-  });
+
+  private MapArabicValues(items: OrderTransactionGetDto[]): OrderTransactionGetDto[] {
+    return items.map((item) => {
+      return {
+        ...item,
+        transactionType: item.transactionType === TransactionTypeEnum.Payment ? 'دفع' : 'استرجاع'
+      }
+    });
+  }
 }
 
