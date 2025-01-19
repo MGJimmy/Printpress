@@ -35,13 +35,13 @@ export class OrderSharedDataService {
    * Returns temp id of the added object.
    * 
    */
-  public addOrderGroup(name:string): number {
-    let tempId:number = this.generateTempId(this.orderObject.orderGroups.map(x => x.id));
+  public intializeNewGroup(): number {
+    let tempId: number = this.generateTempId(this.orderObject.orderGroups.map(x => x.id));
 
     let orderGroup: OrderGroupGetDto = {
       id: tempId,
       orderId: this.orderObject.id,
-      name: name,
+      name: '',
       orderGroupServices: [],
       items: []
     };
@@ -51,14 +51,37 @@ export class OrderSharedDataService {
     return tempId
   }
 
+  public updateOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[], groupItmes: ItemGetDto[]) {
+
+    let orderGroup: OrderGroupGetDto = {
+      id: id,
+      orderId: this.orderObject.id,
+      name: name,
+      orderGroupServices: groupServices,
+      items: groupItmes
+    };
+
+    let currentGroup = this.orderObject.orderGroups.find(x => x.id == id);
+    currentGroup = orderGroup;
+  }
+
+  public getOrderGroup(id: number): OrderGroupGetDto {
+    let group = this.orderObject.orderGroups.find(x => x.id == id);
+    if (group) {
+      return group;
+    } else {
+      throw 'cannot find a group with id = ' + id;
+    }
+  }
+  
   /**
    * Returns temp id of the added object.
    * 
    */
-  public addOrderGroupService(orderGroupId: number, ServiceId:number): number {
-    let orderGroup: OrderGroupGetDto| undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
+  public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
+    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
 
-    if(orderGroup === undefined) {
+    if (orderGroup === undefined) {
       throw new Error('Order group not found');
     }
     let tempId = this.generateTempId(orderGroup.orderGroupServices.map(x => x.id));
@@ -78,10 +101,10 @@ export class OrderSharedDataService {
    * Returns temp id of the added object.
    * 
    */
-  public addItem(orderGroupId: number, name:string, quantity:number, price:number): number {
-    let orderGroup: OrderGroupGetDto| undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
+  public addItem(orderGroupId: number, name: string, quantity: number, price: number): number {
+    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
 
-    if(orderGroup === undefined) {
+    if (orderGroup === undefined) {
       throw new Error('Order group not found');
     }
 
@@ -105,22 +128,18 @@ export class OrderSharedDataService {
     return this.orderObject;
   }
 
-  public getOrderGroup(id:number): OrderGroupGetDto {
-    return this.orderObject.orderGroups.find(x => x.id === id)!;
-  }
-
-  public getOrderGroupServices(orderGroupId:number): OrderGroupServiceGetDto[] {
+  public getOrderGroupServices(orderGroupId: number): OrderGroupServiceGetDto[] {
     return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
   }
 
-  public getItem(orderGroupId:number, itemId:number): ItemGetDto {
+  public getItem(orderGroupId: number, itemId: number): ItemGetDto {
     return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items.find(x => x.id === itemId)!;
   }
 
 
-    
-  private generateTempId(ids:number[]): number {
-    if(ids.length === 0) {
+
+  private generateTempId(ids: number[]): number {
+    if (ids.length === 0) {
       return 1;
     }
 
