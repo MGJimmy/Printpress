@@ -65,8 +65,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       // get group items from API
     }
 
-    console.log(this.OrderSharedService.getOrderGroup());
-
     // this.inputObject = this.OrderSharedService.orderObject.orderGroups.filter(x => x.id == this.groupId);
   }
 

@@ -147,4 +147,25 @@ export class AddClientComponent implements OnInit, OnDestroy {
   onCancel(): void {
     this.router.navigate(['/clients']);
   }
+
+
+  validateNumberAndGetErrorMessage(): {isValid: boolean, message: string} {
+    let numberControl = this.clientForm.get('number');
+
+    if(numberControl?.hasError('required')) {
+      return {isValid: false, message: 'يجب إدخال رقم الهاتف'}; 
+      
+    }
+
+    if(numberControl?.hasError('pattern')) {
+      return {isValid: false, message: 'يجب إدخال أرقام فقط'}; 
+    }
+
+    if(numberControl?.hasError('minlength') || numberControl?.hasError('maxlength')) {
+      return  {isValid: false, message: 'يجب أن يتكون رقم الهاتف من 11 رقم'};
+    }
+
+    return {isValid: true, message: ''};
+
+  }
 }

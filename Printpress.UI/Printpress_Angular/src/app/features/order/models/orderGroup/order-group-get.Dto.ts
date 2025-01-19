@@ -1,5 +1,6 @@
-import { ItemUpsertDto } from "../item/item-upsert.dto";
-import { OrderGroupServiceUpsertDto } from "../orderGroupService/order-group-service-upsert.dto";
+import { ItemGetDto } from "../item/item-get.Dto";
+import { OrderGroupServiceGetDto } from "../orderGroupService/order-group-service-get.Dto";
+
 
 export interface OrderGroupGetDto {
     id:number;
@@ -9,6 +10,6 @@ export interface OrderGroupGetDto {
     receiverName?:string
     name: string;
 
-    orderGroupServices: OrderGroupServiceUpsertDto[];
-    items: ItemUpsertDto[];
+    orderGroupServices: OrderGroupServiceGetDto[];
+    items: ItemGetDto[];
 }

@@ -1,4 +1,4 @@
-import { OrderGroupUpsertDto } from "../orderGroup/order-group-upsert.Dto";
+import { OrderGroupGetDto } from "../orderGroup/order-group-get.Dto";
 
 export interface OrderGetDto {
     id:number;
@@ -7,5 +7,5 @@ export interface OrderGetDto {
     name:string;
     clientId:number;
 
-    orderGroups: OrderGroupUpsertDto[];
+    orderGroups: OrderGroupGetDto[];
 }
