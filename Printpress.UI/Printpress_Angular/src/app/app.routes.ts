@@ -72,5 +72,13 @@ export const routes: Routes = [
       import(
         './features/order/components/item-add-update/item-add-update.component'
       ).then((m)=> m.ItemAddUpdateComponent)
+  },
+  {
+    path: 'services',
+    loadComponent: ()=>
+      import(
+        './features/order/components/order-group-service-upsert/order-group-service-upsert.component'
+      ).then((m)=> m.OrderGroupServiceUpsertComponent),
+      canActivate: [authGuard]
   }
 ];
