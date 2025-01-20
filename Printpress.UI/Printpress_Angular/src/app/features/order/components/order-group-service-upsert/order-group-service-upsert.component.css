@@ -1,0 +1,27 @@
+.customer-list-container{
+  margin: 3rem auto;
+  width: 80%;
+}
+
+mat-card-title{
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.customer-list-container div.services{
+  display: flex;
+  /* gap: 1rem; */
+  flex-direction: column;
+}
+.customer-list-container button.btn{
+  background-color: rgb(255, 149, 0);
+  color: white;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+}
+.flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

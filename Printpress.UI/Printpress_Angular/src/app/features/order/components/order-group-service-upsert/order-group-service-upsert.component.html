@@ -1,11 +1,41 @@
-<!-- Optional Sample you can use -->
+<mat-card class="customer-list-container">
+  <mat-card-title class="text-center">خدمات المجموعة</mat-card-title>
+  <mat-card-content>
+    <div class="row my-3">
+      <!-- Categories Dropdown -->
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>الفئة</mat-label>
+          <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="onCategorySelect($event.value)">
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
+      <!-- Services Dropdown -->
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>الخدمة</mat-label>
+          <mat-select [(ngModel)]="selectedServiceId" [disabled]="filteredServices.length === 0">
+            <mat-option *ngFor="let service of filteredServices" [value]="service.id">
+              {{ service.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
-<h2 mat-dialog-title>Delete all elements?</h2>
-<mat-dialog-content>This will delete all elements that are currently on this page and cannot be undone.
-  {{data.x}}</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
-  <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
-  <button mat-button [mat-dialog-close]="outputObject">Delete</button>
-</mat-dialog-actions>
+    <div class="row my-3">
+      <!-- Add Button -->
+      <div class="col-md-12 text-center">
+        <button mat-raised-button color="primary" (click)="addSelectedServiceToTable()">إضافة</button>
+      </div>
+    </div>
+    <app-table-template
+      [isShowDeleteButton]="true"
+      [columnDefs]="columnDefs"
+      [originalSource]="tableData"
+      (deleteClicked)="onDeleteServiceCat($event)">
+    </app-table-template>
+  </mat-card-content>
+</mat-card>
