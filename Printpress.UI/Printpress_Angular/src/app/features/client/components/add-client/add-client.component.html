@@ -13,16 +13,12 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>رقم الموبايل</mat-label>
         <input type="number" matInput formControlName="number"/>
-        <mat-error *ngIf="clientForm.get('number')?.hasError('required') && clientForm.get('number')?.touched">
-          رقم الموبايل مطلوب
-        </mat-error>
-        <mat-error *ngIf="clientForm.get('number')?.hasError('pattern') && clientForm.get('number')?.touched">
-          يجب أن يحتوي على أرقام فقط
-        </mat-error>
-        <mat-error *ngIf="clientForm.get('number')?.hasError('minlength')  && clientForm.get('number')?.hasError('maxlength') && clientForm.get('number')?.touched">
-        يجب أن يتكون من 11 رقم
+       
+        <mat-error *ngIf="validateNumberAndGetErrorMessage().isValid === false">
+          {{validateNumberAndGetErrorMessage().message}}
         </mat-error>
       </mat-form-field>
+
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>العنوان</mat-label>

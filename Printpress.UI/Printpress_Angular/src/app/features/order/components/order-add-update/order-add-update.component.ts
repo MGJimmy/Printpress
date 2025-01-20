@@ -24,7 +24,6 @@ export class OrderAddUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.OrderSharedService.getOrderGroup());
 
   }
 }
