@@ -9,6 +9,10 @@ import { CommonModule } from '@angular/common';
 import { TableColDefinitionModel } from '../../models/table-col-definition.model';
 import { PageChangedModel } from '../../models/page-changed.model';
 
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+
 @Component({
   selector: 'app-table-template',
   standalone: true,
@@ -19,6 +23,7 @@ import { PageChangedModel } from '../../models/page-changed.model';
     MatButtonModule,
     MatTableModule,
     CommonModule,
+    FontAwesomeModule
   ],
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.css'],
@@ -40,6 +45,8 @@ export class TableTemplateComponent implements OnInit{
   actionColumn: string = 'action';
   sequenceColumn: string = 'sequence';
 
+  faTrash = faTrash;
+  faEdit = faEdit;
 
   get conditionalPagination(): boolean {
     return this.totalItemsCount > this.pageSize;

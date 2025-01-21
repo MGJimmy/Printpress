@@ -36,9 +36,9 @@
 
 <ng-template #actionTemplate let-element = "element">
   <button *ngIf="isShowEditButton"
-    class="mx-3" mat-raised-button color="primary" (click)="onEdit(element)">تعديل</button>
+    class="mx-3" mat-raised-button color="primary" (click)="onEdit(element)"><fa-icon [icon]="faEdit"></fa-icon> تعديل</button>
   <button *ngIf="isShowDeleteButton"
-    class="mx-3" mat-raised-button color="warn" (click)="onDelete(element)">حذف</button>
+    class="mx-3" mat-raised-button color="warn" (click)="onDelete(element)"> <fa-icon [icon]="faTrash"></fa-icon> حذف</button>
 </ng-template>
 
 <ng-template #dataTemplate let-element = "element" let-column = "column">

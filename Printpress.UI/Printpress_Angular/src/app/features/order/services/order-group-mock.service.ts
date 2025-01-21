@@ -9,10 +9,10 @@ export class OrderGroupMockService {
   constructor() {}
 
   private ServiceCategory: any[] = [
-    {id:1, name: "printing"},
-    {id:2, name: "selling"},
-    {id:3, name: "stapling"},
-    {id:4, name: "Glueing"}
+    {id:1, name: "طباعة"},
+    {id:2, name: "بيع"},
+    {id:3, name: "تدبيس"},
+    {id:4, name: "لصق"}
     ]
 
 
@@ -25,24 +25,24 @@ export class OrderGroupMockService {
     return of(customer);
   }
 
-  deleteServiceCat(id: number): Observable<any> {
-    const initialLength = this.ServiceCategory.length;
-    this.ServiceCategory = this.ServiceCategory.filter(ser => ser.id !== id);
-    return of(
-      this.ServiceCategory.length < initialLength
-        ? 'service deleted successfully'
-        : 'service not found'
-    );
-  }
+  // deleteServiceCat(id: number): Observable<any> {
+  //   const initialLength = this.ServiceCategory.length;
+  //   this.ServiceCategory = this.ServiceCategory.filter(ser => ser.id !== id);
+  //   return of(
+  //     this.ServiceCategory.length < initialLength
+  //       ? 'service deleted successfully'
+  //       : 'service not found'
+  //   );
+  // }
 
 ///////////////////////////////////////////////////////////////////////////
 
 private Services: any[] = [
-  {id:1, serviceCategoryId: 1, name: "80 g printing"},
-  {id:2, serviceCategoryId: 1, name: "70 g printing"},
-  {id:3, serviceCategoryId: 2, name: "sell external item "},
-  {id:4, serviceCategoryId: 3, name: "stapling "},
-  {id:5, serviceCategoryId: 4, name:"Glueing"},
+  {id:1, serviceCategoryId: 1, name: "طباعة ورق 80 جرام "},
+  {id:2, serviceCategoryId: 1, name: "طباعة ورق 70 جرام"},
+  {id:3, serviceCategoryId: 2, name: "بيع منتج خارجي"},
+  {id:4, serviceCategoryId: 3, name: "تدبيس "},
+  {id:5, serviceCategoryId: 4, name:"لصق"},
   ]
 
   getServices(): Observable<any[]> {
@@ -54,14 +54,14 @@ private Services: any[] = [
     return of(customer);
   }
 
-  deleteService(id: number): Observable<any> {
-    const initialLength = this.Services.length;
-    this.Services = this.Services.filter(ser => ser.id !== id);
-    return of(
-      this.Services.length < initialLength
-        ? 'service deleted successfully'
-        : 'service not found'
-    );
-  }
+  // deleteService(id: number): Observable<any> {
+  //   const initialLength = this.Services.length;
+  //   this.Services = this.Services.filter(ser => ser.id !== id);
+  //   return of(
+  //     this.Services.length < initialLength
+  //       ? 'service deleted successfully'
+  //       : 'service not found'
+  //   );
+  // }
 
 }

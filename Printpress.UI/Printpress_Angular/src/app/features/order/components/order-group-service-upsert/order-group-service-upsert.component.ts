@@ -93,8 +93,8 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.mockService.getServiceCats().subscribe({
       next: (data) => {
         this.categories = data;
-        this.sellingCategories = data.filter((cat) => cat.name === 'selling');
-        this.otherCategories = data.filter((cat) => cat.name !== 'selling');
+        this.sellingCategories = data.filter((cat) => cat.name === 'بيع');
+        this.otherCategories = data.filter((cat) => cat.name !== 'بيع');
       },
       error: (err) => {
         this.errorHandlingService.handleError(err);
@@ -121,7 +121,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   onCategorySelect(categoryId: number): void {
-    const isSelling = this.categories.some((cat) => cat.id === categoryId && cat.name === 'selling');
+    const isSelling = this.categories.some((cat) => cat.id === categoryId && cat.name === 'بيع');
 
     if (this.isSellingSelected === null || this.isSellingSelected === isSelling) {
       this.isSellingSelected = isSelling;
@@ -130,7 +130,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       this.filteredServices = this.services.filter((svc) => svc.serviceCategoryId === categoryId);
       this.categories = isSelling ? this.sellingCategories : this.otherCategories;
     } else {
-      this.alertService.showError('You can only select either Selling or Other Categories.');
+      this.alertService.showError('يمكنك اختيار فئة واحدة فقط');
       this.clearSelections();
     }
   }
@@ -143,7 +143,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   addSelectedServiceToTable(): void {
     if (!this.selectedCategoryId || !this.selectedServiceId) {
-      this.alertService.showError('Please select a category and a service.');
+      this.alertService.showError('من فضلك اختر نوع الخدمة أولا');
       this.clearSelections();
       return;
     }
@@ -151,27 +151,27 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     const selectedService = this.services.find((svc) => svc.id === this.selectedServiceId);
 
     if (!selectedService) {
-      this.alertService.showError('Invalid service selected.');
+      this.alertService.showError('حدث خطأ في اختيار نوع الخدمة');
       return;
     }
 
     if (this.tableData.some((row) => row.id === selectedService.id)) {
-      this.alertService.showError('This service has already been added.');
+      this.alertService.showError('لا يمكنك إضافة الخدمة مرتين');
       return;
     }
 
     this.SelectedServicesMockService.addService(selectedService).subscribe({
-      next: (updatedService) => {
-        this.tableData = [...this.tableData, updatedService];
-        this.alertService.showSuccess('Service added successfully.');
+      next: (services) => {
+        this.tableData = [...services];
+        this.alertService.showSuccess('تم إضافة الخدمة بنجاح');
         console.log(this.tableData);
-        this.selectedServiceId = null;
       },
       error: (error) => {
         this.errorHandlingService.handleError(error);
-        this.alertService.showError('Error while adding the service.');
+        this.alertService.showError('حدث خطأ أثناء إضافة الخدمة');
       },
     });
+    this.clearSelections();
   }
 
   onDeleteServiceCat(id: number): void {
