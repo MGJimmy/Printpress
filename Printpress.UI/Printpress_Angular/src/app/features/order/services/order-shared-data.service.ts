@@ -8,6 +8,12 @@ import { ItemGetDto } from '../models/item/item-get.Dto';
 import { ItemUpsertDto } from '../models/item/item-upsert.Dto';
 import { ObjectStateEnum } from '../../../core/models/object-state.enum';
 
+/*
+  Notes: 
+    * Return new object when returning object from the service to prevent changing the original object. using spread operator. {...object}
+*/
+
+
 @Injectable()
 export class OrderSharedDataService {
 
@@ -17,6 +23,14 @@ export class OrderSharedDataService {
     this.initializeOrderObject();
   }
 
+
+
+/*
+  =======================
+  Start order object methods
+  =======================
+*/
+
   private initializeOrderObject(): void {
     this.orderObject = {
       id: 0,
@@ -24,13 +38,44 @@ export class OrderSharedDataService {
       totalPaid: 0,
       name: '',
       clientId: 0,
+      objectState: ObjectStateEnum.temp,
       orderGroups: []
     };
   }
 
+
+
   public setOrderObject(order: OrderGetDto): void {
     this.orderObject = order;
   }
+
+  public getOrderObject(): OrderGetDto {
+    return this.orderObject;
+  }
+
+/*
+  =======================
+  End order object methods
+  =======================
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+  =======================
+  Start order group methods
+  =======================
+*/
 
   /**
    * Returns temp id of the added object.
@@ -50,6 +95,29 @@ export class OrderSharedDataService {
     this.orderObject.orderGroups.push(orderGroup);
 
     return tempId
+  }
+
+   /**
+   * Returns temp id of the added object.
+   * 
+   */
+   public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
+    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
+
+    if (orderGroup === undefined) {
+      throw new Error('Order group not found');
+    }
+    let tempId = this.generateTempId(orderGroup.orderGroupServices.map(x => x.id));
+
+    let orderGroupService: OrderGroupServiceGetDto = {
+      id: tempId,
+      OrderGroupId: orderGroupId,
+      ServiceId: ServiceId,
+    };
+
+    orderGroup.orderGroupServices.push(orderGroupService);
+
+    return tempId;
   }
 
   public updateOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[], groupItmes: ItemGetDto[]) {
@@ -74,29 +142,29 @@ export class OrderSharedDataService {
       throw 'cannot find a group with id = ' + id;
     }
   }
+
+/*
+  =======================
+  End order group methods
+  =======================
+*/
+
   
-  /**
-   * Returns temp id of the added object.
-   * 
-   */
-  public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
-    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
 
-    if (orderGroup === undefined) {
-      throw new Error('Order group not found');
-    }
-    let tempId = this.generateTempId(orderGroup.orderGroupServices.map(x => x.id));
 
-    let orderGroupService: OrderGroupServiceGetDto = {
-      id: tempId,
-      OrderGroupId: orderGroupId,
-      ServiceId: ServiceId,
-    };
 
-    orderGroup.orderGroupServices.push(orderGroupService);
 
-    return tempId;
-  }
+
+
+
+
+
+
+ /*
+  =======================
+  Start item methods
+  =======================
+*/
 
   /**
  * Returns temp id of the generated object.
@@ -122,7 +190,7 @@ export class OrderSharedDataService {
 
     orderGroup.items.push(item);
 
-    return item;
+    return {...item} as ItemGetDto;
 
   }
 
@@ -156,17 +224,45 @@ export class OrderSharedDataService {
     item.objectState = ObjectStateEnum.updated;
   }
 
-  public getOrderObject(): OrderGetDto {
-    return this.orderObject;
+  public getItem(orderGroupId: number, itemId: number): ItemGetDto {
+    let item = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items.find(x => x.id === itemId)!;
+    
+    return {...item} as ItemGetDto;
+  
   }
+
+/*
+  =======================
+  End item methods
+  =======================
+*/
+
+
+
+
+
+
+
+
+
+
+
+/*
+  =======================
+  Start group services methods
+  =======================
+*/
 
   public getOrderGroupServices(orderGroupId: number): OrderGroupServiceGetDto[] {
     return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
   }
 
-  public getItem(orderGroupId: number, itemId: number): ItemGetDto {
-    return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items.find(x => x.id === itemId)!;
-  }
+
+  /*
+  =======================
+  End group services methods
+  =======================
+*/
 
 
 
