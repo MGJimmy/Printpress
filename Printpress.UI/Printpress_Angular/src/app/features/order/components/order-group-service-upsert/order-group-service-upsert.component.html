@@ -31,11 +31,11 @@
         <button mat-raised-button color="primary" (click)="addSelectedServiceToTable()">إضافة</button>
       </div>
     </div>
-    <app-table-template
-      [isShowDeleteButton]="true"
-      [columnDefs]="columnDefs"
-      [originalSource]="tableData"
-      (deleteClicked)="onDeleteServiceCat($event)">
-    </app-table-template>
   </mat-card-content>
+  <app-table-template style="width: 95%;" class="mx-auto mt-3"
+  [isShowDeleteButton]="true"
+  [columnDefs]="columnDefs"
+  [originalSource]="tableData"
+  (deleteClicked)="onDeleteServiceCat($event)">
+</app-table-template>
 </mat-card>

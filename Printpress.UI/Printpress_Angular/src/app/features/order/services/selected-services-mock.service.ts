@@ -10,7 +10,7 @@ export class SelectedServicesMockService {
   constructor() { }
 
   private Services: Service_interface[] = [
-    // {id:1, serviceCategoryId: 1, name: "80 g printing"}
+    {id: 0, serviceCategoryId: 0, name: "test service"}
   ]
 
     getServices(): Observable<any[]> {
@@ -22,8 +22,9 @@ export class SelectedServicesMockService {
       return of(service);
     }
 
-    addService(addedService: Service_interface): Observable<Service_interface> {
-      return of(addedService);
+    addService(addedService: Service_interface): Observable<any> {
+      this.Services.push(addedService);
+      return of(this.Services);
     }
 
     deleteService(id: number): Observable<any> {
