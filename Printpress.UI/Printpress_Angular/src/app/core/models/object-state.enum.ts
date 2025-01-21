@@ -1,6 +1,7 @@
 export enum ObjectStateEnum{
-    unchanged,
-    added,
-    updated,
-    deleted
+    temp = "temp",
+    unchanged = "unchanged",
+    added = "added",
+    updated = "updated",
+    deleted = "deleted"
 }

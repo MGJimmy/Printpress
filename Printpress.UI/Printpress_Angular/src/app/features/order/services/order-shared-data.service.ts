@@ -6,6 +6,7 @@ import { OrderGroupGetDto } from '../models/orderGroup/order-group-get.Dto';
 import { OrderGroupServiceGetDto } from '../models/orderGroupService/order-group-service-get.Dto';
 import { ItemGetDto } from '../models/item/item-get.Dto';
 import { ItemUpsertDto } from '../models/item/item-upsert.Dto';
+import { ObjectStateEnum } from '../../../core/models/object-state.enum';
 
 @Injectable()
 export class OrderSharedDataService {
@@ -98,10 +99,10 @@ export class OrderSharedDataService {
   }
 
   /**
-   * Returns temp id of the added object.
-   * 
-   */
-  public addItem(orderGroupId: number, name: string, quantity: number, price: number): number {
+ * Returns temp id of the generated object.
+ * 
+ */
+  public initializeTempItem(orderGroupId: number): ItemGetDto {
     let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
 
     if (orderGroup === undefined) {
@@ -109,20 +110,51 @@ export class OrderSharedDataService {
     }
 
     let tempId = this.generateTempId(orderGroup.items.map(x => x.id));
+
     let item: ItemGetDto = {
       id: tempId,
-      name: name,
-      quantity: quantity,
-      price: price,
-      groupId: orderGroupId
+      name: '',
+      quantity: 0,
+      price: 0,
+      groupId: orderGroupId,
+      objectState: ObjectStateEnum.temp
     }
 
     orderGroup.items.push(item);
 
-    return tempId;
+    return item;
+
   }
 
+  public addItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number): void {
+    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
 
+    if (orderGroup === undefined) {
+      throw new Error('Order group not found');
+    }
+
+    let item : ItemGetDto = orderGroup.items.find(x => x.id == itemId)!;
+
+    item.name = name;
+    item.quantity = quantity;
+    item.price = price;
+    item.objectState = ObjectStateEnum.added;
+  }
+
+  public updateItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number): void {
+    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
+
+    if (orderGroup === undefined) {
+      throw new Error('Order group not found');
+    }
+
+    let item : ItemGetDto = orderGroup.items.find(x => x.id == itemId)!;
+
+    item.name = name;
+    item.quantity = quantity;
+    item.price = price;
+    item.objectState = ObjectStateEnum.updated;
+  }
 
   public getOrderObject(): OrderGetDto {
     return this.orderObject;

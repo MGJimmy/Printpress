@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard.guard';
 import { OrderAddUpdateComponent } from './features/order/components/order-add-update/order-add-update.component';
 import { OrderGroupAddUpdateComponent } from './features/order/components/order-group-add-update/order-group-add-update.component';
+import { OrderGroupServiceUpsertComponent } from './features/order/components/order-group-service-upsert/order-group-service-upsert.component';
+import { ItemAddUpdateComponent } from './features/order/components/item-add-update/item-add-update.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'orderlist', pathMatch: 'full' },
@@ -50,6 +52,9 @@ export const routes: Routes = [
       { path: 'view/:id', component: OrderAddUpdateComponent },
       { path: 'group/add', component: OrderGroupAddUpdateComponent },
       { path: 'group/edit/:id', component: OrderGroupAddUpdateComponent },
+      { path: 'groupService', component: OrderGroupServiceUpsertComponent },
+      { path: 'item/add/:groupId', component: ItemAddUpdateComponent },
+      { path: 'item/edit/:groupId/:id', component: ItemAddUpdateComponent },
     ]
   },
   {
@@ -65,12 +70,5 @@ export const routes: Routes = [
       import(
         './shared/components/login/login.component'
       ).then((m)=> m.LoginComponent)
-  },
-  {
-    path: 'item',
-    loadComponent: ()=>
-      import(
-        './features/order/components/item-add-update/item-add-update.component'
-      ).then((m)=> m.ItemAddUpdateComponent)
   }
 ];
