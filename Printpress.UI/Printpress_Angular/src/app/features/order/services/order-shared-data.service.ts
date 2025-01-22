@@ -128,6 +128,15 @@ export class OrderSharedDataService {
     return tempId;
   }
 
+  public getOrderGroup(id: number): OrderGroupGetDto {
+    let group = this.orderObject.orderGroups.find(x => x.id == id);
+    if (group) {
+      return group;
+    } else {
+      throw 'cannot find a group with id = ' + id;
+    }
+  }
+
   public updateOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[]) {
     let orderGroup = this.getOrderGroup(id);
 
@@ -135,6 +144,7 @@ export class OrderSharedDataService {
     orderGroup.orderGroupServices = groupServices;
     orderGroup.objectState = ObjectStateEnum.updated;
   }
+
   public saveNewOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[]) {
     let orderGroup = this.getOrderGroup(id);
 
@@ -143,13 +153,18 @@ export class OrderSharedDataService {
     orderGroup.objectState = ObjectStateEnum.added;
   }
 
-  public getOrderGroup(id: number): OrderGroupGetDto {
-    let group = this.orderObject.orderGroups.find(x => x.id == id);
-    if (group) {
-      return group;
-    } else {
-      throw 'cannot find a group with id = ' + id;
+  public deleteNewlyAddedGroup(groupId: number) {
+    let orderGroups = this.getOrderObject().orderGroups;
+
+    const index = orderGroups.findIndex(x => x.id === groupId);
+    if (index !== -1) {
+      orderGroups.splice(index, 1);
     }
+  }
+
+  public deleteExistingGroup(groupId: number) {
+    let group = this.getOrderGroup(groupId);
+    group.objectState = ObjectStateEnum.deleted;
   }
 
   /*

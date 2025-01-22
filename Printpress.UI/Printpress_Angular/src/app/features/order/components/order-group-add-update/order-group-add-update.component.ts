@@ -148,6 +148,16 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     return true;
   }
 
+  protected onBack_Click(){
+    // Alert
+
+    if (!this.isEdit) {
+      this.orderSharedService.deleteNewlyAddedGroup(this.groupId);
+    }
+
+    this.navigateToOrderPage();
+  }
+
   private navigateToOrderPage() {
     this.router.navigate([this.orderSharedService.getOrderPageRoute()]);
   }
@@ -155,6 +165,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private navigateToAddItemPage() {
     this.router.navigate(['/order/item', this.groupId]);
   }
+  
   private navigateToEditItemPage(itemId: number) {
     this.router.navigate(['/order/item', this.groupId, itemId]);
   }
