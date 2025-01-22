@@ -28,8 +28,16 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   private groupId!: number;
   protected groupName: string = '';
-  protected groupServices: OrderGroupServiceGetDto[] = [];
-  protected groupItems: ItemGetDto[] = [];
+  // protected groupItems: ItemGetDto[] = [];
+  protected groupItems: any[] = [
+    { name: 'عنصر 1', price: 30, quantity: 10 },
+    { name: 'عنصر 2', price: 50, quantity: 20 }
+  ]
+
+  private groupServices: OrderGroupServiceGetDto[] = [];
+  protected get displayedGroupServices(): string {
+    return this.groupServices.map(x => { return x.serviceName }).join(',');
+  }
 
   protected isOuterItem: boolean = false;
   displayedColumns: string[];
@@ -69,7 +77,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
 
     this.groupName = currentGroup.name;
-    this.groupItems = currentGroup.items;
+    // this.groupItems = currentGroup.items;
     this.groupServices = currentGroup.orderGroupServices;
     this.groupName = currentGroup.name;
   }
@@ -147,7 +155,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     return true;
   }
 
-  protected onBack_Click(){
+  protected onBack_Click() {
     // Alert
 
     if (!this.isEdit) {
