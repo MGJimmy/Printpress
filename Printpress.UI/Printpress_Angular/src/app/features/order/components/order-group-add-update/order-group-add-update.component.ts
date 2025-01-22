@@ -14,6 +14,7 @@ import { OrderGroupService } from "../../services/order-group.service";
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
 import { ItemGetDto } from '../../models/item/item-get.Dto';
+import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -24,7 +25,7 @@ import { ItemGetDto } from '../../models/item/item-get.Dto';
 })
 export class OrderGroupAddUpdateComponent implements OnInit {
 
-  protected isEdit: boolean = false; // shall be removed.
+  protected isEdit: boolean = false;
 
   private groupId!: number;
   protected groupName: string = '';
@@ -38,8 +39,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private orderGroupService: OrderGroupService,
-    private OrderSharedService: OrderSharedDataService
+    private orderSharedService: OrderSharedDataService
   ) {
     if (!this.isOuterItem) {
       this.displayedColumns = ['index', 'name', 'numberOfPages', 'quantity',
@@ -57,15 +57,17 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   private setGroupId(): void {
     const param_GroupId = this.route.snapshot.paramMap.get('id');
-    this.groupId = Number(param_GroupId);
+    if (param_GroupId) {
+      this.isEdit = true;
+      this.groupId = Number(param_GroupId);
+    } else {
+      this.isEdit = false;
+      this.groupId = this.orderSharedService.intializeNewGroup();
+    }
   }
 
   private setCurrentGroupData() {
-    // should be intialized from order Page
-    // const id = this.OrderSharedService.intializeNewGroup();
-    // const currentGroup = this.OrderSharedService.getOrderGroup(id);
-
-    const currentGroup = this.OrderSharedService.getOrderGroup(this.groupId);
+    const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
 
     this.groupName = currentGroup.name;
     this.groupItems = currentGroup.items;
@@ -87,20 +89,19 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected addItem_Click() {
-    // const newItemId = this.OrderSharedService.intializeNewGroupItem(this.groupId);
-    // this.navigateToAddItemPage(newItemId);
+    this.navigateToAddItemPage();
   }
 
   protected editItem_Click(item: ItemGetDto) {
-    this.navigateToAddItemPage(item.id);
+    this.navigateToEditItemPage(item.id);
   }
 
   protected deleteItem_Click(item: ItemGetDto) {
-    let groupItems = this.OrderSharedService.getOrderGroup(this.groupId).items;
 
-    const index = groupItems.findIndex(x => x.id === item.id);
-    if (index !== -1) {
-      groupItems.splice(index, 1);
+    if (item.objectState == ObjectStateEnum.temp) {
+      this.orderSharedService.deleteNewlyAddedItem(this.groupId, item.id);
+    } else {
+      this.orderSharedService.deleteExistingItem(this.groupId, item.id);
     }
   }
 
@@ -124,7 +125,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     });
 
 
-    this.OrderSharedService.updateOrderGroup(this.groupId, this.groupName, this.groupServices, this.groupItems);
+    this.orderSharedService.updateOrderGroup(this.groupId, this.groupName, this.groupServices, this.groupItems);
 
     this.navigateToOrderPage();
   }
@@ -144,10 +145,14 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   private navigateToOrderPage() {
-    this.router.navigate(['/order/edit', this.OrderSharedService.getOrderObject().id])
+    this.router.navigate(['/order/edit', this.orderSharedService.getOrderObject().id])
   }
 
-  private navigateToAddItemPage(itemId: number) {
+  private navigateToAddItemPage() {
+    this.router.navigate(['/order/item', this.groupId]);
+  }
+  private navigateToEditItemPage(itemId: number) {
     this.router.navigate(['/order/item', this.groupId, itemId]);
   }
+
 }

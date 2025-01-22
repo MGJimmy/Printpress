@@ -231,6 +231,20 @@ export class OrderSharedDataService {
   
   }
 
+  public deleteNewlyAddedItem(groupId: number, itemId: number){
+    let groupItems = this.getOrderGroup(groupId).items;
+
+    const index = groupItems.findIndex(x => x.id === itemId);
+    if (index !== -1) {
+      groupItems.splice(index, 1);
+    }
+  }
+
+  public deleteExistingItem(groupId: number, itemId: number){
+    let item = this.getItem(groupId, itemId);
+    item.objectState = ObjectStateEnum.deleted;
+  }
+
 /*
   =======================
   End item methods
