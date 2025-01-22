@@ -25,11 +25,11 @@ export class OrderSharedDataService {
 
 
 
-/*
-  =======================
-  Start order object methods
-  =======================
-*/
+  /*
+    =======================
+    Start order object methods
+    =======================
+  */
 
   private initializeOrderObject(): void {
     this.orderObject = {
@@ -53,11 +53,18 @@ export class OrderSharedDataService {
     return this.orderObject;
   }
 
-/*
-  =======================
-  End order object methods
-  =======================
-*/
+  public getOrderPageRoute(): string {
+    if (this.orderObject.objectState == ObjectStateEnum.temp) {
+      return '/order/add';
+    } else {
+      return '/order/edit/' + this.orderObject.id;
+    }
+  }
+  /*
+    =======================
+    End order object methods
+    =======================
+  */
 
 
 
@@ -71,11 +78,11 @@ export class OrderSharedDataService {
 
 
 
-/*
-  =======================
-  Start order group methods
-  =======================
-*/
+  /*
+    =======================
+    Start order group methods
+    =======================
+  */
 
   /**
    * Returns temp id of the added object.
@@ -89,7 +96,8 @@ export class OrderSharedDataService {
       orderId: this.orderObject.id,
       name: '',
       orderGroupServices: [],
-      items: []
+      items: [],
+      objectState: ObjectStateEnum.temp
     };
 
     this.orderObject.orderGroups.push(orderGroup);
@@ -97,11 +105,11 @@ export class OrderSharedDataService {
     return tempId
   }
 
-   /**
-   * Returns temp id of the added object.
-   * 
-   */
-   public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
+  /**
+  * Returns temp id of the added object.
+  * 
+  */
+  public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
     let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
 
     if (orderGroup === undefined) {
@@ -120,18 +128,19 @@ export class OrderSharedDataService {
     return tempId;
   }
 
-  public updateOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[], groupItmes: ItemGetDto[]) {
+  public updateOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[]) {
+    let orderGroup = this.getOrderGroup(id);
 
-    let orderGroup: OrderGroupGetDto = {
-      id: id,
-      orderId: this.orderObject.id,
-      name: name,
-      orderGroupServices: groupServices,
-      items: groupItmes
-    };
+    orderGroup.name = name;
+    orderGroup.orderGroupServices = groupServices;
+    orderGroup.objectState = ObjectStateEnum.updated;
+  }
+  public saveNewOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[]) {
+    let orderGroup = this.getOrderGroup(id);
 
-    let currentGroup = this.orderObject.orderGroups.find(x => x.id == id);
-    currentGroup = orderGroup;
+    orderGroup.name = name;
+    orderGroup.orderGroupServices = groupServices;
+    orderGroup.objectState = ObjectStateEnum.added;
   }
 
   public getOrderGroup(id: number): OrderGroupGetDto {
@@ -143,13 +152,11 @@ export class OrderSharedDataService {
     }
   }
 
-/*
-  =======================
-  End order group methods
-  =======================
-*/
-
-  
+  /*
+    =======================
+    End order group methods
+    =======================
+  */
 
 
 
@@ -160,11 +167,13 @@ export class OrderSharedDataService {
 
 
 
- /*
-  =======================
-  Start item methods
-  =======================
-*/
+
+
+  /*
+   =======================
+   Start item methods
+   =======================
+ */
 
   /**
  * Returns temp id of the generated object.
@@ -190,7 +199,7 @@ export class OrderSharedDataService {
 
     orderGroup.items.push(item);
 
-    return {...item} as ItemGetDto;
+    return { ...item } as ItemGetDto;
 
   }
 
@@ -201,7 +210,7 @@ export class OrderSharedDataService {
       throw new Error('Order group not found');
     }
 
-    let item : ItemGetDto = orderGroup.items.find(x => x.id == itemId)!;
+    let item: ItemGetDto = orderGroup.items.find(x => x.id == itemId)!;
 
     item.name = name;
     item.quantity = quantity;
@@ -216,7 +225,7 @@ export class OrderSharedDataService {
       throw new Error('Order group not found');
     }
 
-    let item : ItemGetDto = orderGroup.items.find(x => x.id == itemId)!;
+    let item: ItemGetDto = orderGroup.items.find(x => x.id == itemId)!;
 
     item.name = name;
     item.quantity = quantity;
@@ -226,12 +235,12 @@ export class OrderSharedDataService {
 
   public getItem(orderGroupId: number, itemId: number): ItemGetDto {
     let item = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items.find(x => x.id === itemId)!;
-    
-    return {...item} as ItemGetDto;
-  
+
+    return { ...item } as ItemGetDto;
+
   }
 
-  public deleteNewlyAddedItem(groupId: number, itemId: number){
+  public deleteNewlyAddedItem(groupId: number, itemId: number) {
     let groupItems = this.getOrderGroup(groupId).items;
 
     const index = groupItems.findIndex(x => x.id === itemId);
@@ -240,16 +249,16 @@ export class OrderSharedDataService {
     }
   }
 
-  public deleteExistingItem(groupId: number, itemId: number){
+  public deleteExistingItem(groupId: number, itemId: number) {
     let item = this.getItem(groupId, itemId);
     item.objectState = ObjectStateEnum.deleted;
   }
 
-/*
-  =======================
-  End item methods
-  =======================
-*/
+  /*
+    =======================
+    End item methods
+    =======================
+  */
 
 
 
@@ -261,11 +270,11 @@ export class OrderSharedDataService {
 
 
 
-/*
-  =======================
-  Start group services methods
-  =======================
-*/
+  /*
+    =======================
+    Start group services methods
+    =======================
+  */
 
   public getOrderGroupServices(orderGroupId: number): OrderGroupServiceGetDto[] {
     return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;

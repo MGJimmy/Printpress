@@ -97,7 +97,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected deleteItem_Click(item: ItemGetDto) {
-
+    // Alert
     if (item.objectState == ObjectStateEnum.temp) {
       this.orderSharedService.deleteNewlyAddedItem(this.groupId, item.id);
     } else {
@@ -125,7 +125,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     });
 
 
-    this.orderSharedService.updateOrderGroup(this.groupId, this.groupName, this.groupServices, this.groupItems);
+    if (this.isEdit) {
+      this.orderSharedService.updateOrderGroup(this.groupId, this.groupName, this.groupServices);
+    } else {
+      this.orderSharedService.saveNewOrderGroup(this.groupId, this.groupName, this.groupServices);
+    }
 
     this.navigateToOrderPage();
   }
@@ -145,7 +149,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   private navigateToOrderPage() {
-    this.router.navigate(['/order/edit', this.orderSharedService.getOrderObject().id])
+    this.router.navigate([this.orderSharedService.getOrderPageRoute()]);
   }
 
   private navigateToAddItemPage() {
