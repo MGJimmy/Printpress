@@ -15,14 +15,14 @@
         </div>
 
         <div class="px-5">
-            <label>الخدمات الحالية</label>
+            <label>الخدمات الحالية:</label>
             <div class="px-2">{{displayedGroupServices}}</div>
         </div>
     </div>
     <div class="my-5">
         <button mat-raised-button color="accent" (click)="addItem_Click()">إضافة عنصر</button>
 
-        <table mat-table [dataSource]="groupItems" class="custom-table">
+        <table mat-table [dataSource]="itemsGridSource" class="custom-table">
             <ng-container matColumnDef="index">
                 <th mat-header-cell *matHeaderCellDef>#</th>
                 <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
@@ -76,7 +76,7 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        <app-shared-pagination [totalItems]="10" (onPageChange)="onPageChangeClick($event)"></app-shared-pagination>
+        <app-shared-pagination [totalItems]="groupItems.length" (onPageChange)="onPageChangeClick($event)"></app-shared-pagination>
 
         <div class="d-flex justify-content-center">
             <button mat-raised-button color="primary" (click)="onSave_Click()">حفظ</button>
