@@ -10,7 +10,6 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { OrderGroupServiceUpsertComponent } from '../order-group-service-upsert/order-group-service-upsert.component';
-import { OrderGroupService } from "../../services/order-group.service";
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
 import { ItemGetDto } from '../../models/item/item-get.Dto';
@@ -165,7 +164,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private navigateToAddItemPage() {
     this.router.navigate(['/order/item', this.groupId]);
   }
-  
+
   private navigateToEditItemPage(itemId: number) {
     this.router.navigate(['/order/item', this.groupId, itemId]);
   }
