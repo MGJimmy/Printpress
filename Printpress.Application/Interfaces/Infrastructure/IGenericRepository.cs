@@ -5,7 +5,7 @@ namespace Printpress.Application
 {
     public interface IGenericRepository<T> where T : class
     {
-        PagedList<T> All(Paging paging, Sorting sorting = null);
+        Task<PagedList<T>> AllAsync (Paging paging, Sorting sorting = null, params string[] includes);
         IEnumerable<T> All(params string[] includes);
         bool Any();
         bool Any(Expression<Func<T, bool>> query);

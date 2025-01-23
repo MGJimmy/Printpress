@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Printpress.Application;
+using Printpress.Application.Interfaces;
+using Printpress.Application.Mappers;
+using Printpress.Application.Services;
 using Printpress.Infrastructure;
 
 namespace Printpress.CompositionRoot
@@ -32,6 +35,8 @@ namespace Printpress.CompositionRoot
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClientService, ClientService>();
             services.AddScoped<IOrderTransactionService, OrderTransactionService>();
+            services.AddScoped<IOrderService, OrderService>();
+
 
 
             return services;
@@ -41,6 +46,8 @@ namespace Printpress.CompositionRoot
         {
             services.AddScoped<ClientMapper>();
             services.AddScoped<OrderTransactionMapper>();
+            services.AddScoped<OrderMapper>();
+
 
             return services;
         }

@@ -8,6 +8,15 @@ namespace Printpress.Application
 {
     public record Paging
     {
+        public Paging()
+        {
+            
+        }
+        public Paging(int pageNumber,int pageSize)
+        {
+            _pageNumber = pageNumber;
+            _pageSize = pageSize;
+        }
 
         private int _pageNumber = 1;
         private int _pageSize = 20;
