@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace Printpress.Application
 {
-    public class Sorting
+    public record Sorting
     {
-        public Sorting()
-        {
-
-        }
         public Sorting(string field, SortingDirection dir)
         {
             Field = field;
