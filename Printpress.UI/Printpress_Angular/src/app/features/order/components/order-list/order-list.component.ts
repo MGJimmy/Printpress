@@ -6,6 +6,7 @@ import { OrderService } from '../../services/order.service';
 import { firstValueFrom } from 'rxjs';
 import { OrderSummaryDto } from '../../models/order/order-summary.Dto';
 import {DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-order-view',
@@ -29,7 +30,7 @@ export class OrderListComponent implements OnInit {
   }
 
  async ngOnInit(){
-  
+
   const response = await firstValueFrom(this.orderService.getOrdersSummaryList(DEFAULT_PAGE_SIZE,DEFAULT_PAGE_NUMBER));
 
   this.dataSource.data = response.data.items;
@@ -37,6 +38,18 @@ export class OrderListComponent implements OnInit {
 
   }
 
+
+  public async onPageChange(event:PageEvent){
+
+    const pageSize = event.pageSize;
+    const pageNumber = event.pageIndex + 1;   
+
+    const response = await firstValueFrom(this.orderService.getOrdersSummaryList(pageSize,pageNumber));
+
+    this.dataSource.data = response.data.items;
+    this.totalCount = response.data.totalCount;
+  
+  }
 
 }
 
