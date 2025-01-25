@@ -1,6 +1,6 @@
 ﻿using Printpress.Domain.Enums;
 
-namespace Printpress.Application.DTO.Order;
+namespace Printpress.Application;
 
 public record OrderSummaryDto
 {

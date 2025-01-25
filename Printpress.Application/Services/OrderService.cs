@@ -1,9 +1,7 @@
-﻿using Printpress.Application.DTO.Order;
-using Printpress.Application.Interfaces;
-using Printpress.Application.Mappers;
+﻿using Printpress.Application;
 using Printpress.Domain.Entities;
 
-namespace Printpress.Application.Services;
+namespace Printpress.Application;
 
 public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : IOrderService
 {

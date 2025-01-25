@@ -1,8 +1,11 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource} from '@angular/material/table';
 import { Router } from '@angular/router';
 import { imports } from './order-list.imports';
+import { OrderService } from '../../services/order.service';
+import { firstValueFrom } from 'rxjs';
+import { OrderSummaryDto } from '../../models/order/order-summary.Dto';
 
 @Component({
   selector: 'app-order-view',
@@ -11,13 +14,19 @@ import { imports } from './order-list.imports';
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.css'
 })
-export class OrderListComponent {
+export class OrderListComponent implements OnInit {
 
-  /**
-   *
-   */
-  constructor(private router:Router) {
+  public orderSummaryList: OrderSummaryDto[] = [];
+
+  constructor(private orderService:OrderService)  {
     
+  }
+ async ngOnInit(){
+   
+  this.orderSummaryList = await firstValueFrom(this.orderService.getOrdersSummaryList(10,1));
+
+  console.log(this.orderSummaryList);
+
   }
 
   public isEditMode:boolean = false;

@@ -1,4 +1,4 @@
-﻿namespace Printpress.Application.DTO;
+﻿namespace Printpress.Application;
 
 public class OrderDto
 {
