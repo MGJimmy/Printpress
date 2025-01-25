@@ -19,12 +19,13 @@ public class OrderMapper : BaseMapper<Order, OrderDto>
     {
 
         var dto = new OrderSummaryDto();
+        dto.Id = order.Id;
         dto.OrderName = order.Name;
         dto.ClientName = order.Client.Name;
         dto.TotalAmount = order.TotalPrice;
         dto.PaidAmount = order.TotalPaid;
         dto.OrderStatus = order.Status;
-        //dto.CreatedAt = order.CreatedAt;
+        dto.CreatedAt = DateTime.Now;
 
         return dto; ;
 

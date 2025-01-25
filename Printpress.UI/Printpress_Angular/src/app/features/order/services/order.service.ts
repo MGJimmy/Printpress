@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { OrderSummaryDto } from '../models/order/order-summary.Dto';
+import { ApiPagingResponseDto } from '../../../core/models/api-response.dto';
 
 @Injectable({
     providedIn: 'root'
@@ -17,8 +18,8 @@ export class OrderService {
     }
 
     
-   public getOrdersSummaryList(pageSize:number, pageNumber:number): Observable<OrderSummaryDto[]> {
-        return this.httpService.get<OrderSummaryDto[]>(ApiUrlResource.OrderAPI.getordersSummaryList,{pageSize:pageSize, pageNumber:pageNumber});
+   public getOrdersSummaryList(pageSize:number, pageNumber:number): Observable<ApiPagingResponseDto<OrderSummaryDto>> {
+        return this.httpService.get<ApiPagingResponseDto<OrderSummaryDto>>(ApiUrlResource.OrderAPI.getordersSummaryList,{pageSize:pageSize, pageNumber:pageNumber});
     }
 
     // getOrders(): Observable<any[]> {
