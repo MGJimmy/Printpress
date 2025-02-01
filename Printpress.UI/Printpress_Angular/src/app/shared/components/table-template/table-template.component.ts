@@ -39,6 +39,8 @@ export class TableTemplateComponent implements OnInit{
   @Input() totalItemsCount!: number ;
   @Input() isShowEditButton: boolean = false;
   @Input() isShowDeleteButton: boolean = false;
+  @Input() isShowHeader: boolean = true;
+  @Input() reportTable: boolean = false;
 
   displayedColumns: string[] = [];
   pageSize:number = 5;

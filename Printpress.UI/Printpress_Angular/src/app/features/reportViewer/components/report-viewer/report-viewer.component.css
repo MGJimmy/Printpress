@@ -1,0 +1,30 @@
+div.details{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+mat-card-title.color-red{
+  background-color: yellow;
+  width: fit-content;
+  padding: 0.2rem 3rem;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.5rem;
+}
+
+.color-red{
+  color: rgb(255, 34, 0);
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.color-red.total{
+  border: 1px solid black;
+  border-top: none;
+}
+
+.details{
+  margin-bottom: -2rem;
+  margin-top: 2rem;
+}
