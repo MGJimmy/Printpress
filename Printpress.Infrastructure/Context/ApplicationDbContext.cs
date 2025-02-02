@@ -19,6 +19,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<OrderTransaction> OrderTransaction { get; set; }
 
 
+
+    public DbSet<ItemDetailsKey_LKP> ItemDetailsKey_LKP { get; set; }
+
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }

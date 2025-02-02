@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Infrastructure
 {
@@ -16,6 +17,9 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<Client>().Configure();
             modelBuilder.Entity<Order>().Configure();
             modelBuilder.Entity<OrderGroup>().Configure();
+            modelBuilder.Entity<Item>().Configure();
+            modelBuilder.Entity<ItemDetails>().Configure();
+            modelBuilder.Entity<ItemDetailsKey_LKP>().Configure();
         }
 
         private static void Configure(this EntityTypeBuilder<OrderTransaction> entity)
@@ -81,6 +85,36 @@ namespace Printpress.Infrastructure
                 .Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(200);
+        }
+
+        private static void Configure(this EntityTypeBuilder<Item> entity)
+        {
+            entity
+                .Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(200);
+        }
+
+        private static void Configure(this EntityTypeBuilder<ItemDetails> entity)
+        {
+            entity
+                .Property(x => x.Value)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.HasOne(x => x.ItemDetailsKey_LKP)
+                .WithMany()
+                .HasForeignKey(x => x.ItemDetailsKeyId);
+
+            entity.Ignore(x => x.ItemDetailsKey);
+        }
+
+        private static void Configure(this EntityTypeBuilder<ItemDetailsKey_LKP> entity)
+        {
+            entity
+                .Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
         }
     }
 }

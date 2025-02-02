@@ -79,7 +79,18 @@ internal sealed class SeedingDbContext
 
     public void SeedingLockupData()
     {
-        //shluld add the lockup data here
+        SeedingItemDetailsKeyLKP();
 
+    }
+
+    private void SeedingItemDetailsKeyLKP()
+    {
+        foreach (var itemDetailsKey in Enum.GetValues(typeof(ItemDetailsKeyEnum)))
+        {
+            if (!_dbContext.ItemDetailsKey_LKP.Any(i => i.Id == (int)itemDetailsKey))
+            {
+                _dbContext.ItemDetailsKey_LKP.Add(new ItemDetailsKey_LKP { Id = (int)itemDetailsKey, Name = itemDetailsKey.ToString() });
+            }
+        }
     }
 }

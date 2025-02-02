@@ -8,6 +8,7 @@ public interface IUnitOfWork
     IGenericRepository<Order> OrderRepository { get; }
 
     IGenericRepository<OrderTransaction> OrderTransactionRepository { get; }
+    IGenericRepository<ItemDetails> ItemDetailsRepository { get; }
 
 
     Task SaveChangesAsync();
