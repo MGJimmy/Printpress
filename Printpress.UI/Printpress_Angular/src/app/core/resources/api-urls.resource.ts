@@ -13,6 +13,7 @@ export class ApiUrlResource {
   private static Order_URL = '/api/order';
   public static readonly OrderAPI = {
     getOrderById: ApiUrlResource.Order_URL + '/getOrderById',
+    getordersSummaryList: ApiUrlResource.Order_URL + '/getOrderSummaryList',
   };
 
   private static Report_URL = '/report';

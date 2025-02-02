@@ -3,9 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Printpress.Application;
-using Printpress.Application.Interfaces;
-using Printpress.Application.Mappers;
-using Printpress.Application.Services;
 using Printpress.Infrastructure;
 
 namespace Printpress.CompositionRoot
@@ -24,7 +21,7 @@ namespace Printpress.CompositionRoot
             return services.AddDbContext<ApplicationDbContext>(option =>
             {
                 option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-                option.LogTo((log) => Console.Write(log),LogLevel.Information);
+                option.LogTo((log) => Console.Write(log), LogLevel.Information);
             });
         }
 

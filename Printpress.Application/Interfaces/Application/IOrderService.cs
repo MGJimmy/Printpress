@@ -1,7 +1,4 @@
-﻿using Printpress.Application.DTO.Order;
-using System.Threading.Tasks;
-
-namespace Printpress.Application.Interfaces;
+﻿namespace Printpress.Application;
 
 public interface IOrderService
 {

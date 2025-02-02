@@ -1,9 +1,10 @@
 ﻿using Printpress.Domain.Enums;
 
-namespace Printpress.Application.DTO.Order;
+namespace Printpress.Application;
 
 public record OrderSummaryDto
 {
+    public int Id { get; set; }
     public string OrderName { get; set; }
     public string ClientName { get; set; }
     public decimal? TotalAmount { get; set; }
