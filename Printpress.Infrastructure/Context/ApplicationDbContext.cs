@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Printpress.Domain.Entities;
 
 namespace Printpress.Infrastructure;
@@ -18,6 +17,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<OrderGroupService> OrderGroupService { get; set; }
     public DbSet<OrderService> OrderService { get; set; }
     public DbSet<OrderTransaction> OrderTransaction { get; set; }
+
+
+
+    public DbSet<ItemDetailsKey_LKP> ItemDetailsKey_LKP { get; set; }
 
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

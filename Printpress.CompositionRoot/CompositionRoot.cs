@@ -21,7 +21,7 @@ namespace Printpress.CompositionRoot
             return services.AddDbContext<ApplicationDbContext>(option =>
             {
                 option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-                option.LogTo((log) => Console.Write(log),LogLevel.Information);
+                option.LogTo((log) => Console.Write(log), LogLevel.Information);
             });
         }
 
@@ -32,6 +32,8 @@ namespace Printpress.CompositionRoot
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClientService, ClientService>();
             services.AddScoped<IOrderTransactionService, OrderTransactionService>();
+            services.AddScoped<IOrderService, OrderService>();
+
 
 
             return services;
@@ -41,6 +43,8 @@ namespace Printpress.CompositionRoot
         {
             services.AddScoped<ClientMapper>();
             services.AddScoped<OrderTransactionMapper>();
+            services.AddScoped<OrderMapper>();
+
 
             return services;
         }

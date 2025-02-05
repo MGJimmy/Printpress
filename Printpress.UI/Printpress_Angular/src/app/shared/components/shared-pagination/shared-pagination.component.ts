@@ -18,7 +18,7 @@ export class SharedPaginationComponent {
   pageSize: number;
 
   constructor() {
-    this.pageSizeOptions = [5, 10, 25];
+    this.pageSizeOptions = [5, 10, 25,50];
     this.showFirstLastButtons = true;
     this.pageSize = 5;
   }

@@ -33,15 +33,23 @@ namespace Printpress.Infrastructure.Repository
 
             return Items.AsEnumerable();
         }
-        public PagedList<T> All(Paging paging, Sorting sorting = null)
+        public async Task<PagedList<T>> AllAsync(Paging paging, Sorting sorting = null, params string[] includes)
         {
             var Items = Context.Set<T>()
                 .OrderBy(sorting)
                 .SelectPage(paging);
 
+            if (includes?.Any() == true)
+            {
+                foreach (var include in includes)
+                {
+                    Items = Items.Include(include);
+                }
+            }
+
             return new PagedList<T>
             {
-                Items = Items.AsEnumerable(),
+                Items = await Items.ToListAsync(),
                 TotalCount = Count(),
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
@@ -185,13 +193,11 @@ namespace Printpress.Infrastructure.Repository
         {
             Context.ChangeTrackedEntityStates(entity);
         }
-
         public async Task<T> AddAsync(T entity)
         {
             await Context.AddAsync(entity);
             return entity;
         }
-
         public T Update(T entity)
         {
             Context.Attach(entity);

@@ -20,6 +20,7 @@ namespace Printpress.Domain.Entities
 
 
         public virtual Order Order { get; set; }
+        public virtual List<Item> Items { get; set; }
         public virtual List<OrderGroupService> Services { get; set; }
     }
 }

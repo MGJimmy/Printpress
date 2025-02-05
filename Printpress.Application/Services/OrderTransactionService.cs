@@ -19,24 +19,16 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
 
     public async Task<PagedList<OrderTransactionDto>> GetByPage(int pageNumber, int pageSize)
     {
-        Paging paging = new Paging
-        {
-            PageSize = pageSize,
-            PageNumber = pageNumber
-        };
 
-        Sorting sorting = new Sorting
-        {
-            Field = "Id",
-            Dir = SortingDirection.DESC 
-        };
-
-        PagedList<OrderTransaction> pagedList = _unitOfWork.OrderTransactionRepository.All(paging, sorting);
+        PagedList<OrderTransaction> pagedList = await _unitOfWork.OrderTransactionRepository.AllAsync(
+            new Paging(pageNumber, pageSize),
+            new Sorting(nameof(OrderTransaction.Id), SortingDirection.DESC)
+            );
 
         // check if no data returned then return no data founds
 
         var result = _orderTransactionMapper.MapFromSourceToDestination(pagedList);
 
-        return await Task.FromResult(result);
+        return result;
     }
 }

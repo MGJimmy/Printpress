@@ -19,6 +19,21 @@ namespace Printpress.Infrastructure
 
         private IGenericRepository<Client> _clientRepository;
         private IGenericRepository<OrderTransaction> _orderTransactionRepository;
+        private IGenericRepository<ItemDetails> _itemDetailsRepository;
+
+        public IGenericRepository<ItemDetails> ItemDetailsRepository
+        {
+            get
+            {
+                if (_itemDetailsRepository == null)
+                {
+                    _itemDetailsRepository = new GenericRepository<ItemDetails>(_context);
+                }
+
+                return _itemDetailsRepository;
+            }
+        }
+
 
         public IGenericRepository<Client> ClientRepository
         {

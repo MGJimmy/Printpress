@@ -70,4 +70,7 @@ public abstract class BaseMapper <TSource, TDestination> where TDestination : cl
     public abstract TSource MapFromDestinationToSource(TDestination destinationEntity);
 
     public abstract TDestination MapFromSourceToDestination(TSource sourceEntity);
+
+
+   
 }

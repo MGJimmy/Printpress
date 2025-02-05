@@ -1,0 +1,27 @@
+
+.mat-mdc-header-cell, .mdc-data-table__cell{
+  text-align: center!important;
+}
+
+.hidden{
+  .mat-mdc-header-cell{
+    background-color: transparent!important;
+    color: transparent!important;
+    border: none!important;
+  }
+}
+  .restyled{
+    .mat-mdc-cell, .custom-table tr:last-child td{
+      border: 1px solid black;
+    }
+    .mat-mdc-header-cell, .mdc-data-table__cell{
+      text-align: center!important;
+    }
+    .mat-mdc-header-cell{
+      background-color: transparent!important;
+      color: rgb(255, 34, 0);
+      font-weight: 700;
+      font-size: 1.2rem;
+      border: 1px solid black;
+    }
+  }

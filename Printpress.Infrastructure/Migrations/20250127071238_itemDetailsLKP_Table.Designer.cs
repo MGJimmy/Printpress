@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Printpress.Infrastructure;
@@ -11,9 +12,11 @@ using Printpress.Infrastructure;
 namespace Printpress.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250127071238_itemDetailsLKP_Table")]
+    partial class itemDetailsLKP_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,11 +57,6 @@ namespace Printpress.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("OrderGroupId")
                         .HasColumnType("integer");
@@ -363,7 +361,7 @@ namespace Printpress.Infrastructure.Migrations
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>
                 {
                     b.HasOne("Printpress.Domain.Entities.OrderGroup", "OrderGroup")
-                        .WithMany("Items")
+                        .WithMany()
                         .HasForeignKey("OrderGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -509,8 +507,6 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroup", b =>
                 {
-                    b.Navigation("Items");
-
                     b.Navigation("Services");
                 });
 #pragma warning restore 612, 618

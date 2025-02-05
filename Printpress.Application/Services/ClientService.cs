@@ -21,9 +21,9 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
     {
         // Make validation
 
-        if(!_unitOfWork.ClientRepository.Any(x=>x.Id == id))
+        if (!_unitOfWork.ClientRepository.Any(x => x.Id == id))
         {
-            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));  
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
         }
 
         var client = _unitOfWork.ClientRepository.Update(_clientMapper.MapFromDestinationToSource(id, payload));
@@ -47,7 +47,7 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
     public async Task DeleteAsync(int id)
     {
         var entity = await _unitOfWork.ClientRepository.FindAsync(id);
-        
+
         if (entity is null)
         {
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
@@ -60,24 +60,16 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
 
     public async Task<PagedList<ClientDto>> GetByPage(int pageNumber, int pageSize)
     {
-        Paging paging = new Paging
-        {
-            PageSize = pageSize,
-            PageNumber = pageNumber
-        };
 
-        Sorting sorting = new Sorting
-        {
-            Dir = SortingDirection.ASC,
-            Field = nameof(ClientDto.Name),
-        };
-
-        PagedList<Client> pagedList = _unitOfWork.ClientRepository.All(paging,sorting);
+        PagedList<Client> pagedList = await _unitOfWork.ClientRepository.AllAsync(
+            new Paging(pageNumber, pageSize),
+            new Sorting(nameof(Client.Name), SortingDirection.DESC)
+        );
 
         // check if no data returned then return no data founds
 
         var result = _clientMapper.MapFromSourceToDestination(pagedList);
 
-        return await Task.FromResult(result);
+        return result;
     }
 }
