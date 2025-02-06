@@ -28,8 +28,8 @@ export class OrderService {
     // }
 
 
-    insertOrder(orderDTO: OrderGetDto): Observable<any> {
-        return this.httpService.post<any>(ApiUrlResource.OrderAPI.insertOrder, orderDTO);
+  public insertOrder(orderDTO: OrderGetDto): Observable<any> {
+    return this.httpService.post<OrderGetDto>(ApiUrlResource.OrderAPI.insertOrder, orderDTO);
     }
 
     // updateOrder(id: number, order: any): Observable<any> {
