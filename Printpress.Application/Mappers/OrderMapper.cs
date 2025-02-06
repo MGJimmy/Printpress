@@ -6,7 +6,15 @@ public class OrderMapper : BaseMapper<Order, OrderDto>
 {
     public override Order MapFromDestinationToSource(OrderDto destinationEntity)
     {
-        throw new NotImplementedException();
+        return new Order
+        {
+            Id = destinationEntity.Id, // ??
+            Name = destinationEntity.Name,
+            ClientId = destinationEntity.ClientId,
+            TotalPaid = destinationEntity.TotalPaid,
+            TotalPrice = destinationEntity.TotalPrice,
+            OrderGroups = destinationEntity.OrderGroups //new GroupMappper.Map
+        };
     }
 
     public override OrderDto MapFromSourceToDestination(Order sourceEntity)

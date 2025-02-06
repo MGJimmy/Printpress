@@ -8,6 +8,7 @@ namespace Printpress.Application
 {
     public enum ObjectState
     {
+        Temp,
         Unchanged,
         Added,
         Updated,
