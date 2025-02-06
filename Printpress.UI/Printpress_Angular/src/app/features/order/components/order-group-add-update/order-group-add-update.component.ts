@@ -88,8 +88,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   protected editGroupService_Click(): void {
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
       data: { x: 5 },
-      height: '650px',
-      width: '1100px',
+      height: '550px',
+      width: '1000px',
     });
 
     dialogRef.afterClosed().subscribe(result => {
