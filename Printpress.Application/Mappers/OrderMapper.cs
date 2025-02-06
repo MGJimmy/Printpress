@@ -2,19 +2,22 @@
 
 namespace Printpress.Application;
 
-public class OrderMapper : BaseMapper<Order, OrderDto>
+public class OrderMapper(OrderGroupMapper _orderGroupMapper) : BaseMapper<Order, OrderDto>
 {
     public override Order MapFromDestinationToSource(OrderDto destinationEntity)
     {
-        return new Order
+        var order = new Order
         {
             Id = destinationEntity.Id, // ??
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
             TotalPaid = destinationEntity.TotalPaid,
-            TotalPrice = destinationEntity.TotalPrice,
-            OrderGroups = destinationEntity.OrderGroups //new GroupMappper.Map
+            TotalPrice = destinationEntity.TotalPrice
         };
+        order.OrderGroups = _orderGroupMapper.MapFromDestinationToSource(destinationEntity.OrderGroups);
+        //order.Services = order.OrderGroups.SelectMany(x => x.Services);
+
+        return order;
     }
 
     public override OrderDto MapFromSourceToDestination(Order sourceEntity)
