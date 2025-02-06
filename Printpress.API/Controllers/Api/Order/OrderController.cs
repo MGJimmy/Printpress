@@ -13,4 +13,17 @@ public class OrderController(IOrderService _IOrderService) : ControllerBase
         var result = await _IOrderService.GetOrderSummaryListAsync(pageNumber, pageSize);
         return Ok(result);
     }
+
+    [HttpPost]
+    [Route("insert")]
+    public async Task<IActionResult> Insert(OrderDto order)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState.ValidationState); // ValidationState.
+        }
+
+        await _IOrderService.InsertOrder(order);
+        return Ok();
+    }
 }

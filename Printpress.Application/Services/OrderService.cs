@@ -1,5 +1,5 @@
-﻿using Printpress.Application;
-using Printpress.Domain.Entities;
+﻿using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application;
 
@@ -18,4 +18,19 @@ public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : 
         return _OrderMapper.MapToOrderSummeryDto(orders);
     }
 
+    public async Task InsertOrder(OrderDto orderDTO)
+    {
+
+        Order order = new OrderMapper().MapFromDestinationToSource(orderDTO);
+
+        order.Status = OrderStatusEnum.New;
+
+        order.Client = new Client();// getClient by orderDTO.ClientId or NO just use ClientId
+
+        // order.Services = orderDTO.OrderGroups.SelectMany(x => x.Services);
+
+        await _IUnitOfWork.OrderRepository.AddAsync(order);
+
+        await _IUnitOfWork.SaveChangesAsync();
+    }
 }
