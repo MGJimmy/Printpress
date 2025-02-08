@@ -4,5 +4,5 @@ public interface IOrderService
 {
     Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize);
 
-    Task InsertOrder(OrderDto order);
+    Task InsertOrder(OrderUpsertDto order);
 }

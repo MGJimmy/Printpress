@@ -18,7 +18,7 @@ public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : 
         return _OrderMapper.MapToOrderSummeryDto(orders);
     }
 
-    public async Task InsertOrder(OrderDto orderDTO)
+    public async Task InsertOrder(OrderUpsertDto orderDTO)
     {
 
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);

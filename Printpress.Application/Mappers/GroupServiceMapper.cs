@@ -2,19 +2,19 @@
 
 namespace Printpress.Application
 {
-    public class GroupServiceMapper : BaseMapper<OrderGroupService, OrderGroupServiceDTO>
+    public class GroupServiceMapper : BaseMapper<OrderGroupService, OrderGroupServiceUpsertDTO>
     {
-        public override OrderGroupService MapFromDestinationToSource(OrderGroupServiceDTO destinationEntity)
+        public override OrderGroupService MapFromDestinationToSource(OrderGroupServiceUpsertDTO destinationEntity)
         {
             return new OrderGroupService
             {
                 Id = destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
-                OrderGroupId = destinationEntity.OrderGroupId
+                //OrderGroupId = destinationEntity.OrderGroupId
             };
         }
 
-        public override OrderGroupServiceDTO MapFromSourceToDestination(OrderGroupService sourceEntity)
+        public override OrderGroupServiceUpsertDTO MapFromSourceToDestination(OrderGroupService sourceEntity)
         {
             throw new NotImplementedException();
         }

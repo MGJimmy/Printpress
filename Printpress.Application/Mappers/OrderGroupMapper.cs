@@ -2,15 +2,15 @@
 
 namespace Printpress.Application
 {
-    public class OrderGroupMapper(ItemMapper _itemMapper, GroupServiceMapper _groupServiceMapper) : BaseMapper<OrderGroup, OrderGroupDTO>
+    public class OrderGroupMapper(ItemMapper _itemMapper, GroupServiceMapper _groupServiceMapper) : BaseMapper<OrderGroup, OrderGroupUpsertDTO>
     {
-        public override OrderGroup MapFromDestinationToSource(OrderGroupDTO destinationEntity)
+        public override OrderGroup MapFromDestinationToSource(OrderGroupUpsertDTO destinationEntity)
         {
             var group = new OrderGroup
             {
                 Id = destinationEntity.Id,
                 Name = destinationEntity.Name,
-                OrderId = destinationEntity.OrderId
+                //OrderId = destinationEntity.OrderId
             };
 
             group.Items = _itemMapper.MapFromDestinationToSource(destinationEntity.Items);
@@ -19,7 +19,7 @@ namespace Printpress.Application
             return group;
         }
 
-        public override OrderGroupDTO MapFromSourceToDestination(OrderGroup sourceEntity)
+        public override OrderGroupUpsertDTO MapFromSourceToDestination(OrderGroup sourceEntity)
         {
             throw new NotImplementedException();
         }

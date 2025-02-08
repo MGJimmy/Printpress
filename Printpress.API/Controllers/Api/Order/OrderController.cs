@@ -16,7 +16,7 @@ public class OrderController(IOrderService _IOrderService) : ControllerBase
 
     [HttpPost]
     [Route("insert")]
-    public async Task<IActionResult> Insert(OrderDto order)
+    public async Task<IActionResult> Insert(OrderUpsertDto order)
     {
         if (!ModelState.IsValid)
         {

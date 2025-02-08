@@ -2,17 +2,17 @@
 
 namespace Printpress.Application;
 
-public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper _orderServiceMapper) : BaseMapper<Order, OrderDto>
+public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper _orderServiceMapper) : BaseMapper<Order, OrderUpsertDto>
 {
-    public override Order MapFromDestinationToSource(OrderDto destinationEntity)
+    public override Order MapFromDestinationToSource(OrderUpsertDto destinationEntity)
     {
         var order = new Order
         {
             Id = destinationEntity.Id, // ??
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
-            TotalPaid = destinationEntity.TotalPaid,
-            TotalPrice = destinationEntity.TotalPrice
+            //TotalPaid = destinationEntity.TotalPaid,
+            //TotalPrice = destinationEntity.TotalPrice
         };
         order.OrderGroups = _orderGroupMapper.MapFromDestinationToSource(destinationEntity.OrderGroups);
         order.Services = _orderServiceMapper.MapFromDestinationToSource(destinationEntity.OrderServices).ToList();
@@ -20,7 +20,7 @@ public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper 
         return order;
     }
 
-    public override OrderDto MapFromSourceToDestination(Order sourceEntity)
+    public override OrderUpsertDto MapFromSourceToDestination(Order sourceEntity)
     {
         throw new NotImplementedException();
     }
