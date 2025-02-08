@@ -1,14 +1,16 @@
-﻿using Printpress.Domain.Entities;
+﻿using System.Text.Json.Serialization;
 
 namespace Printpress.Application
 {
-    public class OrderGroupDTO //: IObjectState
+    public class OrderGroupDTO : IObjectState
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public int OrderId { get; set; }
         public List<OrderGroupServiceDTO> OrderGroupServices { get; set; }
         public List<ItemDTO> Items { get; set; }
-        public string ObjectState { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ObjectState ObjectState { get; set; }
     }
 }
