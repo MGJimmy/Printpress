@@ -1,53 +1,57 @@
 <div class="container my-3">
-  <h3 class="text-center">إضافة عنصر</h3>
 
-  <div class="row g-3">
-    <!-- Item Name -->
-    <div class="col-md-6">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>اسم العنصر</mat-label>
-        <input matInput [(ngModel)]="item.name" placeholder="اسم العنصر" />
-      </mat-form-field>
+  <form [formGroup]="itemForm" (submit)="onSave()">
+
+    <h3 class="text-center">إضافة عنصر</h3>
+
+    <div class="row g-3">
+      <!-- Item Name -->
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>اسم العنصر</mat-label>
+          <input matInput formControlName="name" placeholder="اسم العنصر" />
+        </mat-form-field>
+      </div>
+
+      <!-- Quantity -->
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>الكمية</mat-label>
+          <input matInput type="number" formControlName="quantity" placeholder="الكمية" />
+        </mat-form-field>
+      </div>
+
+      <!-- Price (Conditional) -->
+      <div class="col-md-6" *ngIf="showPriceField()">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>سعر العنصر</mat-label>
+          <input matInput type="number" formControlName="price" placeholder="سعر العنصر" />
+        </mat-form-field>
+      </div>
+
+      <!-- Pages (Conditional) -->
+      <div class="col-md-6" *ngIf="showPrintingFields()">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>عدد الصفحات</mat-label>
+          <input matInput type="number" formControlName="numberOfPages" placeholder="عدد الصفحات" />
+        </mat-form-field>
+      </div>
+
+      <!-- Faces -->
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>الأوجه</mat-label>
+          <mat-select formControlName="numberOfPrintingFaces">
+            <mat-option value="1">وجه</mat-option>
+            <mat-option value="2">وجهين</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
 
-    <!-- Quantity -->
-    <div class="col-md-6">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>الكمية</mat-label>
-        <input matInput type="number" [(ngModel)]="item.quantity" placeholder="الكمية" />
-      </mat-form-field>
+    <!-- Save Button -->
+    <div class="text-center mt-3">
+      <button type="submit" [disabled]="itemForm.invalid" mat-raised-button color="primary">حفظ</button>
     </div>
-
-    <!-- Price (Conditional) -->
-    <div class="col-md-6" *ngIf="showPriceField()">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>سعر العنصر</mat-label>
-        <input matInput type="number" [(ngModel)]="item.price" placeholder="سعر العنصر" />
-      </mat-form-field>
-    </div>
-
-    <!-- Pages (Conditional) -->
-    <!-- <div class="col-md-6" *ngIf="showPrintingFields()">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>عدد الصفحات</mat-label>
-        <input matInput type="number" [(ngModel)]="item.pages" placeholder="عدد الصفحات" />
-      </mat-form-field>
-    </div> -->
-
-    <!-- Faces -->
-    <!-- <div class="col-md-6">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>الأوجه</mat-label>
-        <mat-select [(ngModel)]="item.faces">
-          <mat-option value="face">وجه</mat-option>
-          <mat-option value="towFaces">وجهين</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div> -->
-  </div>
-
-  <!-- Save Button -->
-  <div class="text-center mt-3">
-    <button mat-raised-button color="primary" (click)="onSave()">حفظ</button>
-  </div>
+  </form>
 </div>

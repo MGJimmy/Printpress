@@ -200,12 +200,16 @@ export class OrderSharedDataService {
 
     let tempId = this.generateTempId(orderGroup.items.map(x => x.id));
 
+    // check if group service contains printing service then init the two item details for printing with default values
+    // to set them in the form
+
     let item: ItemGetDto = {
       id: tempId,
       name: '',
       quantity: 0,
       price: 0,
       groupId: orderGroupId,
+      itemDetails: [],
       objectState: ObjectStateEnum.temp
     }
 
