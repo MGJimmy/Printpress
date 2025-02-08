@@ -8,7 +8,7 @@ public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper 
     {
         var order = new Order
         {
-            Id = destinationEntity.Id, // ??
+            Id = destinationEntity.Id,
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
             //TotalPaid = destinationEntity.TotalPaid,
