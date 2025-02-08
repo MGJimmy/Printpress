@@ -20,7 +20,7 @@ public class OrderController(IOrderService _IOrderService) : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState.ValidationState); // ValidationState.
+            return BadRequest();
         }
 
         await _IOrderService.InsertOrder(order);

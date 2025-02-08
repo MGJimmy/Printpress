@@ -1,6 +1,4 @@
-﻿using Printpress.Domain.Entities;
-using Printpress.Domain.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Printpress.Application;
@@ -19,4 +17,6 @@ public class OrderDto : IObjectState
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ObjectState ObjectState { get; set; }
+    public List<OrderGroupDTO> OrderGroups { get; set; }
+    public List<OrderServiceDTO> OrderServices { get; set; }
 }

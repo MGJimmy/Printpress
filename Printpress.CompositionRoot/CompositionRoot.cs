@@ -46,6 +46,7 @@ namespace Printpress.CompositionRoot
             services.AddScoped<OrderMapper>();
             services.AddScoped<OrderGroupMapper>();
             services.AddScoped<GroupServiceMapper>();
+            services.AddScoped<OrderServiceMapper>();
             services.AddScoped<ItemMapper>();
 
 
