@@ -31,10 +31,12 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   // protected groupItems: ItemGetDto[] = [];
   protected groupItems: any[] = [
     { name: 'عنصر 1', price: 30, quantity: 10 },
-    { name: 'عنصر 2', price: 50, quantity: 20 }
+    { name: 'عنصر 2', price: 40, quantity: 20 },
+    { name: 'عنصر 3', price: 50, quantity: 30 }
   ]
 
   private groupServices: OrderGroupServiceGetDto[] = [];
+  itemsGridSource!: any[];
   protected get displayedGroupServices(): string {
     return this.groupServices.map(x => { return x.serviceName }).join(',');
   }
@@ -60,6 +62,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.setGroupId();
     this.setCurrentGroupData();
+    this.itemsGridSource = this.groupItems.slice(0, 5)
   }
 
   private setGroupId(): void {
@@ -85,8 +88,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   protected editGroupService_Click(): void {
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
       data: { x: 5 },
-      height: '650px',
-      width: '1100px',
+      height: '550px',
+      width: '1000px',
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -113,11 +116,9 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   onPageChangeClick(event: PageEvent) {
-    console.log(event);
     const length = event.pageSize;
     const pageNumber = event.pageIndex;
-    // Call APi and set dataSource
-    // this.dataSource = this.originalSource.slice((pageNumber) * length, (pageNumber + 1) * length)
+    this.itemsGridSource = this.groupItems.slice((pageNumber) * length, (pageNumber + 1) * length)
   }
 
   protected onSave_Click() {

@@ -1,6 +1,6 @@
 export interface OrderGroupServiceGetDto {
     id: number;
-    ServiceId: number;
-    OrderGroupId: number;
+    serviceId: number;
+    orderGroupId: number;
     serviceName?: string;
 }

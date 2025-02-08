@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { imports } from './order-add-update.imports';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-order-add-update',
@@ -18,13 +19,20 @@ export class OrderAddUpdateComponent implements OnInit {
   dataSource = new MatTableDataSource<OrderGroupGridViewModel>(ELEMENT_DATA);
 
   constructor(private router: Router,
-    private OrderSharedService: OrderSharedDataService
+    private OrderSharedService: OrderSharedDataService,
+    private orderService: OrderService
   ) {
     this.componentMode = new ComponentMode(router);
   }
 
   ngOnInit(): void {
 
+  }
+
+  saveOrder(){
+    const orderDTO = this.OrderSharedService.getOrderObject()
+    console.log(orderDTO);
+    this.orderService.insertOrder(orderDTO).subscribe();
   }
 }
 

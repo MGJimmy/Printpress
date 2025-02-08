@@ -116,8 +116,8 @@ export class OrderSharedDataService {
 
     let orderGroupService: OrderGroupServiceGetDto = {
       id: tempId,
-      OrderGroupId: orderGroupId,
-      ServiceId: ServiceId,
+      orderGroupId: orderGroupId,
+      serviceId: ServiceId,
     };
 
     orderGroup.orderGroupServices.push(orderGroupService);
