@@ -9,8 +9,7 @@ namespace Printpress.Application
             return new OrderGroupService
             {
                 Id = destinationEntity.Id,
-                ServiceId = destinationEntity.ServiceId,
-                //OrderGroupId = destinationEntity.OrderGroupId
+                ServiceId = destinationEntity.ServiceId
             };
         }
 

@@ -9,8 +9,7 @@ namespace Printpress.Application
             var group = new OrderGroup
             {
                 Id = destinationEntity.Id,
-                Name = destinationEntity.Name,
-                //OrderId = destinationEntity.OrderId
+                Name = destinationEntity.Name
             };
 
             group.Items = _itemMapper.MapFromDestinationToSource(destinationEntity.Items);

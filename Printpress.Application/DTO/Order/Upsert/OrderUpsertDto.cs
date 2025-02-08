@@ -12,8 +12,6 @@ public class OrderUpsertDto : IObjectState
 
     [Required]
     public int ClientId { get; set; }
-    //public decimal? TotalPrice { get; set; }
-    //public decimal? TotalPaid { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ObjectState ObjectState { get; set; }

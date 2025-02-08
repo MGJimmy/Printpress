@@ -10,7 +10,6 @@ namespace Printpress.Application
             {
                 Id = destinationEntity.Id,
                 Name = destinationEntity.Name,
-                //OrderGroupId = destinationEntity.GroupId,
                 Price = destinationEntity.Price,
                 Quantity = destinationEntity.Quantity
             };

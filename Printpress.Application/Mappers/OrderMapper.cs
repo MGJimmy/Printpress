@@ -8,12 +8,10 @@ public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper 
     {
         var order = new Order
         {
-            Id = destinationEntity.Id,
             Name = destinationEntity.Name,
-            ClientId = destinationEntity.ClientId,
-            //TotalPaid = destinationEntity.TotalPaid,
-            //TotalPrice = destinationEntity.TotalPrice
+            ClientId = destinationEntity.ClientId
         };
+
         order.OrderGroups = _orderGroupMapper.MapFromDestinationToSource(destinationEntity.OrderGroups);
         order.Services = _orderServiceMapper.MapFromDestinationToSource(destinationEntity.OrderServices).ToList();
 
