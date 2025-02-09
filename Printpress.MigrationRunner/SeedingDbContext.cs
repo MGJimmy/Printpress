@@ -14,7 +14,17 @@ internal sealed class SeedingDbContext
         _dbContext = dbContext;
     }
 
+    #region Seeding mock data
     public void SeedingMockData()
+    {
+        SeedingOrdersMockData();
+
+        SeedingClientsMockData();
+
+        SeedingServiceMockData();
+    }
+
+    private void SeedingOrdersMockData()
     {
         List<Order> orders =
         [
@@ -43,7 +53,10 @@ internal sealed class SeedingDbContext
                 _dbContext.Order.Add(order);
             }
         }
+    }
 
+    private void SeedingClientsMockData()
+    {
         List<Client> clients =
         [
             new Client { Id = 1, Name = "عميل 1", Mobile = "0111284858", Address = "first streat 488" },
@@ -73,8 +86,34 @@ internal sealed class SeedingDbContext
             }
         }
 
+
     }
 
+
+    private void SeedingServiceMockData()
+    {
+        List<Service> services =
+        [
+           new Service { Id = 1, Name = "طباعة ورق 70 جم الوان", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Printing },
+           new Service { Id = 1, Name = "طباعة ورق 80 جم الوان", Price = 0.7m, ServiceCategory = ServiceCategoryEnum.Printing },
+           new Service { Id = 1, Name = "قص", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Cutting },
+           new Service { Id = 1, Name = "لصق", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Clueing },
+           new Service { Id = 1, Name = "تدبيس", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Stapling },
+           new Service { Id = 1, Name = "علم مصر", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
+        ];
+
+
+        foreach (var service in services)
+        {
+            // Check if the order already exists in the database
+            if (!_dbContext.Service.Any(o => o.Id == service.Id))
+            {
+                _dbContext.Service.Add(service);
+            }
+        }
+    }
+
+    #endregion
 
 
     public void SeedingLockupData()

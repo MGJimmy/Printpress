@@ -19,7 +19,7 @@ namespace Printpress.Infrastructure.Repository
             Context = dbContext;
         }
         protected ApplicationDbContext Context { get; set; }
-        public IEnumerable<T> All(params string[] includes)
+        public async Task<List<T>> AllAsync(params string[] includes)
         {
             var Items = Context.Set<T>().AsQueryable();
 
@@ -31,7 +31,7 @@ namespace Printpress.Infrastructure.Repository
                 }
             }
 
-            return Items.AsEnumerable();
+            return await Items.ToListAsync();
         }
         public async Task<PagedList<T>> AllAsync(Paging paging, Sorting sorting = null, params string[] includes)
         {

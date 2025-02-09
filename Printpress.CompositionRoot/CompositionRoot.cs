@@ -33,6 +33,7 @@ namespace Printpress.CompositionRoot
             services.AddScoped<IClientService, ClientService>();
             services.AddScoped<IOrderTransactionService, OrderTransactionService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IServiceService, ServiceService>();
 
 
 
@@ -48,6 +49,7 @@ namespace Printpress.CompositionRoot
             services.AddScoped<GroupServiceMapper>();
             services.AddScoped<OrderServiceMapper>();
             services.AddScoped<ItemMapper>();
+            services.AddScoped<ServiceMapper>();
 
 
             return services;

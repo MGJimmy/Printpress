@@ -8,10 +8,10 @@ namespace Printpress.Domain.Enums
 {
     public enum ServiceCategoryEnum
     {
-        Printing,
-        Stapling,
-        Clueing,
-        Cutting,
-        Selling
+        Printing = 1,
+        Stapling = 2,
+        Clueing = 3,
+        Cutting = 4,
+        Selling = 5 
     }
 }

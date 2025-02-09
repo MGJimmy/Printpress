@@ -14,12 +14,29 @@ namespace Printpress.Infrastructure
             _context = context;
         }
 
-
+        private IGenericRepository<Service> _serviceRepository;
         private IGenericRepository<Order> _orderRepository;
-
         private IGenericRepository<Client> _clientRepository;
         private IGenericRepository<OrderTransaction> _orderTransactionRepository;
         private IGenericRepository<ItemDetails> _itemDetailsRepository;
+
+
+
+
+
+        public IGenericRepository<Service> ServiceRepository
+        {
+            get
+            {
+                if (_serviceRepository == null)
+                {
+                    _serviceRepository = new GenericRepository<Service>(_context);
+                }
+
+                return _serviceRepository;
+            }
+        }
+
 
         public IGenericRepository<ItemDetails> ItemDetailsRepository
         {
