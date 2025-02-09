@@ -20,6 +20,7 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<Item>().Configure();
             modelBuilder.Entity<ItemDetails>().Configure();
             modelBuilder.Entity<ItemDetailsKey_LKP>().Configure();
+            modelBuilder.Entity<ServiceCategory_LKP>().Configure();
         }
 
         private static void Configure(this EntityTypeBuilder<OrderTransaction> entity)
@@ -34,6 +35,12 @@ namespace Printpress.Infrastructure
             entity
                 .Property(x => x.Name)
                 .HasMaxLength(200);
+
+            entity.HasOne(x => x.ServiceCategory_LKP)
+                 .WithMany()
+                 .HasForeignKey(x => x.ServiceCategoryId);
+
+            entity.Ignore(x => x.ServiceCategory);
         }
 
         private static void Configure(this EntityTypeBuilder<ProductStock> entity)
@@ -110,6 +117,14 @@ namespace Printpress.Infrastructure
         }
 
         private static void Configure(this EntityTypeBuilder<ItemDetailsKey_LKP> entity)
+        {
+            entity
+                .Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+        }
+
+        private static void Configure(this EntityTypeBuilder<ServiceCategory_LKP> entity)
         {
             entity
                 .Property(x => x.Name)

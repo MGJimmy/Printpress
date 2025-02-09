@@ -21,6 +21,7 @@ public class ApplicationDbContext : DbContext
 
 
     public DbSet<ItemDetailsKey_LKP> ItemDetailsKey_LKP { get; set; }
+    public DbSet<ServiceCategory_LKP> ServiceCategory_LKP { get; set; }
 
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

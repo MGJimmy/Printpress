@@ -1,6 +1,7 @@
 ﻿using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
 using Printpress.Infrastructure;
+using Printpress.Infrastructure.Migrations;
 
 namespace Printpress.MigrationRunner;
 
@@ -95,11 +96,11 @@ internal sealed class SeedingDbContext
         List<Service> services =
         [
            new Service { Id = 1, Name = "طباعة ورق 70 جم الوان", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Printing },
-           new Service { Id = 1, Name = "طباعة ورق 80 جم الوان", Price = 0.7m, ServiceCategory = ServiceCategoryEnum.Printing },
-           new Service { Id = 1, Name = "قص", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Cutting },
-           new Service { Id = 1, Name = "لصق", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Clueing },
-           new Service { Id = 1, Name = "تدبيس", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Stapling },
-           new Service { Id = 1, Name = "علم مصر", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
+           new Service { Id = 2, Name = "طباعة ورق 80 جم الوان", Price = 0.7m, ServiceCategory = ServiceCategoryEnum.Printing },
+           new Service { Id = 3, Name = "قص", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Cutting },
+           new Service { Id = 4, Name = "لصق", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Clueing },
+           new Service { Id = 5, Name = "تدبيس", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Stapling },
+           new Service { Id = 6, Name = "علم مصر", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
         ];
 
 
@@ -119,7 +120,7 @@ internal sealed class SeedingDbContext
     public void SeedingLockupData()
     {
         SeedingItemDetailsKeyLKP();
-
+        SeedingServiceCategoryLKP();
     }
 
     private void SeedingItemDetailsKeyLKP()
@@ -129,6 +130,17 @@ internal sealed class SeedingDbContext
             if (!_dbContext.ItemDetailsKey_LKP.Any(i => i.Id == (int)itemDetailsKey))
             {
                 _dbContext.ItemDetailsKey_LKP.Add(new ItemDetailsKey_LKP { Id = (int)itemDetailsKey, Name = itemDetailsKey.ToString() });
+            }
+        }
+    }
+
+    private void SeedingServiceCategoryLKP()
+    {
+        foreach (var serviceCategory in Enum.GetValues(typeof(ServiceCategoryEnum)))
+        {
+            if (!_dbContext.ServiceCategory_LKP.Any(i => i.Id == (int)serviceCategory))
+            {
+                _dbContext.ServiceCategory_LKP.Add(new ServiceCategory_LKP { Id = (int)serviceCategory, Name = serviceCategory.ToString() });
             }
         }
     }
