@@ -8,8 +8,8 @@ namespace Printpress.API;
 public class ServiceController(IServiceService _serviceService) : ControllerBase
 {
     [HttpGet]
-    [Route("getByPage")]
-    public async Task<IActionResult> GetByPage()
+    [Route("getAll")]
+    public async Task<IActionResult> GetAll()
     {
         List<ServiceDto> result = await _serviceService.GetAll();
         return Ok(result);

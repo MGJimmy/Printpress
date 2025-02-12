@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { ItemDetailsGetDto } from '../../models/item-details/item-details-get.dto';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
+import { ServiceService } from '../../../setup/services/service.service';
 
 @Component({
   selector: 'app-item-add-update',
@@ -39,6 +40,8 @@ export class ItemAddUpdateComponent implements OnInit {
 
   item!: ItemGetDto;
 
+  itemIdToEdit!: number;
+
   itemForm!: FormGroup<{ [K in keyof ItemForm]: FormControl<ItemForm[K]> }>;
 
 
@@ -52,7 +55,8 @@ export class ItemAddUpdateComponent implements OnInit {
 
   constructor(private orderSharedService:OrderSharedDataService,
               private router: Router, private activateRoute: ActivatedRoute,
-              private fb: NonNullableFormBuilder
+              private fb: NonNullableFormBuilder,
+              private serviceService: ServiceService
   ) {}
 
   ngOnInit(): void {
@@ -65,18 +69,16 @@ export class ItemAddUpdateComponent implements OnInit {
       numberOfPages: [0, [Validators.required, Validators.min(0)]],
       numberOfPrintingFaces: [0, Validators.required],
     });
-
   }
 
   checkModeAndInitData() {
     this.activateRoute.url.subscribe(urlSegments => {
       this.isEditMode = urlSegments.some(x=> x.path === 'edit');
       this.isAddMode = urlSegments.some(x=> x.path === 'add');
-      console.log(urlSegments);  
     });
 
     this.activateRoute.params.subscribe(params => {
-      this.item.id = this.isEditMode? params['id'] : 0;
+      this.itemIdToEdit = this.isEditMode? params['id'] : 0;
       this.groupId = params['groupId'];
     });
 
@@ -98,10 +100,10 @@ export class ItemAddUpdateComponent implements OnInit {
     this.groupId = this.orderSharedService.intializeNewGroup();
     let item = this.orderSharedService.initializeTempItem(this.groupId);
     this.orderSharedService.addItem(this.groupId, item.id, "test", 10, 20);
-
+    this.itemIdToEdit = item.id;
    
    
-    this.item = this.orderSharedService.getItem(this.groupId, item.id);
+    this.item = this.orderSharedService.getItem(this.groupId, this.itemIdToEdit);
   }
 
 

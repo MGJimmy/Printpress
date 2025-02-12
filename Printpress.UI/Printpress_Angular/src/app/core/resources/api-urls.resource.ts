@@ -28,4 +28,12 @@ export class ApiUrlResource {
     add: ApiUrlResource.OrderTransaction_URL + '/add'
   };
 
+  private static Service_URL = '/api/service';
+  public static readonly ServiceAPI = {
+    getAll: ApiUrlResource.Service_URL + '/getAll',
+    add: ApiUrlResource.Service_URL + '/add',
+    update: (id:number) => `${ApiUrlResource.Service_URL}/update/${id}`,
+    delete:(id:number) => `${ApiUrlResource.Service_URL}/delete/${id}`,
+  };
+
 }
