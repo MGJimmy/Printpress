@@ -23,6 +23,14 @@ public class ClientController(IClientService _IClientService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet]
+    [Route("getAll")]
+    public async Task<IActionResult> getAll()
+    {
+        var result = await _IClientService.GetAll();
+        return Ok(result);
+    }
+
     [HttpPost]
     [Route("add")]
     public async Task<IActionResult> Add(ClientUpsertDto payload)

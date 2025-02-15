@@ -8,6 +8,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { RouterModule } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+
 
 export const imports = [
   CommonModule,
@@ -19,5 +22,7 @@ export const imports = [
   MatButtonModule,
   MatIconModule,
   SharedPaginationComponent,
-  RouterModule
+  RouterModule,
+  MatSelectModule,
+  MatDialogModule
 ];

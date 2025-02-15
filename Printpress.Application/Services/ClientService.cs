@@ -72,4 +72,14 @@ public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) 
 
         return result;
     }
+
+    public async Task<List<ClientDto>> GetAll()
+    {
+        var pagedList = await _unitOfWork.ClientRepository.AllAsync();
+
+        var result = _clientMapper.MapFromSourceToDestination(pagedList);
+
+        return result;
+
+    }
 }

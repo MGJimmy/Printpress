@@ -5,6 +5,7 @@ export class ApiUrlResource {
   public static readonly ClientAPI = {
     getById: ApiUrlResource.Cliet_URL + '/getById',
     getByPage: ApiUrlResource.Cliet_URL + '/getByPage',
+    getAll:ApiUrlResource.Cliet_URL + '/getAll',
     add: ApiUrlResource.Cliet_URL + '/add',
     update: (id:number) => `${ApiUrlResource.Cliet_URL}/update/${id}`,
     delete:(id:number) => `${ApiUrlResource.Cliet_URL}/delete/${id}`,

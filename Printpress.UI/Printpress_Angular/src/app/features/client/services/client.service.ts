@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { ErrorHandlingService } from '../../../core/helpers/error-handling.service';
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { ClientGetDto } from '../models/client-get.dto';
 import { ClientUpsertDto } from '../models/client-upsert.dto';
 import { ConfigurationService } from '../../../core/services/configuration.service';
 import { ClientMockService } from './client-mock.service';
+import { ApiResponseDto } from '../../../core/models/api-response.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +32,10 @@ export class ClientService {
       return this.clientMockService.getCustomerById(id);
     }else
     return this.httpService.get<ClientGetDto>(ApiUrlResource.ClientAPI.getById, {id:id})
+  }
+
+  getAll(): Observable<ApiResponseDto<ClientGetDto[]>>{
+     return this.httpService.get<ApiResponseDto<ClientGetDto[]>>(ApiUrlResource.ClientAPI.getAll);
   }
 
   add(client: ClientUpsertDto): Observable<ClientUpsertDto> {
