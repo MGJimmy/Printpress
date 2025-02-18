@@ -18,6 +18,26 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
         return _OrderMapper.MapToOrderSummeryDto(orders);
     }
 
+    public async Task<OrderDto> GetOrderDTOAsync(int orderId)
+    {
+        string[] includes = [
+            $"{nameof(Order.OrderGroups)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}",
+            $"{nameof(Order.Services)}"];
+
+        var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, includes);
+
+        if (order == null)
+        {
+            return null;
+        }
+
+        var orderDTO = order.MapToOrderDTO();
+
+        return orderDTO;
+    }
+
     public async Task InsertOrder(OrderUpsertDto orderDTO)
     {
 
@@ -64,7 +84,7 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
         var staplingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Stapling);
         var cluingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Clueing);
         var cuttingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Cutting);
-        
+
         // Validate incoming data to be .... ???/???/???
 
         foreach (var item in group.Items)
@@ -103,7 +123,7 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
 
     private decimal CalculatePrintingServicePrice(Item item, decimal price)
     {
-        string stringNoOfPages =  item.Details.Find(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages).Value;
+        string stringNoOfPages = item.Details.Find(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages).Value;
         var noOfPages = string.IsNullOrEmpty(stringNoOfPages) ? 1 : int.Parse(stringNoOfPages);
 
         string stringNoOfPrintingFaces = item.Details.Find(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces).Value;
