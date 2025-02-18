@@ -8,7 +8,7 @@ namespace Printpress.Application
         public string Name { get; set; }
         public int GroupId { get; set; }
         public int Quantity { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ObjectState ObjectState { get; set; }
