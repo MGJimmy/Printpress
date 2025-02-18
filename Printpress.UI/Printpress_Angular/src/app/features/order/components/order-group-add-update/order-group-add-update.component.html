@@ -1,4 +1,4 @@
-<div class="container-fluid p-5">
+<div class="container-fluid p-5" [class.disabled] = "isAddGroupServiceDialogOpen">
     <div>
         <h1 *ngIf="isEdit">تعديل مجموعة</h1>
         <h1 *ngIf="!isEdit">إضافة مجموعة</h1>
@@ -16,7 +16,7 @@
 
         <div class="px-5">
             <label>الخدمات الحالية:</label>
-            <div class="px-2">{{displayedGroupServices}}</div>
+            <div class="px-2">{{groupServicesNamesCommaseperated}}</div>
         </div>
     </div>
     <div class="my-5">
@@ -32,7 +32,7 @@
                 <th mat-header-cell *matHeaderCellDef>اسم العنصر</th>
                 <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
             </ng-container>
-            <ng-container *ngIf="!isOuterItem" matColumnDef="numberOfPages">
+            <ng-container *ngIf="isGroupHasPrintingService" matColumnDef="numberOfPages">
                 <th mat-header-cell *matHeaderCellDef>عدد الصفحات</th>
                 <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
             </ng-container>
@@ -44,11 +44,11 @@
                 <th mat-header-cell *matHeaderCellDef>سعر العنصر</th>
                 <td mat-cell *matCellDef="let element"> {{ element.price }} </td>
             </ng-container>
-            <ng-container *ngIf="!isOuterItem" matColumnDef="stapledItemsCount">
+            <ng-container *ngIf="!isGroupHasSellingService" matColumnDef="stapledItemsCount">
                 <th mat-header-cell *matHeaderCellDef>عدد العناصر المدبسة</th>
                 <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
             </ng-container>
-            <ng-container *ngIf="!isOuterItem" matColumnDef="printedItemsCount">
+            <ng-container *ngIf="!isGroupHasSellingService" matColumnDef="printedItemsCount">
                 <th mat-header-cell *matHeaderCellDef>عدد العناصر المطبوعة</th>
                 <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
             </ng-container>
@@ -56,7 +56,7 @@
                 <th mat-header-cell *matHeaderCellDef>الإجمالي</th>
                 <td mat-cell *matCellDef="let element"> {{ element.price }} </td>
             </ng-container>
-            <ng-container *ngIf="isOuterItem" matColumnDef="boughtItemsCount">
+            <ng-container *ngIf="isGroupHasSellingService" matColumnDef="boughtItemsCount">
                 <th mat-header-cell *matHeaderCellDef>عدد العناصر المشتراه</th>
                 <td mat-cell *matCellDef="let element"> {{ element.price }} </td>
             </ng-container>
@@ -85,3 +85,6 @@
 
     </div>
 </div>
+
+<div  class="overlay disabled" *ngIf="isAddGroupServiceDialogOpen"></div>
+<app-order-group-service-add-update class="groupServicesPopUp" *ngIf="isAddGroupServiceDialogOpen"></app-order-group-service-add-update>

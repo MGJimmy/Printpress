@@ -38,7 +38,7 @@
       </div>
 
       <!-- Faces -->
-      <div class="col-md-6">
+      <div class="col-md-6" *ngIf="showPrintingFields()">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>الأوجه</mat-label>
           <mat-select formControlName="numberOfPrintingFaces">

@@ -92,6 +92,8 @@ export class OrderSharedDataService {
       id: tempId,
       orderId: this.orderObject.id,
       name: '',
+      isHasPrintingService: false,
+      isHasSellingService: false,
       orderGroupServices: [],
       items: [],
       objectState: ObjectStateEnum.temp
@@ -162,6 +164,13 @@ export class OrderSharedDataService {
   public deleteExistingGroup(groupId: number) {
     let group = this.getOrderGroup(groupId);
     group.objectState = ObjectStateEnum.deleted;
+  }
+
+  public setGroupBooleanProperty(groupId: number, isHasPrintingService: boolean, isHasSellingService: boolean) {
+    let group = this.getOrderGroup(groupId);
+
+    group.isHasPrintingService = isHasPrintingService;
+    group.isHasSellingService = isHasSellingService;
   }
 
   /*

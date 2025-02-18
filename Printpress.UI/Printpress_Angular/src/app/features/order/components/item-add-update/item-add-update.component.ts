@@ -16,6 +16,9 @@ import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { ItemDetailsGetDto } from '../../models/item-details/item-details-get.dto';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 import { ServiceService } from '../../../setup/services/service.service';
+import { ServiceGetDto } from '../../../setup/models/service-get.dto';
+import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
+import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 
 @Component({
   selector: 'app-item-add-update',
@@ -45,11 +48,14 @@ export class ItemAddUpdateComponent implements OnInit {
   itemForm!: FormGroup<{ [K in keyof ItemForm]: FormControl<ItemForm[K]> }>;
 
 
-  mockOrderGroupServices: any[] = [
-    { id: 1, type: 'buyService' },
-    { id: 2, type: 'printService' },
-    { id: 3, type: 'otherService' },
+  mockOrderGroupServices: OrderGroupServiceGetDto[] = [
+    // { id: 1, serviceId: 1, orderGroupId: 1, serviceName: "printing" },
+    // { id: 2, serviceId: 2, orderGroupId: 1, serviceName: "printing" },
+    // { id: 3, serviceId: 3, orderGroupId: 1, serviceName: "cutting" },
+    { id: 3, serviceId: 6, orderGroupId: 1, serviceName: "selling" },
   ];
+
+  groupServices!: ServiceGetDto[];
 
   groupId!:number;
 
@@ -60,6 +66,10 @@ export class ItemAddUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.serviceService.getServices(this.mockOrderGroupServices.map(x=> x.serviceId)).subscribe(services => {
+      this.groupServices = services;
+    });
+
     this.checkModeAndInitData();  
 
     this.itemForm = this.fb.group({
@@ -108,15 +118,15 @@ export class ItemAddUpdateComponent implements OnInit {
 
 
   showPriceField(): boolean {
-    return true;
+    return this.groupServices.some(x => x.serviceCategory === ServiceCategoryEnum.Selling);
   }
 
   showPrintingFields(): boolean {
-    return true;
+    return this.isGroupServicesContainsPrintingService();
   }
 
   isGroupServicesContainsPrintingService(): boolean {
-    return true;
+    return this.groupServices.some(x => x.serviceCategory === ServiceCategoryEnum.Printing);
   }
 
   onSave(): void {
