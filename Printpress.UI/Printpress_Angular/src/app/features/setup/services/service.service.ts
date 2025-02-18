@@ -6,6 +6,7 @@ import { ApiUrlResource } from "../../../core/resources/api-urls.resource";
 import { CacheKeyEnum, CacheService } from "../../../core/services/cache.service";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { ApiResponseDto } from "../../../core/models/api-response.dto";
+import { ServiceCategoryEnum } from "../models/service-category.enum";
 
 @Injectable({
   providedIn: 'root',
@@ -26,5 +27,11 @@ export class ServiceService {
             tap(data=> this.cacheService.set(CacheKeyEnum.services, data.data)), // cache the data 
             map(data => data.data)
         );
+    }
+
+    public getServices(serviceIds: number[]): Observable<ServiceGetDto[]> {
+        return this.getAll().pipe(
+            map(services => services.filter(service => serviceIds.includes(service.id)))
+        )
     }
 }

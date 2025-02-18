@@ -14,11 +14,14 @@ import { OrderSharedDataService } from '../../services/order-shared-data.service
 import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
 import { ItemGetDto } from '../../models/item/item-get.Dto';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
+import { ServiceService } from '../../../setup/services/service.service';
+import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 
 @Component({
   selector: 'app-order-group-add-update',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, SharedPaginationComponent, CommonModule, MatDialogModule],
+  imports: [ReactiveFormsModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, SharedPaginationComponent, 
+    CommonModule, MatDialogModule, OrderGroupServiceUpsertComponent],
   templateUrl: './order-group-add-update.component.html',
   styleUrl: './order-group-add-update.component.css'
 })
@@ -37,20 +40,23 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   private groupServices: OrderGroupServiceGetDto[] = [];
   itemsGridSource!: any[];
-  protected get displayedGroupServices(): string {
-    return this.groupServices.map(x => { return x.serviceName }).join(',');
-  }
 
-  protected isOuterItem: boolean = false;
+  protected groupServicesNamesCommaseperated!: string;
+
+  protected isGroupHasSellingService: boolean = false;
+  protected isGroupHasPrintingService: boolean = false;
+  protected isAddGroupServiceDialogOpen: boolean = false;
+
   displayedColumns: string[];
 
   constructor(private alertService: AlertService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private orderSharedService: OrderSharedDataService
+    private orderSharedService: OrderSharedDataService,
+    private serviceService: ServiceService
   ) {
-    if (!this.isOuterItem) {
+    if (!this.isGroupHasSellingService) {
       this.displayedColumns = ['index', 'name', 'numberOfPages', 'quantity',
         'itemPrice', 'stapledItemsCount', 'printedItemsCount', 'total', 'actions'];
     } else {
@@ -60,6 +66,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isAddGroupServiceDialogOpen = false;
     this.setGroupId();
     this.setCurrentGroupData();
     this.itemsGridSource = this.groupItems.slice(0, 5)
@@ -90,12 +97,15 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       data: { x: 5 },
       height: '550px',
       width: '1000px',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
       let returnedServices = result as { y: string };
       console.log(returnedServices);
     });
+
+     this.isAddGroupServiceDialogOpen = true;
   }
 
   protected addItem_Click() {
@@ -176,6 +186,20 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   private navigateToEditItemPage(itemId: number) {
     this.router.navigate(['/order/item', this.groupId, itemId]);
+  }
+  
+  private onGroupServicesChanged(): void {
+    this.extractGroupServicesData();
+  }
+
+  private extractGroupServicesData():void{
+    this.groupServicesNamesCommaseperated = this.groupServices.map(x => { return x.serviceName }).join(',');
+    this.serviceService.getServices(this.groupServices.map(x => x.serviceId)).subscribe(groupServices=>
+      {
+        this.isGroupHasPrintingService = groupServices.some(x => x.serviceCategory == ServiceCategoryEnum.Printing);
+        this.isGroupHasSellingService = groupServices.some(x => x.serviceCategory == ServiceCategoryEnum.Selling);
+        this.orderSharedService.setGroupBooleanProperty(this.groupId, this.isGroupHasPrintingService, this.isGroupHasSellingService);
+      });
   }
 
 }

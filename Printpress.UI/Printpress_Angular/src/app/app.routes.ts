@@ -6,7 +6,7 @@ import { OrderGroupServiceUpsertComponent } from './features/order/components/or
 import { ItemAddUpdateComponent } from './features/order/components/item-add-update/item-add-update.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'orderlist', pathMatch: 'full' },
+  { path: '', redirectTo: 'order/group/add', pathMatch: 'full' },
 
   {
     path: 'orderlist',
