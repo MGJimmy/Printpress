@@ -4,7 +4,7 @@ namespace Printpress.API;
 
 [Route("api/[controller]")]
 [ApiController]
-public class OrderController(IOrderService _IOrderService) : ControllerBase
+public class OrderController(IOrderAggregateService _IOrderService) : ControllerBase
 {
     [HttpGet]
     [Route("getOrderSummaryList")]

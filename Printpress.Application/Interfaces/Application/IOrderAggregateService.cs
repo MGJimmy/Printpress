@@ -1,6 +1,6 @@
 ﻿namespace Printpress.Application;
 
-public interface IOrderService
+public interface IOrderAggregateService
 {
     Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize);
 
