@@ -4,6 +4,11 @@ import { Router } from '@angular/router';
 import { imports } from './order-add-update.imports';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { OrderService } from '../../services/order.service';
+import { ClientService } from '../../../client/services/client.service';
+import { ClientGetDto } from '../../../client/models/client-get.dto';
+import { ComponentMode } from '../../../../shared/models/ComponentMode';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { AddClientComponent } from '../../../client/components/add-client/add-client.component';
 
 @Component({
   selector: 'app-order-add-update',
@@ -15,24 +20,46 @@ import { OrderService } from '../../services/order.service';
 export class OrderAddUpdateComponent implements OnInit {
 
   public componentMode: ComponentMode;
-  displayedColumns = ['no', 'name', 'deliveryDate', 'action'];
-  dataSource = new MatTableDataSource<OrderGroupGridViewModel>(ELEMENT_DATA);
+  public displayedColumns = ['no', 'name', 'deliveryDate', 'action'];
+  public dataSource = new MatTableDataSource<OrderGroupGridViewModel>(ELEMENT_DATA);
+  public clients : ClientGetDto[] =[];
+  public selectedClientId!:number
+  public orderName!:string;
 
   constructor(private router: Router,
     private OrderSharedService: OrderSharedDataService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private clientService:ClientService,
+    private dialog: MatDialog
   ) {
-    this.componentMode = new ComponentMode(router);
+    this.componentMode = new ComponentMode(this.router);
   }
 
   ngOnInit(): void {
 
+    if(this.componentMode.isViewMode){
+      this.displayedColumns = this.displayedColumns.filter(col=>col !=='action')
+    }
+
+    this.clientService.getAll().subscribe((res)=>{
+
+     this.clients = res.data;
+    })
   }
 
   saveOrder(){
     const orderDTO = this.OrderSharedService.getOrderObject()
     console.log(orderDTO);
     this.orderService.insertOrder(orderDTO).subscribe();
+  }
+
+
+
+  openDialog() {
+    this.dialog.open(AddClientComponent, {
+      width: '600px',
+      data: { message: 'Hello from the main component!' }
+    });
   }
 }
 
@@ -47,13 +74,4 @@ const ELEMENT_DATA: OrderGroupGridViewModel[] = [
   { no: 3, name: 'Lithium', deliveryDate: 6.941 },
 ];
 
-export class ComponentMode {
-  public isEditMode: boolean;
-  public isViewMode: boolean;
-  public isaddMode: boolean;
-  constructor(private router: Router) {
-    this.isViewMode = this.router.url.includes('view');
-    this.isEditMode = this.router.url.includes('edit');
-    this.isaddMode = this.router.url.includes('add');
-  }
-}
+

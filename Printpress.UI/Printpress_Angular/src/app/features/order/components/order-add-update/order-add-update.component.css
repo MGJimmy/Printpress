@@ -1,0 +1,12 @@
+.custom-panel .mat-option {
+    height: auto !important; /* Ensures search box fits properly */
+    display: flex;
+    align-items: center;
+}
+
+.custom-panel input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    outline: none;
+}
