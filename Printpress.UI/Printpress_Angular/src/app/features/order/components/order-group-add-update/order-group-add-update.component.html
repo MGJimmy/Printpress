@@ -5,7 +5,7 @@
         <hr>
         <div class="form-group">
             <label for="groupName">اسم المجموعة</label>
-            <input class="form-control" id="groupName" [(ngModel)]="groupName" placeholder="اسم المجموعة">
+            <input class="form-control" id="groupName" [(ngModel)]="groupName" (input)="groupNameChanged()" placeholder="اسم المجموعة">
         </div>
 
         <div class="d-flex">
