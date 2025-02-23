@@ -9,6 +9,7 @@ import { ClientGetDto } from '../../../client/models/client-get.dto';
 import { ComponentMode } from '../../../../shared/models/ComponentMode';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddClientComponent } from '../../../client/components/add-client/add-client.component';
+import { OrderServicePricesComponent } from '../order-service-prices/order-service-prices.component';
 
 @Component({
   selector: 'app-order-add-update',
@@ -22,14 +23,13 @@ export class OrderAddUpdateComponent implements OnInit {
   public componentMode: ComponentMode;
   public displayedColumns = ['no', 'name', 'deliveryDate', 'action'];
   public dataSource = new MatTableDataSource<OrderGroupGridViewModel>(ELEMENT_DATA);
-  public clients : ClientGetDto[] =[];
-  public selectedClientId!:number
-  public orderName!:string;
+  public clients: ClientGetDto[] = [];
+  public selectedClientId!: number
+  public orderName!: string;
 
   constructor(private router: Router,
     private OrderSharedService: OrderSharedDataService,
-    private orderService: OrderService,
-    private clientService:ClientService,
+    private clientService: ClientService,
     private dialog: MatDialog
   ) {
     this.componentMode = new ComponentMode(this.router);
@@ -37,20 +37,26 @@ export class OrderAddUpdateComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if(this.componentMode.isViewMode){
-      this.displayedColumns = this.displayedColumns.filter(col=>col !=='action')
+    if (this.componentMode.isViewMode) {
+      this.displayedColumns = this.displayedColumns.filter(col => col !== 'action')
     }
 
-    this.clientService.getAll().subscribe((res)=>{
+    this.clientService.getAll().subscribe((res) => {
 
-     this.clients = res.data;
+      this.clients = res.data;
     })
   }
 
-  saveOrder(){
-    const orderDTO = this.OrderSharedService.getOrderObject()
-    console.log(orderDTO);
-    this.orderService.insertOrder(orderDTO).subscribe();
+  saveOrder_Click() {
+
+    // Validate ////
+
+    // Open Service Prices Component.
+    this.dialog.open(OrderServicePricesComponent, {
+      data: { orderSharedService: this.OrderSharedService },
+      height: '550px',
+      width: '1000px'
+    });
   }
 
 

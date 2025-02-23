@@ -1,0 +1,20 @@
+<div class="prices-container">
+    <h1>اسعار خدمات الطلبية</h1>
+  
+    <div class="price-section">
+      <div class="price-item">
+        <label>سعر الورقة 80 جم ليزر</label>
+        <input type="number" [(ngModel)]="laserPrice" />
+        <button mat-raised-button color="accent" (click)="editPrice('laser')">تعديل</button>
+      </div>
+  
+      <div class="price-item">
+        <label>سعر الورقة 80 جم الوان</label>
+        <input type="number" [(ngModel)]="colorPrice" />
+        <button mat-raised-button color="accent" (click)="editPrice('color')">تعديل</button>
+      </div>
+    </div>
+  
+    <button mat-raised-button color="primary" (click)="save_Click()">حفظ</button>
+    <button mat-raised-button color="accent" mat-dialog-close>رجوع</button>
+  </div>
