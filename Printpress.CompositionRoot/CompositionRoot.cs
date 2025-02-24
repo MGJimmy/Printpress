@@ -32,7 +32,7 @@ namespace Printpress.CompositionRoot
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClientService, ClientService>();
             services.AddScoped<IOrderTransactionService, OrderTransactionService>();
-            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderAggregateService, OrderAggregateService>();
             services.AddScoped<IServiceService, ServiceService>();
 
 

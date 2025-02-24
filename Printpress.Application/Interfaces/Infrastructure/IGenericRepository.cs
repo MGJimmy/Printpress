@@ -20,6 +20,7 @@ namespace Printpress.Application
         T FirstOrDefault(bool track = true);
         T FirstOrDefault(Expression<Func<T, bool>> query, bool track = true);
         T FirstOrDefault(Expression<Func<T, bool>> query, bool track = true, params string[] includes);
+        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> query, bool track = true, params string[] includes);
         T FirstOrDefault(Expression<Func<T, bool>> query, params string[] includes);
         void RemoveAll(Expression<Func<T, bool>> query);
         void Remove(T entity);

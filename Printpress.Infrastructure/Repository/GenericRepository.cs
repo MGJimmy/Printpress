@@ -154,6 +154,20 @@ namespace Printpress.Infrastructure.Repository
 
             return track ? Items.FirstOrDefault() : Items.AsNoTracking().FirstOrDefault();
         }
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> query, bool track = true, params string[] includes)
+        {
+            var Items = Context.Set<T>().Where(query);
+
+            if (includes?.Any() == true)
+            {
+                foreach (var include in includes)
+                {
+                    Items = Items.Include(include);
+                }
+            }
+
+            return await (track ? Items.FirstOrDefaultAsync() : Items.AsNoTracking().FirstOrDefaultAsync());
+        }
         public T Find(params object[] id)
         {
             return Context.Set<T>().Find(id);

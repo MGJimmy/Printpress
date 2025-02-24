@@ -3,7 +3,7 @@ using Printpress.Domain.Enums;
 
 namespace Printpress.Application;
 
-public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : IOrderService
+public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : IOrderAggregateService
 {
     public async Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize)
     {
@@ -18,6 +18,26 @@ public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : 
         return _OrderMapper.MapToOrderSummeryDto(orders);
     }
 
+    public async Task<OrderDto> GetOrderDTOAsync(int orderId)
+    {
+        string[] includes = [
+            $"{nameof(Order.OrderGroups)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}",
+            $"{nameof(Order.Services)}"];
+
+        var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, includes);
+
+        if (order == null)
+        {
+            return null;
+        }
+
+        var orderDTO = order.MapToOrderDTO();
+
+        return orderDTO;
+    }
+
     public async Task InsertOrder(OrderUpsertDto orderDTO)
     {
 
@@ -27,20 +47,20 @@ public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : 
 
         order.TotalPaid = 0;
 
-        order.TotalPrice = CalculateOrderTotalPrice(order);
+        order.TotalPrice = await CalculateOrderTotalPrice(order);
 
         await _IUnitOfWork.OrderRepository.AddAsync(order);
 
         await _IUnitOfWork.SaveChangesAsync();
     }
 
-    private decimal? CalculateOrderTotalPrice(Order order)
+    private async Task<decimal?> CalculateOrderTotalPrice(Order order)
     {
         decimal totalOrderPrice = 0;
 
         foreach (var group in order.OrderGroups)
         {
-            SetGroupItemPrices(group, order.Services);
+            await SetGroupItemPrices(group, order.Services);
 
             totalOrderPrice += group.Items.Sum(i => i.Price);
         }
@@ -48,23 +68,23 @@ public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : 
         return totalOrderPrice;
     }
 
-    private void SetGroupItemPrices(OrderGroup group, List<Domain.Entities.OrderService> orderService)
+    private async Task SetGroupItemPrices(OrderGroup group, List<Domain.Entities.OrderService> orderService)
     {
-        var CachedServices =  new List<Service>();
-        // check existing Services
+        var allServices = await _IUnitOfWork.ServiceRepository.AllAsync();
 
-        var serviceList = CachedServices.Where(s => group.Services.Exists(x => s.Id == x.ServiceId)).ToList();
+        var groupServicesIds = new HashSet<int>(group.Services.Select(d => d.Id));
+        var currentGroupServices = allServices.Where(s => groupServicesIds.Contains(s.Id)).ToList();
 
-        if (serviceList.Exists(x => x.ServiceCategory == ServiceCategoryEnum.Selling))
+        if (currentGroupServices.Exists(x => x.ServiceCategory == ServiceCategoryEnum.Selling))
         {
             return;
         }
 
-        var printingService = serviceList.Find(x => x.ServiceCategory == ServiceCategoryEnum.Printing);
-        var staplingService = serviceList.Find(x => x.ServiceCategory == ServiceCategoryEnum.Stapling);
-        var cluingService = serviceList.Find(x => x.ServiceCategory == ServiceCategoryEnum.Clueing);
-        var cuttingService = serviceList.Find(x => x.ServiceCategory == ServiceCategoryEnum.Cutting);
-        
+        var printingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Printing);
+        var staplingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Stapling);
+        var cluingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Clueing);
+        var cuttingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Cutting);
+
         // Validate incoming data to be .... ???/???/???
 
         foreach (var item in group.Items)
@@ -103,7 +123,7 @@ public class OrderService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : 
 
     private decimal CalculatePrintingServicePrice(Item item, decimal price)
     {
-        string stringNoOfPages =  item.Details.Find(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages).Value;
+        string stringNoOfPages = item.Details.Find(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages).Value;
         var noOfPages = string.IsNullOrEmpty(stringNoOfPages) ? 1 : int.Parse(stringNoOfPages);
 
         string stringNoOfPrintingFaces = item.Details.Find(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces).Value;

@@ -1,0 +1,40 @@
+.prices-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .price-section {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 40px;
+    flex-direction: column;
+  }
+  
+  .price-item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    gap: 10px;
+  }
+  
+  input {
+    width: 80px;
+    padding: 5px;
+    text-align: center;
+  }
+  
+  button {
+    background-color: #ff914d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .save-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+  }
+  

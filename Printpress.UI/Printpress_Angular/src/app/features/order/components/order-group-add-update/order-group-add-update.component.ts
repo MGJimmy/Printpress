@@ -93,6 +93,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.groupName = currentGroup.name;
   }
 
+  protected groupNameChanged(){
+    const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
+    currentGroup.name = this.groupName;
+  }
+  
   protected editGroupService_Click(): void {
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
       data: { groupId: this.groupId },
