@@ -4,14 +4,13 @@ import { OrderGroupUpsertDto } from "../orderGroup/order-group-upsert.Dto";
 
 export class OrderUpsertDto extends IObjectState {
 
-    constructor(public id: number,
+    constructor(
+        public id: number,
         public name: string,
         public clientId: number,
         public orderGroups: OrderGroupUpsertDto[],
         public orderServices: OrderServicesUpsertDTO[]) {
 
         super();
-        console.log(orderGroups);
-
     }
 }
