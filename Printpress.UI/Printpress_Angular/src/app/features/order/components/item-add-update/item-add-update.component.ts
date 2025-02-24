@@ -6,7 +6,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order-group-service-upsert.Dto';
-import { ItemUpsertDto } from '../../models/item/item-upsert.Dto';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ItemGetDto } from '../../models/item/item-get.Dto';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -48,12 +47,12 @@ export class ItemAddUpdateComponent implements OnInit {
   itemForm!: FormGroup<{ [K in keyof ItemForm]: FormControl<ItemForm[K]> }>;
 
 
-  mockOrderGroupServices: OrderGroupServiceGetDto[] = [
-    // { id: 1, serviceId: 1, orderGroupId: 1, serviceName: "printing" },
-    // { id: 2, serviceId: 2, orderGroupId: 1, serviceName: "printing" },
-    // { id: 3, serviceId: 3, orderGroupId: 1, serviceName: "cutting" },
-    { id: 3, serviceId: 6, orderGroupId: 1, serviceName: "selling" },
-  ];
+  // mockOrderGroupServices: OrderGroupServiceGetDto[] = [
+  //   // { id: 1, serviceId: 1, orderGroupId: 1, serviceName: "printing" },
+  //   // { id: 2, serviceId: 2, orderGroupId: 1, serviceName: "printing" },
+  //   // { id: 3, serviceId: 3, orderGroupId: 1, serviceName: "cutting" },
+  //   { id: 3, serviceId: 6, orderGroupId: 1, serviceName: "selling" },
+  // ];
 
   groupServices!: ServiceGetDto[];
 
@@ -66,9 +65,9 @@ export class ItemAddUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.serviceService.getServices(this.mockOrderGroupServices.map(x=> x.serviceId)).subscribe(services => {
-      this.groupServices = services;
-    });
+    // this.serviceService.getServices(this.mockOrderGroupServices.map(x=> x.serviceId)).subscribe(services => {
+    //   this.groupServices = services;
+    // });
 
     this.checkModeAndInitData();  
 

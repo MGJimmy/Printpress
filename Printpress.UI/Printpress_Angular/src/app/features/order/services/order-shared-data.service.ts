@@ -4,6 +4,8 @@ import { OrderGroupGetDto } from '../models/orderGroup/order-group-get.Dto';
 import { OrderGroupServiceGetDto } from '../models/orderGroupService/order-group-service-get.Dto';
 import { ItemGetDto } from '../models/item/item-get.Dto';
 import { ObjectStateEnum } from '../../../core/models/object-state.enum';
+import { ServiceService } from '../../setup/services/service.service';
+import { ServiceCategoryEnum } from '../../setup/models/service-category.enum';
 
 /*
   Notes: 
@@ -16,7 +18,7 @@ export class OrderSharedDataService {
 
   private orderObject!: OrderGetDto;
 
-  constructor() {
+  constructor(private serviceService:ServiceService) {
     this.initializeOrderObject();
   }
 
@@ -102,29 +104,6 @@ export class OrderSharedDataService {
     this.orderObject.orderGroups.push(orderGroup);
 
     return tempId
-  }
-
-  /**
-  * Returns temp id of the added object.
-  * 
-  */
-  public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
-    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
-
-    if (orderGroup === undefined) {
-      throw new Error('Order group not found');
-    }
-    let tempId = this.generateTempId(orderGroup.orderGroupServices.map(x => x.id));
-
-    let orderGroupService: OrderGroupServiceGetDto = {
-      id: tempId,
-      orderGroupId: orderGroupId,
-      serviceId: ServiceId,
-    };
-
-    orderGroup.orderGroupServices.push(orderGroupService);
-
-    return tempId;
   }
 
   public getOrderGroup(id: number): OrderGroupGetDto {
@@ -305,6 +284,53 @@ export class OrderSharedDataService {
     return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
   }
 
+  public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
+    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
+
+    if (orderGroup === undefined) {
+      throw new Error('Order group not found');
+    }
+
+
+    let tempId = this.generateTempId(orderGroup.orderGroupServices.map(x => x.id));
+
+    let orderGroupService: OrderGroupServiceGetDto = {
+      id: tempId,
+      orderGroupId: orderGroupId,
+      serviceId: ServiceId,
+      objectState : ObjectStateEnum.temp
+    };
+
+    orderGroup.orderGroupServices.push(orderGroupService);
+
+    this.checkGroupServicesCategory(orderGroup);
+
+    return tempId;
+  }
+
+  private checkGroupServicesCategory(group:OrderGroupGetDto){
+      this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services =>{
+      group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
+      group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
+    });
+  }
+
+  public deleteGroupService(groupId:number, serviceId:number){
+    let groupServices = this.orderObject.orderGroups.find(x => x.id = groupId)!.orderGroupServices
+    
+    
+    let groupService = groupServices.find(s => s.id = serviceId)!;
+
+    if(groupService?.objectState === ObjectStateEnum.temp){
+      let index = groupServices.findIndex(s => s.id = serviceId);
+      groupServices.splice(index, 1);
+    }
+    else{
+      groupService.objectState = ObjectStateEnum.deleted;
+    }
+
+
+  }
 
   /*
   =======================

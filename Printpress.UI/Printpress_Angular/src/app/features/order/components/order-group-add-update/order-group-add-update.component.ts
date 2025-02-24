@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +20,7 @@ import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum
 @Component({
   selector: 'app-order-group-add-update',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, SharedPaginationComponent, 
+  imports: [ReactiveFormsModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, SharedPaginationComponent,
     CommonModule, MatDialogModule, OrderGroupServiceUpsertComponent],
   templateUrl: './order-group-add-update.component.html',
   styleUrl: './order-group-add-update.component.css'
@@ -54,7 +54,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private orderSharedService: OrderSharedDataService,
-    private serviceService: ServiceService
+    private serviceService: ServiceService,
+    private injector: Injector
   ) {
     if (!this.isGroupHasSellingService) {
       this.displayedColumns = ['index', 'name', 'numberOfPages', 'quantity',
@@ -94,18 +95,21 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   protected editGroupService_Click(): void {
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
-      data: { x: 5 },
+      data: { groupId: this.groupId },
       height: '550px',
       width: '1000px',
-      disableClose: true
+      disableClose: true,
+      injector: this.injector
     });
+    this.isAddGroupServiceDialogOpen = true;
 
     dialogRef.afterClosed().subscribe(result => {
       let returnedServices = result as { y: string };
+     this.isAddGroupServiceDialogOpen = false;
+
       console.log(returnedServices);
     });
 
-     this.isAddGroupServiceDialogOpen = true;
   }
 
   protected addItem_Click() {
