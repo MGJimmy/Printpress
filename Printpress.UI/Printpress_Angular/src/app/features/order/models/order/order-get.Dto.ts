@@ -1,4 +1,5 @@
 import { IObjectState } from "../../../../core/models/i-object-state";
+import { OrderServicesGetDTO } from "../order-service/order-service-getDto";
 import { OrderGroupGetDto } from "../orderGroup/order-group-get.Dto";
 
 export interface OrderGetDto extends IObjectState {
@@ -9,4 +10,5 @@ export interface OrderGetDto extends IObjectState {
     clientId:number;
 
     orderGroups: OrderGroupGetDto[];
+    orderServices: OrderServicesGetDTO[];
 }

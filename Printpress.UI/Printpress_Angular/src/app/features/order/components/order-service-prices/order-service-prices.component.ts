@@ -8,6 +8,8 @@ import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../services/order.service';
 import { Router } from '@angular/router';
+import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
+import { AlertService } from '../../../../core/services/alert.service';
 
 @Component({
   selector: 'app-order-service-prices',
@@ -20,44 +22,60 @@ import { Router } from '@angular/router';
 export class OrderServicePricesComponent {
 
   private _orderSharedService!: OrderSharedDataService;
-  private _tempServicesList!: any;
+  protected _tempServicesList!: any[];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { orderSharedService: OrderSharedDataService },
     private orderService: OrderService,
     private router: Router,
+    private alertService: AlertService
   ) {
+
     this._orderSharedService = data.orderSharedService;
-    // this._tempServicesList = this._orderSharedService.getOrderGroupServices(1); //getOrderServices()
+    // this._tempServicesList = this._orderSharedService.getAllOrderGroupsServices();
 
-  }
-
-  ngOnInit() {
-
-  }
-
-  laserPrice: number = 1.0;
-  colorPrice: number = 1.0;
-
-  editPrice(type: string) {
-    if (type === 'laser') {
-      alert(`Editing laser paper price: ${this.laserPrice}`);
-    } else if (type === 'color') {
-      alert(`Editing color paper price: ${this.colorPrice}`);
-    }
+    this._tempServicesList = [
+      { id: 1, price: 5, serviceName: 'test' },
+      { id: 2, price: 10, serviceName: 'test' },
+      { id: 3, price: 15, serviceName: 'test' }
+    ];
   }
 
   save_Click() {
-    //this._orderSharedService.setOrderServices(this._tempServicesList);
+
+    // Validate
+    if (!this.validateOrderPrices()) {
+      return;
+    }
+    // this._orderSharedService.setOrderServices(this._tempServicesList);
 
     const orderDTO = this._orderSharedService.getOrderObject()
     console.log(orderDTO);
-    this.orderService.insertOrder(orderDTO).subscribe();
+    // Map to order upsert
+    this.orderService.insertOrder(orderDTO).subscribe(
+      (response) => {
+        this.alertService.showSuccess('تم حفظ الطلبية بنجاح');
+        this.navigateToOrderListPage();
+      }, (error) => {
+        this.alertService.showError('حدث خطأ أثناء حفظ الطلبية');
+      }
+    );
+  }
 
-    this.navigateToOrderListPage();
+  private validateOrderPrices(): boolean {
+    if (this.isAnyServicePriceEmpty()) {
+      this.alertService.showError('يجب تحديد سعر لكل الخدمات');
+      return false;
+    }
+
+    return true;
+  }
+
+  private isAnyServicePriceEmpty() {
+    return this._tempServicesList.some(x => !x.price);
   }
 
   private navigateToOrderListPage() {
-    this.router.navigate([this._orderSharedService.getOrderPageRoute()]);
+    this.router.navigate([this._orderSharedService.getOrderListRoute()]);
   }
 }

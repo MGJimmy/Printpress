@@ -5,13 +5,15 @@
   
   .price-section {
     display: flex;
-    justify-content: space-around;
-    margin: 20px 0;
+    justify-content: space-between;
+    margin: 20px 40px;
+    flex-direction: column;
   }
   
   .price-item {
     display: flex;
     align-items: center;
+    margin: 10px 0;
     gap: 10px;
   }
   
