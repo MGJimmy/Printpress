@@ -36,12 +36,6 @@ export class OrderAddUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Open Service Prices Component.
-    this.dialog.open(OrderServicePricesComponent, {
-      data: { orderSharedService: this.OrderSharedService },
-      height: '550px',
-      width: '1000px'
-    });
     if (this.componentMode.isViewMode) {
       this.displayedColumns = this.displayedColumns.filter(col => col !== 'action')
     }

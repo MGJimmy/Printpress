@@ -6,56 +6,51 @@ import { OrderGetDto } from "./order/order-get.Dto";
 import { OrderUpsertDto } from "./order/order-upsert.Dto";
 import { OrderGroupGetDto } from "./orderGroup/order-group-get.Dto";
 import { OrderGroupUpsertDto } from "./orderGroup/order-group-upsert.Dto";
+import { OrderGroupServiceGetDto } from "./orderGroupService/order-group-service-get.Dto";
+import { OrderGroupServiceUpsertDto } from "./orderGroupService/order-group-service-upsert.Dto";
 
-function mapOrderGetDtoToUpsertDto(order: OrderGetDto): OrderUpsertDto {
+export function mapOrderGetToUpsert(orderGet: OrderGetDto): OrderUpsertDto {
     return new OrderUpsertDto(
-        order.id,
-        order.name,
-        order.clientId,
-        order.orderGroups.map(group => mapOrderGroupGetDtoToUpsertDto(group)),
-        order.orderServices.map(service => mapOrderServiceGetDtoToUpsertDto(service))
+        orderGet.id,
+        orderGet.name,
+        orderGet.clientId,
+        orderGet.orderGroups.map(mapOrderGroupGetToUpsert),
+        orderGet.orderServices.map(mapOrderServiceGetToUpsert)
     );
 }
 
-function mapOrderGroupGetDtoToUpsertDto(group: OrderGroupGetDto): OrderGroupUpsertDto {
-    return new OrderGroupUpsertDto(
-        group.id,
-        group.orderId,
-        group.name,
-        group.deliveryDate,
-        group.deliveryName,
-        group.receiverName,
-        group.isHasPrintingService,
-        group.isHasSellingService,
-        group.orderGroupServices.map(service => ({
-            id: service.id,
-            serviceId: service.serviceId,
-            orderGroupId: service.orderGroupId,
-            serviceName: service.serviceName
-        })),
-        group.items.map(item => mapItemGetDtoToUpsertDto(item))
-    );
-}
-
-function mapOrderServiceGetDtoToUpsertDto(service: OrderServicesGetDTO): OrderServicesUpsertDTO {
+function mapOrderGroupGetToUpsert(groupGet: OrderGroupGetDto): OrderGroupUpsertDto {
     return {
-        id: service.id,
-        serviceId: service.serviceId,
-        price: service.price
+        id: groupGet.id,
+        name: groupGet.name,
+        objectState: groupGet.objectState, // Keep object state
+        orderGroupServices: groupGet.orderGroupServices.map(mapOrderGroupServiceGetToUpsert),
+        items: groupGet.items.map(mapItemGetToUpsert)
     };
 }
 
-function mapItemGetDtoToUpsertDto(item: ItemGetDto): ItemUpsertDto {
+function mapOrderGroupServiceGetToUpsert(serviceGet: OrderGroupServiceGetDto): OrderGroupServiceUpsertDto {
     return {
-        id: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        groupId: item.groupId,
-        itemDetails: item.itemDetails.map(detail => ({
-            ...detail
-        }))
+        id: serviceGet.id,
+        ServiceId: serviceGet.serviceId,
+        objectState: serviceGet.objectState
     };
 }
 
-// Let me know if you want me to define the Upsert DTO classes or adjust anything! 🚀
+function mapItemGetToUpsert(itemGet: ItemGetDto): ItemUpsertDto {
+    return {
+        id: itemGet.id,
+        name: itemGet.name,
+        quantity: itemGet.quantity,
+        price: itemGet.price,
+        objectState: itemGet.objectState
+    };
+}
+
+function mapOrderServiceGetToUpsert(serviceGet: OrderServicesGetDTO): OrderServicesUpsertDTO {
+    return {
+        id: serviceGet.id,
+        serviceId: serviceGet.serviceId,
+        price: serviceGet.price
+    };
+}
