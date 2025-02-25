@@ -10,6 +10,7 @@ import { ComponentMode } from '../../../../shared/models/ComponentMode';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddClientComponent } from '../../../client/components/add-client/add-client.component';
 import { OrderServicePricesComponent } from '../order-service-prices/order-service-prices.component';
+import { AlertService } from '../../../../core/services/alert.service';
 
 @Component({
   selector: 'app-order-add-update',
@@ -30,7 +31,8 @@ export class OrderAddUpdateComponent implements OnInit {
   constructor(private router: Router,
     private OrderSharedService: OrderSharedDataService,
     private clientService: ClientService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private alertService: AlertService
   ) {
     this.componentMode = new ComponentMode(this.router);
   }
@@ -48,16 +50,30 @@ export class OrderAddUpdateComponent implements OnInit {
 
   saveOrder_Click() {
 
-    // Validate ////
+    if (!this.validateOrderData()) {
+      return;
+    }
 
-    // Open Service Prices Component.
+    this.openServicePricesDialog();
+  }
+
+  private validateOrderData(): boolean {
+    const emptyGroupsList = this.OrderSharedService.getOrderObject().orderGroups.length == 0;
+    if (emptyGroupsList) {
+      this.alertService.showError('يجب إضافة مجموعات للطلبية');
+      return false;
+    }
+
+    return true;
+  }
+
+  private openServicePricesDialog() {
     this.dialog.open(OrderServicePricesComponent, {
       data: { orderSharedService: this.OrderSharedService },
       height: '550px',
       width: '1000px'
     });
   }
-
 
 
   openDialog() {
