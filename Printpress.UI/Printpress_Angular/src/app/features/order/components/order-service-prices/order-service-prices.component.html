@@ -9,7 +9,7 @@
   <div class="price-section">
     <ng-container *ngFor="let service of _tempServicesList; let i = index">
       <div class="price-item">
-        <label>{{service.serviceName}}</label>
+        <label>{{service.name}}</label>
         <input type="number" [(ngModel)]="service.price" />
       </div>
     </ng-container>
