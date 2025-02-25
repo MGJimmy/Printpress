@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
-import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order-group-service-upsert.Dto';
 import { MatButtonModule } from '@angular/material/button';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
@@ -11,21 +10,18 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
-import { OrderGroupMockService } from '../../services/order-group-mock.service';
 import { Observable, Subscription } from 'rxjs';
 import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
-import { SelectedServicesMockService } from '../../services/selected-services-mock.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ServiceService } from '../../../setup/services/service.service';
+import { ServiceGetDto } from '../../../setup/models/service-get.dto';
+import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
+import { OrderSharedDataService } from '../../services/order-shared-data.service';
 
 export interface ServiceCat_interface {
   id: number;
-  name: string;
-}
-
-export interface Service_interface {
-  id: number;
-  serviceCategoryId: number;
   name: string;
 }
 @Component({
@@ -55,57 +51,51 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     { headerName: 'إجراء', column: 'action' },
   ];
 
-  tableData: Service_interface[] = [];
+  tableData: ServiceGetDto[] | null = null;
+
   sellingCategories: ServiceCat_interface[] = [];
   otherCategories: ServiceCat_interface[] = [];
-  categories: ServiceCat_interface[] = [];
-  services: Service_interface[] = [];
+  serviceCategories!: string[] 
+  allServices: ServiceGetDto[] = [];
 
-  selectedCategoryId: number | null = null;
+  selectedCategory: string | null = null;
   selectedServiceId: number | null = null;
   isSellingSelected: boolean | null = null;
   subscriptions: Subscription = new Subscription();
 
 
-  filteredServices: Service_interface[] = [];
+  filteredServices: ServiceGetDto[] = [];
   selectedServiceCategoryId: number | null = null;
+
+  groupId: number = 1;
 
   constructor(
     private alertService: AlertService,
     private dialogService: DialogService,
-    private mockService: OrderGroupMockService,
     private errorHandlingService: ErrorHandlingService,
-    private SelectedServicesMockService: SelectedServicesMockService,
-    private cdr: ChangeDetectorRef
+    private currentComponentDialogRef: MatDialogRef<OrderGroupServiceUpsertComponent>,
+    private serviceService: ServiceService,
+    private orderSharedDataService:OrderSharedDataService,
+    @Inject(MAT_DIALOG_DATA) public inputData: any
   ) {}
 
   ngOnInit(): void {
-    this.fetchServiceCats();
+    this.groupId = this.inputData.groupId;
+    console.log(this.groupId);
+
     this.fetchServices();
-    this.fetchTableData();
+    this.fillPageData()
+
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
-  fetchServiceCats(): void {
-    this.mockService.getServiceCats().subscribe({
-      next: (data) => {
-        this.categories = data;
-        this.sellingCategories = data.filter((cat) => cat.name === 'بيع');
-        this.otherCategories = data.filter((cat) => cat.name !== 'بيع');
-      },
-      error: (err) => {
-        this.errorHandlingService.handleError(err);
-      },
-    });
-  }
-
   fetchServices(): void {
-    this.mockService.getServices().subscribe({
+    this.serviceService.getAll().subscribe({
       next: (data) => {
-        this.services = data;
+        this.allServices = data;
       },
       error: (err) => {
         this.errorHandlingService.handleError(err);
@@ -113,68 +103,96 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     });
   }
 
-  fetchTableData(){
-    this.SelectedServicesMockService.getServices().subscribe({
-      next: (data) => {this.tableData = data},
-      error: (err) => {this.errorHandlingService.handleError(err)}
-    })
+
+  private fillPageData(){
+    this.fillServiceCategoriesList();
+    this.fillTableData();
+    this.clearSelections();
   }
 
-  onCategorySelect(categoryId: number): void {
-    const isSelling = this.categories.some((cat) => cat.id === categoryId && cat.name === 'بيع');
+  fillServiceCategoriesList(){
+    let group = this.orderSharedDataService.getOrderGroup(this.groupId);
 
-    if (this.isSellingSelected === null || this.isSellingSelected === isSelling) {
-      this.isSellingSelected = isSelling;
-      this.selectedCategoryId = categoryId;
-
-      this.filteredServices = this.services.filter((svc) => svc.serviceCategoryId === categoryId);
-      this.categories = isSelling ? this.sellingCategories : this.otherCategories;
-    } else {
-      this.alertService.showError('يمكنك اختيار فئة واحدة فقط');
-      this.clearSelections();
+    if(!group.orderGroupServices || group.orderGroupServices.length == 0){
+      this.serviceCategories = Object.keys(ServiceCategoryEnum);
+      return;
     }
+
+    if(group.isHasSellingService){
+      this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling);
+      return;
+    }
+    
+    this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling);
   }
+
+  private fillTableData(){
+    let groupServices = this.orderSharedDataService.getOrderGroupServices(this.groupId);
+    
+    if(!groupServices || groupServices.length == 0){
+      return;
+    }
+
+    this.serviceService.getServices(groupServices.map(x => x.serviceId)).subscribe(services =>{
+      this.tableData = services;
+    });
+  }
+
+
+  // onCategorySelect_old(categoryId: number): void {
+  //   const isSelling = this.serviceCategories.some((cat) => cat.id === categoryId && cat.name === 'بيع');
+
+  //   if (this.isSellingSelected === null || this.isSellingSelected === isSelling) {
+  //     this.isSellingSelected = isSelling;
+  //     this.selectedCategory = categoryId;
+
+  //     this.filteredServices = this.allServices.filter((svc) => svc.serviceCategoryId === categoryId);
+  //     this.serviceCategories = isSelling ? this.sellingCategories : this.otherCategories;
+
+  //   } else {
+  //     this.alertService.showError('يمكنك اختيار فئة واحدة فقط');
+  //     this.clearSelections();
+  //   }
+  // }
+
+  onCategorySelect(serviceCategoryEnumValue: string): void {
+    this.filteredServices = this.allServices.filter(s => s.serviceCategory === (serviceCategoryEnumValue as ServiceCategoryEnum));
+  }
+
+
 
   clearSelections(): void {
     this.isSellingSelected = null;
-    this.selectedCategoryId = null;
+    this.selectedCategory = null;
     this.selectedServiceId = null;
   }
 
-  addSelectedServiceToTable(): void {
-    if (!this.selectedCategoryId || !this.selectedServiceId) {
+  addGroupService(): void {
+    if (!this.selectedCategory || !this.selectedServiceId) {
       this.alertService.showError('من فضلك اختر نوع الخدمة أولا');
       this.clearSelections();
       return;
     }
 
-    const selectedService = this.services.find((svc) => svc.id === this.selectedServiceId);
+    const selectedService = this.allServices.find((svc) => svc.id === this.selectedServiceId);
 
     if (!selectedService) {
       this.alertService.showError('حدث خطأ في اختيار نوع الخدمة');
       return;
     }
 
-    if (this.tableData.some((row) => row.id === selectedService.id)) {
+    if (this.tableData?.some((row) => row.id === selectedService.id)) {
       this.alertService.showError('لا يمكنك إضافة الخدمة مرتين');
       return;
     }
 
-    this.SelectedServicesMockService.addService(selectedService).subscribe({
-      next: (services) => {
-        this.tableData = [...services];
-        this.alertService.showSuccess('تم إضافة الخدمة بنجاح');
-        console.log(this.tableData);
-      },
-      error: (error) => {
-        this.errorHandlingService.handleError(error);
-        this.alertService.showError('حدث خطأ أثناء إضافة الخدمة');
-      },
-    });
-    this.clearSelections();
+    this.orderSharedDataService.addOrderGroupService(this.groupId, selectedService.id);
+    this.fillPageData();
+
+    this.alertService.showSuccess('تم إضافة الخدمة بنجاح');
   }
 
-  onDeleteServiceCat(id: number): void {
+  onDeleteServiceCat(serviceId: number): void {
     const dialogData: ConfirmDialogModel = {
       title: 'تأكيد الحذف',
       message: 'هل أنت متأكد أنك تريد حذف هذه الخدمة ؟',
@@ -184,20 +202,16 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
     const dialogSub = this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
       if (confirmed) {
-        const deleteSub = this.SelectedServicesMockService.deleteService(id).subscribe({
-          next: () => {
-            this.fetchTableData();
-            this.alertService.showSuccess('تم حذف الخدمة بنجاح!');
-          },
-          error: (err) => {
-            this.alertService.showError('حدث خطأ أثناء حذف الخدمة. يرجى المحاولة مرة أخرى.');
-            this.errorHandlingService.handleError(err);
-          },
-        });
-        this.subscriptions.add(deleteSub);
+        this.orderSharedDataService.deleteGroupService(this.groupId, serviceId);
+        this.fillPageData();
+        this.alertService.showSuccess('تم حذف الخدمة بنجاح!');
       }
     });
 
     this.subscriptions.add(dialogSub);
+  }
+
+  protected Save(){
+    this.currentComponentDialogRef.close();
   }
 }
