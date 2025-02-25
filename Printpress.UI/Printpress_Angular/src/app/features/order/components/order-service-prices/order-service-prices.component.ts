@@ -10,6 +10,7 @@ import { OrderService } from '../../services/order.service';
 import { Router } from '@angular/router';
 import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { mapOrderGetToUpsert } from '../../models/order-mapper';
 
 @Component({
   selector: 'app-order-service-prices',
@@ -47,12 +48,14 @@ export class OrderServicePricesComponent {
     if (!this.validateOrderPrices()) {
       return;
     }
+    
     // this._orderSharedService.setOrderServices(this._tempServicesList);
 
     const orderDTO = this._orderSharedService.getOrderObject()
-    console.log(orderDTO);
+
+    const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
     // Map to order upsert
-    this.orderService.insertOrder(orderDTO).subscribe(
+    this.orderService.insertOrder(orderUpsertDTO).subscribe(
       (response) => {
         this.alertService.showSuccess('تم حفظ الطلبية بنجاح');
         this.navigateToOrderListPage();
