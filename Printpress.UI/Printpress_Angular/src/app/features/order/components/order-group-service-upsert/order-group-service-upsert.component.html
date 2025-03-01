@@ -6,8 +6,8 @@
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>الفئة</mat-label>
-          <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="onCategorySelect($event.value)">
-            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategorySelect($event.value)">
+            <mat-option *ngFor="let cat of serviceCategories" [value]="cat">{{ cat }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -28,14 +28,19 @@
     <div class="row my-3">
       <!-- Add Button -->
       <div class="col-md-12 text-center">
-        <button mat-raised-button color="primary" (click)="addSelectedServiceToTable()">إضافة</button>
+        <button mat-raised-button color="primary" (click)="addGroupService()">إضافة</button>
       </div>
     </div>
   </mat-card-content>
-  <app-table-template style="width: 95%;" class="mx-auto mt-3"
-  [isShowDeleteButton]="true"
-  [columnDefs]="columnDefs"
-  [originalSource]="tableData"
-  (deleteClicked)="onDeleteServiceCat($event)">
-</app-table-template>
+  <div></div>
+  <app-table-template style="width: 95%;" class="mx-auto mt-3" *ngIf="tableData"
+    [isShowDeleteButton]="true"
+    [columnDefs]="columnDefs"
+    [originalSource]="tableData"
+    (deleteClicked)="onDeleteServiceCat($event)">
+  </app-table-template>
+
+<button mat-button class="btn btn-primary" (click)="Save()">
+  Save
+</button>
 </mat-card>

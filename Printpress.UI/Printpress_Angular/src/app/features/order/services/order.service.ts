@@ -4,7 +4,7 @@ import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { OrderSummaryDto } from '../models/order/order-summary.Dto';
 import { ApiPagingResponseDto } from '../../../core/models/api-response.dto';
-import { OrderGetDto } from '../models/order/order-get.Dto';
+import { OrderUpsertDto } from '../models/order/order-upsert.Dto';
 
 @Injectable({
   providedIn: 'root',
@@ -32,8 +32,8 @@ export class OrderService {
   //     return this.httpService.get<any[]>(ApiUrlResource.OrderAPI.GetOrders);
   // }
 
-  public insertOrder(orderDTO: OrderGetDto): Observable<any> {
-    return this.httpService.post<OrderGetDto>(
+  public insertOrder(orderDTO: OrderUpsertDto): Observable<any> {
+    return this.httpService.post<OrderUpsertDto>(
       ApiUrlResource.OrderAPI.insertOrder,
       orderDTO
     );

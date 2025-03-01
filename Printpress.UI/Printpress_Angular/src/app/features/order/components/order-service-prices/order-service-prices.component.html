@@ -1,0 +1,20 @@
+<div class="prices-container">
+  <h1>اسعار خدمات الطلبية</h1>
+
+  <br>
+  <br>
+  <div class="text-danger">تنبيه: التعديل في سعر خدمة سيؤدي الي تعديل سعرها ف كل المجموعات التي تحتوي علي هذه الخدمة.
+  </div>
+
+  <div class="price-section">
+    <ng-container *ngFor="let service of _tempServicesList; let i = index">
+      <div class="price-item">
+        <label>{{service.name}}</label>
+        <input type="number" [(ngModel)]="service.price" />
+      </div>
+    </ng-container>
+  </div>
+
+  <button class="mx-3" mat-raised-button color="primary" (click)="save_Click()">حفظ</button>
+  <button class="mx-3" mat-raised-button color="accent" mat-dialog-close>رجوع</button>
+</div>
