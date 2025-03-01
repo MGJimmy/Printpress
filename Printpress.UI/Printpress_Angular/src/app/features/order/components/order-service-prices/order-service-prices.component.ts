@@ -12,6 +12,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { mapOrderGetToUpsert } from '../../models/order-mapper';
 import { ServiceService } from '../../../setup/services/service.service';
 import { OrderServicesGetDTO } from '../../models/order-service/order-service-getDto';
+import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 
 @Component({
   selector: 'app-order-service-prices',
@@ -39,13 +40,21 @@ export class OrderServicePricesComponent implements OnInit{
 
   async ngOnInit() {
     this._tempServicesList = [];
+    
     for (let i = 0; i < this._orderSharedService.getAllOrderGroupsServices().length; i++) {
-      const service = this._orderSharedService.getAllOrderGroupsServices()[i];
-      const servicePrice = (await this.servicesService.getServiceById(service.serviceId)).price;
+
+      const serviceId = this._orderSharedService.getAllOrderGroupsServices()[i].serviceId;
+
+      const service = await this.servicesService.getServiceById(serviceId);
+
+      if (service.serviceCategory == ServiceCategoryEnum.Selling) {
+        continue;
+      }
+
       const tempService: { serviceId: number, name: string, price: number } = {
-        serviceId: service.serviceId,
-        name: service.serviceName || '',
-        price: servicePrice
+        serviceId: service.id,
+        name: service.name || '',
+        price: service.price
       };
 
 
