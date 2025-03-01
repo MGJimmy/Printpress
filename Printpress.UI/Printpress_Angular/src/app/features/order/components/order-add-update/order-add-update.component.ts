@@ -58,7 +58,7 @@ export class OrderAddUpdateComponent implements OnInit {
   openDialog() {
     this.dialog.open(AddClientComponent, {
       width: '600px',
-      data: { message: 'Hello from the main component!' }
+     
     });
   }
 }

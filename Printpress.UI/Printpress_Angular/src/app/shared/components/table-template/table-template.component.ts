@@ -23,7 +23,9 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
     MatButtonModule,
     MatTableModule,
     CommonModule,
+    FontAwesomeModule,
     FontAwesomeModule
+
   ],
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.css'],
@@ -58,6 +60,7 @@ export class TableTemplateComponent implements OnInit{
 
   ngOnInit(): void {
 
+    debugger;
     this.displayedColumns = Object.keys(this.originalSource[0])
 
     this.pushSharedColumns();

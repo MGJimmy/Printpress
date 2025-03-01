@@ -1,6 +1,6 @@
 export interface ClientGetDto {
   id : number,
   name : string,
-  number : number,
+  mobile : string,
   address : string
 }
