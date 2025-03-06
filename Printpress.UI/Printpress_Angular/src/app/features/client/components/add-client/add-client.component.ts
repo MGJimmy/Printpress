@@ -12,6 +12,7 @@ import { ClientService } from '../../services/client.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ClientUpsertDto } from '../../models/client-upsert.dto';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ClientGetDto } from '../../models/client-get.dto';
 
 @Component({
   selector: 'app-add-customer',
@@ -28,14 +29,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./add-client.component.css']
 })
 export class AddClientComponent implements OnInit, OnDestroy {
-  clientForm!: FormGroup<{ 
+ public clientForm!: FormGroup<{ 
     name: FormControl<string>; 
     number: FormControl<string>; 
     address: FormControl<string>; 
   }>;
-  isEditMode = false;
-  clientId = 0;
+  public isEditMode = false;
+  public clientId = 0;
   private readonly destroy$ = new Subject<void>();
+  public originalFormValue!:ClientGetDto
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -52,7 +54,6 @@ export class AddClientComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    debugger;
     this.initializeForm();
     this.checkForEditMode();
   }
@@ -79,15 +80,16 @@ export class AddClientComponent implements OnInit, OnDestroy {
   }
 
   private loadClientData(id: number): void {
-    debugger;
     this.clientService.getById(id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (client) => {
-        if (client) {
+      next: (response) => {
+        if (response) {
           this.clientForm.patchValue({
-            name: client.data.name,
-            number: String(client.data.mobile),
-            address: client.data.address
+            name: response.data.name,
+            number: response.data.mobile,
+            address: response.data.address
           });
+          this.clientForm.markAllAsTouched();
+          this.originalFormValue = response.data;
         } else {
           this.handleClientNotFound();
         }
@@ -106,12 +108,17 @@ export class AddClientComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     const clientData: ClientUpsertDto = {
       name: this.clientForm.value.name!,
-      mobile: String(this.clientForm.value.number),
+      mobile: this.clientForm.value.number!,
       address: this.clientForm.value.address!
     };
 
+    if(this.isEditMode &&!this.isDateChanged(clientData, this.originalFormValue)){
+      this.alertService.showInfo('لم يتم تغيير أي بيانات');
+      return;
+    }
+
     const request = this.isEditMode 
-      ? this.clientService.update(clientData, this.clientId) 
+      ? this.clientService.update(clientData, this.clientId)
       : this.clientService.add(clientData);
     
     const successMessage = this.isEditMode ? 'تم تحديث بيانات العميل' : 'تم إضافة العميل بنجاح';
@@ -140,6 +147,17 @@ export class AddClientComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
+  isDateChanged(clientUpsertDto: ClientUpsertDto, originalFormValue: ClientGetDto): boolean {
+    // Check if any field has changed
+    const isChanged =
+      clientUpsertDto.name !== originalFormValue.name ||
+      clientUpsertDto.mobile !== originalFormValue.mobile ||
+      clientUpsertDto.address !== originalFormValue.address;
+    
+      return isChanged ;
+  }
+  
+
   validateNumberAndGetErrorMessage(): { isValid: boolean; message: string } {
     
     const numberControl = this.clientForm.get('number');
@@ -159,4 +177,5 @@ export class AddClientComponent implements OnInit, OnDestroy {
 
     return { isValid: true, message: '' };
   }
+
 }

@@ -60,7 +60,6 @@ export class TableTemplateComponent implements OnInit{
 
   ngOnInit(): void {
 
-    debugger;
     this.displayedColumns = Object.keys(this.originalSource[0])
 
     this.pushSharedColumns();

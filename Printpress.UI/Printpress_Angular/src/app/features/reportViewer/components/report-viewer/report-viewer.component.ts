@@ -46,7 +46,6 @@ export class ReportViewerComponent implements OnInit {
 
   ngOnInit(): void {
     this.reportViewerService.getReport().subscribe((blob :BlobPart ) => {
-      debugger;
       const pdfBlob = new Blob([blob], { type: 'application/pdf' });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl);

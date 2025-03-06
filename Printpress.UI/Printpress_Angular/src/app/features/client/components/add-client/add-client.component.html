@@ -12,7 +12,7 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>رقم الموبايل</mat-label>
-        <input type="number" matInput formControlName="number"/>
+        <input type="text" matInput formControlName="number"/>
        
         <mat-error *ngIf="validateNumberAndGetErrorMessage().isValid === false">
           {{validateNumberAndGetErrorMessage().message}}

@@ -37,7 +37,7 @@ export class ClientService {
   }
 
   update(client: ClientUpsertDto, id: number): Observable<ApiResponseDto<ClientUpsertDto>> {
-    return this.httpService.put<ApiResponseDto<ClientUpsertDto>>(ApiUrlResource.ClientAPI.update(id), client);
+    return this.httpService.post<ApiResponseDto<ClientUpsertDto>>(ApiUrlResource.ClientAPI.update(id), client);
   }
 
   delete(id: number): Observable<string> {
