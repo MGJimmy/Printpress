@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { imports } from './order-add-update.imports';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { OrderService } from '../../services/order.service';
 import { ClientService } from '../../../client/services/client.service';
 import { ClientGetDto } from '../../../client/models/client-get.dto';
 import { ComponentMode } from '../../../../shared/models/ComponentMode';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { AddClientComponent } from '../../../client/components/add-client/add-client.component';
 import { OrderServicePricesComponent } from '../order-service-prices/order-service-prices.component';
 import { AlertService } from '../../../../core/services/alert.service';
+import { OrderGetDto } from '../../models/order/order-get.Dto';
+import { firstValueFrom } from 'rxjs';
+import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 
 @Component({
   selector: 'app-order-add-update',
@@ -22,33 +25,45 @@ import { AlertService } from '../../../../core/services/alert.service';
 export class OrderAddUpdateComponent implements OnInit {
 
   public componentMode: ComponentMode;
-  public displayedColumns = ['no', 'name', 'deliveryDate', 'action'];
-  public dataSource = new MatTableDataSource<OrderGroupGridViewModel>(ELEMENT_DATA);
+  public displayedColumns = ['name', 'deliveryDate', 'action'];
+  public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public clients: ClientGetDto[] = [];
   public selectedClientId!: number
   public orderName!: string;
+  public orderGetDto!:OrderGetDto;
 
   constructor(private router: Router,
     private OrderSharedService: OrderSharedDataService,
     private clientService: ClientService,
     private dialog: MatDialog,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private activedRoute: ActivatedRoute,
+    private orderService: OrderService
   ) {
     this.componentMode = new ComponentMode(this.router);
   }
 
-  ngOnInit(): void {
-    if (this.componentMode.isViewMode) {
-      this.displayedColumns = this.displayedColumns.filter(col => col !== 'action')
+ async ngOnInit() {
+    if (this.componentMode.isViewMode || this.componentMode.isEditMode) {
+      if(this.componentMode.isViewMode){
+        this.displayedColumns = this.displayedColumns.filter(col => col !== 'action')
+      }
+      let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));         
+      let response = await firstValueFrom(this.orderService.getOrderById(orderId));
+      this.orderGetDto = response.data
+      this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGropuGridViewModel(this.orderGetDto.orderGroups));
+      this.OrderSharedService.setOrderObject(this.orderGetDto);
     }
 
-    this.clientService.getAll().subscribe((res) => {
+    else{ // case add mode
+     this.orderGetDto = this.OrderSharedService.getOrderObject();       
+    }
 
-      this.clients = res.data;
-    })
+    let response = await firstValueFrom(this.clientService.getAll())
+    this.clients = response.data;
   }
 
-  saveOrder_Click() {
+ public saveOrder_Click() {
 
     if (!this.validateOrderData()) {
       return;
@@ -57,7 +72,7 @@ export class OrderAddUpdateComponent implements OnInit {
     this.openServicePricesDialog();
   }
 
-  private validateOrderData(): boolean {
+ private validateOrderData(): boolean {
     const emptyGroupsList = this.OrderSharedService.getOrderObject().orderGroups.length == 0;
     if (emptyGroupsList) {
       this.alertService.showError('يجب إضافة مجموعات للطلبية');
@@ -67,7 +82,7 @@ export class OrderAddUpdateComponent implements OnInit {
     return true;
   }
 
-  private openServicePricesDialog() {
+ private openServicePricesDialog() {
     this.dialog.open(OrderServicePricesComponent, {
       data: { orderSharedService: this.OrderSharedService },
       height: '550px',
@@ -75,24 +90,26 @@ export class OrderAddUpdateComponent implements OnInit {
     });
   }
 
-
-  openDialog() {
+ public openDialog() {
     this.dialog.open(AddClientComponent, {
       width: '600px',
      
     });
   }
+  
+ private MapToOrderGropuGridViewModel( orderGroupGetDtos:OrderGroupGetDto[] ):OrderGroupGridViewModel[]{
+  return orderGroupGetDtos.map((orderGroup, index) => {
+      return {
+        name: orderGroup.name,
+        deliveryDate: orderGroup.deliveryDate
+    }});
+  }
 }
 
-export interface OrderGroupGridViewModel {
-  no: number;
+ interface OrderGroupGridViewModel {
   name: string;
-  deliveryDate: number;
+  deliveryDate?: Date;
 }
-const ELEMENT_DATA: OrderGroupGridViewModel[] = [
-  { no: 1, name: 'Hydrogen', deliveryDate: 1.0079 },
-  { no: 2, name: 'Helium', deliveryDate: 4.0026 },
-  { no: 3, name: 'Lithium', deliveryDate: 6.941 },
-];
+
 
 

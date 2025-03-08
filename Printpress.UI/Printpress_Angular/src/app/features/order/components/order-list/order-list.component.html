@@ -16,15 +16,10 @@
           <div class="custom-table">
             <table mat-table [dataSource]="dataSource">
 
-              <ng-container matColumnDef="no">
-                <th mat-header-cell *matHeaderCellDef> </th>
-                <td mat-cell *matCellDef="let element"> {{element.no}} </td>
-              </ng-container>
-
               <ng-container matColumnDef="orderName">
                 <th mat-header-cell *matHeaderCellDef> ألاسم</th>
                 <td mat-cell *matCellDef="let element"> 
-                  <a routerLink='/order/view/1'>{{element.orderName}} </a> 
+                  <a routerLink='/order/view/{{element.id}}'>{{element.orderName}} </a> 
                  </td>
               </ng-container>
 
@@ -62,7 +57,7 @@
               <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef> أجراء </th>
                 <td mat-cell *matCellDef="let element">
-                  <button class="mx-3" mat-raised-button color="primary" routerLink="/order/edit/1">تعديل</button>
+                  <button class="mx-3" mat-raised-button color="primary" routerLink="/order/edit/{{element.id}}">تعديل</button>
                   <button class="mx-3" mat-raised-button color="warn">حذف</button>
                 </td>
               </ng-container>

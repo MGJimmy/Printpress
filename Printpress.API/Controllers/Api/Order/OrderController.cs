@@ -20,11 +20,6 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
     {
         var orderDto = await _IOrderService.GetOrderDTOAsync(id);
 
-        if (orderDto == null)
-        {
-            return NotFound(id);
-        }
-
         return Ok(orderDto);
     }
     [HttpPost]

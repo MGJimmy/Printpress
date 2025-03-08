@@ -24,14 +24,12 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
             $"{nameof(Order.OrderGroups)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}",
-            $"{nameof(Order.Services)}"];
+            $"{nameof(Order.Services)}",
+            $"{nameof(Order.Client)}"];
 
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, includes);
 
-        if (order == null)
-        {
-            return null;
-        }
+        if (order is null) ValidationExeption.FireValidationException("order with {id} not found", orderId);
 
         var orderDTO = order.MapToOrderDTO();
 

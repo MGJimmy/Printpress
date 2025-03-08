@@ -8,6 +8,7 @@ export interface OrderGetDto extends IObjectState {
     totalPaid:number;
     name:string;
     clientId:number;
+    clientName:string,
 
     orderGroups: OrderGroupGetDto[];
     orderServices: OrderServicesGetDTO[];

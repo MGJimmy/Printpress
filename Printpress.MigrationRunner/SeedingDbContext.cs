@@ -1,4 +1,5 @@
-﻿using Printpress.Domain.Entities;
+﻿using Microsoft.Extensions.Logging;
+using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
 using Printpress.Infrastructure;
 using Printpress.Infrastructure.Migrations;
@@ -23,6 +24,8 @@ internal sealed class SeedingDbContext
         SeedingClientsMockData();
 
         SeedingServiceMockData();
+
+        SeedingGroupMockData();
     }
 
     private void SeedingOrdersMockData()
@@ -52,6 +55,73 @@ internal sealed class SeedingDbContext
             if (!_dbContext.Order.Any(o => o.Id == order.Id))
             {
                 _dbContext.Order.Add(order);
+                Console.WriteLine(string.Format("new order add with id {id}", order.Id));
+            }
+        }
+    }
+
+    private void SeedingGroupMockData()
+    {
+        List<OrderGroup> orderGroup =
+        [
+        new OrderGroup { Id = 1, Name = "مجموعة 1", OrderId = 1, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 2, Name = "مجموعة 2", OrderId = 1, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 3, Name = "مجموعة 3", OrderId = 1, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 4, Name = "مجموعة 4", OrderId = 1, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 5, Name = "مجموعة 1", OrderId = 2, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 6, Name = "مجموعة 2", OrderId = 2, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 7, Name = "مجموعة 3", OrderId = 2, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 8, Name = "مجموعة 4", OrderId = 2, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 9, Name = "مجموعة  1", OrderId = 3, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 10, Name = "مجموعة 2", OrderId = 3, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 11, Name = "مجموعة 3", OrderId = 3, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 12, Name = "مجموعة 4", OrderId = 3, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 13, Name = "مجموعة 1", OrderId = 4, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 14, Name = "مجموعة 2", OrderId = 4, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 15, Name = "مجموعة 3", OrderId = 4, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 16, Name = "مجموعة 4", OrderId = 4, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 17, Name = "مجموعة 1", OrderId = 5, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 18, Name = "مجموعة 2", OrderId = 5, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 19, Name = "مجموعة 3", OrderId = 5, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 20, Name = "مجموعة 4", OrderId = 5, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 21, Name = "مجموعة 1", OrderId = 6, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 22, Name = "مجموعة 2", OrderId = 6, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 23, Name = "مجموعة 3", OrderId = 6, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 24, Name = "مجموعة 4", OrderId = 6, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 25, Name = "مجموعة 1", OrderId = 7, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 26, Name = "مجموعة 2", OrderId = 7, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 27, Name = "مجموعة 3", OrderId = 7, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 28, Name = "مجموعة 4", OrderId = 7, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 29, Name = "مجموعة 1", OrderId = 8, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 30, Name = "مجموعة 2", OrderId = 8, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 31, Name = "مجموعة 3", OrderId = 8, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 32, Name = "مجموعة 4", OrderId = 8, Status = OrderStatusEnum.New },
+
+        new OrderGroup { Id = 33, Name = "مجموعة 1", OrderId = 9, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 34, Name = "مجموعة 2", OrderId = 10, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 35, Name = "مجموعة 3", OrderId = 11, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 36, Name = "مجموعة 4", OrderId = 12, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 37, Name = "مجموعة 4", OrderId = 13, Status = OrderStatusEnum.New },
+        new OrderGroup { Id = 38, Name = "مجموعة 4", OrderId = 14, Status = OrderStatusEnum.New },
+
+
+
+    ];
+
+        foreach (var group in orderGroup)
+        {
+            // Check if the order already exists in the database
+            if (!_dbContext.OrderGroup.Any(o => o.Id == group.Id))
+            {
+                _dbContext.OrderGroup.Add(group);
+                Console.WriteLine(string.Format("order group add {0} for order {1}", group.Name, group.OrderId));
             }
         }
     }
@@ -84,6 +154,8 @@ internal sealed class SeedingDbContext
             if (!_dbContext.Client.Any(c => c.Id == client.Id))
             {
                 _dbContext.Client.Add(client);
+                Console.WriteLine(string.Format("new client add with id {id}",client.Id));
+
             }
         }
 
@@ -110,6 +182,7 @@ internal sealed class SeedingDbContext
             if (!_dbContext.Service.Any(o => o.Id == service.Id))
             {
                 _dbContext.Service.Add(service);
+                Console.WriteLine(string.Format("new service add with id {id}", service.Id));
             }
         }
     }
@@ -130,6 +203,7 @@ internal sealed class SeedingDbContext
             if (!_dbContext.ItemDetailsKey_LKP.Any(i => i.Id == (int)itemDetailsKey))
             {
                 _dbContext.ItemDetailsKey_LKP.Add(new ItemDetailsKey_LKP { Id = (int)itemDetailsKey, Name = itemDetailsKey.ToString() });
+
             }
         }
     }
