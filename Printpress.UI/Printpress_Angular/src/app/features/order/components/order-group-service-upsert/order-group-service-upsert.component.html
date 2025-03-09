@@ -1,4 +1,4 @@
-<mat-card class="customer-list-container">
+<mat-card class="p-4">
   <mat-card-title class="text-center">خدمات المجموعة</mat-card-title>
   <mat-card-content>
     <div class="row my-3">
@@ -33,14 +33,12 @@
     </div>
   </mat-card-content>
   <div></div>
-  <app-table-template style="width: 95%;" class="mx-auto mt-3" *ngIf="tableData"
-    [isShowDeleteButton]="true"
-    [columnDefs]="columnDefs"
-    [originalSource]="tableData"
-    (deleteClicked)="onDeleteServiceCat($event)">
+  <app-table-template style="width: 95%;" class="mx-auto mt-3" *ngIf="tableData" [isShowDeleteButton]="true"
+    [columnDefs]="columnDefs" [originalSource]="tableData" (deleteClicked)="onDeleteServiceCat($event)">
   </app-table-template>
 
-<button mat-button class="btn btn-primary" (click)="Save()">
-  Save
-</button>
+  <hr>
+  <div class="d-flex justify-content-center">
+    <input type="button" class="btn btn-primary px-5 mx-3 mb-3" (click)="Save()" value="حفظ">
+  </div>
 </mat-card>

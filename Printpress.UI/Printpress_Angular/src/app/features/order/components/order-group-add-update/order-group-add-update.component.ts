@@ -41,11 +41,12 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private groupServices: OrderGroupServiceGetDto[] = [];
   itemsGridSource!: any[];
 
-  protected groupServicesNamesCommaseperated!: string;
-
+  protected get groupServicesNamesCommaseperated(): string {
+    return this.groupServices.map(x => { return x.serviceName }).join(' - ');
+  }
+  
   protected isGroupHasSellingService: boolean = false;
   protected isGroupHasPrintingService: boolean = false;
-  protected isAddGroupServiceDialogOpen: boolean = false;
 
   displayedColumns: string[];
 
@@ -67,10 +68,13 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isAddGroupServiceDialogOpen = false;
     this.setGroupId();
     this.setCurrentGroupData();
-    this.itemsGridSource = this.groupItems.slice(0, 5)
+    this.itemsGridSource = this.groupItems.slice(0, 5);
+
+    if (!this.isEdit) {
+      this.openServicesModal();
+    }
   }
 
   private setGroupId(): void {
@@ -93,12 +97,16 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.groupName = currentGroup.name;
   }
 
-  protected groupNameChanged(){
+  protected groupNameChanged() {
     const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
     currentGroup.name = this.groupName;
   }
-  
+
   protected editGroupService_Click(): void {
+    this.openServicesModal();
+  }
+
+  private openServicesModal(){
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
       data: { groupId: this.groupId },
       height: '550px',
@@ -106,15 +114,13 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       disableClose: true,
       injector: this.injector
     });
-    this.isAddGroupServiceDialogOpen = true;
 
-    dialogRef.afterClosed().subscribe(result => {
-      let returnedServices = result as { y: string };
-     this.isAddGroupServiceDialogOpen = false;
-
-      console.log(returnedServices);
+    dialogRef.afterClosed().subscribe((isSave: boolean) => {
+      if (!isSave) {
+        return;
+      }
+      this.groupServices = this.orderSharedService.getOrderGroupServices(this.groupId);
     });
-
   }
 
   protected addItem_Click() {
@@ -196,19 +202,4 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private navigateToEditItemPage(itemId: number) {
     this.router.navigate(['/order/item', this.groupId, itemId]);
   }
-  
-  private onGroupServicesChanged(): void {
-    this.extractGroupServicesData();
-  }
-
-  private extractGroupServicesData():void{
-    this.groupServicesNamesCommaseperated = this.groupServices.map(x => { return x.serviceName }).join(',');
-    this.serviceService.getServices(this.groupServices.map(x => x.serviceId)).subscribe(groupServices=>
-      {
-        this.isGroupHasPrintingService = groupServices.some(x => x.serviceCategory == ServiceCategoryEnum.Printing);
-        this.isGroupHasSellingService = groupServices.some(x => x.serviceCategory == ServiceCategoryEnum.Selling);
-        this.orderSharedService.setGroupBooleanProperty(this.groupId, this.isGroupHasPrintingService, this.isGroupHasSellingService);
-      });
-  }
-
 }

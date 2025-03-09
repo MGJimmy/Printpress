@@ -7,6 +7,7 @@ import { ObjectStateEnum } from '../../../core/models/object-state.enum';
 import { OrderServicesGetDTO } from '../models/order-service/order-service-getDto';
 import { ServiceService } from '../../setup/services/service.service';
 import { ServiceCategoryEnum } from '../../setup/models/service-category.enum';
+import { ServiceGetDto } from '../../setup/models/service-get.dto';
 
 /*
   Notes: 
@@ -19,7 +20,7 @@ export class OrderSharedDataService {
 
   private orderObject!: OrderGetDto;
 
-  constructor(private serviceService:ServiceService) {
+  constructor(private serviceService: ServiceService) {
     this.initializeOrderObject();
   }
 
@@ -294,52 +295,65 @@ export class OrderSharedDataService {
     return this.orderObject.orderGroups.flatMap(x => x.orderGroupServices);
   }
 
-  public addOrderGroupService(orderGroupId: number, ServiceId: number): number {
+  public addOrderGroupService(orderGroupId: number, service: ServiceGetDto): void {
     let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
 
     if (orderGroup === undefined) {
       throw new Error('Order group not found');
     }
 
+    if (orderGroup.orderGroupServices.find(x => x.serviceId == service.id)) {
+      return;
+    }
 
     let tempId = this.generateTempId(orderGroup.orderGroupServices.map(x => x.id));
 
     let orderGroupService: OrderGroupServiceGetDto = {
       id: tempId,
       orderGroupId: orderGroupId,
-      serviceId: ServiceId,
-      objectState : ObjectStateEnum.temp
+      serviceId: service.id,
+      serviceName: service.name,
+      objectState: ObjectStateEnum.temp
     };
 
     orderGroup.orderGroupServices.push(orderGroupService);
 
-    this.checkGroupServicesCategory(orderGroup);
-
-    return tempId;
+    this.updateGroupFlagsOnServicesCategories(orderGroup);
   }
 
-  private checkGroupServicesCategory(group:OrderGroupGetDto){
-      this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services =>{
-      group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
-      group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
-    });
-  }
 
-  public deleteGroupService(groupId:number, serviceId:number){
-    let groupServices = this.orderObject.orderGroups.find(x => x.id = groupId)!.orderGroupServices
+  public deleteGroupService(groupId: number, serviceId: number) {
+    let orderGroup = this.orderObject.orderGroups.find(x => x.id == groupId);
     
-    
-    let groupService = groupServices.find(s => s.id = serviceId)!;
+    if (!orderGroup) {
+      throw 'Cannot Find a group with ID = ' + groupId + 'in Shared Data';
+    }
 
-    if(groupService?.objectState === ObjectStateEnum.temp){
-      let index = groupServices.findIndex(s => s.id = serviceId);
+    let groupServices = orderGroup.orderGroupServices;
+
+
+    let groupService = groupServices.find(s => s.serviceId == serviceId);
+
+    if (!groupService) {
+      throw 'Cannot Find a Services with ID = ' + serviceId + 'For Group:' + groupId + 'in Shared Data';
+    }
+
+    if (groupService.objectState === ObjectStateEnum.temp) {
+      let index = groupServices.findIndex(s => s.serviceId == serviceId);
       groupServices.splice(index, 1);
     }
-    else{
+    else {
       groupService.objectState = ObjectStateEnum.deleted;
     }
 
+    this.updateGroupFlagsOnServicesCategories(orderGroup);
+  }
 
+  private updateGroupFlagsOnServicesCategories(group: OrderGroupGetDto) {
+    this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services => {
+      group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
+      group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
+    });
   }
 
   /*

@@ -1,11 +1,11 @@
-<div class="container-fluid p-5" [class.disabled] = "isAddGroupServiceDialogOpen">
+<div class="container-fluid p-5">
     <div>
         <h1 *ngIf="isEdit">تعديل مجموعة</h1>
         <h1 *ngIf="!isEdit">إضافة مجموعة</h1>
         <hr>
-        <div class="form-group">
-            <label for="groupName">اسم المجموعة</label>
-            <input class="form-control" id="groupName" [(ngModel)]="groupName" (input)="groupNameChanged()" placeholder="اسم المجموعة">
+        <div class="form-group col-md-6">
+            <label class="form-label" for="groupName">اسم المجموعة</label>
+            <input class="form-control" id="groupName" [(ngModel)]="groupName" (input)="groupNameChanged()">
         </div>
 
         <div class="d-flex">
@@ -13,10 +13,9 @@
                 إضافة خدمات المجموعة
             </button>
         </div>
-
         <div class="px-5">
             <label>الخدمات الحالية:</label>
-            <div class="px-2">{{groupServicesNamesCommaseperated}}</div>
+            <div class="px-2 d-inline">{{groupServicesNamesCommaseperated}}</div>
         </div>
     </div>
     <!-- <div class="my-5">
@@ -85,6 +84,3 @@
 
     </div> -->
 </div>
-
-<div  class="overlay disabled" *ngIf="isAddGroupServiceDialogOpen"></div>
-<!-- <app-order-group-service-add-update class="groupServicesPopUp" *ngIf="!isAddGroupServiceDialogOpen"></app-order-group-service-add-update> -->

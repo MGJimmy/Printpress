@@ -27,11 +27,6 @@ public static class ApplicationPipelineExtensions
 
         app.MapDefaultControllerRoute();
 
-
-
-
         return app;
     }
-
-
 }

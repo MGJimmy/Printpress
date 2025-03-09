@@ -114,16 +114,16 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     let group = this.orderSharedDataService.getOrderGroup(this.groupId);
 
     if(!group.orderGroupServices || group.orderGroupServices.length == 0){
-      this.serviceCategories = Object.keys(ServiceCategoryEnum);
+      this.serviceCategories = Object.keys(ServiceCategoryEnum).sort();
       return;
     }
 
     if(group.isHasSellingService){
-      this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling);
+      this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling).sort();
       return;
     }
     
-    this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling);
+    this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling).sort();
   }
 
   private fillTableData(){
@@ -181,18 +181,18 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.tableData?.some((row) => row.id === selectedService.id)) {
-      this.alertService.showError('لا يمكنك إضافة الخدمة مرتين');
+    if (this.tableData?.some((row) => row.serviceCategory === selectedService.serviceCategory)) { // validate on category
+      this.alertService.showError('لا يمكنك إضافة خدمات من نفس النوع أكثر من مرة');
       return;
     }
 
-    this.orderSharedDataService.addOrderGroupService(this.groupId, selectedService.id);
+    this.orderSharedDataService.addOrderGroupService(this.groupId, selectedService);
     this.fillPageData();
 
     this.alertService.showSuccess('تم إضافة الخدمة بنجاح');
   }
 
-  onDeleteServiceCat(serviceId: number): void {
+  protected onDeleteServiceCat(serviceId: number): void {
     const dialogData: ConfirmDialogModel = {
       title: 'تأكيد الحذف',
       message: 'هل أنت متأكد أنك تريد حذف هذه الخدمة ؟',
@@ -212,6 +212,10 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   protected Save(){
-    this.currentComponentDialogRef.close();
+    this.closeModal(true);
+  }
+
+  protected closeModal(isSave: boolean){
+    this.currentComponentDialogRef.close(isSave);
   }
 }
