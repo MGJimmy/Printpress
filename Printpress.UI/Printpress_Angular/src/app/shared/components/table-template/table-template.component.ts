@@ -23,7 +23,9 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
     MatButtonModule,
     MatTableModule,
     CommonModule,
+    FontAwesomeModule,
     FontAwesomeModule
+
   ],
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.css'],

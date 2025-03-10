@@ -1,5 +1,5 @@
 export interface ClientUpsertDto{
   name : string,
-  number : number,
+  mobile : string,
   address : string
 }

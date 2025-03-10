@@ -1,5 +1,10 @@
-import {AfterViewInit, Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
+import {
+  AfterViewInit,
+  Component,
+  ViewChild,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -7,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { debounceTime, BehaviorSubject } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
@@ -15,6 +20,14 @@ import { DialogService } from '../../../../shared/services/dialog.service';
 import { Router } from '@angular/router';
 import { ClientService } from '../../services/client.service';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
+import { MatDialog } from '@angular/material/dialog';
+import { AddClientComponent } from '../add-client/add-client.component';
+import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { ClientGetDto } from '../../models/client-get.dto';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-client-list',
@@ -22,7 +35,7 @@ import { TableColDefinitionModel } from '../../../../shared/models/table-col-def
   styleUrls: ['./client-list.component.css'],
   standalone: true,
   imports: [
-    TableTemplateComponent,
+    SharedPaginationComponent,
     CommonModule,
     FormsModule,
     MatInputModule,
@@ -30,44 +43,47 @@ import { TableColDefinitionModel } from '../../../../shared/models/table-col-def
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
+    MatTableModule,
+    FontAwesomeModule,
   ],
 })
 export class ClientListComponent implements OnInit, OnDestroy {
-  columnDefs:TableColDefinitionModel[] = [
-    { headerName: 'الاسم', column: 'name' },
-    { headerName: 'رقم الموبايل', column: 'number' },
-    { headerName: 'العنوان', column: 'address' },
-    { headerName: 'الإجراء', column: 'action' },
-  ];
-
-  originalSource : any[] = [];
-  filteredSource: any[] = [];
   private subscriptions: Subscription = new Subscription();
-  searchSubject = new BehaviorSubject<string>('');
-  searchText : string = '';
+  public searchSubject = new BehaviorSubject<string>('');
+  public searchText: string = '';
+  public displayedColumns = ['name', 'mobile', 'address', 'action'];
+  public faTrash = faTrash;
+  public faEdit = faEdit;
+  public totalCount: number;
+  public dataSource: MatTableDataSource<ClientGetDto>;
 
   constructor(
     private clientService: ClientService,
     private alertService: AlertService,
     private errorHandlingService: ErrorHandlingService,
     private dialogService: DialogService,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.fetchClients();
-    this.setupSearch();
+    private dialog: MatDialog
+  ) {
+    this.dataSource = new MatTableDataSource<ClientGetDto>();
+    this.totalCount = 0;
   }
 
-  ngOnDestroy(): void {
+  public ngOnInit(): void {
+    this.fetchClients();
+    this.setupSearch();
+    this.dialog.afterAllClosed.subscribe(()=>this.fetchClients());
+    
+  }
+
+  public ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
-  fetchClients(): void {
-    const fetchSub = this.clientService.getByPage(1,10).subscribe({
-      next: (data) => {
-        this.originalSource = data;
-        this.filteredSource = data;
+  public fetchClients(): void {
+    const fetchSub = this.clientService.getByPage(1, 10).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.data.items;
+        this.totalCount = response.data.totalCount;
       },
       error: (err) => {
         this.errorHandlingService.handleError(err);
@@ -76,25 +92,21 @@ export class ClientListComponent implements OnInit, OnDestroy {
     this.subscriptions.add(fetchSub);
   }
 
-
-  onAddClient(): void {
-    this.router.navigate(['client/add']);
+  public onAddClient(): void {
+    this.dialog.open(AddClientComponent, {
+      width: '600px',
+      data: null,
+    });
   }
 
-  onEditClient(id: number): void {
-    if (id) {
-      this.router.navigate(['client/add'], { queryParams: { id } }).catch((err) => {
-        this.alertService.showError('تعذر التنقل إلى صفحة التعديل. يرجى المحاولة لاحقًا.');
-        this.errorHandlingService.handleError(err);
-      });
-    } else {
-      this.alertService.showError('حدث خطأ أثناء تحميل البيانات');
-    }
+  public onEditClient(id: number): void {
+    this.dialog.open(AddClientComponent, {
+      width: '600px',
+      data: id,
+    });
   }
 
-
-
-  onDeleteClient(id: number): void {
+  public onDeleteClient(id: number): void {
     const dialogData = {
       title: 'تأكيد الحذف',
       message: 'هل أنت متأكد أنك تريد حذف هذا العميل؟',
@@ -102,53 +114,66 @@ export class ClientListComponent implements OnInit, OnDestroy {
       cancelText: 'إلغاء',
     };
 
-    const dialogSub = this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
-      if (confirmed) {
-        const deleteSub = this.clientService.delete(id).subscribe({
-          next: () => {
-            this.alertService.showSuccess('تم حذف العميل بنجاح!');
-            this.fetchClients();
-          },
-          error: (err) => {
-            this.alertService.showError('حدث خطأ أثناء حذف العميل. يرجى المحاولة مرة أخرى.');
-            this.errorHandlingService.handleError(err);
-          },
-        });
-        this.subscriptions.add(deleteSub);
-      }
-    });
+    const dialogSub = this.dialogService
+      .confirmDialog(dialogData)
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          const deleteSub = this.clientService.delete(id).subscribe({
+            next: () => {
+              this.alertService.showSuccess('تم حذف العميل بنجاح!');
+              this.fetchClients();
+            },
+            error: (err) => {
+              this.alertService.showError(
+                'حدث خطأ أثناء حذف العميل. يرجى المحاولة مرة أخرى.'
+              );
+              this.errorHandlingService.handleError(err);
+            },
+          });
+          this.subscriptions.add(deleteSub);
+        }
+      });
 
     this.subscriptions.add(dialogSub);
   }
 
-
-
-
-  setupSearch(): void {
-    const searchSub = this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
-      this.filterClients(searchTerm);
-    });
+  public setupSearch(): void {
+    const searchSub = this.searchSubject
+      .pipe(debounceTime(300))
+      .subscribe((searchTerm) => {
+        this.filterClients(searchTerm);
+      });
     this.subscriptions.add(searchSub);
   }
 
-  filterClients(searchTerm: string): void {
-    const lowerCaseTerm = searchTerm.trim().toLowerCase();
-    if (lowerCaseTerm) {
-      this.filteredSource = this.originalSource.filter((client) =>
-        client.name.toLowerCase().includes(lowerCaseTerm)
-      );
-    } else {
-      this.filteredSource = [...this.originalSource];
-    }
+  public filterClients(searchTerm: string): void {
+    // const lowerCaseTerm = searchTerm.trim().toLowerCase();
+    // if (lowerCaseTerm) {
+    //   this.filteredSource = this.originalSource.filter((client) =>
+    //     client.name.toLowerCase().includes(lowerCaseTerm)
+    //   );
+    // } else {
+    //   this.filteredSource = [...this.originalSource];
+    // }
   }
 
-  applyFilter(event: Event): void {
+  public applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.searchSubject.next(filterValue);
   }
 
-  clearSearch(): void {
+  public clearSearch(): void {
     this.searchText = '';
     this.searchSubject.next('');
+  }
+
+  public async onPageChange(event: PageEvent) {
+    const pageSize = event.pageSize;
+    const pageNumber = event.pageIndex + 1;
+    const response = await firstValueFrom(
+      this.clientService.getByPage(pageNumber, pageSize)
+    );
+    this.dataSource.data = response.data.items;
+    this.totalCount = response.data.totalCount;
   }
 }

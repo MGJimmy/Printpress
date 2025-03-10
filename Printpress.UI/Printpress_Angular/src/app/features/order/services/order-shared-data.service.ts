@@ -39,6 +39,7 @@ export class OrderSharedDataService {
       totalPaid: 0,
       name: '',
       clientId: 0,
+      clientName: '',
       objectState: ObjectStateEnum.temp,
       orderGroups: [],
       orderServices: []
