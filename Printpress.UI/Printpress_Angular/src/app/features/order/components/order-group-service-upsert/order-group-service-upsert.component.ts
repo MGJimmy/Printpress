@@ -14,7 +14,7 @@ import { Observable, Subscription } from 'rxjs';
 import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { ChangeDetectorRef } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ServiceService } from '../../../setup/services/service.service';
 import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
@@ -35,7 +35,8 @@ export interface ServiceCat_interface {
     MatFormField,
     MatCardModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    MatDialogModule
   ],
   templateUrl: './order-group-service-upsert.component.html',
   styleUrl: './order-group-service-upsert.component.css'
@@ -130,6 +131,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     let groupServices = this.orderSharedDataService.getOrderGroupServices(this.groupId);
     
     if(!groupServices || groupServices.length == 0){
+      //this.tableData = [];
       return;
     }
 
@@ -138,28 +140,9 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  // onCategorySelect_old(categoryId: number): void {
-  //   const isSelling = this.serviceCategories.some((cat) => cat.id === categoryId && cat.name === 'بيع');
-
-  //   if (this.isSellingSelected === null || this.isSellingSelected === isSelling) {
-  //     this.isSellingSelected = isSelling;
-  //     this.selectedCategory = categoryId;
-
-  //     this.filteredServices = this.allServices.filter((svc) => svc.serviceCategoryId === categoryId);
-  //     this.serviceCategories = isSelling ? this.sellingCategories : this.otherCategories;
-
-  //   } else {
-  //     this.alertService.showError('يمكنك اختيار فئة واحدة فقط');
-  //     this.clearSelections();
-  //   }
-  // }
-
   onCategorySelect(serviceCategoryEnumValue: string): void {
     this.filteredServices = this.allServices.filter(s => s.serviceCategory === (serviceCategoryEnumValue as ServiceCategoryEnum));
   }
-
-
 
   clearSelections(): void {
     this.isSellingSelected = null;
@@ -209,13 +192,5 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(dialogSub);
-  }
-
-  protected Save(){
-    this.closeModal(true);
-  }
-
-  protected closeModal(isSave: boolean){
-    this.currentComponentDialogRef.close(isSave);
   }
 }

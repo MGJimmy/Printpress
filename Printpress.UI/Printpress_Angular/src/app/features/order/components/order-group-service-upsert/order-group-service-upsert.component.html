@@ -16,7 +16,7 @@
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>الخدمة</mat-label>
-          <mat-select [(ngModel)]="selectedServiceId" [disabled]="filteredServices.length === 0">
+          <mat-select [(ngModel)]="selectedServiceId" [disabled]="!filteredServices ||filteredServices.length === 0">
             <mat-option *ngFor="let service of filteredServices" [value]="service.id">
               {{ service.name }}
             </mat-option>
@@ -39,6 +39,6 @@
 
   <hr>
   <div class="d-flex justify-content-center">
-    <input type="button" class="btn btn-primary px-5 mx-3 mb-3" (click)="Save()" value="حفظ">
+    <button mat-raised-button color="accent" class="px-5 mx-3 mb-3" [mat-dialog-close]="true">حفظ</button>
   </div>
 </mat-card>

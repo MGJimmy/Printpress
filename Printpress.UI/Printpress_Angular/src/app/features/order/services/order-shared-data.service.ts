@@ -325,7 +325,7 @@ export class OrderSharedDataService {
 
   public deleteGroupService(groupId: number, serviceId: number) {
     let orderGroup = this.orderObject.orderGroups.find(x => x.id == groupId);
-    
+
     if (!orderGroup) {
       throw 'Cannot Find a group with ID = ' + groupId + 'in Shared Data';
     }
@@ -357,6 +357,9 @@ export class OrderSharedDataService {
     });
   }
 
+  public updateGroupFlagsOnServicesCategoriesById(groupId: number) {
+    this.updateGroupFlagsOnServicesCategories(this.getOrderGroup(groupId));
+  }
   /*
   =======================
   End group services methods
