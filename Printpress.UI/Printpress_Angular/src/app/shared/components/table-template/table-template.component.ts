@@ -64,8 +64,6 @@ export class TableTemplateComponent implements OnInit{
 
     this.pushSharedColumns();
 
-
-    console.log(this.displayedColumns)
   }
 
   pushSharedColumns() {

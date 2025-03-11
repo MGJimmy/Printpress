@@ -14,8 +14,6 @@ import { OrderSharedDataService } from '../../services/order-shared-data.service
 import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
 import { ItemGetDto } from '../../models/item/item-get.Dto';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
-import { ServiceService } from '../../../setup/services/service.service';
-import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { ItemSharedVM, ItemNonSellingVM, ItemSellingVM } from '../../models/item/itemGridVM';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
@@ -250,7 +248,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private orderSharedService: OrderSharedDataService,
-    private serviceService: ServiceService,
     private injector: Injector,
     private dialogService: DialogService
   ) {
@@ -265,13 +262,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     if (!this.groupItems || this.groupItems.length == 0) {
       this.openServicesModal();
     }
-    // else {
-    //   if (this.isGroupHasSellingService) {
-    //     this.itemsGridSource = this.mapIntoSellingVM(this.groupItems.slice(0, 5));
-    //   } else {
-    //     this.itemsGridSource = this.mapIntoNonSellingVM(this.groupItems.slice(0, 5));
-    //   }
-    // }
   }
 
   private setGroupId(): void {
@@ -371,8 +361,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
         this.alertService.showSuccess('تم حذف العنصر بنجاح!');
       }
     });
-
-
   }
 
   protected onPageChangeClick(event: PageEvent) {
