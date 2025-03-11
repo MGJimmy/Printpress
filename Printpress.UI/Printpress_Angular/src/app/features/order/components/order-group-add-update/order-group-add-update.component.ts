@@ -19,6 +19,7 @@ import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { ItemSharedVM, ItemNonSellingVM, ItemSellingVM } from '../../models/item/itemGridVM';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
+import { DialogService } from '../../../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -46,23 +47,14 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   displayedColumns: string[] = [];
 
-  protected updateDisplayedColumns() {
-    if (this.isGroupHasSellingService) {
-      this.displayedColumns = ['index', 'name', 'quantity',
-        'itemPrice', 'boughtItemsCount', 'total', 'actions'];
-    } else {
-      this.displayedColumns = ['index', 'name',
-        'numberOfPages', 'stapledItemsCount', 'printedItemsCount',
-        'quantity', 'itemPrice', 'total', 'actions'];
-    }
-  }
   constructor(private alertService: AlertService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
     private orderSharedService: OrderSharedDataService,
     private serviceService: ServiceService,
-    private injector: Injector
+    private injector: Injector,
+    private dialogService: DialogService
   ) {
   }
 
@@ -74,7 +66,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
     if (!this.groupItems || this.groupItems.length == 0) {
       this.openServicesModal();
-    } 
+    }
     // else {
     //   if (this.isGroupHasSellingService) {
     //     this.itemsGridSource = this.mapIntoSellingVM(this.groupItems.slice(0, 5));
@@ -108,8 +100,17 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     } else {
       this.itemsGridSource = this.mapIntoNonSellingVM(this.groupItems.slice(0, 5));
     }
+  }
 
-
+  protected updateDisplayedColumns() {
+    if (this.isGroupHasSellingService) {
+      this.displayedColumns = ['index', 'name', 'quantity',
+        'itemPrice', 'boughtItemsCount', 'total', 'actions'];
+    } else {
+      this.displayedColumns = ['index', 'name',
+        'numberOfPages', 'stapledItemsCount', 'printedItemsCount',
+        'quantity', 'itemPrice', 'total', 'actions'];
+    }
   }
 
   protected groupNameChanged() {
@@ -154,28 +155,21 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected deleteItem_Click(item: ItemGetDto) {
-    // Alert
-    // const dialogData: ConfirmDialogModel = {
-    //   title: 'تأكيد الحذف',
-    //   message: 'هل أنت متأكد أنك تريد حذف هذه الخدمة ؟',
-    //   confirmText: 'نعم',
-    //   cancelText: 'إلغاء',
-    // };
+    const dialogData: ConfirmDialogModel = {
+      title: 'تأكيد الحذف',
+      message: 'هل أنت متأكد أنك تريد حذف هذا العنصر ؟',
+      confirmText: 'نعم',
+      cancelText: 'إلغاء',
+    };
 
-    // const dialogSub = this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
-    //   if (confirmed) {
-    //     this.orderSharedDataService.deleteGroupService(this.groupId, serviceId);
-    //     this.fillPageData();
-    //     this.alertService.showSuccess('تم حذف الخدمة بنجاح!');
-    //   }
-    // });
+    this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
+      if (confirmed) {
+        this.orderSharedService.deleteItem(this.groupId, item.id);
+        this.alertService.showSuccess('تم حذف العنصر بنجاح!');
+      }
+    });
 
-    // Move to shared service
-    if (item.objectState == ObjectStateEnum.temp) {
-      this.orderSharedService.deleteNewlyAddedItem(this.groupId, item.id);
-    } else {
-      this.orderSharedService.deleteExistingItem(this.groupId, item.id);
-    }
+
   }
 
   onPageChangeClick(event: PageEvent) {

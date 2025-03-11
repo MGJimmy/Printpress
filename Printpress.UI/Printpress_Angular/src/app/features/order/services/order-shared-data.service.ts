@@ -153,13 +153,17 @@ export class OrderSharedDataService {
     group.objectState = ObjectStateEnum.deleted;
   }
 
-  public setGroupBooleanProperty(groupId: number, isHasPrintingService: boolean, isHasSellingService: boolean) {
-    let group = this.getOrderGroup(groupId);
-
-    group.isHasPrintingService = isHasPrintingService;
-    group.isHasSellingService = isHasSellingService;
+  private updateGroupFlagsOnServicesCategories(group: OrderGroupGetDto) {
+    this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services => {
+      group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
+      group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
+    });
   }
 
+  public updateGroupFlagsOnServicesCategoriesById(groupId: number) {
+    this.updateGroupFlagsOnServicesCategories(this.getOrderGroup(groupId));
+  }
+  
   /*
     =======================
     End order group methods
@@ -252,19 +256,31 @@ export class OrderSharedDataService {
 
   }
 
-  public deleteNewlyAddedItem(groupId: number, itemId: number) {
-    let groupItems = this.getOrderGroup(groupId).items;
+  public deleteItem(groupId: number, itemId: number): void {
+    const item = this.getItem(groupId, itemId);
 
-    const index = groupItems.findIndex(x => x.id === itemId);
-    if (index !== -1) {
-      groupItems.splice(index, 1);
+    if (item.objectState == ObjectStateEnum.temp) {
+      let groupItems = this.getOrderGroup(groupId).items;
+
+      const index = groupItems.findIndex(x => x.id === itemId);
+      if (index !== -1) {
+        groupItems.splice(index, 1);
+      }
+    } else {
+      item.objectState = ObjectStateEnum.deleted;
     }
   }
 
-  public deleteExistingItem(groupId: number, itemId: number) {
-    let item = this.getItem(groupId, itemId);
-    item.objectState = ObjectStateEnum.deleted;
-  }
+  // May Be used in items back button page
+  // public deleteNewlyAddedItem(groupId: number, itemId: number) {
+  //   let groupItems = this.getOrderGroup(groupId).items;
+  
+  //   const index = groupItems.findIndex(x => x.id === itemId);
+  //   if (index !== -1) {
+  //     groupItems.splice(index, 1);
+  //   }
+  // }
+
 
   /*
     =======================
@@ -354,16 +370,6 @@ export class OrderSharedDataService {
     this.updateGroupFlagsOnServicesCategories(orderGroup);
   }
 
-  private updateGroupFlagsOnServicesCategories(group: OrderGroupGetDto) {
-    this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services => {
-      group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
-      group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
-    });
-  }
-
-  public updateGroupFlagsOnServicesCategoriesById(groupId: number) {
-    this.updateGroupFlagsOnServicesCategories(this.getOrderGroup(groupId));
-  }
   /*
   =======================
   End group services methods
