@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogModel } from '../../core/models/confirm-dialog.model';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -22,11 +22,11 @@ export class DialogService {
   public async confirmOnBackButton(): Promise<boolean>{
     const dialogData: ConfirmDialogModel = {
       title: 'تأكيد الرجوع',
-      message: 'ستفقد جميع تعديلاتك فف هذه الصفحه تأكيد الرجوع؟',
+      message: 'ستفقد جميع تعديلاتك في هذه الصفحه تأكيد الرجوع؟',
       confirmText: 'نعم',
       cancelText: 'إلغاء',
     };
 
-    return (await this.confirmDialog(dialogData).toPromise()) || false;
+    return await firstValueFrom(this.confirmDialog(dialogData));
   }
 }

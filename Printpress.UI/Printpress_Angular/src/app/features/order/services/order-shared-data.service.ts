@@ -26,11 +26,10 @@ export class OrderSharedDataService {
 
 
 
-  /*
-    =======================
-    Start order object methods
-    =======================
-  */
+  //=======================
+  //#region Order methods
+  //=======================
+
 
   private initializeOrderObject(): void {
     this.orderObject = {
@@ -67,11 +66,10 @@ export class OrderSharedDataService {
   public getOrderListRoute(): string {
     return '/order';
   }
-  /*
-    =======================
-    End order object methods
-    =======================
-  */
+
+  //=======================
+  //#endregion Order methods
+  //=======================
 
 
 
@@ -85,11 +83,12 @@ export class OrderSharedDataService {
 
 
 
-  /*
-    =======================
-    Start order group methods
-    =======================
-  */
+
+
+  //=======================
+  //#region Group methods
+  //=======================
+
 
   /**
    * Returns temp id of the added object.
@@ -163,12 +162,10 @@ export class OrderSharedDataService {
   public updateGroupFlagsOnServicesCategoriesById(groupId: number) {
     this.updateGroupFlagsOnServicesCategories(this.getOrderGroup(groupId));
   }
-  
-  /*
-    =======================
-    End order group methods
-    =======================
-  */
+
+  //=======================
+  //#endregion Group methods
+  //=======================
 
 
 
@@ -181,11 +178,11 @@ export class OrderSharedDataService {
 
 
 
-  /*
-   =======================
-   Start item methods
-   =======================
- */
+
+  //=======================
+  //#region item methods
+  //=======================
+
 
   /**
  * Returns temp id of the generated object.
@@ -274,7 +271,7 @@ export class OrderSharedDataService {
   // May Be used in items back button page
   // public deleteNewlyAddedItem(groupId: number, itemId: number) {
   //   let groupItems = this.getOrderGroup(groupId).items;
-  
+
   //   const index = groupItems.findIndex(x => x.id === itemId);
   //   if (index !== -1) {
   //     groupItems.splice(index, 1);
@@ -282,11 +279,9 @@ export class OrderSharedDataService {
   // }
 
 
-  /*
-    =======================
-    End item methods
-    =======================
-  */
+  //=======================
+  //#endregion item methods
+  //=======================
 
 
 
@@ -298,11 +293,9 @@ export class OrderSharedDataService {
 
 
 
-  /*
-    =======================
-    Start group services methods
-    =======================
-  */
+  //=======================
+  //#region GroupServices
+  //=======================
 
   public getOrderGroupServices(orderGroupId: number): OrderGroupServiceGetDto[] {
     return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
@@ -370,11 +363,9 @@ export class OrderSharedDataService {
     this.updateGroupFlagsOnServicesCategories(orderGroup);
   }
 
-  /*
-  =======================
-  End group services methods
-  =======================
-*/
+  //=======================
+  //#endregion Group Services
+  //=======================
 
 
 
@@ -382,11 +373,9 @@ export class OrderSharedDataService {
 
 
 
-  /*
-    =======================
-    Start order services methods
-    =======================
-  */
+  //=======================
+  //#region Order Servies
+  //=======================
 
   // public getOrderServices(): OrderServicesGetDTO[] {
   //   return this.orderObject.orderServices;
@@ -403,11 +392,11 @@ export class OrderSharedDataService {
   }
 
 
-  /*
-  =======================
-  End order services methods
-  =======================
-*/
+  //=======================
+  //#endregion Order Services
+  //=======================
+
+
 
 
 
