@@ -18,4 +18,15 @@ export class DialogService {
       ariaLabel: data?.title || 'Confirmation Dialog',
     }).afterClosed(); // Emits the result (true/false)
   }
+
+  public async confirmOnBackButton(): Promise<boolean>{
+    const dialogData: ConfirmDialogModel = {
+      title: 'تأكيد الرجوع',
+      message: 'ستفقد جميع تعديلاتك فف هذه الصفحه تأكيد الرجوع؟',
+      confirmText: 'نعم',
+      cancelText: 'إلغاء',
+    };
+
+    return (await this.confirmDialog(dialogData).toPromise()) || false;
+  }
 }

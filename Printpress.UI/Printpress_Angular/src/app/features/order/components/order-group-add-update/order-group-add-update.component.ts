@@ -213,8 +213,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     return true;
   }
 
-  protected onBack_Click() {
-    // Alert
+  protected async onBack_Click() {
+
+    if (! await this.dialogService.confirmOnBackButton()) {
+      return;
+    }
 
     if (!this.isEdit) {
       this.orderSharedService.deleteNewlyAddedGroup(this.groupId);
