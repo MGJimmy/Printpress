@@ -35,7 +35,204 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   protected isEdit: boolean = false;
   protected groupName: string = '';
-  protected groupItems: ItemGetDto[] = [];
+  protected groupItems: ItemGetDto[] = [
+    {
+      id: 1,
+      name: "Printer",
+      quantity: 5,
+      price: 300,
+      groupId: 1,
+      objectState: ObjectStateEnum.unchanged,
+      itemDetails: [
+        {
+          id: 1,
+          itemId: 1,
+          key: itemDetailsKeyEnum.NumberOfPages,
+          value: "500",
+          objectState: ObjectStateEnum.unchanged
+        },
+        {
+          id: 2,
+          itemId: 1,
+          key: itemDetailsKeyEnum.NumberOfPrintingFaces,
+          value: "2",
+          objectState: ObjectStateEnum.unchanged
+        }
+      ]
+    },
+    {
+      id: 2,
+      name: "Notebook",
+      quantity: 50,
+      price: 10,
+      groupId: 2,
+      objectState: ObjectStateEnum.added,
+      itemDetails: [
+        {
+          id: 3,
+          itemId: 2,
+          key: itemDetailsKeyEnum.BoughtItemsCount,
+          value: "100",
+          objectState: ObjectStateEnum.added
+        },
+        {
+          id: 4,
+          itemId: 2,
+          key: itemDetailsKeyEnum.PrintedItemsCount,
+          value: "80",
+          objectState: ObjectStateEnum.added
+        }
+      ]
+    },
+    {
+      id: 3,
+      name: "Stapler",
+      quantity: 20,
+      price: 15,
+      groupId: 3,
+      objectState: ObjectStateEnum.updated,
+      itemDetails: [
+        {
+          id: 5,
+          itemId: 3,
+          key: itemDetailsKeyEnum.StapledItemsCount,
+          value: "200",
+          objectState: ObjectStateEnum.updated
+        }
+      ]
+    },
+    {
+      id: 1,
+      name: "Printer",
+      quantity: 5,
+      price: 300,
+      groupId: 1,
+      objectState: ObjectStateEnum.unchanged,
+      itemDetails: [
+        {
+          id: 1,
+          itemId: 1,
+          key: itemDetailsKeyEnum.NumberOfPages,
+          value: "500",
+          objectState: ObjectStateEnum.unchanged
+        },
+        {
+          id: 2,
+          itemId: 1,
+          key: itemDetailsKeyEnum.NumberOfPrintingFaces,
+          value: "2",
+          objectState: ObjectStateEnum.unchanged
+        }
+      ]
+    },
+    {
+      id: 2,
+      name: "Notebook",
+      quantity: 50,
+      price: 10,
+      groupId: 2,
+      objectState: ObjectStateEnum.added,
+      itemDetails: [
+        {
+          id: 3,
+          itemId: 2,
+          key: itemDetailsKeyEnum.BoughtItemsCount,
+          value: "100",
+          objectState: ObjectStateEnum.added
+        },
+        {
+          id: 4,
+          itemId: 2,
+          key: itemDetailsKeyEnum.PrintedItemsCount,
+          value: "80",
+          objectState: ObjectStateEnum.added
+        }
+      ]
+    },
+    {
+      id: 3,
+      name: "Stapler",
+      quantity: 20,
+      price: 15,
+      groupId: 3,
+      objectState: ObjectStateEnum.updated,
+      itemDetails: [
+        {
+          id: 5,
+          itemId: 3,
+          key: itemDetailsKeyEnum.StapledItemsCount,
+          value: "200",
+          objectState: ObjectStateEnum.updated
+        }
+      ]
+    },
+    {
+      id: 1,
+      name: "Printer",
+      quantity: 5,
+      price: 300,
+      groupId: 1,
+      objectState: ObjectStateEnum.unchanged,
+      itemDetails: [
+        {
+          id: 1,
+          itemId: 1,
+          key: itemDetailsKeyEnum.NumberOfPages,
+          value: "500",
+          objectState: ObjectStateEnum.unchanged
+        },
+        {
+          id: 2,
+          itemId: 1,
+          key: itemDetailsKeyEnum.NumberOfPrintingFaces,
+          value: "2",
+          objectState: ObjectStateEnum.unchanged
+        }
+      ]
+    },
+    {
+      id: 2,
+      name: "Notebook",
+      quantity: 50,
+      price: 10,
+      groupId: 2,
+      objectState: ObjectStateEnum.added,
+      itemDetails: [
+        {
+          id: 3,
+          itemId: 2,
+          key: itemDetailsKeyEnum.BoughtItemsCount,
+          value: "100",
+          objectState: ObjectStateEnum.added
+        },
+        {
+          id: 4,
+          itemId: 2,
+          key: itemDetailsKeyEnum.PrintedItemsCount,
+          value: "80",
+          objectState: ObjectStateEnum.added
+        }
+      ]
+    },
+    {
+      id: 3,
+      name: "Stapler",
+      quantity: 20,
+      price: 15,
+      groupId: 3,
+      objectState: ObjectStateEnum.updated,
+      itemDetails: [
+        {
+          id: 5,
+          itemId: 3,
+          key: itemDetailsKeyEnum.StapledItemsCount,
+          value: "200",
+          objectState: ObjectStateEnum.updated
+        }
+      ]
+    }
+  ];
+
   protected groupServices: OrderGroupServiceGetDto[] = [];
   protected itemsGridSource!: ItemSharedVM[];
 
@@ -91,14 +288,18 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
 
     this.groupName = currentGroup.name;
-    this.groupItems = currentGroup.items;
     this.groupServices = currentGroup.orderGroupServices;
     this.groupName = currentGroup.name;
 
+    // this.groupItems = currentGroup.items;
+    this.mapItems(this.groupItems);
+  }
+
+  private mapItems(items: ItemGetDto[]): void {
     if (this.isGroupHasSellingService) {
-      this.itemsGridSource = this.mapIntoSellingVM(this.groupItems.slice(0, 5));
+      this.itemsGridSource = this.mapIntoSellingVM(items);
     } else {
-      this.itemsGridSource = this.mapIntoNonSellingVM(this.groupItems.slice(0, 5));
+      this.itemsGridSource = this.mapIntoNonSellingVM(items);
     }
   }
 
@@ -172,10 +373,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   }
 
-  onPageChangeClick(event: PageEvent) {
+  protected onPageChangeClick(event: PageEvent) {
     const length = event.pageSize;
     const pageNumber = event.pageIndex;
-    // this.itemsGridSource = this.groupItems.slice((pageNumber) * length, (pageNumber + 1) * length)
+    const itemsToDisplay = this.groupItems.slice((pageNumber) * length, (pageNumber + 1) * length);
+    this.mapItems(itemsToDisplay);
   }
 
   protected onSave_Click() {
