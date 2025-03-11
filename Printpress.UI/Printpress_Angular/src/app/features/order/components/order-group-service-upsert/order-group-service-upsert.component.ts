@@ -176,6 +176,11 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   protected onDeleteServiceCat(serviceId: number): void {
+    if (!this.validateBeforeDelete()) {
+      this.alertService.showError('لا يمكن حذف خدمة. المجموعة تحتوي علي عناصر مضافة');
+      return;
+    }
+    
     const dialogData: ConfirmDialogModel = {
       title: 'تأكيد الحذف',
       message: 'هل أنت متأكد أنك تريد حذف هذه الخدمة ؟',
@@ -192,5 +197,13 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(dialogSub);
+  }
+  private validateBeforeDelete(){
+    const items = this.orderSharedDataService.getOrderGroupItems(this.groupId)
+    if (items && items.length > 0) {
+      return false;
+    }
+
+    return true;
   }
 }
