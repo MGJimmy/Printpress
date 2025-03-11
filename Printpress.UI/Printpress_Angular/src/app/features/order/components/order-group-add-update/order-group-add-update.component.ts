@@ -233,11 +233,12 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     }
   ];
 
-  protected groupServices: OrderGroupServiceGetDto[] = [];
   protected itemsGridSource!: ItemSharedVM[];
 
-  protected get groupServicesNamesCommaseperated(): string {
-    return this.groupServices.map(x => { return x.serviceName }).join(' - ');
+  protected groupServicesNamesCommaseperated!: string;
+
+  private updateDisplayedServicesNames(groupServices: OrderGroupServiceGetDto[]) {
+    this.groupServicesNamesCommaseperated = groupServices.map(x => { return x.serviceName }).join(' - ');
   }
 
   protected isGroupHasSellingService: boolean = false;
@@ -288,7 +289,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
 
     this.groupName = currentGroup.name;
-    this.groupServices = currentGroup.orderGroupServices;
+    this.updateDisplayedServicesNames(currentGroup.orderGroupServices);
     this.groupName = currentGroup.name;
 
     // this.groupItems = currentGroup.items;
@@ -315,8 +316,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected groupNameChanged() {
-    const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
-    currentGroup.name = this.groupName;
+    this.orderSharedService.updateOrderGroupName(this.groupId, this.groupName);
   }
 
   protected editGroupService_Click(): void {
@@ -336,7 +336,9 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       if (!isSave) {
         return;
       }
-      this.groupServices = this.orderSharedService.getOrderGroupServices(this.groupId);
+      const groupServices = this.orderSharedService.getOrderGroupServices(this.groupId);
+      this.updateDisplayedServicesNames(groupServices);
+
       this.isGroupHasSellingService = this.orderSharedService.getOrderGroup(this.groupId).isHasSellingService;
       this.updateDisplayedColumns();
     });
@@ -385,17 +387,10 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       return;
     }
 
-    console.log('Group saved:', {
-      groupName: this.groupName,
-      groupServices: this.groupServices,
-      items: this.groupItems
-    });
-
-
     if (this.isEdit) {
-      this.orderSharedService.updateOrderGroup(this.groupId, this.groupName, this.groupServices);
+      this.orderSharedService.updateOrderGroup(this.groupId);
     } else {
-      this.orderSharedService.saveNewOrderGroup(this.groupId, this.groupName, this.groupServices);
+      this.orderSharedService.saveNewOrderGroup(this.groupId);
     }
 
     this.navigateToOrderPage();

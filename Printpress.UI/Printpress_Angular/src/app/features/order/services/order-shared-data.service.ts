@@ -122,19 +122,18 @@ export class OrderSharedDataService {
     }
   }
 
-  public updateOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[]) {
+  public updateOrderGroupName(id: number, name: string) {
     let orderGroup = this.getOrderGroup(id);
-
     orderGroup.name = name;
-    orderGroup.orderGroupServices = groupServices;
+  }
+
+  public updateOrderGroup(id: number) {
+    let orderGroup = this.getOrderGroup(id);
     orderGroup.objectState = ObjectStateEnum.updated;
   }
 
-  public saveNewOrderGroup(id: number, name: string, groupServices: OrderGroupServiceGetDto[]) {
+  public saveNewOrderGroup(id: number) {
     let orderGroup = this.getOrderGroup(id);
-
-    orderGroup.name = name;
-    orderGroup.orderGroupServices = groupServices;
     orderGroup.objectState = ObjectStateEnum.added;
   }
 
