@@ -24,7 +24,7 @@ import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
   selector: 'app-order-group-add-update',
   standalone: true,
   imports: [ReactiveFormsModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, SharedPaginationComponent,
-    CommonModule, MatDialogModule, OrderGroupServiceUpsertComponent],
+    CommonModule, MatDialogModule],
   templateUrl: './order-group-add-update.component.html',
   styleUrl: './order-group-add-update.component.css'
 })
@@ -46,13 +46,12 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   displayedColumns: string[] = [];
 
-  updateDisplayedColumns(){
+  protected updateDisplayedColumns() {
     if (this.isGroupHasSellingService) {
-      this.displayedColumns =  ['index', 'name', 'quantity',
+      this.displayedColumns = ['index', 'name', 'quantity',
         'itemPrice', 'boughtItemsCount', 'total', 'actions'];
-    } else
-    {
-      this.displayedColumns =   ['index', 'name',
+    } else {
+      this.displayedColumns = ['index', 'name',
         'numberOfPages', 'stapledItemsCount', 'printedItemsCount',
         'quantity', 'itemPrice', 'total', 'actions'];
     }
@@ -69,14 +68,20 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.setGroupId();
-    this.setCurrentGroupData();
     this.orderSharedService.updateGroupFlagsOnServicesCategoriesById(this.groupId);
-    // this.itemsGridSource = this.groupItems.slice(0, 5);
+    this.setCurrentGroupData();
     this.updateDisplayedColumns();
 
-    if (!this.isEdit) {
+    if (!this.groupItems || this.groupItems.length == 0) {
       this.openServicesModal();
-    }
+    } 
+    // else {
+    //   if (this.isGroupHasSellingService) {
+    //     this.itemsGridSource = this.mapIntoSellingVM(this.groupItems.slice(0, 5));
+    //   } else {
+    //     this.itemsGridSource = this.mapIntoNonSellingVM(this.groupItems.slice(0, 5));
+    //   }
+    // }
   }
 
   private setGroupId(): void {
@@ -94,9 +99,17 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
 
     this.groupName = currentGroup.name;
-    // this.groupItems = currentGroup.items;
+    this.groupItems = currentGroup.items;
     this.groupServices = currentGroup.orderGroupServices;
     this.groupName = currentGroup.name;
+
+    if (this.isGroupHasSellingService) {
+      this.itemsGridSource = this.mapIntoSellingVM(this.groupItems.slice(0, 5));
+    } else {
+      this.itemsGridSource = this.mapIntoNonSellingVM(this.groupItems.slice(0, 5));
+    }
+
+
   }
 
   protected groupNameChanged() {
