@@ -292,6 +292,10 @@ export class OrderSharedDataService {
     return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
   }
 
+  public getOrderGroupItems(orderGroupId: number): ItemGetDto[] {
+    return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items;
+  }
+
   public getAllOrderGroupsServices(): OrderGroupServiceGetDto[] {
     return this.orderObject.orderGroups.flatMap(x => x.orderGroupServices);
   }
