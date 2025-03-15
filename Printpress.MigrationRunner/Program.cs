@@ -42,6 +42,8 @@ public class Program
                 dbContext.SaveChanges();
 
                 Console.WriteLine("Database migrations applied successfully.");
+
+                Console.ReadLine();
             }
 
         }
