@@ -111,7 +111,6 @@ export class OrderSharedDataService {
     };
 
     this.orderObject.orderGroups.push(orderGroup);
-    console.log('after push:', this.orderObject);
     return tempId
   }
 

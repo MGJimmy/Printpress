@@ -24,7 +24,6 @@ export class SharedPaginationComponent {
   }
 
   onPageChangeClick(event: PageEvent) {
-    console.log(event);
     this.onPageChange.emit(event);
   }
 }

@@ -82,7 +82,6 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.groupId = this.inputData.groupId;
-    console.log(this.groupId);
 
     this.fetchServices();
     this.fillPageData()

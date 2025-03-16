@@ -58,10 +58,6 @@ export class ItemAddUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkModeAndInitData();  
-
-    this.group = this.orderSharedService.getOrderGroup(this.groupId);
-
     this.itemForm = this.fb.group({
       name: ['', Validators.required],
       quantity: [0, Validators.required],
@@ -69,6 +65,10 @@ export class ItemAddUpdateComponent implements OnInit {
       numberOfPages: [0, [Validators.required, Validators.min(0)]],
       numberOfPrintingFaces: [1, Validators.required],
     });
+
+    this.checkModeAndInitData();  
+
+    this.group = this.orderSharedService.getOrderGroup(this.groupId);   
   }
 
   checkModeAndInitData() {
@@ -96,16 +96,25 @@ export class ItemAddUpdateComponent implements OnInit {
   }
 
   initEditModeData() {
-    let item = this.orderSharedService.initializeTempItem(this.groupId);
-    //this.orderSharedService.addItem(this.groupId, item.id, "test", 10, 20);
-    this.itemIdToEdit = item.id;
-
     this.item = this.orderSharedService.getItem(this.groupId, this.itemIdToEdit);
+    this.fillFormWithItemData(this.item);
+  }
+
+  fillFormWithItemData(item: ItemGetDto) {
+    this.numberOfPages = (item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)?.value || 0) as number;
+    this.numberOfPrintingFaces = (item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)?.value || 0) as number;
+
+    this.itemForm.patchValue({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      numberOfPages: this.numberOfPages,
+      numberOfPrintingFaces: this.numberOfPrintingFaces,
+    });
   }
 
 
   onSave(): void {
-    console.log('Saved Item:', this.itemForm.value); // for debugging
 
     this.MapValuesFromFormToItem(this.itemForm);
 
@@ -115,10 +124,6 @@ export class ItemAddUpdateComponent implements OnInit {
     else{
       this.orderSharedService.updateItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price);
     }
-
-    console.log( "order:" + JSON.stringify(this.orderSharedService.getOrderObject())); // for debugging
-
-    console.log("Group:" + JSON.stringify(this.orderSharedService.getOrderGroup(this.groupId))); // for debugging
     
     // navigate to group component after saving
     this.router.navigate(['order/group/edit', this.groupId]);

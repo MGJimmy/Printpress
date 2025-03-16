@@ -96,7 +96,6 @@ export class TransactionComponent implements OnInit {
     this.orderTransactionService.getTransactions(this.orderId, this.currentPage, this.pageSize)
     .subscribe({
       next: (response) => {
-        console.log(response);
         this.transactions = this.MapArabicValues(response.data.items);
         this.totalItemsCount = response.data.totalCount;
       },

@@ -429,6 +429,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       const boughtItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.BoughtItemsCount);
 
       let itemSellingVM: ItemSellingVM = {
+        id: item.id,
         name: item.name,
         quantity: item.quantity,
         price: item.price,
@@ -450,6 +451,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       const stapledItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.StapledItemsCount);
 
       let itemSellingVM: ItemNonSellingVM = {
+        id: item.id,
         name: item.name,
         quantity: item.quantity,
         price: item.price,

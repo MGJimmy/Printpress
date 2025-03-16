@@ -1,6 +1,6 @@
 
 export interface ItemSharedVM {
-    // id: number;
+    id: number;
     // groupId: number;
     name: string;
     quantity: number;
