@@ -17,6 +17,8 @@ public class InvoiceDocument : IDocument
         container
              .Page(page =>
              {
+                 page.ContentFromRightToLeft();
+
                  page.Margin(40);
 
                  page.Header().Element(ComposeHeader);
@@ -36,62 +38,66 @@ public class InvoiceDocument : IDocument
         {
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignLeft().Column(col =>
+                row.RelativeItem().AlignRight().Column(col =>
                 {
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span($"{DateTime.Now:d}");
-                        });
+                    
 
                         row.AutoItem().Text(text =>
                         {
-                            text.Span(" : تاريخ الطباعه").SemiBold();
+                            text.Span("تاريخ الطباعه : ").SemiBold();
+                        });
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span($"{DateTime.Now:d}");
                         });
                     });
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(Model.Client.Mobile);
-                        });
+                      
 
                         row.AutoItem().Text(text =>
                         {
-                            text.Span(" : تيلفون العميل").SemiBold();
+                            text.Span("تيلفون العميل : ").SemiBold();
+                        });
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span(Model.Client.Mobile);
                         });
                     });
 
                 });
 
-                row.RelativeItem().AlignRight().Column(col =>
+                row.RelativeItem().AlignLeft().Column(col =>
                 {
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
+                     
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span("أسم العميل : ").SemiBold();
+                        });
                         row.AutoItem().Text(text =>
                         {
                             text.Span(Model.Client.Name);
                         });
 
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(" : أسم العميل").SemiBold();
-                        });
                     });
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(Model.Client.Address);
-                        });
+                       
 
                         row.AutoItem().Text(text =>
                         {
-                            text.Span(" : عنوان العميل").SemiBold();
+                            text.Span(" عنوان العميل :").SemiBold();
+                        });
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span(Model.Client.Address);
                         });
                     });
 
@@ -134,11 +140,12 @@ public class InvoiceDocument : IDocument
 
             table.Header(header =>
             {
-                header.Cell().Element(CellStyle).AlignCenter().Text("الاجمالي");
-                header.Cell().Element(CellStyle).AlignCenter().Text("الكميه");
-                header.Cell().Element(CellStyle).AlignCenter().Text("سعر الوحده");
-                header.Cell().Element(CellStyle).AlignCenter().Text("النوع");
                 header.Cell().Element(CellStyle).AlignCenter().Text("#");
+                header.Cell().Element(CellStyle).AlignCenter().Text("النوع");
+                header.Cell().Element(CellStyle).AlignCenter().Text("سعر الوحده");
+                header.Cell().Element(CellStyle).AlignCenter().Text("الكميه");
+                header.Cell().Element(CellStyle).AlignCenter().Text("الاجمالي");
+
 
                 static IContainer CellStyle(IContainer container)
                 {
@@ -150,11 +157,12 @@ public class InvoiceDocument : IDocument
 
             foreach (var item in Items)
             {
-                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price * item.Quantity}");
-                table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString());
-                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price}");
-                table.Cell().Element(CellStyle).AlignCenter().Text(item.Name);
                 table.Cell().Element(CellStyle).AlignCenter().Text((Items.IndexOf(item) + 1).ToString());
+                table.Cell().Element(CellStyle).AlignCenter().Text(item.Name);
+                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price}");
+                table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString());
+                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price * item.Quantity}");
+
 
 
                 static IContainer CellStyle(IContainer container)
