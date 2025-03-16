@@ -8,7 +8,7 @@ namespace Printpress.API;
 
 public static class IServiceCollectionExtensions
 {
-    public static void AddApplicationServices(this IServiceCollection services,IConfiguration configuration)
+    public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
         services.AddEndpointsApiExplorer();

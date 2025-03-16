@@ -43,7 +43,7 @@ public class InvoiceDocument : IDocument
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-                    
+
 
                         row.AutoItem().Text(text =>
                         {
@@ -57,7 +57,7 @@ public class InvoiceDocument : IDocument
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-                      
+
 
                         row.AutoItem().Text(text =>
                         {
@@ -75,7 +75,7 @@ public class InvoiceDocument : IDocument
                 {
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-                     
+
                         row.AutoItem().Text(text =>
                         {
                             text.Span("أسم العميل : ").SemiBold();
@@ -89,7 +89,7 @@ public class InvoiceDocument : IDocument
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-                       
+
 
                         row.AutoItem().Text(text =>
                         {

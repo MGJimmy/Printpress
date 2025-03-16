@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using Printpress.Domain.Entities;
+﻿using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
 using Printpress.Infrastructure;
-using Printpress.Infrastructure.Migrations;
 
 namespace Printpress.MigrationRunner;
 
@@ -207,7 +205,7 @@ internal sealed class SeedingDbContext
             if (!_dbContext.Client.Any(c => c.Id == client.Id))
             {
                 _dbContext.Client.Add(client);
-                Console.WriteLine(string.Format("new client add with id {0}",client.Id));
+                Console.WriteLine(string.Format("new client add with id {0}", client.Id));
 
             }
         }

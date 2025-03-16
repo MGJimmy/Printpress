@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Printpress.API;
 using Printpress.Application;
-using Printpress.Domain.Enums;
 
 public class ResponseWrapperFilter : IAsyncResultFilter
 {

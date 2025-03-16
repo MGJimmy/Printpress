@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Printpress.Domain.Enums;
+﻿using Printpress.Domain.Enums;
 
 namespace Printpress.Domain.Entities
 {
@@ -12,8 +7,8 @@ namespace Printpress.Domain.Entities
         public int Id { get; set; }
         public int ItemId { get; set; }
 
-        public ItemDetailsKeyEnum ItemDetailsKey 
-        { 
+        public ItemDetailsKeyEnum ItemDetailsKey
+        {
             get { return (ItemDetailsKeyEnum)ItemDetailsKeyId; }
             set { ItemDetailsKeyId = (int)value; }
         }

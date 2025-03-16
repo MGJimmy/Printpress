@@ -15,7 +15,7 @@ namespace Printpress.Application
                 Id = order.Id,
                 Name = order.Name,
                 ClientId = order.ClientId,
-                ClientName=order.Client.Name,
+                ClientName = order.Client.Name,
                 TotalPaid = order.TotalPaid,
                 TotalPrice = order.TotalPrice,
                 OrderServices = order.Services.MapAsList(MapToOrderServiceDTO),

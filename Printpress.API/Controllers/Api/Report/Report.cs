@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Printpress.Application;
 using Printpress.Domain.Entities;
-using QuestPDF.Companion;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
 
 namespace Printpress.API.Controllers.Api
 {

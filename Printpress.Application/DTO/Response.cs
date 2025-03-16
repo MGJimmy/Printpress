@@ -1,6 +1,4 @@
-﻿using Printpress.Domain.Enums;
-
-namespace Printpress.Application
+﻿namespace Printpress.Application
 {
     public class Response<T> : Response
     {

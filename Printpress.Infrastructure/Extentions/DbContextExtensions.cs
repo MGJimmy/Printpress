@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Printpress.Domain;
 using Printpress.Domain.Enums;
 using System.Data;
 using System.Dynamic;
-using Printpress.Domain;
 
 namespace Printpress.Infrastructure;
 
