@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using Printpress.Domain.Enums;
+﻿using Printpress.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Printpress.Application;
 

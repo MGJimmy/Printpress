@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Printpress.Application;
-using Printpress.Domain.Enums;
 
 namespace Printpress.API
 {

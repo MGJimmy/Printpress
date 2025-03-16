@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Printpress.Application;
-using Printpress.Domain.Enums;
 
 namespace Printpress.API.Middlewares;
 

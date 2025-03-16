@@ -19,18 +19,19 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
     public async Task<IActionResult> GetById(int id)
     {
         var orderDto = await _IOrderService.GetOrderDTOAsync(id);
-
         return Ok(orderDto);
     }
     [HttpPost]
     [Route("insert")]
     public async Task<IActionResult> Insert(OrderUpsertDto order)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest();
-        }
-
+        await _IOrderService.InsertOrder(order);
+        return Ok();
+    }
+    [HttpPost]
+    [Route("update/{id}")]
+    public async Task<IActionResult> update(int id, OrderUpsertDto order)
+    {
         await _IOrderService.InsertOrder(order);
         return Ok();
     }

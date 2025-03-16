@@ -6,7 +6,7 @@ using Printpress.MigrationRunner;
 
 public class Program
 {
-    public static  void Main(string[] args)
+    public static void Main(string[] args)
     {
         try
         {
@@ -42,6 +42,8 @@ public class Program
                 dbContext.SaveChanges();
 
                 Console.WriteLine("Database migrations applied successfully.");
+
+                Console.ReadLine();
             }
 
         }

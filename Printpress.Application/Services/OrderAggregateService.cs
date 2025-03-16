@@ -66,7 +66,7 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
         return totalOrderPrice;
     }
 
-    private async Task SetGroupItemPrices(OrderGroup group, List<Domain.Entities.OrderService> orderService)
+    private async Task SetGroupItemPrices(OrderGroup group, List<OrderService> orderService)
     {
         var allServices = await _IUnitOfWork.ServiceRepository.AllAsync();
 
@@ -128,5 +128,16 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
         var noOfPrintingFaces = string.IsNullOrEmpty(stringNoOfPrintingFaces) ? 1 : int.Parse(stringNoOfPrintingFaces);
 
         return price * noOfPages / noOfPrintingFaces;
+    }
+
+    public async Task UpdateOrder(OrderUpsertDto orderDTO)
+    {
+        Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
+
+        order.TotalPrice = await CalculateOrderTotalPrice(order);
+
+        _IUnitOfWork.OrderRepository.Update(order);
+
+        await _IUnitOfWork.SaveChangesAsync();
     }
 }

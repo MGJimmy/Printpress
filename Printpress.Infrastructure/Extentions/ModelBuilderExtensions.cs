@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Printpress.Domain.Entities;
-using Printpress.Domain.Enums;
 
 namespace Printpress.Infrastructure
 {

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Printpress.Application
+﻿namespace Printpress.Application
 {
     public record Paging
     {
 
-        public Paging(int pageNumber,int pageSize)
+        public Paging(int pageNumber, int pageSize)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;

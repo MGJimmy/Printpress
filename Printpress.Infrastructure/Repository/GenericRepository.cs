@@ -1,14 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Printpress.Application;
 using Printpress.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Printpress.Infrastructure.Repository
 {
