@@ -280,9 +280,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
     this.groupName = currentGroup.name;
     this.updateDisplayedServicesNames(currentGroup.orderGroupServices);
-    this.groupName = currentGroup.name;
 
-    // this.groupItems = currentGroup.items;
+    this.groupItems = currentGroup.items;
     this.mapItems(this.groupItems);
   }
 

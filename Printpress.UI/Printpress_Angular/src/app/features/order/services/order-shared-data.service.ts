@@ -8,6 +8,8 @@ import { OrderServicesGetDTO } from '../models/order-service/order-service-getDt
 import { ServiceService } from '../../setup/services/service.service';
 import { ServiceCategoryEnum } from '../../setup/models/service-category.enum';
 import { ServiceGetDto } from '../../setup/models/service-get.dto';
+import { ItemDetailsGetDto } from '../models/item-details/item-details-get.dto';
+import { itemDetailsKeyEnum } from '../models/enums/item-details-key.enum';
 
 /*
   Notes: 
@@ -109,17 +111,17 @@ export class OrderSharedDataService {
     };
 
     this.orderObject.orderGroups.push(orderGroup);
-
+    console.log('after push:', this.orderObject);
     return tempId
   }
 
   public getOrderGroup(id: number): OrderGroupGetDto {
     let group = this.orderObject.orderGroups.find(x => x.id == id);
-    if (group) {
-      return group;
-    } else {
+    if (!group) {
       throw 'cannot find a group with id = ' + id;
-    }
+    } 
+
+    return {...group};
   }
 
   public updateOrderGroupName(id: number, name: string) {
@@ -188,8 +190,8 @@ export class OrderSharedDataService {
  * 
  */
   public initializeTempItem(orderGroupId: number): ItemGetDto {
-    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
-
+    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id == orderGroupId);
+    
     if (orderGroup === undefined) {
       throw new Error('Order group not found');
     }
@@ -197,7 +199,24 @@ export class OrderSharedDataService {
     let tempId = this.generateTempId(orderGroup.items.map(x => x.id));
 
     // check if group service contains printing service then init the two item details for printing with default values
-    // to set them in the form
+    let itemDetails: ItemDetailsGetDto[] =  [];
+
+    if(orderGroup.isHasPrintingService){
+      itemDetails.push({
+        id: 0,
+        itemId: tempId,
+        key: itemDetailsKeyEnum.NumberOfPages,
+        value: "",
+        objectState: ObjectStateEnum.temp
+      });
+      itemDetails.push({
+        id: 1,
+        itemId: tempId,
+        key: itemDetailsKeyEnum.NumberOfPrintingFaces,
+        value: "",
+        objectState: ObjectStateEnum.temp
+      });
+    }
 
     let item: ItemGetDto = {
       id: tempId,
@@ -205,7 +224,7 @@ export class OrderSharedDataService {
       quantity: 0,
       price: 0,
       groupId: orderGroupId,
-      itemDetails: [],
+      itemDetails: itemDetails,
       objectState: ObjectStateEnum.temp
     }
 
@@ -215,10 +234,11 @@ export class OrderSharedDataService {
 
   }
 
-  public addItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number): void {
-    let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id === orderGroupId);
+  public addItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number, numberOfPages:number|undefined, numberOfPrintingFaces:number|undefined): void {
 
-    if (orderGroup === undefined) {
+    let orderGroup = this.orderObject.orderGroups.find(x => x.id == orderGroupId);
+
+    if (!orderGroup) {
       throw new Error('Order group not found');
     }
 
@@ -228,6 +248,23 @@ export class OrderSharedDataService {
     item.quantity = quantity;
     item.price = price;
     item.objectState = ObjectStateEnum.added;
+    
+    if(orderGroup.isHasPrintingService){
+      if(!numberOfPages || !numberOfPrintingFaces){
+        throw new Error('Number of pages and number of printing faces are required for printing service');
+      }
+
+      let numberOfPagesItemDetail: ItemDetailsGetDto = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)!;
+      let numberOfPrintingFacesItemDetail: ItemDetailsGetDto = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)!;
+
+      numberOfPagesItemDetail.value = numberOfPages.toString();
+      numberOfPagesItemDetail.objectState = ObjectStateEnum.added;
+
+      numberOfPrintingFacesItemDetail.value = numberOfPrintingFaces.toString();
+      numberOfPrintingFacesItemDetail.objectState = ObjectStateEnum.added;
+    }
+
+
   }
 
   public updateItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number): void {

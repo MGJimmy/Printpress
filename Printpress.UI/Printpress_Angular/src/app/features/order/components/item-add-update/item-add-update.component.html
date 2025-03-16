@@ -22,7 +22,7 @@
       </div>
 
       <!-- Price (Conditional) -->
-      <div class="col-md-6" *ngIf="showPriceField()">
+      <div class="col-md-6" *ngIf="group.isHasSellingService">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>سعر العنصر</mat-label>
           <input matInput type="number" formControlName="price" placeholder="سعر العنصر" />
@@ -30,7 +30,7 @@
       </div>
 
       <!-- Pages (Conditional) -->
-      <div class="col-md-6" *ngIf="showPrintingFields()">
+      <div class="col-md-6" *ngIf="group.isHasPrintingService">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>عدد الصفحات</mat-label>
           <input matInput type="number" formControlName="numberOfPages" placeholder="عدد الصفحات" />
@@ -38,9 +38,9 @@
       </div>
 
       <!-- Faces -->
-      <div class="col-md-6" *ngIf="showPrintingFields()">
+      <div class="col-md-6" *ngIf="group.isHasPrintingService">
         <mat-form-field appearance="outline" class="w-100">
-          <mat-label>الأوجه</mat-label>
+          <mat-label>اوجة الطباعة</mat-label>
           <mat-select formControlName="numberOfPrintingFaces">
             <mat-option value="1">وجه</mat-option>
             <mat-option value="2">وجهين</mat-option>

@@ -18,6 +18,7 @@ import { ServiceService } from '../../../setup/services/service.service';
 import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
+import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 
 @Component({
   selector: 'app-item-add-update',
@@ -35,8 +36,6 @@ import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum
   styleUrls: ['./item-add-update.component.css'],
 })
 export class ItemAddUpdateComponent implements OnInit {
-
-  @Input({ required: true }) orderGroupServices!: OrderGroupServiceUpsertDto[];  // need this list to show and hide inputs depend on it
   isEditMode!: boolean;
   isAddMode!: boolean;
 
@@ -46,37 +45,29 @@ export class ItemAddUpdateComponent implements OnInit {
 
   itemForm!: FormGroup<{ [K in keyof ItemForm]: FormControl<ItemForm[K]> }>;
 
-
-  // mockOrderGroupServices: OrderGroupServiceGetDto[] = [
-  //   // { id: 1, serviceId: 1, orderGroupId: 1, serviceName: "printing" },
-  //   // { id: 2, serviceId: 2, orderGroupId: 1, serviceName: "printing" },
-  //   // { id: 3, serviceId: 3, orderGroupId: 1, serviceName: "cutting" },
-  //   { id: 3, serviceId: 6, orderGroupId: 1, serviceName: "selling" },
-  // ];
-
-  groupServices!: ServiceGetDto[];
-
   groupId!:number;
+  group!: OrderGroupGetDto;
+
+  numberOfPages: number | undefined;
+  numberOfPrintingFaces: number | undefined;
+
 
   constructor(private orderSharedService:OrderSharedDataService,
               private router: Router, private activateRoute: ActivatedRoute,
-              private fb: NonNullableFormBuilder,
-              private serviceService: ServiceService
+              private fb: NonNullableFormBuilder
   ) {}
 
   ngOnInit(): void {
-    // this.serviceService.getServices(this.mockOrderGroupServices.map(x=> x.serviceId)).subscribe(services => {
-    //   this.groupServices = services;
-    // });
-
     this.checkModeAndInitData();  
+
+    this.group = this.orderSharedService.getOrderGroup(this.groupId);
 
     this.itemForm = this.fb.group({
       name: ['', Validators.required],
       quantity: [0, Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
       numberOfPages: [0, [Validators.required, Validators.min(0)]],
-      numberOfPrintingFaces: [0, Validators.required],
+      numberOfPrintingFaces: [1, Validators.required],
     });
   }
 
@@ -87,8 +78,8 @@ export class ItemAddUpdateComponent implements OnInit {
     });
 
     this.activateRoute.params.subscribe(params => {
-      this.itemIdToEdit = this.isEditMode? params['id'] : 0;
-      this.groupId = params['groupId'];
+      this.itemIdToEdit = this.isEditMode? +params['id'] : 0;
+      this.groupId = +params['groupId'];
     });
 
     if(this.isAddMode){
@@ -101,32 +92,17 @@ export class ItemAddUpdateComponent implements OnInit {
   }
 
   initAddModeData() {
-    this.groupId = this.orderSharedService.intializeNewGroup();
     this.item = this.orderSharedService.initializeTempItem(this.groupId);
   }
 
   initEditModeData() {
-    this.groupId = this.orderSharedService.intializeNewGroup();
     let item = this.orderSharedService.initializeTempItem(this.groupId);
-    this.orderSharedService.addItem(this.groupId, item.id, "test", 10, 20);
+    //this.orderSharedService.addItem(this.groupId, item.id, "test", 10, 20);
     this.itemIdToEdit = item.id;
-   
-   
+
     this.item = this.orderSharedService.getItem(this.groupId, this.itemIdToEdit);
   }
 
-
-  showPriceField(): boolean {
-    return this.groupServices.some(x => x.serviceCategory === ServiceCategoryEnum.Selling);
-  }
-
-  showPrintingFields(): boolean {
-    return this.isGroupServicesContainsPrintingService();
-  }
-
-  isGroupServicesContainsPrintingService(): boolean {
-    return this.groupServices.some(x => x.serviceCategory === ServiceCategoryEnum.Printing);
-  }
 
   onSave(): void {
     console.log('Saved Item:', this.itemForm.value); // for debugging
@@ -134,7 +110,7 @@ export class ItemAddUpdateComponent implements OnInit {
     this.MapValuesFromFormToItem(this.itemForm);
 
     if(this.isAddMode){
-      this.orderSharedService.addItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price);
+      this.orderSharedService.addItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price, this.numberOfPages, this.numberOfPrintingFaces);
     }
     else{
       this.orderSharedService.updateItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price);
@@ -145,7 +121,7 @@ export class ItemAddUpdateComponent implements OnInit {
     console.log("Group:" + JSON.stringify(this.orderSharedService.getOrderGroup(this.groupId))); // for debugging
     
     // navigate to group component after saving
-    //this.router.navigate(['order/group/edit', this.tempGroupId]);
+    this.router.navigate(['order/group/edit', this.groupId]);
   }
 
   MapValuesFromFormToItem(itemForm: FormGroup) {
@@ -155,17 +131,35 @@ export class ItemAddUpdateComponent implements OnInit {
     this.item.quantity = formRawValue.quantity;
     this.item.price = formRawValue.price;
 
-    if (this.isGroupServicesContainsPrintingService()) {
-      let numberOfPages = this.item.itemDetails?.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)
-      let numberOfPrintingFaces = this.item.itemDetails?.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)
-      if(numberOfPages){
-        numberOfPages.value = formRawValue.numberOfPages;
-      }
+    if (this.group.isHasPrintingService) {
+      // let numberOfPages = this.item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)
+      // let numberOfPrintingFaces = this.item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)
+      // if(numberOfPages){
+      //   numberOfPages.value = formRawValue.numberOfPages;
+      // }
 
-      if(numberOfPrintingFaces){
-        numberOfPrintingFaces.value = formRawValue.numberOfPrintingFaces;
-      }
+      // if(numberOfPrintingFaces){
+      //   numberOfPrintingFaces.value = formRawValue.numberOfPrintingFaces;
+      // }
+
+      this.numberOfPages = formRawValue.numberOfPages;
+      this.numberOfPrintingFaces = formRawValue.numberOfPrintingFaces;
     }
   }
+
+  // MapValuesFromFormToItem2(itemForm: FormGroup) {
+  //   Object.assign(this.item, itemForm.getRawValue());
+  
+  //   if (this.group.isHasPrintingService) {
+  //     this.item.itemDetails.forEach(detail => {
+  //       if (detail.key === itemDetailsKeyEnum.NumberOfPages) {
+  //         detail.value = this.itemForm.value.numberOfPages.toString();
+  //       }
+  //       if (detail.key === itemDetailsKeyEnum.NumberOfPrintingFaces) {
+  //         detail.value = this.itemForm.value.numberOfPrintingFaces;
+  //       }
+  //     });
+  //   }
+  // }
 
 }
