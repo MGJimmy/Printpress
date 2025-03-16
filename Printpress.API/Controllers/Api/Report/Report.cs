@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Printpress.Application;
+using Printpress.Domain.Entities;
+using QuestPDF.Companion;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
 
 namespace Printpress.API.Controllers.Api
 {
@@ -15,9 +18,11 @@ namespace Printpress.API.Controllers.Api
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
-            var model = await _unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == 1, true,["Client", "OrderGroups", "OrderGroups.Items" ]);
+            string[] includes = [nameof(Order.Client), nameof(Order.OrderGroups), $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}"];
 
-            var document = new InvoiceDocument{ Model = model };
+            var model = await _unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == 1, true, includes);
+
+            var document = new InvoiceDocument { Model = model };
 
             document.GeneratePdfAndShow();
 
