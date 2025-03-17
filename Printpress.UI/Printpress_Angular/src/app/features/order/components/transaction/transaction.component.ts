@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Subscription} from 'rxjs';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +13,8 @@ import { OrderTransactionAddDto } from '../../models/order-transaction/order-tra
 import { OrderTransactionGetDto } from '../../models/order-transaction/order-transaction-get.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { OrderSharedDataService } from '../../services/order-shared-data.service';
 @Component({
   selector: 'app-transaction',
   templateUrl: './transaction.component.html',
@@ -30,7 +31,7 @@ import { PageChangedModel } from '../../../../shared/models/page-changed.model';
   ],
 })
 export class TransactionComponent implements OnInit {
-  
+
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'المبلغ المدفوع', column: 'amount' },
     { headerName: 'نوع المعاملة', column: 'transactionType' },
@@ -38,21 +39,26 @@ export class TransactionComponent implements OnInit {
     { headerName: 'تاريخ المعاملة', column: 'createdOn' },
   ];
 
-  transactions!:  OrderTransactionGetDto[];
+  transactions!: OrderTransactionGetDto[];
   amount: number | null = null;
   note: string = '';
 
   pageSize: number = 5;
   currentPage: number = 1;
-  
-  orderId: number = 1; // this should be passed from the parent component
-  totalItemsCount!: number;
 
-  constructor(
+  orderId: number;
+  totalItemsCount!: number;
+  protected clientName: string;
+  protected orderName: string;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public inputData: { orderId: number },
     private orderTransactionService: OrderTransactionService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private orderSharedDataService: OrderSharedDataService
   ) {
-    
+    this.orderId = inputData.orderId;
+    this.orderName = orderSharedDataService.getOrderObject().name;
+    this.clientName = orderSharedDataService.getOrderObject().clientName;
   }
 
   ngOnInit(): void {
@@ -86,23 +92,23 @@ export class TransactionComponent implements OnInit {
         this.fetchTransactions();
       },
       error: (error) => {
-       console.error(error);
-       this.alertService.showError('حدث خطأ أثناء تنفيذ العملية');
+        console.error(error);
+        this.alertService.showError('حدث خطأ أثناء تنفيذ العملية');
       }
     });
   }
 
   private fetchTransactions(): void {
     this.orderTransactionService.getTransactions(this.orderId, this.currentPage, this.pageSize)
-    .subscribe({
-      next: (response) => {
-        this.transactions = this.MapArabicValues(response.data.items);
-        this.totalItemsCount = response.data.totalCount;
-      },
-      error: (error) => {
-       console.error(error);
-      }
-    });
+      .subscribe({
+        next: (response) => {
+          this.transactions = this.MapArabicValues(response.data.items);
+          this.totalItemsCount = response.data.totalCount;
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
   }
 
   private resetForm(): void {
@@ -121,7 +127,7 @@ export class TransactionComponent implements OnInit {
     return items.map((item) => {
       return {
         ...item,
-        transactionType: item.transactionType === TransactionTypeEnum.Payment ? 'دفع' : 'استرجاع'
+        transactionType: item.transactionType === TransactionTypeEnum.Payment ? 'دفع' : 'استرداد'
       }
     });
   }

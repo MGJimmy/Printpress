@@ -6,9 +6,9 @@
 
     </div>
 
-    <div *ngIf="componentMode.isViewMode" clas="border border-primary">
+    <div clas="border border-primary">
         <div class="row ">
-            <button class="col-3 m-2 " mat-raised-button color="primary">التحويلات الماليه</button>
+            <button class="col-3 m-2 " mat-raised-button color="primary" (click)="manageTransactions_Click()">التحويلات الماليه</button>
             <button class="col-3 m-2" mat-raised-button color="primary">تحديث العناصر المنتهيه </button>
             <button class="col-3 m-2" mat-raised-button color="primary">أصدار فاتوره </button>
         </div>
