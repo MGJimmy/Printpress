@@ -17,11 +17,12 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
         return _orderTransactionMapper.MapFromSourceToDestination(client);
     }
 
-    public async Task<PagedList<OrderTransactionDto>> GetByPage(int pageNumber, int pageSize)
+    public async Task<PagedList<OrderTransactionDto>> GetByPage(int orderId, int pageNumber, int pageSize)
     {
 
-        PagedList<OrderTransaction> pagedList = await _unitOfWork.OrderTransactionRepository.AllAsync(
+        PagedList<OrderTransaction> pagedList = _unitOfWork.OrderTransactionRepository.Filter(
             new Paging(pageNumber, pageSize),
+            (transaction) => transaction.OrderId == orderId,
             new Sorting(nameof(OrderTransaction.Id), SortingDirection.DESC)
             );
 
