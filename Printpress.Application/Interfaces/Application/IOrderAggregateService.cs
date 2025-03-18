@@ -7,4 +7,6 @@ public interface IOrderAggregateService
     Task InsertOrder(OrderUpsertDto order);
 
     Task<OrderDto> GetOrderDTOAsync(int orderId);
+    Task UpdateOrder(int id, OrderUpsertDto orderDTO);
+
 }

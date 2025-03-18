@@ -9,7 +9,8 @@ namespace Printpress.Application
             return new OrderGroupService
             {
                 Id = destinationEntity.Id,
-                ServiceId = destinationEntity.ServiceId
+                ServiceId = destinationEntity.ServiceId,
+                State = destinationEntity.ObjectState.MapToTrackingState()
             };
         }
 

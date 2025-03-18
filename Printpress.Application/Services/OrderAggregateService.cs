@@ -130,7 +130,7 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
         return price * noOfPages / noOfPrintingFaces;
     }
 
-    public async Task UpdateOrder(OrderUpsertDto orderDTO)
+    public async Task UpdateOrder(int id,OrderUpsertDto orderDTO)
     {
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
 

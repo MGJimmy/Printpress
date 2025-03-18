@@ -40,18 +40,14 @@ public class InvoiceDocument : IDocument
             column.Item().PaddingHorizontal(5).AlignCenter().Text("فاتوره")
                                 .FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
 
-            //column.Item().PaddingVertical(3).Height(2).Background(Color.FromRGB(0, 0, 5));
 
 
-            column.Item().Row(row =>
+            column.Item().PaddingHorizontal(40).Row(row =>
             {
                 row.RelativeItem().AlignRight().Column(col =>
                 {
-
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-
-
                         row.AutoItem().Text(text =>
                         {
                             text.Span("تاريخ الطباعه : ").SemiBold();
@@ -64,16 +60,14 @@ public class InvoiceDocument : IDocument
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-
-
                         row.AutoItem().Text(text =>
                         {
-                            text.Span("تيلفون العميل : ").SemiBold();
+                            text.Span(" عنوان العميل :").SemiBold();
                         });
                         row.AutoItem().Text(text =>
                         {
-                            text.Span(Model.Client.Mobile);
-                        });
+                            text.Span(Model.Client.Address);
+                        });                    
                     });
 
                 });
@@ -91,21 +85,20 @@ public class InvoiceDocument : IDocument
                         {
                             text.Span(Model.Client.Name);
                         });
-
                     });
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
 
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span("تيلفون العميل : ").SemiBold();
+                        });
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span(Model.Client.Mobile);
+                        });
 
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(" عنوان العميل :").SemiBold();
-                        });
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(Model.Client.Address);
-                        });
                     });
 
 
@@ -117,14 +110,14 @@ public class InvoiceDocument : IDocument
     }
     void ComposeContent(IContainer container)
     {
-        container.PaddingVertical(40).Column(column =>
+        container.Padding(40).Column(column =>
         {
             decimal total = 0;
 
             foreach (var group in Model.OrderGroups)
             {
                 column.Spacing(5);
-                column.Item().Element(x => ComposeTable(x, group));
+                column.Item().PaddingHorizontal(30).PaddingVertical(10).Element(x => ComposeTable(x, group));
                 column.Spacing(5);
                 total += group.Items.Sum(item => item.Price * item.Quantity);
 

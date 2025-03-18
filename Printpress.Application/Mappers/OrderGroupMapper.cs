@@ -9,7 +9,8 @@ namespace Printpress.Application
             var group = new OrderGroup
             {
                 Id = destinationEntity.Id,
-                Name = destinationEntity.Name
+                Name = destinationEntity.Name,
+                State = destinationEntity.ObjectState.MapToTrackingState()
             };
 
             group.Items = _itemMapper.MapFromDestinationToSource(destinationEntity.Items);

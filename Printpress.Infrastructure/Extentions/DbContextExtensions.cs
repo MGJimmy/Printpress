@@ -38,10 +38,12 @@ public static class DbContextExtensions
         {
             entry.State = EntityState.Modified;
         }
+     
         else if (entity.State == TrackingState.Unchanged)
         {
             entry.State = EntityState.Unchanged;
         }
+
     }
 
     public static IEnumerable<dynamic> DynamicListFromSql(this DbContext db, string sql)
