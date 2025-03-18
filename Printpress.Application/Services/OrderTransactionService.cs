@@ -20,7 +20,7 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
     public async Task<PagedList<OrderTransactionDto>> GetByPage(int orderId, int pageNumber, int pageSize)
     {
 
-        PagedList<OrderTransaction> pagedList = _unitOfWork.OrderTransactionRepository.Filter(
+        PagedList<OrderTransaction> pagedList = await _unitOfWork.OrderTransactionRepository.FilterAsync(
             new Paging(pageNumber, pageSize),
             (transaction) => transaction.OrderId == orderId,
             new Sorting(nameof(OrderTransaction.Id), SortingDirection.DESC)
