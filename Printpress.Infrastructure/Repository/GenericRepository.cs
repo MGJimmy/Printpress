@@ -91,6 +91,21 @@ namespace Printpress.Infrastructure.Repository
                 PageSize = paging.PageSize
             };
         }
+        public async Task<PagedList<T>> FilterAsync(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null)
+        {
+            var Items = Context.Set<T>()
+                .Where(query)
+                .OrderBy(sorting)
+                .SelectPage(paging);
+
+            return new PagedList<T>
+            {
+                Items = await Items.ToListAsync(),
+                TotalCount = Count(query),
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+        }
         public PagedList<T> Filter(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null, params string[] includes)
         {
             var Items = Context.Set<T>()
