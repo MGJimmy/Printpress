@@ -164,11 +164,6 @@ export class OrderSharedDataService {
       group.isHasStaplingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Stapling);
     });
   }
-
-  public updateGroupFlagsOnServicesCategoriesById(groupId: number) {
-    this.updateGroupFlagsOnServicesCategories(this.getOrderGroup(groupId));
-  }
-
   //=======================
   //#endregion Group methods
   //=======================

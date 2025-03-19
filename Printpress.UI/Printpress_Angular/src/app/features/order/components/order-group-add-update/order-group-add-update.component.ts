@@ -18,6 +18,7 @@ import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model
 import { ItemGridVM } from '../../models/item/itemGridVM';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { DialogService } from '../../../../shared/services/dialog.service';
+import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -233,7 +234,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   protected itemsGridSource!: ItemGridVM[];
 
-  protected groupServicesNamesCommaseperated!: string; 
+  protected groupServicesNamesCommaseperated!: string;
 
   private updateDisplayedServicesNames(groupServices: OrderGroupServiceGetDto[]) {
     this.groupServicesNamesCommaseperated = groupServices.map(x => { return x.serviceName }).join(' - ');
@@ -253,8 +254,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.setGroupId();
-    this.orderSharedService.updateGroupFlagsOnServicesCategoriesById(this.groupId);
-    this.setCurrentGroupData();
+
+    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+
+    this.setIsEdit(currentGroup);
+    this.setCurrentGroupData(currentGroup);
     this.updateDisplayedColumns();
 
     if (!this.groupItems || this.groupItems.length == 0) {
@@ -265,16 +269,21 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private setGroupId(): void {
     const param_GroupId = this.route.snapshot.paramMap.get('id');
     if (param_GroupId) {
-      this.isEdit = true;
       this.groupId = Number(param_GroupId);
     } else {
-      this.isEdit = false;
       this.groupId = this.orderSharedService.intializeNewGroup();
     }
   }
 
-  private setCurrentGroupData() {
-    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+  private setIsEdit(currentGroup: OrderGroupGetDto) {
+    if (currentGroup.objectState == ObjectStateEnum.temp) {
+      this.isEdit = false;
+    } else {
+      this.isEdit = true;
+    }
+  }
+
+  private setCurrentGroupData(currentGroup: OrderGroupGetDto) {
 
     this.groupName = currentGroup.name;
     this.updateDisplayedServicesNames(currentGroup.orderGroupServices);
@@ -362,7 +371,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     const length = event.pageSize;
     const pageNumber = event.pageIndex;
     const itemsToDisplay = this.groupItems.slice((pageNumber) * length, (pageNumber + 1) * length);
-   
+
     this.mapItemsGrid(itemsToDisplay);
   }
 
