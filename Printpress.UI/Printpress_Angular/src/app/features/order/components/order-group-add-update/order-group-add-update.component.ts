@@ -298,12 +298,12 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       { key: 'index', condition: () => true },
       { key: 'name', condition: () => true },
       { key: 'quantity', condition: () => true },
-      { key: 'itemPrice', condition: () => true },
+      { key: 'itemPrice', condition: () => false },
       { key: 'numberOfPages', condition: () => group.isHasPrintingService },
       { key: 'printedItemsCount', condition: () => group.isHasPrintingService },
       { key: 'stapledItemsCount', condition: () => group.isHasStaplingService },
       { key: 'boughtItemsCount', condition: () => group.isHasSellingService },
-      { key: 'total', condition: () => true },
+      { key: 'total', condition: () => false },
       { key: 'actions', condition: () => true }
     ];
 
