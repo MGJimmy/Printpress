@@ -105,6 +105,7 @@ export class OrderSharedDataService {
       name: '',
       isHasPrintingService: false,
       isHasSellingService: false,
+      isHasStaplingService: false,
       orderGroupServices: [],
       items: [],
       objectState: ObjectStateEnum.temp
@@ -156,6 +157,7 @@ export class OrderSharedDataService {
     this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services => {
       group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
       group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
+      group.isHasStaplingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Stapling);
     });
   }
 
