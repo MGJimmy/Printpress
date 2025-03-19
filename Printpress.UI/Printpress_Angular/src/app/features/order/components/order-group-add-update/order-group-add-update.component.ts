@@ -441,13 +441,13 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       let itemVM: ItemGridVM = {
         id: item.id,
         name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        total: 0,
-        boughtItemsCount: boughtItemsCount ? Number(boughtItemsCount.value) : 0,
-        numberOfPages: numberOfPages ? Number(numberOfPages.value) : 0,
-        printedItemsCount: printedItemsCount ? Number(printedItemsCount.value) : 0,
-        stapledItemsCount: stapledItemsCount ? Number(stapledItemsCount.value) : 0
+        quantity: item.quantity ? item.quantity.toString() : '',
+        price: item.price ? item.price .toString() : '',
+        total: (item.price && item.quantity) ? (item.price * item.quantity).toString() : '',
+        boughtItemsCount: boughtItemsCount?.value ?? '',
+        numberOfPages: numberOfPages?.value ?? '',
+        printedItemsCount: printedItemsCount?.value ?? '',
+        stapledItemsCount: stapledItemsCount?.value ?? ''
       };
 
       itemVMList.push(itemVM);
