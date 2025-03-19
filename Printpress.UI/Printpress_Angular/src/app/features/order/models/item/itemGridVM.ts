@@ -6,7 +6,6 @@ export interface ItemSharedVM {
     quantity: number;
     price: number;
     total: number;
-
 }
 
 export interface ItemSellingVM extends ItemSharedVM {

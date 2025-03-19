@@ -276,7 +276,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   private setCurrentGroupData() {
-    const currentGroup = this.orderSharedService.getOrderGroup(this.groupId);
+    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
 
     this.groupName = currentGroup.name;
     this.updateDisplayedServicesNames(currentGroup.orderGroupServices);
@@ -305,6 +305,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected groupNameChanged() {
+    console.log('groupNameChanged:  ' + this.groupName);
     this.orderSharedService.updateOrderGroupName(this.groupId, this.groupName);
   }
 
@@ -325,16 +326,16 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       if (!isSave) {
         return;
       }
-      const groupServices = this.orderSharedService.getOrderGroupServices(this.groupId);
+      const groupServices = this.orderSharedService.getOrderGroupServices_copy(this.groupId);
       this.updateDisplayedServicesNames(groupServices);
 
-      this.isGroupHasSellingService = this.orderSharedService.getOrderGroup(this.groupId).isHasSellingService;
+      this.isGroupHasSellingService = this.orderSharedService.getOrderGroup_Copy(this.groupId).isHasSellingService;
       this.updateDisplayedColumns();
     });
   }
 
   protected getDetailValueByKeyName(itemId: number, key: string) {
-    const item: ItemGetDto = this.orderSharedService.getItem(this.groupId, itemId);
+    const item: ItemGetDto = this.orderSharedService.getItem_copy(this.groupId, itemId);
     item.itemDetails.find(x => x.key == key)?.value;
   }
 

@@ -41,9 +41,9 @@ export class OrderServicePricesComponent implements OnInit{
   async ngOnInit() {
     this._tempServicesList = [];
     
-    for (let i = 0; i < this._orderSharedService.getAllOrderGroupsServices().length; i++) {
+    for (let i = 0; i < this._orderSharedService.getAllOrderGroupsServices_copy().length; i++) {
 
-      const serviceId = this._orderSharedService.getAllOrderGroupsServices()[i].serviceId;
+      const serviceId = this._orderSharedService.getAllOrderGroupsServices_copy()[i].serviceId;
 
       const service = await this.servicesService.getServiceById(serviceId);
 

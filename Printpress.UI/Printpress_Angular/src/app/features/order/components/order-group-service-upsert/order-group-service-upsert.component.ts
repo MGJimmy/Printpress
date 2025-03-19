@@ -111,7 +111,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   fillServiceCategoriesList(){
-    let group = this.orderSharedDataService.getOrderGroup(this.groupId);
+    let group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
 
     if(!group.orderGroupServices || group.orderGroupServices.length == 0){
       this.serviceCategories = Object.keys(ServiceCategoryEnum).sort();
@@ -127,7 +127,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   private fillTableData(){
-    let groupServices = this.orderSharedDataService.getOrderGroupServices(this.groupId);
+    let groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
     
     if(!groupServices || groupServices.length == 0){
       //this.tableData = [];
@@ -198,7 +198,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.subscriptions.add(dialogSub);
   }
   private validateBeforeDelete(){
-    const items = this.orderSharedDataService.getOrderGroupItems(this.groupId)
+    const items = this.orderSharedDataService.getOrderGroupItems_copy(this.groupId)
     if (items && items.length > 0) {
       return false;
     }
