@@ -54,7 +54,7 @@ export class OrderSharedDataService {
   }
 
   public getOrderObject(): OrderGetDto {
-    return this.orderObject;
+    return this.deepCopy(this.orderObject);
   }
 
   public getOrderPageRoute(): string {
@@ -115,13 +115,17 @@ export class OrderSharedDataService {
     return tempId
   }
 
-  public getOrderGroup(id: number): OrderGroupGetDto {
+  public getOrderGroup_Copy(id: number): OrderGroupGetDto {
+    return  this.deepCopy(this.getOrderGroup(id));
+  }
+
+  private getOrderGroup(id: number): OrderGroupGetDto {
     let group = this.orderObject.orderGroups.find(x => x.id == id);
     if (!group) {
       throw 'cannot find a group with id = ' + id;
     } 
 
-    return {...group};
+    return group;
   }
 
   public updateOrderGroupName(id: number, name: string) {
@@ -190,7 +194,7 @@ export class OrderSharedDataService {
  * Returns temp id of the generated object.
  * 
  */
-  public initializeTempItem(orderGroupId: number): ItemGetDto {
+  public initializeTempItem(orderGroupId: number): number {
     let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id == orderGroupId);
     
     if (orderGroup === undefined) {
@@ -231,8 +235,7 @@ export class OrderSharedDataService {
 
     orderGroup.items.push(item);
 
-    return { ...item } as ItemGetDto;
-
+    return item.id;
   }
 
   public addItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number, numberOfPages:number|undefined, numberOfPrintingFaces:number|undefined): void {
@@ -283,10 +286,14 @@ export class OrderSharedDataService {
     item.objectState = ObjectStateEnum.updated;
   }
 
-  public getItem(orderGroupId: number, itemId: number): ItemGetDto {
+  public getItem_copy(orderGroupId: number, itemId: number): ItemGetDto {
+    return this.deepCopy(this.getItem(orderGroupId, itemId));
+  }
+
+  private getItem(orderGroupId: number, itemId: number): ItemGetDto {
     let item = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items.find(x => x.id === itemId)!;
 
-    return { ...item } as ItemGetDto;
+    return item;
 
   }
 
@@ -334,16 +341,19 @@ export class OrderSharedDataService {
   //#region GroupServices
   //=======================
 
-  public getOrderGroupServices(orderGroupId: number): OrderGroupServiceGetDto[] {
-    return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
+  public getOrderGroupServices_copy(orderGroupId: number): OrderGroupServiceGetDto[] {
+    let orderGroupServices = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
+    return this.deepCopy(orderGroupServices);
   }
 
-  public getOrderGroupItems(orderGroupId: number): ItemGetDto[] {
-    return this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items;
+  public getOrderGroupItems_copy(orderGroupId: number): ItemGetDto[] {
+    let items = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items;
+    return this.deepCopy(items);
   }
 
-  public getAllOrderGroupsServices(): OrderGroupServiceGetDto[] {
-    return this.orderObject.orderGroups.flatMap(x => x.orderGroupServices);
+  public getAllOrderGroupsServices_copy(): OrderGroupServiceGetDto[] {
+    let orderGroupsServices = this.orderObject.orderGroups.flatMap(x => x.orderGroupServices);
+    return this.deepCopy(orderGroupsServices);
   }
 
   public addOrderGroupService(orderGroupId: number, service: ServiceGetDto): void {
@@ -443,5 +453,9 @@ export class OrderSharedDataService {
     }
 
     return Math.max(...ids) + 1;
+  }
+
+  private deepCopy<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj)) as T;
   }
 }

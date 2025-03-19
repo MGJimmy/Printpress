@@ -68,7 +68,7 @@ export class ItemAddUpdateComponent implements OnInit {
 
     this.checkModeAndInitData();  
 
-    this.group = this.orderSharedService.getOrderGroup(this.groupId);   
+    this.group = this.orderSharedService.getOrderGroup_Copy(this.groupId);   
   }
 
   checkModeAndInitData() {
@@ -92,11 +92,12 @@ export class ItemAddUpdateComponent implements OnInit {
   }
 
   initAddModeData() {
-    this.item = this.orderSharedService.initializeTempItem(this.groupId);
+    let itemId = this.orderSharedService.initializeTempItem(this.groupId);
+    this.item = this.orderSharedService.getItem_copy(this.groupId, itemId);
   }
 
   initEditModeData() {
-    this.item = this.orderSharedService.getItem(this.groupId, this.itemIdToEdit);
+    this.item = this.orderSharedService.getItem_copy(this.groupId, this.itemIdToEdit);
     this.fillFormWithItemData(this.item);
   }
 

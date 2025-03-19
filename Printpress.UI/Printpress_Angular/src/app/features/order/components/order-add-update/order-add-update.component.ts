@@ -53,13 +53,14 @@ export class OrderAddUpdateComponent implements OnInit {
       let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));
       let response = await firstValueFrom(this.orderService.getOrderById(orderId));
       this.orderGetDto = response.data
-      this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGropuGridViewModel(this.orderGetDto.orderGroups));
       this.OrderSharedService.setOrderObject(this.orderGetDto);
     }
 
     else { // case add mode
       this.orderGetDto = this.OrderSharedService.getOrderObject();
     }
+
+    this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.orderGetDto.orderGroups));
 
     let response = await firstValueFrom(this.clientService.getAll())
     this.clients = response.data;
@@ -114,9 +115,13 @@ export class OrderAddUpdateComponent implements OnInit {
 
     });
   }
+  
+ private MapToOrderGroupGridViewModel( orderGroupGetDtos:OrderGroupGetDto[] ):OrderGroupGridViewModel[]{
+  if(!orderGroupGetDtos){
+    return [];
+  }
 
-  private MapToOrderGropuGridViewModel(orderGroupGetDtos: OrderGroupGetDto[]): OrderGroupGridViewModel[] {
-    return orderGroupGetDtos.map((orderGroup, index) => {
+  return orderGroupGetDtos.map((orderGroup, index) => {
       return {
         name: orderGroup.name,
         deliveryDate: orderGroup.deliveryDate
