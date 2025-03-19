@@ -2,6 +2,7 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Text.RegularExpressions;
 
 namespace Printpress.Application;
 
@@ -19,7 +20,7 @@ public class InvoiceDocument : IDocument
              {
                  page.ContentFromRightToLeft();
 
-                 page.Margin(40);
+                 page.Margin(10);
 
                  page.Header().Element(ComposeHeader);
                  page.Content().Element(ComposeContent);
@@ -36,15 +37,17 @@ public class InvoiceDocument : IDocument
     {
         container.Column(column =>
         {
-            column.Item().Row(row =>
+            column.Item().PaddingHorizontal(5).AlignCenter().Text("فاتوره")
+                                .FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
+
+
+
+            column.Item().PaddingHorizontal(40).Row(row =>
             {
                 row.RelativeItem().AlignRight().Column(col =>
                 {
-
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-
-
                         row.AutoItem().Text(text =>
                         {
                             text.Span("تاريخ الطباعه : ").SemiBold();
@@ -57,16 +60,14 @@ public class InvoiceDocument : IDocument
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
-
-
                         row.AutoItem().Text(text =>
                         {
-                            text.Span("تيلفون العميل : ").SemiBold();
+                            text.Span(" عنوان العميل :").SemiBold();
                         });
                         row.AutoItem().Text(text =>
                         {
-                            text.Span(Model.Client.Mobile);
-                        });
+                            text.Span(Model.Client.Address);
+                        });                    
                     });
 
                 });
@@ -84,48 +85,53 @@ public class InvoiceDocument : IDocument
                         {
                             text.Span(Model.Client.Name);
                         });
-
                     });
 
                     col.Item().PaddingVertical(2).AlignRight().Row(row =>
                     {
 
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span("تيلفون العميل : ").SemiBold();
+                        });
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span(Model.Client.Mobile);
+                        });
 
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(" عنوان العميل :").SemiBold();
-                        });
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(Model.Client.Address);
-                        });
                     });
 
 
                 });
             });
+
+
         });
     }
     void ComposeContent(IContainer container)
     {
-        container.PaddingVertical(40).Column(column =>
+        container.Padding(40).Column(column =>
         {
+            decimal total = 0;
 
             foreach (var group in Model.OrderGroups)
             {
                 column.Spacing(5);
-                column.Item().AlignCenter().Text(group.Name);
-
-                column.Item().Element(x => ComposeTable(x, group.Items));
-
+                column.Item().PaddingHorizontal(30).PaddingVertical(10).Element(x => ComposeTable(x, group));
                 column.Spacing(5);
+                total += group.Items.Sum(item => item.Price * item.Quantity);
+
             }
 
+            column.Item().Padding(30).Border(1).Row(row =>
+            {
+                row.AutoItem().Padding(10).Text("الأجمالي الكلي  :").SemiBold();
+                row.AutoItem().PaddingVertical(10).Text(total.ToString()).SemiBold();
+            });
 
-            column.Item().PaddingTop(25).Element(ComposeComments);
         });
     }
-    void ComposeTable(IContainer container, List<Item> Items)
+    void ComposeTable(IContainer container, OrderGroup orderGroup)
     {
         container.Table(table =>
         {
@@ -140,6 +146,7 @@ public class InvoiceDocument : IDocument
 
             table.Header(header =>
             {
+                header.Cell().ColumnSpan(5).Element(CellStyle).AlignCenter().Text(orderGroup.Name.ToString()).FontColor(Colors.Blue.Darken2);
                 header.Cell().Element(CellStyle).AlignCenter().Text("#");
                 header.Cell().Element(CellStyle).AlignCenter().Text("النوع");
                 header.Cell().Element(CellStyle).AlignCenter().Text("سعر الوحده");
@@ -149,38 +156,43 @@ public class InvoiceDocument : IDocument
 
                 static IContainer CellStyle(IContainer container)
                 {
-                    return container.DefaultTextStyle(x => x.SemiBold()).Border(1).BorderColor(Colors.Black).PaddingVertical(8);
+                    return container.DefaultTextStyle(x => x.SemiBold()).Border(1, Unit.Mil).BorderColor(Colors.Black).PaddingVertical(8);
                 }
             });
 
 
 
-            foreach (var item in Items)
+            foreach (var item in orderGroup.Items)
             {
-                table.Cell().Element(CellStyle).AlignCenter().Text((Items.IndexOf(item) + 1).ToString());
-                table.Cell().Element(CellStyle).AlignCenter().Text(item.Name);
-                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price}");
-                table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString());
-                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price * item.Quantity}");
+                table.Cell().Element(CellStyle).AlignCenter().Text((orderGroup.Items.IndexOf(item) + 1).ToString()).FontSize(12);
+                table.Cell().Element(CellStyle).AlignCenter().Text(item.Name).FontSize(12);
+                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price}").FontSize(12);
+                table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString()).FontSize(12);
+                table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price * item.Quantity}").FontSize(12);
 
 
 
                 static IContainer CellStyle(IContainer container)
                 {
-                    return container.Border(1).BorderColor(Colors.Black).PaddingVertical(5);
+                    return container.Border(1,Unit.Mil).BorderColor(Colors.Black).PaddingVertical(5);
                 }
             }
+
+            table.Cell().ColumnSpan(4).Element(FooterCellStyle).AlignCenter().Text("إجمالي المجموعه");
+            table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{orderGroup.Items.Sum(item=>item.Price * item.Quantity)}");
+
+            static IContainer FooterCellStyle(IContainer container)
+            {
+                return container.DefaultTextStyle(x => x.SemiBold())
+                               .Border(7,Unit.Mil)
+                               .BorderColor(Colors.Black)
+                               .PaddingVertical(8)
+                               .Background(Colors.Grey.Lighten5);
+            }
+
         });
     }
-    void ComposeComments(IContainer container)
-    {
-        container.Background(Colors.Grey.Lighten3).Padding(10).Column(column =>
-        {
-            column.Spacing(5);
-            column.Item().Text("Comments").FontSize(14);
-            column.Item().Text("");
-        });
-    }
+  
 
 }
 

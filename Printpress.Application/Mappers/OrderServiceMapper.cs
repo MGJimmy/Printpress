@@ -7,7 +7,8 @@
             return new Domain.Entities.OrderService
             {
                 Id = destinationEntity.Id,
-                ServiceId = destinationEntity.ServiceId
+                ServiceId = destinationEntity.ServiceId,
+                State = destinationEntity.ObjectState.MapToTrackingState()
             };
         }
 

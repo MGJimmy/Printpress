@@ -11,8 +11,12 @@ namespace Printpress.Application
                 Id = destinationEntity.Id,
                 Name = destinationEntity.Name,
                 Price = destinationEntity.Price,
-                Quantity = destinationEntity.Quantity
+                Quantity = destinationEntity.Quantity,
+                State = destinationEntity.ObjectState.MapToTrackingState(),
+                IsDeleted = destinationEntity.ObjectState == ObjectState.Deleted,
+               
             };
+
         }
 
         public override ItemUpsertDTO MapFromSourceToDestination(Item sourceEntity)

@@ -9,7 +9,9 @@ public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper 
         var order = new Order
         {
             Name = destinationEntity.Name,
-            ClientId = destinationEntity.ClientId
+            ClientId = destinationEntity.ClientId,
+            State = destinationEntity.ObjectState.MapToTrackingState()
+
         };
 
         order.OrderGroups = _orderGroupMapper.MapFromDestinationToSource(destinationEntity.OrderGroups);

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, Input, OnInit, input } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { SharedPaginationComponent } from '../shared-pagination/shared-pagination.component';
-import { MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatTableDataSource } from '@angular/material/table';
@@ -30,7 +30,7 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.css'],
 })
-export class TableTemplateComponent implements OnInit{
+export class TableTemplateComponent implements OnInit {
 
   @Output() editClicked: EventEmitter<number> = new EventEmitter<number>();
   @Output() deleteClicked: EventEmitter<number> = new EventEmitter<number>();
@@ -38,14 +38,14 @@ export class TableTemplateComponent implements OnInit{
 
   @Input() columnDefs: TableColDefinitionModel[] = [];
   @Input() originalSource: any[] = [];
-  @Input() totalItemsCount!: number ;
+  @Input() totalItemsCount!: number;
   @Input() isShowEditButton: boolean = false;
   @Input() isShowDeleteButton: boolean = false;
   @Input() isShowHeader: boolean = true;
   @Input() reportTable: boolean = false;
 
   displayedColumns: string[] = [];
-  pageSize:number = 5;
+  pageSize: number = 5;
   actionColumn: string = 'action';
   sequenceColumn: string = 'sequence';
 
@@ -56,14 +56,17 @@ export class TableTemplateComponent implements OnInit{
     return this.totalItemsCount > this.pageSize;
   }
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
 
-    this.displayedColumns = Object.keys(this.originalSource[0])
+    try {
+      this.displayedColumns = Object.keys(this.originalSource[0])
 
-    this.pushSharedColumns();
-
+      this.pushSharedColumns();
+    } catch {
+      console.log('Error While Defining Shared Grid Columns.');
+    }
   }
 
   pushSharedColumns() {
@@ -72,7 +75,7 @@ export class TableTemplateComponent implements OnInit{
     this.displayedColumns.push(this.actionColumn);
   }
 
-  getColumnHeaderName(column: string) : string | undefined {
+  getColumnHeaderName(column: string): string | undefined {
     return this.columnDefs.find(c => c.column === column)?.headerName;
   }
 
@@ -88,7 +91,7 @@ export class TableTemplateComponent implements OnInit{
   onEdit(element: any): void {
     this.editClicked.emit(element.id);
   }
-  onDelete(element: any): void{
+  onDelete(element: any): void {
     this.deleteClicked.emit(element.id);
   }
 }

@@ -30,9 +30,9 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
     }
     [HttpPost]
     [Route("update/{id}")]
-    public async Task<IActionResult> update(int id, OrderUpsertDto order)
+    public async Task<IActionResult> Update(int id, OrderUpsertDto order)
     {
-        await _IOrderService.InsertOrder(order);
+        await _IOrderService.UpdateOrder(id,order);
         return Ok();
     }
 }

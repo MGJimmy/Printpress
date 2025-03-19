@@ -1,11 +1,13 @@
 ﻿using Printpress.Domain.Enums;
+using Printpress.Domain.Interfaces;
 
 namespace Printpress.Domain.Entities
 {
-    public class ItemDetails : Entity
+    public class ItemDetails : Entity , ISoftDelete
     {
         public int Id { get; set; }
         public int ItemId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public ItemDetailsKeyEnum ItemDetailsKey
         {
