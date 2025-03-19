@@ -311,7 +311,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected groupNameChanged() {
-    console.log('groupNameChanged:  ' + this.groupName);
     this.orderSharedService.updateOrderGroupName(this.groupId, this.groupName);
   }
 
@@ -442,7 +441,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
         id: item.id,
         name: item.name,
         quantity: item.quantity ? item.quantity.toString() : '',
-        price: item.price ? item.price .toString() : '',
+        price: item.price ? item.price.toString() : '',
         total: (item.price && item.quantity) ? (item.price * item.quantity).toString() : '',
         boughtItemsCount: boughtItemsCount?.value ?? '',
         numberOfPages: numberOfPages?.value ?? '',
