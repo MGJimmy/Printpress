@@ -1,4 +1,5 @@
 ﻿using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application;
 
@@ -6,8 +7,7 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
 {
     public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload)
     {
-        // Make validation
-        // validate tranactiontype string is valid enum value by enum helper
+        ValidateTransactionPayload(payload);
 
         var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
 
@@ -15,6 +15,18 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
         await _unitOfWork.SaveChangesAsync();
 
         return _orderTransactionMapper.MapFromSourceToDestination(client);
+    }
+
+    private void ValidateTransactionPayload(OrderTransactionAddDto payload)
+    {
+        if (!EnumHelper.IsValidEnumValue(typeof(TransactionType), payload.TransactionType))
+        {
+            throw new ValidationExeption("Transaction type cannot be identified!");
+        }
+        if (payload.Amount <= 0)
+        {
+            throw new ValidationExeption("Transaction Amount must be a positive value!");
+        }
     }
 
     public async Task<PagedList<OrderTransactionDto>> GetByPage(int orderId, int pageNumber, int pageSize)
