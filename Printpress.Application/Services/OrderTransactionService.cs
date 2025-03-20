@@ -16,6 +16,13 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
         
         var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
 
+        var isPayment = EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Payment;
+
+        var transactionAmount = isPayment ? payload.Amount : (-1 * payload.Amount);
+
+        order.TotalPaid += transactionAmount;
+
+        _unitOfWork.OrderRepository.Update(order);
 
         await _unitOfWork.SaveChangesAsync();
 
