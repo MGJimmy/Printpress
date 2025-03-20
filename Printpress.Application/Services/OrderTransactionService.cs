@@ -9,6 +9,11 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
     {
         ValidateTransactionPayload(payload);
 
+        var order = _unitOfWork.OrderRepository.Find(payload.OrderId);
+
+        ValidatePayloadAmountComparedToOrder(order, payload);
+
+        
         var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
 
 
@@ -26,6 +31,20 @@ public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMa
         if (payload.Amount <= 0)
         {
             throw new ValidationExeption("Transaction Amount must be a positive value!");
+        }
+    }
+
+    private void ValidatePayloadAmountComparedToOrder(Order order, OrderTransactionAddDto payload)
+    {
+        if (EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Payment &&
+            payload.Amount > (order.TotalPrice - order.TotalPaid))
+        {
+            throw new ValidationExeption("Payment Amount cannot exceed remaining!");
+        }
+        if (EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Refund &&
+            payload.Amount > order.TotalPaid)
+        {
+            throw new ValidationExeption("Refund Amount cannot exceed order total paid!");
         }
     }
 
