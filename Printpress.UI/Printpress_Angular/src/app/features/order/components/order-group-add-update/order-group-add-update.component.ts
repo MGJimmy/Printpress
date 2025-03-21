@@ -15,9 +15,10 @@ import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-gr
 import { ItemGetDto } from '../../models/item/item-get.Dto';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
-import { ItemSharedVM, ItemNonSellingVM, ItemSellingVM } from '../../models/item/itemGridVM';
+import { ItemGridVM } from '../../models/item/itemGridVM';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { DialogService } from '../../../../shared/services/dialog.service';
+import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -231,7 +232,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     }
   ];
 
-  protected itemsGridSource!: ItemSharedVM[];
+  protected itemsGridSource!: ItemGridVM[];
 
   protected groupServicesNamesCommaseperated!: string;
 
@@ -239,9 +240,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.groupServicesNamesCommaseperated = groupServices.map(x => { return x.serviceName }).join(' - ');
   }
 
-  protected isGroupHasSellingService: boolean = false;
-
-  displayedColumns: string[] = [];
+  protected displayedColumns: string[] = [];
 
   constructor(private alertService: AlertService,
     private route: ActivatedRoute,
@@ -255,8 +254,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.setGroupId();
-    this.orderSharedService.updateGroupFlagsOnServicesCategoriesById(this.groupId);
-    this.setCurrentGroupData();
+
+    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+
+    this.setIsEdit(currentGroup);
+    this.setCurrentGroupData(currentGroup);
     this.updateDisplayedColumns();
 
     if (!this.groupItems || this.groupItems.length == 0) {
@@ -267,45 +269,48 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private setGroupId(): void {
     const param_GroupId = this.route.snapshot.paramMap.get('id');
     if (param_GroupId) {
-      this.isEdit = true;
       this.groupId = Number(param_GroupId);
     } else {
-      this.isEdit = false;
       this.groupId = this.orderSharedService.intializeNewGroup();
     }
   }
 
-  private setCurrentGroupData() {
-    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+  private setIsEdit(currentGroup: OrderGroupGetDto) {
+    if (currentGroup.objectState == ObjectStateEnum.temp) {
+      this.isEdit = false;
+    } else {
+      this.isEdit = true;
+    }
+  }
+
+  private setCurrentGroupData(currentGroup: OrderGroupGetDto) {
 
     this.groupName = currentGroup.name;
     this.updateDisplayedServicesNames(currentGroup.orderGroupServices);
 
     this.groupItems = currentGroup.items;
-    this.mapItems(this.groupItems);
-  }
-
-  private mapItems(items: ItemGetDto[]): void {
-    if (this.isGroupHasSellingService) {
-      this.itemsGridSource = this.mapIntoSellingVM(items);
-    } else {
-      this.itemsGridSource = this.mapIntoNonSellingVM(items);
-    }
+    this.mapItemsGrid(this.groupItems);
   }
 
   protected updateDisplayedColumns() {
-    if (this.isGroupHasSellingService) {
-      this.displayedColumns = ['index', 'name', 'quantity',
-        'itemPrice', 'boughtItemsCount', 'total', 'actions'];
-    } else {
-      this.displayedColumns = ['index', 'name',
-        'numberOfPages', 'stapledItemsCount', 'printedItemsCount',
-        'quantity', 'itemPrice', 'total', 'actions'];
-    }
+    const group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+    let allColumns = [
+      { key: 'index', condition: () => true },
+      { key: 'name', condition: () => true },
+      { key: 'quantity', condition: () => true },
+      { key: 'itemPrice', condition: () => false },
+      { key: 'numberOfPages', condition: () => group.isHasPrintingService },
+      { key: 'printedItemsCount', condition: () => group.isHasPrintingService },
+      { key: 'stapledItemsCount', condition: () => group.isHasStaplingService },
+      { key: 'boughtItemsCount', condition: () => group.isHasSellingService },
+      { key: 'total', condition: () => false },
+      { key: 'actions', condition: () => true }
+    ];
+
+    this.displayedColumns = allColumns.filter(x => x.condition()).map(x => x.key);
   }
 
   protected groupNameChanged() {
-    console.log('groupNameChanged:  ' + this.groupName);
     this.orderSharedService.updateOrderGroupName(this.groupId, this.groupName);
   }
 
@@ -328,8 +333,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       }
       const groupServices = this.orderSharedService.getOrderGroupServices_copy(this.groupId);
       this.updateDisplayedServicesNames(groupServices);
-
-      this.isGroupHasSellingService = this.orderSharedService.getOrderGroup_Copy(this.groupId).isHasSellingService;
       this.updateDisplayedColumns();
     });
   }
@@ -367,7 +370,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     const length = event.pageSize;
     const pageNumber = event.pageIndex;
     const itemsToDisplay = this.groupItems.slice((pageNumber) * length, (pageNumber + 1) * length);
-    this.mapItems(itemsToDisplay);
+
+    this.mapItemsGrid(itemsToDisplay);
   }
 
   protected onSave_Click() {
@@ -423,47 +427,30 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.router.navigate(['/order/item/edit', this.groupId, itemId]);
   }
 
-  private mapIntoSellingVM(items: ItemGetDto[]): ItemSellingVM[] {
-    let itemSellingVMArr: ItemSellingVM[] = [];
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      const boughtItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.BoughtItemsCount);
-
-      let itemSellingVM: ItemSellingVM = {
-        id: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        total: 0,
-        boughtItemsCount: boughtItemsCount ? Number(boughtItemsCount.value) : 0
-      };
-      itemSellingVMArr.push(itemSellingVM);
-
-    }
-    return itemSellingVMArr;
-  }
-
-  private mapIntoNonSellingVM(items: ItemGetDto[]): ItemNonSellingVM[] {
-    let itemSellingVMArr: ItemNonSellingVM[] = [];
+  private mapItemsGrid(items: ItemGetDto[]): void {
+    let itemVMList: ItemGridVM[] = [];
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       const numberOfPages = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPages);
       const printedItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.PrintedItemsCount);
       const stapledItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.StapledItemsCount);
+      const boughtItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.BoughtItemsCount);
 
-      let itemSellingVM: ItemNonSellingVM = {
+
+      let itemVM: ItemGridVM = {
         id: item.id,
         name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        total: 0,
-        numberOfPages: numberOfPages ? Number(numberOfPages.value) : 0,
-        printedItemsCount: printedItemsCount ? Number(printedItemsCount.value) : 0,
-        stapledItemsCount: stapledItemsCount ? Number(stapledItemsCount.value) : 0
+        quantity: item.quantity ? item.quantity.toString() : '',
+        price: item.price ? item.price.toString() : '',
+        total: (item.price && item.quantity) ? (item.price * item.quantity).toString() : '',
+        boughtItemsCount: boughtItemsCount?.value ?? '',
+        numberOfPages: numberOfPages?.value ?? '',
+        printedItemsCount: printedItemsCount?.value ?? '',
+        stapledItemsCount: stapledItemsCount?.value ?? ''
       };
-      itemSellingVMArr.push(itemSellingVM);
 
+      itemVMList.push(itemVM);
     }
-    return itemSellingVMArr;
+    this.itemsGridSource = itemVMList;
   }
 }

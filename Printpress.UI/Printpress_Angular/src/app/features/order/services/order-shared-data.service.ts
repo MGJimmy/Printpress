@@ -105,6 +105,7 @@ export class OrderSharedDataService {
       name: '',
       isHasPrintingService: false,
       isHasSellingService: false,
+      isHasStaplingService: false,
       orderGroupServices: [],
       items: [],
       objectState: ObjectStateEnum.temp
@@ -115,14 +116,14 @@ export class OrderSharedDataService {
   }
 
   public getOrderGroup_Copy(id: number): OrderGroupGetDto {
-    return  this.deepCopy(this.getOrderGroup(id));
+    return this.deepCopy(this.getOrderGroup(id));
   }
 
   private getOrderGroup(id: number): OrderGroupGetDto {
     let group = this.orderObject.orderGroups.find(x => x.id == id);
     if (!group) {
       throw 'cannot find a group with id = ' + id;
-    } 
+    }
 
     return group;
   }
@@ -160,13 +161,9 @@ export class OrderSharedDataService {
     this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services => {
       group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
       group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
+      group.isHasStaplingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Stapling);
     });
   }
-
-  public updateGroupFlagsOnServicesCategoriesById(groupId: number) {
-    this.updateGroupFlagsOnServicesCategories(this.getOrderGroup(groupId));
-  }
-
   //=======================
   //#endregion Group methods
   //=======================
@@ -194,7 +191,7 @@ export class OrderSharedDataService {
  */
   public initializeTempItem(orderGroupId: number): number {
     let orderGroup: OrderGroupGetDto | undefined = this.orderObject.orderGroups.find(x => x.id == orderGroupId);
-    
+
     if (orderGroup === undefined) {
       throw new Error('Order group not found');
     }
@@ -202,9 +199,9 @@ export class OrderSharedDataService {
     let tempId = this.generateTempId(orderGroup.items.map(x => x.id));
 
     // check if group service contains printing service then init the two item details for printing with default values
-    let itemDetails: ItemDetailsGetDto[] =  [];
+    let itemDetails: ItemDetailsGetDto[] = [];
 
-    if(orderGroup.isHasPrintingService){
+    if (orderGroup.isHasPrintingService) {
       itemDetails.push({
         id: 0,
         itemId: tempId,
@@ -236,7 +233,7 @@ export class OrderSharedDataService {
     return item.id;
   }
 
-  public addItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number, numberOfPages:number|undefined, numberOfPrintingFaces:number|undefined): void {
+  public addItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number, numberOfPages: number | undefined, numberOfPrintingFaces: number | undefined): void {
 
     let orderGroup = this.orderObject.orderGroups.find(x => x.id == orderGroupId);
 
@@ -250,9 +247,9 @@ export class OrderSharedDataService {
     item.quantity = quantity;
     item.price = price;
     item.objectState = ObjectStateEnum.added;
-    
-    if(orderGroup.isHasPrintingService){
-      if(!numberOfPages || !numberOfPrintingFaces){
+
+    if (orderGroup.isHasPrintingService) {
+      if (!numberOfPages || !numberOfPrintingFaces) {
         throw new Error('Number of pages and number of printing faces are required for printing service');
       }
 

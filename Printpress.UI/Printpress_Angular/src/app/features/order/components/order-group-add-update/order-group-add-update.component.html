@@ -31,7 +31,7 @@
                 <th mat-header-cell *matHeaderCellDef>اسم العنصر</th>
                 <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
             </ng-container>
-            <ng-container *ngIf="!isGroupHasSellingService" matColumnDef="numberOfPages">
+            <ng-container matColumnDef="numberOfPages">
                 <th mat-header-cell *matHeaderCellDef>عدد الصفحات</th>
                 <td mat-cell *matCellDef="let element"> {{ element.numberOfPages }} </td>
             </ng-container>
@@ -43,11 +43,11 @@
                 <th mat-header-cell *matHeaderCellDef>سعر العنصر</th>
                 <td mat-cell *matCellDef="let element"> {{ element.price }} </td>
             </ng-container>
-            <ng-container *ngIf="!isGroupHasSellingService" matColumnDef="stapledItemsCount">
+            <ng-container matColumnDef="stapledItemsCount">
                 <th mat-header-cell *matHeaderCellDef>عدد العناصر المدبسة</th>
                 <td mat-cell *matCellDef="let element"> {{ element.stapledItemsCount }} </td>
             </ng-container>
-            <ng-container *ngIf="!isGroupHasSellingService" matColumnDef="printedItemsCount">
+            <ng-container matColumnDef="printedItemsCount">
                 <th mat-header-cell *matHeaderCellDef>عدد العناصر المطبوعة</th>
                 <td mat-cell *matCellDef="let element"> {{ element.printedItemsCount }} </td>
             </ng-container>
@@ -55,7 +55,7 @@
                 <th mat-header-cell *matHeaderCellDef>الإجمالي</th>
                 <td mat-cell *matCellDef="let element"> {{ element.total }} </td>
             </ng-container>
-            <ng-container *ngIf="isGroupHasSellingService" matColumnDef="boughtItemsCount">
+            <ng-container matColumnDef="boughtItemsCount">
                 <th mat-header-cell *matHeaderCellDef>عدد العناصر المشتراه</th>
                 <td mat-cell *matCellDef="let element"> {{ element.boughtItemsCount }} </td>
             </ng-container>
