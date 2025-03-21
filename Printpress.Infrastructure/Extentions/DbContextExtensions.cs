@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Printpress.Domain;
 using Printpress.Domain.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Dynamic;
 
@@ -67,4 +69,59 @@ public static class DbContextExtensions
             yield return row;
         }
     }
+
+    
+    
+    public static void ChangeTrackedEntityStates_Jimmy(this DbContext db, IEntity entity)
+    {
+        var properties = entity.GetType().GetProperties();
+
+        foreach (var propertyInfo in properties)
+        {
+            var propertyEntity = propertyInfo.GetValue(entity);
+
+            if (propertyEntity is ITrackedEntity)
+            {
+                db.ChangeTrackedEntityStates((IEntity) propertyEntity);
+            }
+
+            if (propertyEntity is IEnumerable<ITrackedEntity>)
+            {
+                foreach (var item in (IEnumerable<IEntity>) propertyEntity)
+                {
+                    db.ChangeTrackedEntityStates(item);
+                }
+            }
+        }
+
+        // Handle sof delete
+        if (entity is ISoftDelete_jimmy && entity.State == TrackingState.Deleted)
+        {
+            EntityEntry<ISoftDelete_jimmy> softDeleteEntry = db.Entry((ISoftDelete_jimmy)entity);
+            softDeleteEntry.Entity.IsDeleted = true;
+            softDeleteEntry.State = EntityState.Modified;
+            return;
+        }
+
+        var entry = db.Entry(entity);
+        entry.State = entity.State switch
+        {
+            TrackingState.Added => EntityState.Added,
+            TrackingState.Modified => EntityState.Modified,
+            TrackingState.Deleted => EntityState.Deleted,
+            TrackingState.Unchanged => EntityState.Unchanged,
+            _ => entry.State
+        };
+
+    }
+
+}
+
+public interface IEntity : ITrackedEntity
+{
+}
+
+public interface ISoftDelete_jimmy : IEntity
+{
+    public bool IsDeleted { get; set; }
 }
