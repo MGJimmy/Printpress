@@ -1,3 +1,4 @@
+import { ObjectStateEnum } from "../../../core/models/object-state.enum";
 import { ItemGetDto } from "./item/item-get.Dto";
 import { ItemUpsertDto } from "./item/item-upsert.Dto";
 import { OrderServicesGetDTO } from "./order-service/order-service-getDto";
@@ -10,13 +11,15 @@ import { OrderGroupServiceGetDto } from "./orderGroupService/order-group-service
 import { OrderGroupServiceUpsertDto } from "./orderGroupService/order-group-service-upsert.Dto";
 
 export function mapOrderGetToUpsert(orderGet: OrderGetDto): OrderUpsertDto {
-    return new OrderUpsertDto(
+    let orderUpsert = new OrderUpsertDto(
         orderGet.id,
         orderGet.name,
-        orderGet.clientId,
+        orderGet.clientId,    
         orderGet.orderGroups.map(mapOrderGroupGetToUpsert),
         orderGet.orderServices.map(mapOrderServiceGetToUpsert)
     );
+    orderUpsert.objectState = orderGet.objectState;
+    return orderUpsert;
 }
 
 function mapOrderGroupGetToUpsert(groupGet: OrderGroupGetDto): OrderGroupUpsertDto {
