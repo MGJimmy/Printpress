@@ -22,7 +22,7 @@ import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum
   templateUrl: './order-service-prices.component.html',
   styleUrl: './order-service-prices.component.css'
 })
-export class OrderServicePricesComponent implements OnInit{
+export class OrderServicePricesComponent implements OnInit {
 
   private _orderSharedService!: OrderSharedDataService;
   protected _tempServicesList!: { serviceId: number, name: string, price: number }[];
@@ -34,7 +34,7 @@ export class OrderServicePricesComponent implements OnInit{
     private alertService: AlertService,
     private servicesService: ServiceService
   ) {
-
+    
     this._orderSharedService = data.orderSharedService;
   }
 
@@ -46,11 +46,16 @@ export class OrderServicePricesComponent implements OnInit{
 
       const serviceId = allOrderGroupServices[i].serviceId;
 
+      if (this._tempServicesList.find(x => x.serviceId == serviceId)) {
+        continue;
+      }
+
       const service = await this.servicesService.getServiceById(serviceId);
 
       if (service.serviceCategory == ServiceCategoryEnum.Selling) {
         continue;
       }
+
 
       const tempService: { serviceId: number, name: string, price: number } = {
         serviceId: service.id,
@@ -63,7 +68,7 @@ export class OrderServicePricesComponent implements OnInit{
     }
   }
 
-  save_Click() {
+  protected save_Click() {
 
     // Validate
     if (!this.validateOrderPrices()) {
