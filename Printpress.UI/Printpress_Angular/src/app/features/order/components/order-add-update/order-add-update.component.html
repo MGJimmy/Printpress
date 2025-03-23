@@ -6,13 +6,13 @@
 
     </div>
 
-    <div clas="border border-primary">
-        <div class="row ">
-            <button class="col-3 m-2 " mat-raised-button color="primary" (click)="manageTransactions_Click()">التحويلات الماليه</button>
+    <div class="border border-primary p-3">
+        <div *ngIf="componentMode.isEditMode" class="row d-flex justify-content-around mb-3">
+            <button class="col-3 m-2 " mat-raised-button color="primary" (click)="manageTransactions_Click()">التحويلات
+                الماليه</button>
             <button class="col-3 m-2" mat-raised-button color="primary">تحديث العناصر المنتهيه </button>
             <button class="col-3 m-2" mat-raised-button color="primary">أصدار فاتوره </button>
         </div>
-
         <div class="row">
             <label class="col-3 m-2 "> الاجمالي : {{orderGetDto.totalPrice}}</label>
             <label class="col-3 m-2"> المدفوع : {{orderGetDto.totalPaid}}</label>
@@ -26,6 +26,7 @@
         </div>
     </div>
 
+    <br>
     <div *ngIf="componentMode.isEditMode||componentMode.isaddMode" class="m-1">
         <form class="row g-3">
             <!-- Order Name -->
@@ -61,7 +62,7 @@
         </form>
     </div>
 
-    <div class="mt-5" >
+    <div class="mt-5">
         <mat-card>
             <mat-card-header class="text-center">
                 <div class="text-center">
@@ -75,7 +76,7 @@
             </mat-card-header>
             <mat-card-content>
                 <div class="mt-4">
-                    <div class="custom-table" >
+                    <div class="custom-table">
                         <table mat-table [dataSource]="orderGroupGridDataSource">
                             <ng-container matColumnDef="name">
                                 <th mat-header-cell *matHeaderCellDef> اسم المجموعه </th>

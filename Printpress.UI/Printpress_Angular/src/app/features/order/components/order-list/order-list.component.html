@@ -1,10 +1,10 @@
 <div class="container mt-5 mb-5 pb-5 rtl">
 
-<div>
-  <div class="text-center mb-5 border-bottom pb-3 text-primary">
-    <h1> قائمة الطلبات</h1>
-</div>
-</div>
+  <div>
+    <div class="text-center mb-5 border-bottom pb-3 text-primary">
+      <h1> قائمة الطلبات</h1>
+    </div>
+  </div>
 
   <div>
     <mat-card>
@@ -18,9 +18,10 @@
 
               <ng-container matColumnDef="orderName">
                 <th mat-header-cell *matHeaderCellDef> ألاسم</th>
-                <td mat-cell *matCellDef="let element"> 
-                  <a routerLink='/order/view/{{element.id}}'>{{element.orderName}} </a> 
-                 </td>
+                <td mat-cell *matCellDef="let element">
+                {{element.orderName}}
+                  <!-- <a routerLink='/order/view/{{element.id}}'>{{element.orderName}} </a>  -->
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="clientName">
@@ -57,7 +58,8 @@
               <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef> أجراء </th>
                 <td mat-cell *matCellDef="let element">
-                  <button class="mx-3" mat-raised-button color="primary" routerLink="/order/edit/{{element.id}}">تعديل</button>
+                  <button class="mx-3" mat-raised-button color="primary"
+                    routerLink="/order/edit/{{element.id}}">تعديل</button>
                   <button class="mx-3" mat-raised-button color="warn">حذف</button>
                 </td>
               </ng-container>
@@ -66,7 +68,8 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             </table>
-            <app-shared-pagination class="ltr" [totalItems]="totalCount" (onPageChange)="onPageChange($event)" > </app-shared-pagination>
+            <app-shared-pagination class="ltr" [totalItems]="totalCount" (onPageChange)="onPageChange($event)">
+            </app-shared-pagination>
           </div>
 
         </div>
