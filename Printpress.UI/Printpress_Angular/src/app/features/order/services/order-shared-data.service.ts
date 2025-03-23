@@ -53,7 +53,18 @@ export class OrderSharedDataService {
     this.orderObject = order;
   }
 
-  public getOrderObject(): OrderGetDto {
+  public setOrderName(name: string): void {
+    this.orderObject.name = name;
+  }
+  public setOrderClient(clientId: number): void {
+    this.orderObject.clientId = clientId;
+  }
+
+  public updateOrderObjectState(): void{
+    this.orderObject.objectState = ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.updated;
+  }
+
+  public getOrderObject_copy(): OrderGetDto {
     return this.deepCopy(this.orderObject);
   }
 
@@ -144,7 +155,7 @@ export class OrderSharedDataService {
   }
 
   public deleteNewlyAddedGroup(groupId: number) {
-    let orderGroups = this.getOrderObject().orderGroups;
+    let orderGroups = this.orderObject.orderGroups;
 
     const index = orderGroups.findIndex(x => x.id === groupId);
     if (index !== -1) {
@@ -369,7 +380,7 @@ export class OrderSharedDataService {
       orderGroupId: orderGroupId,
       serviceId: service.id,
       serviceName: service.name,
-      objectState: ObjectStateEnum.temp
+      objectState: ObjectStateEnum.added
     };
 
     orderGroup.orderGroupServices.push(orderGroupService);

@@ -32,8 +32,8 @@
             <!-- Order Name -->
             <div class="col-md-3 ">
                 <label for="orderName" class="form-label">اسم الطلبية</label>
-                <input type="text" [(ngModel)]="orderGetDto.name" [ngModelOptions]="{standalone: true}"
-                    class="form-control" id="orderName" required>
+                <input type="text" [(ngModel)]="orderName" [ngModelOptions]="{standalone: true}" (blur)="onOrderNameInputBlur()" class="form-control"
+                    id="orderName" required>
             </div>
 
 
@@ -43,7 +43,7 @@
                 <div class="row input-group">
                     <label for="clientSelect" class="form-label">اسم العميل</label>
                     <mat-form-field appearance="outline" class="col-7">
-                        <mat-select [(value)]="orderGetDto.clientId" panelClass="custom-panel">
+                        <mat-select [(value)]="orderClientId" panelClass="custom-panel" (selectionChange)="onClientSelectChange()">
                             <!-- Dropdown Options -->
                             <mat-option *ngFor="let client of clients" [value]="client.id">
                                 {{ client.name }}

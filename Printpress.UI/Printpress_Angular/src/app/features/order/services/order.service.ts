@@ -33,6 +33,7 @@ export class OrderService {
   // }
 
   public insertOrder(orderDTO: OrderUpsertDto): Observable<any> {
+    console.log(JSON.stringify( orderDTO));
     return this.httpService.post<OrderUpsertDto>(
       ApiUrlResource.OrderAPI.insertOrder,
       orderDTO

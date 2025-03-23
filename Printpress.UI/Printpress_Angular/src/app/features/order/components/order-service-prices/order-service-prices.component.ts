@@ -40,10 +40,11 @@ export class OrderServicePricesComponent implements OnInit{
 
   async ngOnInit() {
     this._tempServicesList = [];
-    
-    for (let i = 0; i < this._orderSharedService.getAllOrderGroupsServices_copy().length; i++) {
+    let allOrderGroupServices = this._orderSharedService.getAllOrderGroupsServices_copy();
 
-      const serviceId = this._orderSharedService.getAllOrderGroupsServices_copy()[i].serviceId;
+    for (let i = 0; i < allOrderGroupServices.length; i++) {
+
+      const serviceId = allOrderGroupServices[i].serviceId;
 
       const service = await this.servicesService.getServiceById(serviceId);
 
@@ -53,7 +54,7 @@ export class OrderServicePricesComponent implements OnInit{
 
       const tempService: { serviceId: number, name: string, price: number } = {
         serviceId: service.id,
-        name: service.name || '',
+        name: service.name,
         price: service.price
       };
 
@@ -79,7 +80,7 @@ export class OrderServicePricesComponent implements OnInit{
 
     this._orderSharedService.setOrderServices(orderServices);
 
-    const orderDTO = this._orderSharedService.getOrderObject()
+    const orderDTO = this._orderSharedService.getOrderObject_copy()
 
     const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
     // Map to order upsert

@@ -29,7 +29,7 @@ export class OrderAddUpdateComponent implements OnInit {
   public displayedColumns = ['name', 'deliveryDate', 'action'];
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public clients: ClientGetDto[] = [];
-  public selectedClientId!: number
+  public orderClientId!: number
   public orderName!: string;
   public orderGetDto!: OrderGetDto;
 
@@ -57,10 +57,12 @@ export class OrderAddUpdateComponent implements OnInit {
     }
 
     else { // case add mode
-      this.orderGetDto = this.OrderSharedService.getOrderObject();
+      this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
     }
 
     this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.orderGetDto.orderGroups));
+    this.orderName = this.orderGetDto.name;
+    this.orderClientId = this.orderGetDto.clientId;
 
     let response = await firstValueFrom(this.clientService.getAll())
     this.clients = response.data;
@@ -72,7 +74,7 @@ export class OrderAddUpdateComponent implements OnInit {
 
   private openTransactionModal() {
     let dialogRef = this.dialog.open(TransactionComponent, {
-      data: { orderId: this.OrderSharedService.getOrderObject().id },
+      data: { orderId: this.OrderSharedService.getOrderObject_copy().id },
       height: '550px',
       width: '1000px',
       injector: this.injector
@@ -88,11 +90,13 @@ export class OrderAddUpdateComponent implements OnInit {
       return;
     }
 
+    this.OrderSharedService.updateOrderObjectState();
+
     this.openServicePricesDialog();
   }
 
   private validateOrderData(): boolean {
-    const emptyGroupsList = this.OrderSharedService.getOrderObject().orderGroups.length == 0;
+    const emptyGroupsList = this.OrderSharedService.getOrderObject_copy().orderGroups.length == 0;
     if (emptyGroupsList) {
       this.alertService.showError('يجب إضافة مجموعات للطلبية');
       return false;
@@ -127,6 +131,14 @@ export class OrderAddUpdateComponent implements OnInit {
         deliveryDate: orderGroup.deliveryDate
       }
     });
+  }
+
+  protected onOrderNameInputBlur() {
+    this.OrderSharedService.setOrderName(this.orderName);
+  }
+
+  protected onClientSelectChange() {
+    this.OrderSharedService.setOrderClient(this.orderClientId);
   }
 }
 

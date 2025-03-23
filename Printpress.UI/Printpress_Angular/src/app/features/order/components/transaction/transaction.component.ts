@@ -58,8 +58,8 @@ export class TransactionComponent implements OnInit {
     private orderSharedDataService: OrderSharedDataService
   ) {
     this.orderId = inputData.orderId;
-    this.orderName = orderSharedDataService.getOrderObject().name;
-    this.clientName = orderSharedDataService.getOrderObject().clientName;
+    this.orderName = orderSharedDataService.getOrderObject_copy().name;
+    this.clientName = orderSharedDataService.getOrderObject_copy().clientName;
   }
 
   ngOnInit(): void {
