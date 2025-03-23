@@ -13,7 +13,7 @@ import { OrderTransactionAddDto } from '../../models/order-transaction/order-tra
 import { OrderTransactionGetDto } from '../../models/order-transaction/order-transaction-get.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 @Component({
   selector: 'app-transaction',
@@ -28,6 +28,7 @@ import { OrderSharedDataService } from '../../services/order-shared-data.service
     MatFormFieldModule,
     MatButtonModule,
     TableTemplateComponent,
+    MatDialogModule
   ],
 })
 export class TransactionComponent implements OnInit {

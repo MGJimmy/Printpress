@@ -31,11 +31,14 @@
       <button mat-raised-button color="warn" (click)="onRefund()">استرداد</button>
     </div>
 
-    <app-table-template class="m-5" *ngIf="transactions"
-      [columnDefs]="columnDefs"
-      [originalSource]="transactions"
-      [totalItemsCount]="totalItemsCount"
-      (pageChanged)="onPageChanged($event)">
+    <app-table-template class="m-5" *ngIf="transactions" [columnDefs]="columnDefs" [originalSource]="transactions"
+      [totalItemsCount]="totalItemsCount" (pageChanged)="onPageChanged($event)">
     </app-table-template>
   </mat-card-content>
 </mat-card>
+
+<div class="d-flex justify-content-around">
+  <button mat-raised-button [mat-dialog-close]="true" color="warn">
+     إالغاء
+  </button>
+</div>
