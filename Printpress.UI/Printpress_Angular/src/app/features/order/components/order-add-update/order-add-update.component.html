@@ -32,8 +32,8 @@
             <!-- Order Name -->
             <div class="col-md-3 ">
                 <label for="orderName" class="form-label">اسم الطلبية</label>
-                <input type="text" [(ngModel)]="orderName" [ngModelOptions]="{standalone: true}" (blur)="onOrderNameInputBlur()" class="form-control"
-                    id="orderName" required>
+                <input type="text" [(ngModel)]="orderName" [ngModelOptions]="{standalone: true}"
+                    (blur)="onOrderNameInputBlur()" class="form-control" id="orderName" required>
             </div>
 
 
@@ -43,7 +43,8 @@
                 <div class="row input-group">
                     <label for="clientSelect" class="form-label">اسم العميل</label>
                     <mat-form-field appearance="outline" class="col-7">
-                        <mat-select [(value)]="orderClientId" panelClass="custom-panel" (selectionChange)="onClientSelectChange()">
+                        <mat-select [(value)]="orderClientId" panelClass="custom-panel"
+                            (selectionChange)="onClientSelectChange()">
                             <!-- Dropdown Options -->
                             <mat-option *ngFor="let client of clients" [value]="client.id">
                                 {{ client.name }}
@@ -69,7 +70,7 @@
                     <mat-card-title>
                         <span *ngIf="componentMode.isViewMode"> المجموعات</span>
                         <button *ngIf="!componentMode.isViewMode" mat-raised-button color="primary"
-                            routerLink="/order/group/add">إضافة مجموعة جديدة
+                            routerLink="/order/group">إضافة مجموعة جديدة
                         </button>
                     </mat-card-title>
                 </div>
@@ -92,7 +93,7 @@
                                 <th mat-header-cell *matHeaderCellDef> إجراء </th>
                                 <td mat-cell *matCellDef="let element">
                                     <button class="mx-3" mat-raised-button color="primary"
-                                        routerlink="group/add">تعديل</button>
+                                        routerLink="/order/group/{{element.id}}">تعديل</button>
                                     <button class="mx-3" mat-raised-button color="warn">حذف</button>
                                 </td>
                             </ng-container>

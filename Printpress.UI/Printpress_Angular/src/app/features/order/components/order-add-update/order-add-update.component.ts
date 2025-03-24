@@ -127,6 +127,7 @@ export class OrderAddUpdateComponent implements OnInit {
 
   return orderGroupGetDtos.map((orderGroup, index) => {
       return {
+        id: orderGroup.id,
         name: orderGroup.name,
         deliveryDate: orderGroup.deliveryDate
       }

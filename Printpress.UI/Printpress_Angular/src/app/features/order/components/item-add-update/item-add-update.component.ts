@@ -125,9 +125,8 @@ export class ItemAddUpdateComponent implements OnInit {
     else{
       this.orderSharedService.updateItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price);
     }
-    
     // navigate to group component after saving
-    this.router.navigate(['order/group/edit', this.groupId]);
+    this.router.navigate(['order/group', this.groupId]);
   }
 
   MapValuesFromFormToItem(itemForm: FormGroup) {
