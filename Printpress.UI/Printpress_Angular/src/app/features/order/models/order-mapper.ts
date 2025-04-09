@@ -1,4 +1,6 @@
 import { ObjectStateEnum } from "../../../core/models/object-state.enum";
+import { ItemDetailsGetDto } from "./item-details/item-details-get.dto";
+import { ItemDetailsUpsertDto } from "./item-details/item-details-upsert.dto";
 import { ItemGetDto } from "./item/item-get.Dto";
 import { ItemUpsertDto } from "./item/item-upsert.Dto";
 import { OrderServicesGetDTO } from "./order-service/order-service-getDto";
@@ -46,7 +48,8 @@ function mapItemGetToUpsert(itemGet: ItemGetDto): ItemUpsertDto {
         name: itemGet.name,
         quantity: itemGet.quantity,
         price: itemGet.price,
-        objectState: itemGet.objectState
+        objectState: itemGet.objectState,
+        details: itemGet.details.map(mapItemDetailGetToUpsert)
     };
 }
 
@@ -54,6 +57,17 @@ function mapOrderServiceGetToUpsert(serviceGet: OrderServicesGetDTO): OrderServi
     return {
         id: serviceGet.id,
         serviceId: serviceGet.serviceId,
-        price: serviceGet.price
+        price: serviceGet.price,
+        objectState: serviceGet.objectState 
+    };
+}
+
+function mapItemDetailGetToUpsert(itemDetailGet: ItemDetailsGetDto): ItemDetailsUpsertDto {
+    return {
+        id: itemDetailGet.id,
+        itemId: itemDetailGet.itemId,
+        key: itemDetailGet.key,
+        value: itemDetailGet.value,
+        objectState: itemDetailGet.objectState
     };
 }

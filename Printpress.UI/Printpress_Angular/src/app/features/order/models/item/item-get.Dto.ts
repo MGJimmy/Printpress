@@ -7,5 +7,5 @@ export interface ItemGetDto extends IObjectState {
     quantity: number;
     price: number;
     groupId: number;
-    itemDetails: ItemDetailsGetDto[];
+    details: ItemDetailsGetDto[];
 }

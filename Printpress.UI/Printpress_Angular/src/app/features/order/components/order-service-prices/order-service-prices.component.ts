@@ -13,6 +13,7 @@ import { mapOrderGetToUpsert } from '../../models/order-mapper';
 import { ServiceService } from '../../../setup/services/service.service';
 import { OrderServicesGetDTO } from '../../models/order-service/order-service-getDto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
+import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 
 @Component({
   selector: 'app-order-service-prices',
@@ -25,7 +26,7 @@ import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum
 export class OrderServicePricesComponent implements OnInit {
 
   private _orderSharedService!: OrderSharedDataService;
-  protected _tempServicesList!: { serviceId: number, name: string, price: number }[];
+  protected _tempServicesList!: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum }[];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { orderSharedService: OrderSharedDataService },
@@ -44,7 +45,8 @@ export class OrderServicePricesComponent implements OnInit {
 
     for (let i = 0; i < allOrderGroupServices.length; i++) {
 
-      const serviceId = allOrderGroupServices[i].serviceId;
+      const currentService = allOrderGroupServices[i];
+      const serviceId = currentService.serviceId;
 
       if (this._tempServicesList.find(x => x.serviceId == serviceId)) {
         continue;
@@ -52,15 +54,17 @@ export class OrderServicePricesComponent implements OnInit {
 
       const service = await this.servicesService.getServiceById(serviceId);
 
+      // Selling  services should not be edited in this page
       if (service.serviceCategory == ServiceCategoryEnum.Selling) {
         continue;
       }
 
 
-      const tempService: { serviceId: number, name: string, price: number } = {
+      const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum } = {
         serviceId: service.id,
         name: service.name,
-        price: service.price
+        price: service.price,
+        objectState: currentService.objectState
       };
 
 
@@ -79,7 +83,8 @@ export class OrderServicePricesComponent implements OnInit {
       return {
         id: 0, //////////////////////////// ???
         serviceId: x.serviceId,
-        price: x.price
+        price: x.price,
+        objectState: x.objectState
       }
     })
 

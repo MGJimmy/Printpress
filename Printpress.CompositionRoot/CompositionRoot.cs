@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Printpress.Application;
+using Printpress.Application.Mappers;
 using Printpress.Infrastructure;
 
 namespace Printpress.CompositionRoot
@@ -50,6 +51,7 @@ namespace Printpress.CompositionRoot
             services.AddScoped<OrderServiceMapper>();
             services.AddScoped<ItemMapper>();
             services.AddScoped<ServiceMapper>();
+            services.AddScoped<ItemDetailsMapper>();
 
 
             return services;

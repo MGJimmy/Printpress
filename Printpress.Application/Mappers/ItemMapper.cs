@@ -1,8 +1,9 @@
-﻿using Printpress.Domain.Entities;
+﻿using Printpress.Application.Mappers;
+using Printpress.Domain.Entities;
 
 namespace Printpress.Application
 {
-    public class ItemMapper : BaseMapper<Item, ItemUpsertDTO>
+    public class ItemMapper (ItemDetailsMapper itemDetailsMapper) : BaseMapper<Item, ItemUpsertDTO>
     {
         public override Item MapFromDestinationToSource(ItemUpsertDTO destinationEntity)
         {
@@ -14,7 +15,7 @@ namespace Printpress.Application
                 Quantity = destinationEntity.Quantity,
                 State = destinationEntity.ObjectState.MapToTrackingState(),
                 IsDeleted = destinationEntity.ObjectState == ObjectState.Deleted,
-               
+                Details = itemDetailsMapper.MapFromDestinationToSource(destinationEntity.Details)
             };
 
         }

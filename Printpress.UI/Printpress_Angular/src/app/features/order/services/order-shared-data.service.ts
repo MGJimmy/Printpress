@@ -235,7 +235,7 @@ export class OrderSharedDataService {
       quantity: 0,
       price: 0,
       groupId: orderGroupId,
-      itemDetails: itemDetails,
+      details: itemDetails,
       objectState: ObjectStateEnum.temp
     }
 
@@ -264,8 +264,8 @@ export class OrderSharedDataService {
         throw new Error('Number of pages and number of printing faces are required for printing service');
       }
 
-      let numberOfPagesItemDetail: ItemDetailsGetDto = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)!;
-      let numberOfPrintingFacesItemDetail: ItemDetailsGetDto = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)!;
+      let numberOfPagesItemDetail: ItemDetailsGetDto = item.details.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)!;
+      let numberOfPrintingFacesItemDetail: ItemDetailsGetDto = item.details.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)!;
 
       numberOfPagesItemDetail.value = numberOfPages.toString();
       numberOfPagesItemDetail.objectState = ObjectStateEnum.added;

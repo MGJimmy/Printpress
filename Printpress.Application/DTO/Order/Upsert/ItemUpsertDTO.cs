@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Printpress.Domain.Entities;
 
 namespace Printpress.Application
 {
@@ -8,6 +9,8 @@ namespace Printpress.Application
         public string Name { get; set; }
         public int Quantity { get; set; }
         public int Price { get; set; }
+
+        public List<ItemDetailsUpsertDTO> Details { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ObjectState ObjectState { get; set; }

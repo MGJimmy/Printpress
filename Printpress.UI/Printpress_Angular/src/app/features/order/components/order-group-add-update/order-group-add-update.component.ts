@@ -42,7 +42,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 300,
       groupId: 1,
       objectState: ObjectStateEnum.unchanged,
-      itemDetails: [
+      details: [
         {
           id: 1,
           itemId: 1,
@@ -66,7 +66,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 10,
       groupId: 2,
       objectState: ObjectStateEnum.added,
-      itemDetails: [
+      details: [
         {
           id: 3,
           itemId: 2,
@@ -90,7 +90,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 15,
       groupId: 3,
       objectState: ObjectStateEnum.updated,
-      itemDetails: [
+      details: [
         {
           id: 5,
           itemId: 3,
@@ -107,7 +107,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 300,
       groupId: 1,
       objectState: ObjectStateEnum.unchanged,
-      itemDetails: [
+      details: [
         {
           id: 1,
           itemId: 1,
@@ -131,7 +131,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 10,
       groupId: 2,
       objectState: ObjectStateEnum.added,
-      itemDetails: [
+      details: [
         {
           id: 3,
           itemId: 2,
@@ -155,7 +155,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 15,
       groupId: 3,
       objectState: ObjectStateEnum.updated,
-      itemDetails: [
+      details: [
         {
           id: 5,
           itemId: 3,
@@ -172,7 +172,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 300,
       groupId: 1,
       objectState: ObjectStateEnum.unchanged,
-      itemDetails: [
+      details: [
         {
           id: 1,
           itemId: 1,
@@ -196,7 +196,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 10,
       groupId: 2,
       objectState: ObjectStateEnum.added,
-      itemDetails: [
+      details: [
         {
           id: 3,
           itemId: 2,
@@ -220,7 +220,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       price: 15,
       groupId: 3,
       objectState: ObjectStateEnum.updated,
-      itemDetails: [
+      details: [
         {
           id: 5,
           itemId: 3,
@@ -339,7 +339,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   protected getDetailValueByKeyName(itemId: number, key: string) {
     const item: ItemGetDto = this.orderSharedService.getItem_copy(this.groupId, itemId);
-    item.itemDetails.find(x => x.key == key)?.value;
+    item.details.find(x => x.key == key)?.value;
   }
 
   protected addItem_Click() {
@@ -431,10 +431,10 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     let itemVMList: ItemGridVM[] = [];
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      const numberOfPages = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPages);
-      const printedItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.PrintedItemsCount);
-      const stapledItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.StapledItemsCount);
-      const boughtItemsCount = item.itemDetails.find(x => x.key === itemDetailsKeyEnum.BoughtItemsCount);
+      const numberOfPages = item.details.find(x => x.key === itemDetailsKeyEnum.NumberOfPages);
+      const printedItemsCount = item.details.find(x => x.key === itemDetailsKeyEnum.PrintedItemsCount);
+      const stapledItemsCount = item.details.find(x => x.key === itemDetailsKeyEnum.StapledItemsCount);
+      const boughtItemsCount = item.details.find(x => x.key === itemDetailsKeyEnum.BoughtItemsCount);
 
 
       let itemVM: ItemGridVM = {
