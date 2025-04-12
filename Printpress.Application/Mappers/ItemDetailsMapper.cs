@@ -13,7 +13,7 @@ namespace Printpress.Application.Mappers
         {
             return new ItemDetails
             {
-                Id = destinationEntity.Id,
+                Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
                 ItemId = destinationEntity.ItemId,
                 ItemDetailsKey = destinationEntity.Key,
                 Value = destinationEntity.Value

@@ -9,7 +9,7 @@ namespace Printpress.Application
         {
             return new Item
             {
-                Id = destinationEntity.Id,
+                Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
                 Name = destinationEntity.Name,
                 Price = destinationEntity.Price,
                 Quantity = destinationEntity.Quantity,

@@ -8,6 +8,7 @@ public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper 
     {
         var order = new Order
         {
+            //Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
             State = destinationEntity.ObjectState.MapToTrackingState()

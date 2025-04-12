@@ -276,7 +276,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   private setIsEdit(currentGroup: OrderGroupGetDto) {
-    if (currentGroup.objectState == ObjectStateEnum.temp) {
+    if (currentGroup.objectState == ObjectStateEnum.temp || currentGroup.objectState == ObjectStateEnum.added) {
       this.isEdit = false;
     } else {
       this.isEdit = true;

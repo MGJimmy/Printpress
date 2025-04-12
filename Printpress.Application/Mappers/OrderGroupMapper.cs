@@ -8,7 +8,7 @@ namespace Printpress.Application
         {
             var group = new OrderGroup
             {
-                Id = destinationEntity.Id,
+                Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
                 Name = destinationEntity.Name,
                 State = destinationEntity.ObjectState.MapToTrackingState()
             };
