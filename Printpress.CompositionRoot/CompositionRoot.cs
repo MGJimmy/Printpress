@@ -23,6 +23,7 @@ namespace Printpress.CompositionRoot
             {
                 option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
                 option.LogTo((log) => Console.Write(log), LogLevel.Information);
+                option.EnableSensitiveDataLogging(true);
             });
         }
 
