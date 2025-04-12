@@ -14,14 +14,14 @@
             <button class="col-3 m-2" mat-raised-button color="primary"> إصدار فاتورة </button>
         </div>
         <div class="row">
-            <label class="col-3 m-2 "> الاجمالي : {{orderGetDto.totalPrice}}</label>
-            <label class="col-3 m-2"> المدفوع : {{orderGetDto.totalPaid}}</label>
-            <label class="col-3 m-2"> الباقي : {{orderGetDto.totalPrice - orderGetDto.totalPaid}}</label>
+            <label class="col-3 m-2 "> الاجمالي : {{orderGetDto?.totalPrice || 0}}</label>
+            <label class="col-3 m-2"> المدفوع : {{orderGetDto?.totalPaid || 0}}</label>
+            <label class="col-3 m-2"> الباقي : {{(orderGetDto?.totalPrice || 0) - (orderGetDto?.totalPaid || 0)}}</label>
         </div>
 
         <div class="row">
-            <label class="col-3 m-2 "> اسم الطلبية:{{orderGetDto.name}}</label>
-            <label class="col-3 m-2"> اسم العميل: {{orderGetDto.clientName}}</label>
+            <label class="col-3 m-2 "> اسم الطلبية:{{orderGetDto?.name}}</label>
+            <label class="col-3 m-2"> اسم العميل: {{orderGetDto?.clientName}}</label>
             <label class="col-3 m-2"> حالة الطلبية: غير منتهية </label>
         </div>
     </div>

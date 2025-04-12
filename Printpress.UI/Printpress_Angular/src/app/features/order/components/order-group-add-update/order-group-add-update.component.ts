@@ -431,10 +431,10 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     let itemVMList: ItemGridVM[] = [];
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      const numberOfPages = item.details.find(x => x.key === itemDetailsKeyEnum.NumberOfPages);
-      const printedItemsCount = item.details.find(x => x.key === itemDetailsKeyEnum.PrintedItemsCount);
-      const stapledItemsCount = item.details.find(x => x.key === itemDetailsKeyEnum.StapledItemsCount);
-      const boughtItemsCount = item.details.find(x => x.key === itemDetailsKeyEnum.BoughtItemsCount);
+      const numberOfPages = item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPages);
+      const printedItemsCount = item.details?.find(x => x.key === itemDetailsKeyEnum.PrintedItemsCount);
+      const stapledItemsCount = item.details?.find(x => x.key === itemDetailsKeyEnum.StapledItemsCount);
+      const boughtItemsCount = item.details?.find(x => x.key === itemDetailsKeyEnum.BoughtItemsCount);
 
 
       let itemVM: ItemGridVM = {

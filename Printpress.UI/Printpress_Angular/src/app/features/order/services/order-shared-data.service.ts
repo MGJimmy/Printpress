@@ -77,7 +77,7 @@ export class OrderSharedDataService {
   }
 
   public getOrderListRoute(): string {
-    return '/order';
+    return '/orderlist';
   }
 
   //=======================
