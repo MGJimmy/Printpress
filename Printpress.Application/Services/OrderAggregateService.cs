@@ -70,7 +70,7 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
     {
         var allServices = await _IUnitOfWork.ServiceRepository.AllAsync();
 
-        var groupServicesIds = new HashSet<int>(group.Services.Select(d => d.Id));
+        var groupServicesIds = new HashSet<int>(group.Services.Select(d => d.ServiceId));
         var currentGroupServices = allServices.Where(s => groupServicesIds.Contains(s.Id)).ToList();
 
         if (currentGroupServices.Exists(x => x.ServiceCategory == ServiceCategoryEnum.Selling))

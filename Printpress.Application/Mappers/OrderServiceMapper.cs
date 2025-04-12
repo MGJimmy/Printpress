@@ -8,7 +8,8 @@
             {
                 Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
-                State = destinationEntity.ObjectState.MapToTrackingState()
+                State = destinationEntity.ObjectState.MapToTrackingState(),
+                Price = destinationEntity.Price
             };
         }
 
