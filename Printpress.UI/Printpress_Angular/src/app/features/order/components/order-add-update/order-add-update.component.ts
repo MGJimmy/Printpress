@@ -46,18 +46,19 @@ export class OrderAddUpdateComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
+
     if (this.componentMode.isViewMode || this.componentMode.isEditMode) {
       if (this.componentMode.isViewMode) {
         this.displayedColumns = this.displayedColumns.filter(col => col !== 'action')
       }
       let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));
-      let response = await firstValueFrom(this.orderService.getOrderById(orderId));
-      this.orderGetDto = response.data
-      this.OrderSharedService.setOrderObject(this.orderGetDto);
-    }
 
-    else { // case add mode
-      this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
+      if (this.orderGetDto.id != orderId) {
+        let response = await firstValueFrom(this.orderService.getOrderById(orderId));
+        this.orderGetDto = response.data
+        this.OrderSharedService.setOrderObject(this.orderGetDto);
+      }
     }
 
     this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.orderGetDto.orderGroups));
