@@ -19,6 +19,7 @@ import { ServiceService } from '../../../setup/services/service.service';
 import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
+import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
 
 export interface ServiceCat_interface {
   id: number;
@@ -36,7 +37,8 @@ export interface ServiceCat_interface {
     MatCardModule,
     FormsModule,
     CommonModule,
-    MatDialogModule
+    MatDialogModule,
+    ServiceCategoryArabicPipe
   ],
   templateUrl: './order-group-service-upsert.component.html',
   styleUrl: './order-group-service-upsert.component.css'
@@ -44,8 +46,6 @@ export interface ServiceCat_interface {
 
 export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
-  // @Output() SaveOrderGroupService = new EventEmitter<OrderGroupServiceUpsertDto>();
-  // outputObject: any = { y: 15 };
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'مسلسل', column: 'id' },
     { headerName: 'الخدمة', column: 'name' },
@@ -56,7 +56,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   sellingCategories: ServiceCat_interface[] = [];
   otherCategories: ServiceCat_interface[] = [];
-  serviceCategories!: string[] 
+  serviceCategories!: ServiceCategoryEnum[] 
   allServices: ServiceGetDto[] = [];
 
   selectedCategory: string | null = null;
@@ -114,17 +114,18 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     let group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
 
     if(!group.orderGroupServices || group.orderGroupServices.length == 0){
-      this.serviceCategories = Object.keys(ServiceCategoryEnum).sort();
+      this.serviceCategories =  Object.keys(ServiceCategoryEnum).sort() as ServiceCategoryEnum[];
       return;
     }
 
     if(group.isHasSellingService){
-      this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling).sort();
+      this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
       return;
     }
     
-    this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling).sort();
+    this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
   }
+
 
   private fillTableData(){
     let groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
