@@ -223,7 +223,7 @@ internal sealed class SeedingDbContext
            new Service { Id = 3, Name = "قص", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Cutting },
            new Service { Id = 4, Name = "لصق", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Clueing },
            new Service { Id = 5, Name = "تدبيس", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Stapling },
-           new Service { Id = 6, Name = "علم مصر", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
+           new Service { Id = 6, Name = "بيع", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
         ];
 
 
