@@ -61,7 +61,7 @@ export class OrderSharedDataService {
   }
 
   public updateOrderObjectState(): void{
-    this.orderObject.objectState = ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.updated;
+    this.orderObject.objectState = this.orderObject.objectState === ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.updated;
   }
 
   public getOrderObject_copy(): OrderGetDto {
