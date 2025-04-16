@@ -38,3 +38,125 @@
     font-size: 18px;
   }
   
+  .container-fluid {
+    max-width: 1400px;
+  }
+  
+  .card {
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+  }
+  
+  /* RTL specific styles */
+  .card-body {
+    text-align: right;
+  }
+  
+  .form-floating > label {
+    right: 0;
+    left: auto;
+    padding-right: 0.75rem;
+  }
+  
+  .form-floating > .form-control {
+    padding-right: 0.75rem;
+    text-align: right;
+  }
+  
+  /* Remove spinner buttons from number input */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  
+  .modal-container {
+    padding: 1rem;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 0.75rem;
+    max-height: calc(80vh - 200px);
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+  
+  .services-grid::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .services-grid::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .services-grid::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+  
+  .service-item {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.75rem;
+  }
+  
+  .service-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .input-group-text {
+    background-color: #f8f9fa;
+    font-size: 0.8rem;
+  }
+  
+  .alert {
+    font-size: 0.85rem;
+  }
+  
+  /* RTL specific styles */
+  .modal-container {
+    direction: rtl;
+  }
+  
+  .input-group > :not(:first-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+  }
+  
+  .input-group > :not(:last-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+  }
+  
+  /* Remove spinner buttons from number input */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  

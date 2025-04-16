@@ -26,7 +26,7 @@ import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 export class OrderServicePricesComponent implements OnInit {
 
   private _orderSharedService!: OrderSharedDataService;
-  protected _tempServicesList!: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum }[];
+  protected _tempServicesList!: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean }[];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { orderSharedService: OrderSharedDataService },
@@ -35,16 +35,14 @@ export class OrderServicePricesComponent implements OnInit {
     private alertService: AlertService,
     private servicesService: ServiceService
   ) {
-    
     this._orderSharedService = data.orderSharedService;
   }
 
   async ngOnInit() {
     this._tempServicesList = [];
     let allOrderGroupServices = this._orderSharedService.getAllOrderGroupsServices_copy();
-
+    
     for (let i = 0; i < allOrderGroupServices.length; i++) {
-
       const currentService = allOrderGroupServices[i];
       const serviceId = currentService.serviceId;
 
@@ -59,14 +57,15 @@ export class OrderServicePricesComponent implements OnInit {
         continue;
       }
 
+      const orderObjectState = this._orderSharedService.getOrderObject_copy().objectState;
 
-      const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum } = {
+      const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean } = {
         serviceId: service.id,
         name: service.name,
         price: service.price,
-        objectState: currentService.objectState
+        objectState: currentService.objectState,
+        isNew: orderObjectState != ObjectStateEnum.temp && currentService.objectState == ObjectStateEnum.added
       };
-
 
       this._tempServicesList.push(tempService);
     }
