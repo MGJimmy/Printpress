@@ -59,13 +59,21 @@ export class TableTemplateComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-
     try {
-      this.displayedColumns = Object.keys(this.originalSource[0])
-
-      this.pushSharedColumns();
-    } catch {
-      console.log('Error While Defining Shared Grid Columns.');
+      
+      if (this.originalSource && this.originalSource.length > 0) {
+        this.displayedColumns = Object.keys(this.originalSource[0]);
+        this.pushSharedColumns();
+      } else if (this.columnDefs && this.columnDefs.length > 0) {
+        // If we have columnDefs but no data, use the column definitions
+        this.displayedColumns = this.columnDefs.map(col => col.column);
+        this.pushSharedColumns();
+      } else {
+        this.displayedColumns = [];
+      }
+    } catch (error) {
+      console.error('Error While Defining Shared Grid Columns:', error);
+      this.displayedColumns = [];
     }
   }
 
