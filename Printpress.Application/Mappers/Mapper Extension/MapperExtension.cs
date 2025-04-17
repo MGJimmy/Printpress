@@ -20,6 +20,7 @@ namespace Printpress.Application
                 TotalPrice = order.TotalPrice,
                 OrderServices = order.Services.MapAsList(MapToOrderServiceDTO),
                 OrderGroups = order.OrderGroups.MapAsList(MapToOrderGroupDTO),
+                ObjectState = ObjectState.Unchanged
             };
 
             return orderDto;
@@ -32,7 +33,8 @@ namespace Printpress.Application
                 Name = orderService.Name,
                 OrderId = orderService.OrderId,
                 OrderGroupServices = orderService.Services.MapAsList(MapToGroupServiceDTO),
-                Items = orderService.Items.MapAsList(MapToItemDTO)
+                Items = orderService.Items.MapAsList(MapToItemDTO),
+                ObjectState = ObjectState.Unchanged
             };
 
             return orderGroupDTO;
@@ -44,7 +46,8 @@ namespace Printpress.Application
                 Id = orderService.Id,
                 OrderId = orderService.OrderId,
                 Price = orderService.Price,
-                ServiceId = orderService.ServiceId
+                ServiceId = orderService.ServiceId,
+                //ObjectState = ObjectState.Unchanged
             };
 
             return orderServiceDTO;
@@ -57,6 +60,7 @@ namespace Printpress.Application
                 ServiceId = groupService.ServiceId,
                 OrderGroupId = groupService.OrderGroupId,
                 ServiceName = groupService.Service?.Name,
+                ObjectState = ObjectState.Unchanged
             };
 
             return orderGroupServiceDTO;
@@ -70,7 +74,8 @@ namespace Printpress.Application
                 GroupId = item.OrderGroupId,
                 Price = item.Price,
                 Quantity = item.Quantity,
-                Details = item.Details.MapAsList(MapToItemDetailsDTO)
+                Details = item.Details.MapAsList(MapToItemDetailsDTO),
+                ObjectState = ObjectState.Unchanged
             };
 
             return itemDTO;
@@ -83,7 +88,8 @@ namespace Printpress.Application
                 Id = itemDetails.Id,
                 ItemId = itemDetails.ItemId,
                 Value = itemDetails.Value,
-                Key = itemDetails.ItemDetailsKey
+                Key = itemDetails.ItemDetailsKey,
+                ObjectState = ObjectState.Unchanged
             };
 
             return itemDTO;
