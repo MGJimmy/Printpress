@@ -16,6 +16,7 @@ export class ApiUrlResource {
     getOrderById: ApiUrlResource.Order_URL + '/GetById',
     getordersSummaryList: ApiUrlResource.Order_URL + '/getOrderSummaryList',
     insertOrder: ApiUrlResource.Order_URL + '/insert',
+    updateOrder: ApiUrlResource.Order_URL + '/update',
   };
 
   private static Report_URL = '/report';

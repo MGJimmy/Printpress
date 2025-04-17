@@ -40,6 +40,12 @@ export class OrderService {
     );
   }
 
+  public updateOrder(orderDTO: OrderUpsertDto): Observable<any> {
+    return this.httpService.put<OrderUpsertDto>(
+      `${ApiUrlResource.OrderAPI.updateOrder}/${orderDTO.id}`,
+      orderDTO
+    );
+  }
   // updateOrder(id: number, order: any): Observable<any> {
   //     return this.httpService.put<any>(`${this.apiUrl}/${id}`, order);
   // }

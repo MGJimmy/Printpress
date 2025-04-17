@@ -59,12 +59,13 @@ export class OrderServicePricesComponent implements OnInit {
 
       const orderObjectState = this._orderSharedService.getOrderObject_copy().objectState;
 
+      
       const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean } = {
         serviceId: service.id,
         name: service.name,
         price: service.price,
         objectState: currentService.objectState,
-        isNew: orderObjectState != ObjectStateEnum.temp && currentService.objectState == ObjectStateEnum.added
+        isNew: orderObjectState != ObjectStateEnum.added && orderObjectState != ObjectStateEnum.temp && currentService.objectState == ObjectStateEnum.added
       };
 
       this._tempServicesList.push(tempService);
@@ -92,8 +93,13 @@ export class OrderServicePricesComponent implements OnInit {
     const orderDTO = this._orderSharedService.getOrderObject_copy()
 
     const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
-    // Map to order upsert
-    this.orderService.insertOrder(orderUpsertDTO).subscribe(
+
+    
+    let upsertObservable = orderDTO.objectState == ObjectStateEnum.added || orderDTO.objectState == ObjectStateEnum.temp ?
+                     this.orderService.insertOrder(orderUpsertDTO) :
+                     this.orderService.updateOrder(orderUpsertDTO);
+
+    upsertObservable.subscribe(
       (response) => {
         this.alertService.showSuccess('تم حفظ الطلبية بنجاح');
         this.navigateToOrderListPage();
