@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Printpress.Domain.Entities;
 
 namespace Printpress.Application
 {

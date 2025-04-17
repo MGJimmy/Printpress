@@ -56,7 +56,7 @@ namespace Printpress.Application
                 Id = groupService.Id,
                 ServiceId = groupService.ServiceId,
                 OrderGroupId = groupService.OrderGroupId,
-                //ServiceName = groupService.,
+                ServiceName = groupService.Service?.Name,
             };
 
             return orderGroupServiceDTO;
@@ -69,7 +69,21 @@ namespace Printpress.Application
                 Name = item.Name,
                 GroupId = item.OrderGroupId,
                 Price = item.Price,
-                Quantity = item.Quantity
+                Quantity = item.Quantity,
+                Details = item.Details.MapAsList(MapToItemDetailsDTO)
+            };
+
+            return itemDTO;
+        }
+
+        public static ItemDetailsDTO MapToItemDetailsDTO(this ItemDetails itemDetails)
+        {
+            var itemDTO = new ItemDetailsDTO
+            {
+                Id = itemDetails.Id,
+                ItemId = itemDetails.ItemId,
+                Value = itemDetails.Value,
+                Key = itemDetails.ItemDetailsKey
             };
 
             return itemDTO;
