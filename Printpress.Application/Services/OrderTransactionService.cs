@@ -3,7 +3,7 @@ using Printpress.Domain.Enums;
 
 namespace Printpress.Application;
 
-public class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper) : IOrderTransactionService
+internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper) : IOrderTransactionService
 {
     public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload)
     {

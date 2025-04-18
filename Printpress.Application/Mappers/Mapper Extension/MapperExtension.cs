@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    public static class MapperExtension
+    internal static class MapperExtension
     {
         public static List<T2> MapAsList<T1, T2>(this IEnumerable<T1> list, Func<T1, T2> singleMapperFunc)
         {

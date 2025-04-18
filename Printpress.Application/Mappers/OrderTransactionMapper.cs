@@ -3,7 +3,7 @@ using Printpress.Domain.Enums;
 
 namespace Printpress.Application
 {
-    public class OrderTransactionMapper : BaseMapper<OrderTransaction, OrderTransactionDto>
+    internal class OrderTransactionMapper : BaseMapper<OrderTransaction, OrderTransactionDto>
     {
         public override OrderTransaction MapFromDestinationToSource(OrderTransactionDto destinationEntity)
         {

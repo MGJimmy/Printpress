@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    public class ServiceMapper : BaseMapper<Service, ServiceDto>
+    internal class ServiceMapper : BaseMapper<Service, ServiceDto>
     {
         public override Service MapFromDestinationToSource(ServiceDto destinationEntity)
         {
