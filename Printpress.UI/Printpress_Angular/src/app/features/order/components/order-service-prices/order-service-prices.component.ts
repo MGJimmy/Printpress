@@ -90,11 +90,12 @@ export class OrderServicePricesComponent implements OnInit {
 
     this._orderSharedService.setOrderServices(orderServices);
 
+    this._orderSharedService.updateOrderObjectState();
+    
     const orderDTO = this._orderSharedService.getOrderObject_copy()
 
     const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
 
-    
     let upsertObservable = orderDTO.objectState == ObjectStateEnum.added || orderDTO.objectState == ObjectStateEnum.temp ?
                      this.orderService.insertOrder(orderUpsertDTO) :
                      this.orderService.updateOrder(orderUpsertDTO);

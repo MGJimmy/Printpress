@@ -430,9 +430,13 @@ export class OrderSharedDataService {
   //#region Order Servies
   //=======================
 
-  // public getOrderServices(): OrderServicesGetDTO[] {
-  //   return this.orderObject.orderServices;
-  // }
+  private getOrderServices(): OrderServicesGetDTO[] {
+    return this.orderObject.orderServices;
+  }
+
+  public getOrderServices_copy(): OrderServicesGetDTO[] {
+    return this.deepCopy(this.getOrderServices());
+  }
 
   public setOrderServices(orderServices: OrderServicesGetDTO[]) {
     return this.orderObject.orderServices = orderServices;

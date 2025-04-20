@@ -31,7 +31,7 @@ export class OrderAddUpdateComponent implements OnInit {
   public clients: ClientGetDto[] = [];
   public orderClientId!: number
   public orderName!: string;
-  public orderGetDto!: OrderGetDto;
+  public orderGetDto: OrderGetDto;
 
   constructor(private router: Router,
     private OrderSharedService: OrderSharedDataService,
@@ -43,10 +43,10 @@ export class OrderAddUpdateComponent implements OnInit {
     private orderService: OrderService
   ) {
     this.componentMode = new ComponentMode(this.router);
+    this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
   }
 
   async ngOnInit() {
-    this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
 
     if (this.componentMode.isViewMode || this.componentMode.isEditMode) {
       if (this.componentMode.isViewMode) {
@@ -90,8 +90,6 @@ export class OrderAddUpdateComponent implements OnInit {
     if (!this.validateOrderData()) {
       return;
     }
-
-    this.OrderSharedService.updateOrderObjectState();
 
     this.openServicePricesDialog();
   }
