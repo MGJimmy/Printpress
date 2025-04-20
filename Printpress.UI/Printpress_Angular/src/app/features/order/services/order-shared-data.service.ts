@@ -10,6 +10,7 @@ import { ServiceCategoryEnum } from '../../setup/models/service-category.enum';
 import { ServiceGetDto } from '../../setup/models/service-get.dto';
 import { ItemDetailsGetDto } from '../models/item-details/item-details-get.dto';
 import { itemDetailsKeyEnum } from '../models/enums/item-details-key.enum';
+import { group } from '@angular/animations';
 
 /*
   Notes: 
@@ -51,6 +52,11 @@ export class OrderSharedDataService {
 
   public setOrderObject(order: OrderGetDto): void {
     this.orderObject = order;
+
+    // set the flags because it used in group and item components
+    this.orderObject.orderGroups.forEach(group => {
+      this.updateGroupFlagsOnServicesCategories(group);
+    });
   }
 
   public setOrderName(name: string): void {

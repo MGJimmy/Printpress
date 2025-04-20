@@ -69,6 +69,8 @@ export class ItemAddUpdateComponent implements OnInit {
     this.checkModeAndInitData();  
 
     this.group = this.orderSharedService.getOrderGroup_Copy(this.groupId);   
+
+    console.log(JSON.stringify(this.group));
   }
 
   checkModeAndInitData() {
@@ -102,8 +104,8 @@ export class ItemAddUpdateComponent implements OnInit {
   }
 
   fillFormWithItemData(item: ItemGetDto) {
-    this.numberOfPages = (item.details.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)?.value || 0) as number;
-    this.numberOfPrintingFaces = (item.details.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)?.value || 0) as number;
+    this.numberOfPages = (item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)?.value || 0) as number;
+    this.numberOfPrintingFaces = (item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)?.value || 0) as number;
 
     this.itemForm.patchValue({
       name: item.name,
