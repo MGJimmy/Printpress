@@ -1,6 +1,6 @@
 ﻿namespace Printpress.Application;
 
-public abstract class BaseMapper<TSource, TDestination> where TDestination : class where TSource : class
+internal abstract class BaseMapper<TSource, TDestination> where TDestination : class where TSource : class
 {
     public PagedList<TDestination> MapFromSourceToDestination(PagedList<TSource> destinationEntities)
     {

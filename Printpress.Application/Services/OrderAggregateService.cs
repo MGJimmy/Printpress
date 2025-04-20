@@ -1,9 +1,9 @@
-﻿using Printpress.Domain.Entities;
+﻿using Printpress.Application.Validators;
+using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
-
 namespace Printpress.Application;
 
-public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : IOrderAggregateService
+internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : IOrderAggregateService
 {
     public async Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize)
     {

@@ -2,7 +2,7 @@
 
 namespace Printpress.Application;
 
-public class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper _orderServiceMapper) : BaseMapper<Order, OrderUpsertDto>
+internal class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper _orderServiceMapper) : BaseMapper<Order, OrderUpsertDto>
 {
     public override Order MapFromDestinationToSource(OrderUpsertDto destinationEntity)
     {

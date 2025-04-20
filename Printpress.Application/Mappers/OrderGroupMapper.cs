@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    public class OrderGroupMapper(ItemMapper _itemMapper, GroupServiceMapper _groupServiceMapper) : BaseMapper<OrderGroup, OrderGroupUpsertDTO>
+    internal class OrderGroupMapper(ItemMapper _itemMapper, GroupServiceMapper _groupServiceMapper) : BaseMapper<OrderGroup, OrderGroupUpsertDTO>
     {
         public override OrderGroup MapFromDestinationToSource(OrderGroupUpsertDTO destinationEntity)
         {

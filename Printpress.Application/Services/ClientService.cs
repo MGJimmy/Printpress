@@ -2,7 +2,7 @@
 
 namespace Printpress.Application;
 
-public class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) : IClientService
+internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) : IClientService
 {
     public async Task<ClientDto> AddAsync(ClientUpsertDto payload)
     {

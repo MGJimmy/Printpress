@@ -18,8 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Printpress.Application\Printpress.Application.csproj" />
-    <ProjectReference Include="..\Printpress.CompositionRoot\Printpress.CompositionRoot.csproj" />
     <ProjectReference Include="..\Printpress.Domain\Printpress.Domain.csproj" />
+    <ProjectReference Include="..\Printpress.Infrastructure\Printpress.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

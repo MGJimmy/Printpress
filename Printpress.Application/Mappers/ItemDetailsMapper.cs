@@ -7,7 +7,7 @@ using Printpress.Domain.Entities;
 
 namespace Printpress.Application.Mappers
 {
-    public class ItemDetailsMapper : BaseMapper<ItemDetails, ItemDetailsUpsertDTO>
+    internal class ItemDetailsMapper : BaseMapper<ItemDetails, ItemDetailsUpsertDTO>
     {
         public override ItemDetails MapFromDestinationToSource(ItemDetailsUpsertDTO destinationEntity)
         {
