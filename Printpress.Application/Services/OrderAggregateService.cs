@@ -23,6 +23,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         string[] includes = [
             $"{nameof(Order.OrderGroups)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(Item.Details)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}.{nameof(OrderGroupService.Service)}",
             $"{nameof(Order.Services)}",
