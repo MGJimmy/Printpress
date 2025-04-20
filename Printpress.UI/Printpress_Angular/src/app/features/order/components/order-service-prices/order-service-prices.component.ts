@@ -41,29 +41,33 @@ export class OrderServicePricesComponent implements OnInit {
   async ngOnInit() {
     this._tempServicesList = [];
     let allOrderGroupServices = this._orderSharedService.getAllOrderGroupsServices_copy();
+
     
     for (let i = 0; i < allOrderGroupServices.length; i++) {
       const currentService = allOrderGroupServices[i];
       const serviceId = currentService.serviceId;
-
+      
       if (this._tempServicesList.find(x => x.serviceId == serviceId)) {
         continue;
       }
-
+      
       const service = await this.servicesService.getServiceById(serviceId);
-
+      
       // Selling  services should not be edited in this page
       if (service.serviceCategory == ServiceCategoryEnum.Selling) {
         continue;
       }
-
+      
       const orderObjectState = this._orderSharedService.getOrderObject_copy().objectState;
+      
+      let orderServices = this._orderSharedService.getOrderServices_copy();
 
+      const servicePrice = orderServices.find(x => x.serviceId == serviceId)?.price ?? service.price;
       
       const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean } = {
         serviceId: service.id,
         name: service.name,
-        price: service.price,
+        price: servicePrice,
         objectState: currentService.objectState,
         isNew: orderObjectState != ObjectStateEnum.added && orderObjectState != ObjectStateEnum.temp && currentService.objectState == ObjectStateEnum.added
       };
