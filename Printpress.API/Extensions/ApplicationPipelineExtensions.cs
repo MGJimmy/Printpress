@@ -13,6 +13,8 @@ public static class ApplicationPipelineExtensions
             app.UseSwaggerUI();
         }
 
+        app.UseExceptionHandler(_ => { });
+
         app.UseCors("AllowAll");
 
         app.UseStaticFiles();

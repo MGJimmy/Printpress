@@ -24,6 +24,7 @@ public class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderM
             $"{nameof(Order.OrderGroups)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}.{nameof(OrderGroupService.Service)}",
             $"{nameof(Order.Services)}",
             $"{nameof(Order.Client)}"];
 

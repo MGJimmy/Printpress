@@ -20,6 +20,7 @@ namespace Printpress.Application
                 TotalPrice = order.TotalPrice,
                 OrderServices = order.Services.MapAsList(MapToOrderServiceDTO),
                 OrderGroups = order.OrderGroups.MapAsList(MapToOrderGroupDTO),
+                ObjectState = ObjectState.Unchanged
             };
 
             return orderDto;
@@ -32,7 +33,8 @@ namespace Printpress.Application
                 Name = orderService.Name,
                 OrderId = orderService.OrderId,
                 OrderGroupServices = orderService.Services.MapAsList(MapToGroupServiceDTO),
-                Items = orderService.Items.MapAsList(MapToItemDTO)
+                Items = orderService.Items.MapAsList(MapToItemDTO),
+                ObjectState = ObjectState.Unchanged
             };
 
             return orderGroupDTO;
@@ -44,7 +46,8 @@ namespace Printpress.Application
                 Id = orderService.Id,
                 OrderId = orderService.OrderId,
                 Price = orderService.Price,
-                ServiceId = orderService.ServiceId
+                ServiceId = orderService.ServiceId,
+                //ObjectState = ObjectState.Unchanged
             };
 
             return orderServiceDTO;
@@ -56,7 +59,8 @@ namespace Printpress.Application
                 Id = groupService.Id,
                 ServiceId = groupService.ServiceId,
                 OrderGroupId = groupService.OrderGroupId,
-                //ServiceName = groupService.,
+                ServiceName = groupService.Service?.Name,
+                ObjectState = ObjectState.Unchanged
             };
 
             return orderGroupServiceDTO;
@@ -69,7 +73,23 @@ namespace Printpress.Application
                 Name = item.Name,
                 GroupId = item.OrderGroupId,
                 Price = item.Price,
-                Quantity = item.Quantity
+                Quantity = item.Quantity,
+                Details = item.Details.MapAsList(MapToItemDetailsDTO),
+                ObjectState = ObjectState.Unchanged
+            };
+
+            return itemDTO;
+        }
+
+        public static ItemDetailsDTO MapToItemDetailsDTO(this ItemDetails itemDetails)
+        {
+            var itemDTO = new ItemDetailsDTO
+            {
+                Id = itemDetails.Id,
+                ItemId = itemDetails.ItemId,
+                Value = itemDetails.Value,
+                Key = itemDetails.ItemDetailsKey,
+                ObjectState = ObjectState.Unchanged
             };
 
             return itemDTO;

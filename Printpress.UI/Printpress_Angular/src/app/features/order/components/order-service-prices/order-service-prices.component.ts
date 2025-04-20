@@ -26,7 +26,7 @@ import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 export class OrderServicePricesComponent implements OnInit {
 
   private _orderSharedService!: OrderSharedDataService;
-  protected _tempServicesList!: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum }[];
+  protected _tempServicesList!: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean }[];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { orderSharedService: OrderSharedDataService },
@@ -35,7 +35,6 @@ export class OrderServicePricesComponent implements OnInit {
     private alertService: AlertService,
     private servicesService: ServiceService
   ) {
-    
     this._orderSharedService = data.orderSharedService;
   }
 
@@ -43,30 +42,35 @@ export class OrderServicePricesComponent implements OnInit {
     this._tempServicesList = [];
     let allOrderGroupServices = this._orderSharedService.getAllOrderGroupsServices_copy();
 
+    
     for (let i = 0; i < allOrderGroupServices.length; i++) {
-
       const currentService = allOrderGroupServices[i];
       const serviceId = currentService.serviceId;
-
+      
       if (this._tempServicesList.find(x => x.serviceId == serviceId)) {
         continue;
       }
-
+      
       const service = await this.servicesService.getServiceById(serviceId);
-
+      
       // Selling  services should not be edited in this page
       if (service.serviceCategory == ServiceCategoryEnum.Selling) {
         continue;
       }
+      
+      const orderObjectState = this._orderSharedService.getOrderObject_copy().objectState;
+      
+      let orderServices = this._orderSharedService.getOrderServices_copy();
 
-
-      const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum } = {
+      const servicePrice = orderServices.find(x => x.serviceId == serviceId)?.price ?? service.price;
+      
+      const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean } = {
         serviceId: service.id,
         name: service.name,
-        price: service.price,
-        objectState: currentService.objectState
+        price: servicePrice,
+        objectState: currentService.objectState,
+        isNew: orderObjectState != ObjectStateEnum.added && orderObjectState != ObjectStateEnum.temp && currentService.objectState == ObjectStateEnum.added
       };
-
 
       this._tempServicesList.push(tempService);
     }
@@ -90,11 +94,17 @@ export class OrderServicePricesComponent implements OnInit {
 
     this._orderSharedService.setOrderServices(orderServices);
 
+    this._orderSharedService.updateOrderObjectState();
+    
     const orderDTO = this._orderSharedService.getOrderObject_copy()
 
     const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
-    // Map to order upsert
-    this.orderService.insertOrder(orderUpsertDTO).subscribe(
+
+    let upsertObservable = orderDTO.objectState == ObjectStateEnum.added || orderDTO.objectState == ObjectStateEnum.temp ?
+                     this.orderService.insertOrder(orderUpsertDTO) :
+                     this.orderService.updateOrder(orderUpsertDTO);
+
+    upsertObservable.subscribe(
       (response) => {
         this.alertService.showSuccess('تم حفظ الطلبية بنجاح');
         this.navigateToOrderListPage();
