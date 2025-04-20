@@ -17,17 +17,12 @@ public static class ApplicationPipelineExtensions
 
         app.UseCors("AllowAll");
 
-        app.UseStaticFiles();
-
-        app.UseRotativa();
-
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
 
         app.MapControllers();
 
-        app.MapDefaultControllerRoute();
 
         return app;
     }

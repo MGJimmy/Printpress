@@ -16,9 +16,7 @@ public static class IServiceCollectionExtensions
         services.AddSwaggerGen();
         services.RegisterApplicationService(configuration);
         services.RegisterInfrastructureServices(configuration);
-
         services.AddExceptionHandler<GlobalExceptionMiddleWare>();
-        services.AddRazorPages().AddRazorRuntimeCompilation();
         services.AddCros();
     }
     private static IServiceCollection AddControllers(this IServiceCollection services)
