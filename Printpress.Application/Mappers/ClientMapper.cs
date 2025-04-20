@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    public class ClientMapper : BaseMapper<Client, ClientDto>
+    internal class ClientMapper : BaseMapper<Client, ClientDto>
     {
         public override Client MapFromDestinationToSource(ClientDto destinationEntity)
         {

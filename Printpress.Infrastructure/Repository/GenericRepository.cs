@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Printpress.Infrastructure.Repository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : Entity
+    internal class GenericRepository<T> : IGenericRepository<T> where T : Entity
     {
         public GenericRepository(ApplicationDbContext dbContext)
         {

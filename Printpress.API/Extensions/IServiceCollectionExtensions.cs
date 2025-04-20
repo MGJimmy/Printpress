@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Printpress.API.Middlewares;
-using Printpress.CompositionRoot;
+using Printpress.Application;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Printpress.Infrastructure;
 
 namespace Printpress.API;
 
@@ -13,7 +14,9 @@ public static class IServiceCollectionExtensions
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.RegisterCompositionRootServices(configuration);
+        services.RegisterApplicationService(configuration);
+        services.RegisterInfrastructureServices(configuration);
+
         services.AddExceptionHandler<GlobalExceptionMiddleWare>();
         services.AddRazorPages().AddRazorRuntimeCompilation();
         services.AddCros();

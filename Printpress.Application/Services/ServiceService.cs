@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    public class ServiceService(IUnitOfWork _unitOfWork, ServiceMapper serviceMapper) : IServiceService
+    internal sealed class ServiceService(IUnitOfWork _unitOfWork, ServiceMapper serviceMapper) : IServiceService
     {
 
         public async Task<ServiceDto> AddAsync(ServiceUpsertDto payload)
