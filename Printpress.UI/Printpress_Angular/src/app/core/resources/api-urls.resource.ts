@@ -14,6 +14,7 @@ export class ApiUrlResource {
   private static Order_URL = '/api/order';
   public static readonly OrderAPI = {
     getOrderById: ApiUrlResource.Order_URL + '/GetById',
+    getOrderMainData: ApiUrlResource.Order_URL + '/GetMainData',
     getordersSummaryList: ApiUrlResource.Order_URL + '/getOrderSummaryList',
     insertOrder: ApiUrlResource.Order_URL + '/insert',
     updateOrder: ApiUrlResource.Order_URL + '/update',

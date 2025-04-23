@@ -5,7 +5,6 @@ import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { OrderSummaryDto } from '../models/order/order-summary.Dto';
 import { ApiPagingResponseDto } from '../../../core/models/api-response.dto';
 import { OrderUpsertDto } from '../models/order/order-upsert.Dto';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -18,6 +17,12 @@ export class OrderService {
     );
   }
 
+  public getOrderMainData(id: number): Observable<any> {
+    return this.httpService.get<any>(
+      ApiUrlResource.OrderAPI.getOrderMainData + `/${id}`
+    );
+  }
+
   public getOrdersSummaryList(
     pageSize: number,
     pageNumber: number
@@ -27,10 +32,6 @@ export class OrderService {
       { pageSize: pageSize, pageNumber: pageNumber }
     );
   }
-
-  // getOrders(): Observable<any[]> {
-  //     return this.httpService.get<any[]>(ApiUrlResource.OrderAPI.GetOrders);
-  // }
 
   public insertOrder(orderDTO: OrderUpsertDto): Observable<any> {
     console.log(JSON.stringify( orderDTO));
@@ -46,9 +47,7 @@ export class OrderService {
       orderDTO
     );
   }
-  // updateOrder(id: number, order: any): Observable<any> {
-  //     return this.httpService.put<any>(`${this.apiUrl}/${id}`, order);
-  // }
+  
 
   // deleteOrder(id: number): Observable<any> {
   //     return this.httpService.delete<any>(`${this.apiUrl}/${id}`);

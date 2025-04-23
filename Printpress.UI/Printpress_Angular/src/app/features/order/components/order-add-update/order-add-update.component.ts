@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { imports } from './order-add-update.imports';
@@ -12,7 +12,7 @@ import { AddClientComponent } from '../../../client/components/add-client/add-cl
 import { OrderServicePricesComponent } from '../order-service-prices/order-service-prices.component';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderGetDto } from '../../models/order/order-get.Dto';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { TransactionComponent } from '../transaction/transaction.component';
 
@@ -23,7 +23,7 @@ import { TransactionComponent } from '../transaction/transaction.component';
   templateUrl: './order-add-update.component.html',
   styleUrl: './order-add-update.component.css',
 })
-export class OrderAddUpdateComponent implements OnInit {
+export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   public componentMode: ComponentMode;
   public displayedColumns = ['name', 'deliveryDate', 'action'];
@@ -32,6 +32,7 @@ export class OrderAddUpdateComponent implements OnInit {
   public orderClientId!: number
   public orderName!: string;
   public orderGetDto: OrderGetDto;
+  private orderUpdatedSubscription: Subscription;
 
   constructor(private router: Router,
     private OrderSharedService: OrderSharedDataService,
@@ -44,6 +45,17 @@ export class OrderAddUpdateComponent implements OnInit {
   ) {
     this.componentMode = new ComponentMode(this.router);
     this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
+    
+    // Subscribe to order updates
+    this.orderUpdatedSubscription = this.OrderSharedService.orderUpdated$.subscribe(() => {
+      this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.orderUpdatedSubscription) {
+      this.orderUpdatedSubscription.unsubscribe();
+    }
   }
 
   async ngOnInit() {

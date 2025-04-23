@@ -15,6 +15,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
+import { OrderService } from '../../services/order.service';
 @Component({
   selector: 'app-transaction',
   templateUrl: './transaction.component.html',
@@ -54,6 +55,7 @@ export class TransactionComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public inputData: { orderId: number },
     private orderTransactionService: OrderTransactionService,
+    private orderService: OrderService,
     private alertService: AlertService,
     private orderSharedDataService: OrderSharedDataService
   ) {
@@ -91,10 +93,19 @@ export class TransactionComponent implements OnInit {
         this.alertService.showSuccess('تمت العملية بنجاح');
         this.resetForm();
         this.fetchTransactions();
+        this.refreshOrderMainData();
       },
       error: (error) => {
         console.error(error);
         this.alertService.showError('حدث خطأ أثناء تنفيذ العملية');
+      }
+    });
+  }
+  
+  private refreshOrderMainData() {
+    this.orderService.getOrderMainData(this.orderId).subscribe({
+      next: (response) => {
+        this.orderSharedDataService.refreshOrderMainData(response.data);
       }
     });
   }

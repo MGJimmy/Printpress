@@ -21,6 +21,14 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
         var orderDto = await _IOrderService.GetOrderDTOAsync(id);
         return Ok(orderDto);
     }
+
+    [HttpGet]
+    [Route("getMainData/{id}")]
+    public async Task<IActionResult> GetMainData(int id)
+    {
+        var orderDto = await _IOrderService.GetOrderMainDataAsync(id);
+        return Ok(orderDto);
+    }
     [HttpPost]
     [Route("insert")]
     public async Task<IActionResult> Insert(OrderUpsertDto order)

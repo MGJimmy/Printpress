@@ -38,6 +38,14 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         return orderDTO;
     }
 
+    public async Task<OrderMainDataDto> GetOrderMainDataAsync(int orderId)
+    {
+        var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, nameof(Order.Client));
+
+        if (order is null) ValidationExeption.FireValidationException("order with {id} not found", orderId);
+
+        return order.MapToOrderMainDataDto();
+    }
     public async Task InsertOrder(OrderUpsertDto orderDTO)
     {
 

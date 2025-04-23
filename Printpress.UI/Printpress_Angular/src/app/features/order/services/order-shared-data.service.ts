@@ -10,7 +10,8 @@ import { ServiceCategoryEnum } from '../../setup/models/service-category.enum';
 import { ServiceGetDto } from '../../setup/models/service-get.dto';
 import { ItemDetailsGetDto } from '../models/item-details/item-details-get.dto';
 import { itemDetailsKeyEnum } from '../models/enums/item-details-key.enum';
-import { group } from '@angular/animations';
+import { OrderMainDataDto } from '../models/order/order-main-data.Dto';
+import { Subject } from 'rxjs';
 
 /*
   Notes: 
@@ -22,8 +23,13 @@ import { group } from '@angular/animations';
 export class OrderSharedDataService {
 
   private orderObject!: OrderGetDto;
+  private orderUpdated = new Subject<void>();
 
-  constructor(private serviceService: ServiceService) {
+  orderUpdated$ = this.orderUpdated.asObservable();
+
+  constructor(
+    private serviceService: ServiceService
+  ) {
     this.initializeOrderObject();
   }
 
@@ -66,12 +72,21 @@ export class OrderSharedDataService {
     this.orderObject.clientId = clientId;
   }
 
-  public updateOrderObjectState(): void{
+  public updateOrderObjectState(): void {
     this.orderObject.objectState = this.orderObject.objectState === ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.updated;
   }
 
   public getOrderObject_copy(): OrderGetDto {
     return this.deepCopy(this.orderObject);
+  }
+
+  public refreshOrderMainData(orderMainData: OrderMainDataDto) {
+    this.orderObject.totalPrice = orderMainData.totalPrice ?? 0;
+    this.orderObject.totalPaid = orderMainData.totalPaid ?? 0;
+    this.orderObject.clientName = orderMainData.clientName;
+    this.orderObject.name = orderMainData.name;
+
+    this.orderUpdated.next();
   }
 
   public getOrderPageRoute(): string {
