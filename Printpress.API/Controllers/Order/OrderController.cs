@@ -43,4 +43,12 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
         await _IOrderService.UpdateOrder(id,order);
         return Ok();
     }
+
+    [HttpDelete]
+    [Route("delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _IOrderService.DeleteOrder(id);
+        return Ok();
+    }
 }

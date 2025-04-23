@@ -18,6 +18,7 @@ export class ApiUrlResource {
     getordersSummaryList: ApiUrlResource.Order_URL + '/getOrderSummaryList',
     insertOrder: ApiUrlResource.Order_URL + '/insert',
     updateOrder: ApiUrlResource.Order_URL + '/update',
+    delete: (id:number) => `${ApiUrlResource.Order_URL}/delete/${id}`,
   };
 
   private static Report_URL = '/report';

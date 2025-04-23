@@ -150,4 +150,15 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         await _IUnitOfWork.SaveChangesAsync();
     }
+
+    public async Task DeleteOrder(int id)
+    {
+        var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync(o => o.Id == id);
+        
+        if (order is null) 
+            ValidationExeption.FireValidationException("Order with ID {0} not found", id);
+
+        _IUnitOfWork.OrderRepository.Remove(order);
+        await _IUnitOfWork.SaveChangesAsync();
+    }
 }

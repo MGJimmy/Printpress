@@ -48,8 +48,7 @@ export class OrderService {
     );
   }
   
-
-  // deleteOrder(id: number): Observable<any> {
-  //     return this.httpService.delete<any>(`${this.apiUrl}/${id}`);
-  // }
+  public deleteOrder(id: number): Observable<any> {
+    return this.httpService.delete<any>(ApiUrlResource.OrderAPI.delete(id));
+  }
 }

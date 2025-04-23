@@ -11,4 +11,5 @@ public interface IOrderAggregateService
 
     Task<OrderMainDataDto> GetOrderMainDataAsync(int orderId);
 
+    Task DeleteOrder(int id);
 }
