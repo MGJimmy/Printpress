@@ -62,7 +62,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         {
             await SetGroupItemPrices(group, order.Services);
 
-            totalOrderPrice += group.Items.Sum(i => i.Price);
+            totalOrderPrice += group.Items.Sum(i => i.Price * i.Quantity);
         }
 
         return totalOrderPrice;
