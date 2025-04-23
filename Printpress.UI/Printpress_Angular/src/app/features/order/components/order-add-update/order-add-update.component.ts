@@ -140,6 +140,10 @@ export class OrderAddUpdateComponent implements OnInit {
   protected onClientSelectChange() {
     this.OrderSharedService.setOrderClient(this.orderClientId);
   }
+
+  public goBack() {
+    this.router.navigate(['/orderlist']);
+  }
 }
 
 interface OrderGroupGridViewModel {
