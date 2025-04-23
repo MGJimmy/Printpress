@@ -6,7 +6,12 @@ import { ServiceCategoryArabicMap } from '../models/Mappers/service-category-ara
     name: 'serviceCategoryArabic',
     standalone: true})
 export class ServiceCategoryArabicPipe implements PipeTransform {
-  transform(value: ServiceCategoryEnum): string {
-    return ServiceCategoryArabicMap[value] || value;
+  transform(value: string | ServiceCategoryEnum): string {
+    if (typeof value === 'string') {
+      // If it's a string, convert it to enum
+      const enumValue = ServiceCategoryEnum[value as keyof typeof ServiceCategoryEnum];
+      return ServiceCategoryArabicMap[enumValue] || value;
+    }
+    return ServiceCategoryArabicMap[value] || ServiceCategoryEnum[value] || '';
   }
 }

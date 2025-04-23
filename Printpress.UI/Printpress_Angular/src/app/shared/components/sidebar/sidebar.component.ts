@@ -14,7 +14,8 @@ import {
   faUserGroup,
   faSignOutAlt,
   faSignInAlt,
-  faCartArrowDown
+  faCartArrowDown,
+  faCog
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -40,7 +41,8 @@ export class SidebarComponent implements OnDestroy {
   faUserGroup = faUserGroup;
   faSignOutAlt = faSignOutAlt;
   faSignInAlt = faSignInAlt;
-  faCartArrowDown = faCartArrowDown
+  faCartArrowDown = faCartArrowDown;
+  faCog = faCog;
 
   private subscriptions: Subscription = new Subscription();
 

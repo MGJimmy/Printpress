@@ -9,16 +9,23 @@ namespace Printpress.Application
         {
             // Make validation
 
-            Service service = await _unitOfWork.ServiceRepository.AddAsync(serviceMapper.MapFromDestinationToSource(payload));
+            Service service = serviceMapper.MapFromDestinationToSource(payload);
+
+            await _unitOfWork.ServiceRepository.AddAsync(service);
 
             await _unitOfWork.SaveChangesAsync();
 
             return serviceMapper.MapFromSourceToDestination(service);
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            Service service = await _unitOfWork.ServiceRepository.FindAsync(id);
+
+            if (service is null) throw new ValidationExeption("Service not found");
+
+            _unitOfWork.ServiceRepository.Remove(service);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<List<ServiceDto>> GetAll()
