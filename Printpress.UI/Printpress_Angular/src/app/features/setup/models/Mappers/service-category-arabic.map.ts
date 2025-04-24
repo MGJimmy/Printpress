@@ -2,9 +2,8 @@ import { ServiceCategoryEnum } from "../service-category.enum";
 
 export const ServiceCategoryArabicMap: Record<ServiceCategoryEnum, string> = {
     [ServiceCategoryEnum.Printing]: 'طباعة',
-    [ServiceCategoryEnum.Selling]: 'بيع',
-    [ServiceCategoryEnum.Cutting]: 'قص',
+    [ServiceCategoryEnum.Stapling]: 'تدبيس',
     [ServiceCategoryEnum.Clueing]: 'لصق',
-    [ServiceCategoryEnum.Stapling]: 'تدبيس'
-  };
-  
+    [ServiceCategoryEnum.Cutting]: 'قص',
+    [ServiceCategoryEnum.Selling]: 'بيع'
+};

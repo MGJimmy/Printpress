@@ -19,6 +19,15 @@
       <fa-icon [icon]="faCartArrowDown" class="fa-icon mx-2"></fa-icon>
       <span>قائمة الطلبات</span>
     </a>
+    <a
+      routerLink="/services"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="list-group-item list-group-item-action"
+    >
+      <fa-icon [icon]="faCog" class="fa-icon mx-2"></fa-icon>
+      <span>إعدادات الخدمات</span>
+    </a>
   </div>
 
   <div class="logout-section list-group-item list-group-item-action"

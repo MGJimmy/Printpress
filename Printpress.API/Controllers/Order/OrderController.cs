@@ -21,6 +21,14 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
         var orderDto = await _IOrderService.GetOrderDTOAsync(id);
         return Ok(orderDto);
     }
+
+    [HttpGet]
+    [Route("getMainData/{id}")]
+    public async Task<IActionResult> GetMainData(int id)
+    {
+        var orderDto = await _IOrderService.GetOrderMainDataAsync(id);
+        return Ok(orderDto);
+    }
     [HttpPost]
     [Route("insert")]
     public async Task<IActionResult> Insert(OrderUpsertDto order)
@@ -33,6 +41,14 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
     public async Task<IActionResult> Update(int id, OrderUpsertDto order)
     {
         await _IOrderService.UpdateOrder(id,order);
+        return Ok();
+    }
+
+    [HttpDelete]
+    [Route("delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _IOrderService.DeleteOrder(id);
         return Ok();
     }
 }

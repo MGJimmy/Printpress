@@ -94,5 +94,17 @@ namespace Printpress.Application
 
             return itemDTO;
         }
+        public static OrderMainDataDto MapToOrderMainDataDto(this Order order)
+        {
+            var orderMainDataDto = new OrderMainDataDto
+            {
+                Name = order.Name,
+                ClientName = order.Client.Name,
+                TotalPaid = order.TotalPaid,
+                TotalPrice = order.TotalPrice
+            };
+
+            return orderMainDataDto;
+        }
     }
 }

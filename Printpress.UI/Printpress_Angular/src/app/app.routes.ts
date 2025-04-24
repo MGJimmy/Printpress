@@ -33,6 +33,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'services',
+    loadComponent: () =>
+      import(
+        './features/setup/components/service-list/service-list.component'
+      ).then((m) => m.ServiceListComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: 'report-viewer',
     loadComponent: () =>
       import(

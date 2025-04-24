@@ -112,8 +112,14 @@
     </div>
     <br>
 
-    <button *ngIf="!componentMode.isViewMode" class="mx-3" mat-raised-button color="primary"
-        (click)="saveOrder_Click()">حفظ</button>
+    <div class="d-flex justify-content-start mb-3">
+        <button *ngIf="!componentMode.isViewMode" class="mx-3" mat-raised-button color="primary"
+            (click)="saveOrder_Click()">حفظ</button>
+        <button mat-raised-button color="primary" (click)="goBack()">
+            <i class="material-icons">arrow_back</i>
+            رجوع
+        </button>
+    </div>
 
 
 </div>

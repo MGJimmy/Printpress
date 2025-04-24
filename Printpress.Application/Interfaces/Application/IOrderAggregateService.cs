@@ -9,4 +9,7 @@ public interface IOrderAggregateService
     Task<OrderDto> GetOrderDTOAsync(int orderId);
     Task UpdateOrder(int id, OrderUpsertDto orderDTO);
 
+    Task<OrderMainDataDto> GetOrderMainDataAsync(int orderId);
+
+    Task DeleteOrder(int id);
 }

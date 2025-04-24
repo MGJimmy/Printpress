@@ -20,7 +20,7 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
 
         var transactionAmount = isPayment ? payload.Amount : (-1 * payload.Amount);
 
-        order.TotalPaid += transactionAmount;
+        order.TotalPaid = order.TotalPaid.GetValueOrDefault() + transactionAmount;
 
         _unitOfWork.OrderRepository.Update(order);
 

@@ -31,7 +31,7 @@ public class ServiceController(IServiceService _serviceService) : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("update/{id}")]
     public async Task<IActionResult> Update(int id, ServiceUpsertDto payload)
     {

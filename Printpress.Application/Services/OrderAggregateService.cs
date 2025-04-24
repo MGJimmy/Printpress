@@ -38,6 +38,14 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         return orderDTO;
     }
 
+    public async Task<OrderMainDataDto> GetOrderMainDataAsync(int orderId)
+    {
+        var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, nameof(Order.Client));
+
+        if (order is null) ValidationExeption.FireValidationException("order with {id} not found", orderId);
+
+        return order.MapToOrderMainDataDto();
+    }
     public async Task InsertOrder(OrderUpsertDto orderDTO)
     {
 
@@ -62,7 +70,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         {
             await SetGroupItemPrices(group, order.Services);
 
-            totalOrderPrice += group.Items.Sum(i => i.Price);
+            totalOrderPrice += group.Items.Sum(i => i.Price * i.Quantity);
         }
 
         return totalOrderPrice;
@@ -140,6 +148,17 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         _IUnitOfWork.OrderRepository.Update(order);
 
+        await _IUnitOfWork.SaveChangesAsync();
+    }
+
+    public async Task DeleteOrder(int id)
+    {
+        var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync(o => o.Id == id);
+        
+        if (order is null) 
+            ValidationExeption.FireValidationException("Order with ID {0} not found", id);
+
+        _IUnitOfWork.OrderRepository.Remove(order);
         await _IUnitOfWork.SaveChangesAsync();
     }
 }
