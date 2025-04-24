@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IdentityProvider\SecurityProvider.csproj" />
     <ProjectReference Include="..\Printpress.Domain\Printpress.Domain.csproj" />
   </ItemGroup>
 
