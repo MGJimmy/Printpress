@@ -125,10 +125,10 @@ export class AddClientComponent implements OnInit, OnDestroy {
     const errorMessage = this.isEditMode ? 'تعذر تحديث بيانات العميل' : 'تعذر إضافة العميل';
 
     request.pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
+      next: (clientDto) => {
         this.alertService.showSuccess(successMessage);
         this.resetForm();
-        this.dialogRef.close();
+        this.dialogRef.close(clientDto.id);
       },
       error: (error) => {
         this.errorHandlingService.handleError(error);

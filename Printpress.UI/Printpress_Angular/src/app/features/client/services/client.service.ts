@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { ClientGetDto } from '../models/client-get.dto';
@@ -32,12 +32,14 @@ export class ClientService {
      return this.httpService.get<ApiResponseDto<ClientGetDto[]>>(ApiUrlResource.ClientAPI.getAll);
   }
 
-  add(client: ClientUpsertDto): Observable<ApiResponseDto<ClientUpsertDto>> {
-    return this.httpService.post<ApiResponseDto<ClientUpsertDto>>(ApiUrlResource.ClientAPI.add, client);
+  add(client: ClientUpsertDto): Observable<ClientGetDto> {
+    return this.httpService.post<ApiResponseDto<ClientGetDto>>(ApiUrlResource.ClientAPI.add, client)
+    .pipe(map((response) => response.data));
   }
 
-  update(client: ClientUpsertDto, id: number): Observable<ApiResponseDto<ClientUpsertDto>> {
-    return this.httpService.post<ApiResponseDto<ClientUpsertDto>>(ApiUrlResource.ClientAPI.update(id), client);
+  update(client: ClientUpsertDto, id: number): Observable<ClientGetDto> {
+    return this.httpService.post<ApiResponseDto<ClientGetDto>>(ApiUrlResource.ClientAPI.update(id), client)
+    .pipe(map((response) => response.data));;
   }
 
   delete(id: number): Observable<string> {

@@ -76,7 +76,12 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.orderGetDto.orderGroups));
     this.orderName = this.orderGetDto.name;
     this.orderClientId = this.orderGetDto.clientId;
+    
+    await this.loadAllClients();
+   
+  }
 
+  async loadAllClients() {
     let response = await firstValueFrom(this.clientService.getAll())
     this.clients = response.data;
   }
@@ -124,11 +129,17 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  public openDialog() {
-    this.dialog.open(AddClientComponent, {
-      width: '600px',
-
+  public openAddClientDialog() {
+     const clientDialog = this.dialog.open(AddClientComponent, {
+      width: '600px'
     });
+
+    clientDialog.afterClosed().subscribe((clientId: number) => {
+      this.loadAllClients();
+      this.orderClientId = clientId;
+      this.onClientSelectChange();
+    });
+
   }
   
  private MapToOrderGroupGridViewModel( orderGroupGetDtos:OrderGroupGetDto[] ):OrderGroupGridViewModel[]{
