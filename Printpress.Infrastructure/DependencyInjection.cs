@@ -19,7 +19,7 @@ public static class DependencyInjection
             option.EnableSensitiveDataLogging(true);
         });
 
-        return services;    
+        return services;
     }
 
 }

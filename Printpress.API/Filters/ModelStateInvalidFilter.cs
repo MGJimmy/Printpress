@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Printpress.Application;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Printpress.API
 {

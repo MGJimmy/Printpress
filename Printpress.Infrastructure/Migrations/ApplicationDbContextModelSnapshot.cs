@@ -44,7 +44,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Client");
+                    b.ToTable("Client", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>
@@ -76,7 +76,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("OrderGroupId");
 
-                    b.ToTable("Item");
+                    b.ToTable("Item", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ItemDetails", b =>
@@ -107,7 +107,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("ItemDetails");
+                    b.ToTable("ItemDetails", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ItemDetailsKey_LKP", b =>
@@ -125,7 +125,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ItemDetailsKey_LKP");
+                    b.ToTable("ItemDetailsKey_LKP", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Order", b =>
@@ -160,7 +160,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroup", b =>
@@ -198,7 +198,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderGroup");
+                    b.ToTable("OrderGroup", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroupService", b =>
@@ -224,7 +224,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("OrderGroupService");
+                    b.ToTable("OrderGroupService", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderService", b =>
@@ -253,7 +253,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("OrderService");
+                    b.ToTable("OrderService", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderTransaction", b =>
@@ -284,7 +284,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderTransaction");
+                    b.ToTable("OrderTransaction", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.PrintingServiceDetails", b =>
@@ -312,7 +312,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ServiceId1");
 
-                    b.ToTable("PrintingServiceDetails");
+                    b.ToTable("PrintingServiceDetails", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.PrintingType", b =>
@@ -329,7 +329,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PrintingType");
+                    b.ToTable("PrintingType", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ProductStock", b =>
@@ -352,7 +352,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductStock");
+                    b.ToTable("ProductStock", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Service", b =>
@@ -377,7 +377,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasIndex("ServiceCategoryId");
 
-                    b.ToTable("Service");
+                    b.ToTable("Service", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ServiceCategory_LKP", b =>
@@ -395,7 +395,7 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceCategory_LKP");
+                    b.ToTable("ServiceCategory_LKP", (string)null);
                 });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>

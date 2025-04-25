@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Printpress.API;
-using Printpress.Application;
 
 public class ResponseWrapperFilter : IAsyncResultFilter
 {

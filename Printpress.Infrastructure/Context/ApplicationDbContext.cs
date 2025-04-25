@@ -1,11 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Printpress.Domain.Entities;
 using Printpress.Domain.Interfaces;
 
 namespace Printpress.Infrastructure;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
     public DbSet<Client> Client { get; set; }
     public DbSet<PrintingServiceDetails> PrintingServiceDetails { get; set; }
     public DbSet<PrintingType> PrintingType { get; set; }
@@ -18,20 +23,29 @@ public class ApplicationDbContext : DbContext
     public DbSet<OrderGroupService> OrderGroupService { get; set; }
     public DbSet<OrderService> OrderService { get; set; }
     public DbSet<OrderTransaction> OrderTransaction { get; set; }
-
-
-
     public DbSet<ItemDetailsKey_LKP> ItemDetailsKey_LKP { get; set; }
     public DbSet<ServiceCategory_LKP> ServiceCategory_LKP { get; set; }
-
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Configure();
+
+        modelBuilder.Entity<IdentityRole>().HasData(
+            new IdentityRole
+            {
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            },
+            new IdentityRole
+            {
+                Name = "User",
+                NormalizedName = "USER"
+            }
+        );
+
+
+
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

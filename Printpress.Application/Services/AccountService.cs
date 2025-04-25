@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Printpress.Domain.Entities;
 using SecurityProvider;
 
 namespace Printpress.Application
@@ -6,25 +7,25 @@ namespace Printpress.Application
     internal sealed class AccountService : IAccountService
     {
         private readonly ITokenProvider _ITokenProvider;
-        private readonly IIdentityProvider<IApplicationUser> _IIdentityProvider;
+        private readonly IdmProvider<ApplicationUser> _IdmProvider;
 
-        public AccountService(ITokenProvider tokenProvider, IIdentityProvider<IApplicationUser> identityProvider)
+        public AccountService(ITokenProvider tokenProvider, IdmProvider<ApplicationUser> identityProvider)
         {
             _ITokenProvider = tokenProvider;
-            _IIdentityProvider = identityProvider;
+            _IdmProvider = identityProvider;
         }
 
         public async Task<string> Login(string username, string password)
         {
 
-            var user = await _IIdentityProvider.FindUserByEmailAsync(username);
+            var user = await _IdmProvider.FindUserByEmailAsync(username);
 
             if (user == null)
             {
                 ValidationExeption.FireValidationException("User Not Found");
             }
 
-            var loginStatus = await _IIdentityProvider.LoginUserAsync(username, password);
+            var loginStatus = await _IdmProvider.LoginUserAsync(username, password);
 
             if (loginStatus == LoginStatus.Succeeded)
             {

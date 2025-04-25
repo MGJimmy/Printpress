@@ -1,15 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Models;
-using Printpress.API.Middlewares;
-using Printpress.Application;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Printpress.Infrastructure;
-using SecurityProvider;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity;
-using Printpress.Domain;
+﻿
 
 namespace Printpress.API;
 
@@ -27,8 +16,7 @@ public static class IServiceCollectionExtensions
         services.AddAuthentication(configuration);
         services.AddAuthorization(configuration);
         services.AddIdentity(configuration);
-        services.AddSecurityProvider();
-
+        services.AddTokenProvider();
     }
     private static IServiceCollection AddAuthentication(this IServiceCollection service, IConfiguration configuration)
     {
@@ -125,8 +113,7 @@ public static class IServiceCollectionExtensions
     }
     private static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-      
-        services.AddIdentity<AplicationUser, IdentityRole>(options =>
+        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
             options.User.RequireUniqueEmail = true;
             options.Password.RequiredLength = 12;
@@ -136,7 +123,9 @@ public static class IServiceCollectionExtensions
         })
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
-       
+
+        services.AddIdentityProvider<ApplicationUser>();
+
         return services;
     }
 

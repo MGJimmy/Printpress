@@ -1,6 +1,4 @@
-﻿using Rotativa.AspNetCore;
-
-namespace Printpress.API;
+﻿namespace Printpress.API;
 
 public static class ApplicationPipelineExtensions
 {
