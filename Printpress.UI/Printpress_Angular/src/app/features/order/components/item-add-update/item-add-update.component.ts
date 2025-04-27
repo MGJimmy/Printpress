@@ -60,20 +60,20 @@ export class ItemAddUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.itemForm = this.fb.group({
       name: ['', Validators.required],
-      quantity: [0, Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
-      numberOfPages: [0, [Validators.required, Validators.min(0)]],
-      numberOfPrintingFaces: [1, Validators.required],
+      quantity: [0, [Validators.required , Validators.min(1)]],
+      price: [0],
+      numberOfPages: [0],
+      numberOfPrintingFaces: [2],
     });
 
     this.checkModeAndInitData();  
 
     this.group = this.orderSharedService.getOrderGroup_Copy(this.groupId);   
 
-    console.log(JSON.stringify(this.group));
+    this.setDynamicFormValidators();
   }
 
-  checkModeAndInitData() {
+  private checkModeAndInitData() {
     this.activateRoute.url.subscribe(urlSegments => {
       this.isEditMode = urlSegments.some(x=> x.path === 'edit');
       this.isAddMode = urlSegments.some(x=> x.path === 'add');
@@ -93,17 +93,17 @@ export class ItemAddUpdateComponent implements OnInit {
     }    
   }
 
-  initAddModeData() {
+  private initAddModeData() {
     let itemId = this.orderSharedService.initializeTempItem(this.groupId);
     this.item = this.orderSharedService.getItem_copy(this.groupId, itemId);
   }
 
-  initEditModeData() {
+  private initEditModeData() {
     this.item = this.orderSharedService.getItem_copy(this.groupId, this.itemIdToEdit);
     this.fillFormWithItemData(this.item);
   }
 
-  fillFormWithItemData(item: ItemGetDto) {
+  private fillFormWithItemData(item: ItemGetDto) {
     this.numberOfPages = (item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)?.value || 0) as number;
     this.numberOfPrintingFaces = (item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)?.value || 0) as number;
 
@@ -115,6 +115,32 @@ export class ItemAddUpdateComponent implements OnInit {
       numberOfPrintingFaces: this.numberOfPrintingFaces,
     });
   }
+
+  private setDynamicFormValidators() {
+    const numberOfPagesControl = this.itemForm.get('numberOfPages');
+    const numberOfPrintingFacesControl = this.itemForm.get('numberOfPrintingFaces');
+    const PriceControl = this.itemForm.get('price');
+
+
+    if (this.group.isHasPrintingService) {
+      numberOfPagesControl?.setValidators([Validators.required, Validators.min(1)]);
+      numberOfPrintingFacesControl?.setValidators([Validators.required]);
+    } else {
+      numberOfPagesControl?.clearValidators();
+      numberOfPrintingFacesControl?.clearValidators();
+    }
+
+    if (this.group.isHasSellingService) {
+      PriceControl?.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      PriceControl?.clearValidators();
+    }
+
+    numberOfPagesControl?.updateValueAndValidity();
+    numberOfPrintingFacesControl?.updateValueAndValidity();
+    PriceControl?.updateValueAndValidity();
+  }
+
 
 
   onSave(): void {
@@ -139,34 +165,8 @@ export class ItemAddUpdateComponent implements OnInit {
     this.item.price = formRawValue.price;
 
     if (this.group.isHasPrintingService) {
-      // let numberOfPages = this.item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)
-      // let numberOfPrintingFaces = this.item.itemDetails.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)
-      // if(numberOfPages){
-      //   numberOfPages.value = formRawValue.numberOfPages;
-      // }
-
-      // if(numberOfPrintingFaces){
-      //   numberOfPrintingFaces.value = formRawValue.numberOfPrintingFaces;
-      // }
-
       this.numberOfPages = formRawValue.numberOfPages;
       this.numberOfPrintingFaces = formRawValue.numberOfPrintingFaces;
     }
   }
-
-  // MapValuesFromFormToItem2(itemForm: FormGroup) {
-  //   Object.assign(this.item, itemForm.getRawValue());
-  
-  //   if (this.group.isHasPrintingService) {
-  //     this.item.itemDetails.forEach(detail => {
-  //       if (detail.key === itemDetailsKeyEnum.NumberOfPages) {
-  //         detail.value = this.itemForm.value.numberOfPages.toString();
-  //       }
-  //       if (detail.key === itemDetailsKeyEnum.NumberOfPrintingFaces) {
-  //         detail.value = this.itemForm.value.numberOfPrintingFaces;
-  //       }
-  //     });
-  //   }
-  // }
-
 }
