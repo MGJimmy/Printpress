@@ -1,4 +1,5 @@
 ﻿using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application
 {
@@ -20,7 +21,7 @@ namespace Printpress.Application
                 TotalPrice = order.TotalPrice,
                 OrderServices = order.Services.MapAsList(MapToOrderServiceDTO),
                 OrderGroups = order.OrderGroups.MapAsList(MapToOrderGroupDTO),
-                ObjectState = ObjectState.Unchanged
+                ObjectState = TrackingState.Unchanged
             };
 
             return orderDto;
@@ -34,7 +35,7 @@ namespace Printpress.Application
                 OrderId = orderService.OrderId,
                 OrderGroupServices = orderService.Services.MapAsList(MapToGroupServiceDTO),
                 Items = orderService.Items.MapAsList(MapToItemDTO),
-                ObjectState = ObjectState.Unchanged
+                ObjectState = TrackingState.Unchanged
             };
 
             return orderGroupDTO;
@@ -60,7 +61,7 @@ namespace Printpress.Application
                 ServiceId = groupService.ServiceId,
                 OrderGroupId = groupService.OrderGroupId,
                 ServiceName = groupService.Service?.Name,
-                ObjectState = ObjectState.Unchanged
+                ObjectState = TrackingState.Unchanged
             };
 
             return orderGroupServiceDTO;
@@ -75,7 +76,7 @@ namespace Printpress.Application
                 Price = item.Price,
                 Quantity = item.Quantity,
                 Details = item.Details.MapAsList(MapToItemDetailsDTO),
-                ObjectState = ObjectState.Unchanged
+                ObjectState = TrackingState.Unchanged
             };
 
             return itemDTO;
@@ -89,7 +90,7 @@ namespace Printpress.Application
                 ItemId = itemDetails.ItemId,
                 Value = itemDetails.Value,
                 Key = itemDetails.ItemDetailsKey,
-                ObjectState = ObjectState.Unchanged
+                ObjectState = TrackingState.Unchanged
             };
 
             return itemDTO;

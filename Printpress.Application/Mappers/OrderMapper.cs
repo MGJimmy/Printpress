@@ -1,4 +1,5 @@
 ﻿using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application;
 
@@ -8,10 +9,10 @@ internal class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMappe
     {
         var order = new Order
         {
-            Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
+            Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
-            State = destinationEntity.ObjectState.MapToTrackingState()
+            State = destinationEntity.ObjectState
 
         };
 

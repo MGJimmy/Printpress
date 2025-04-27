@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using Printpress.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Printpress.Application
 {
-    public class ItemUpsertDTO : IObjectState
+    public class ItemUpsertDTO : ITrackingState
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -12,6 +13,6 @@ namespace Printpress.Application
         public List<ItemDetailsUpsertDTO> Details { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ObjectState ObjectState { get; set; }
+        public TrackingState ObjectState { get; set; }
     }
 }

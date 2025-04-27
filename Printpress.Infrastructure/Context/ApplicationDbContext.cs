@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Printpress.Domain.Entities;
+using Printpress.Domain.Interfaces;
 
 namespace Printpress.Infrastructure;
 
@@ -33,8 +34,41 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Configure();
     }
 
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        HandleSoftDelete();
+        return base.SaveChangesAsync(cancellationToken);
+    }
 
+    public override int SaveChanges()
+    {
+        HandleSoftDelete();
+        return base.SaveChanges();
+    }
 
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        HandleSoftDelete();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        HandleSoftDelete();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void HandleSoftDelete()
+    {
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.Entity is ISoftDelete softDeleteEntity && entry.State == EntityState.Deleted)
+            {
+                entry.State = EntityState.Modified;
+                softDeleteEntity.IsDeleted = true;
+            }
+        }
+    }
 
 }
 

@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using Printpress.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Printpress.Application;
 
-public class OrderDto : IObjectState
+public class OrderDto : ITrackingState
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -10,7 +11,7 @@ public class OrderDto : IObjectState
     public int ClientId { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ObjectState ObjectState { get; set; }
+    public TrackingState ObjectState { get; set; }
 
     public decimal? TotalPrice { get; set; }
     public decimal? TotalPaid { get; set; }

@@ -14,6 +14,6 @@ namespace Printpress.Application
         public string Value { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ObjectState ObjectState { get; set; }
+        public TrackingState ObjectState { get; set; }
     }
 }

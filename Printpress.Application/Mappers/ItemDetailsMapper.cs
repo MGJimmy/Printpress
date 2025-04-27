@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application.Mappers
 {
@@ -13,10 +14,11 @@ namespace Printpress.Application.Mappers
         {
             return new ItemDetails
             {
-                Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
+                Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 ItemId = destinationEntity.ItemId,
                 ItemDetailsKey = destinationEntity.Key,
-                Value = destinationEntity.Value
+                Value = destinationEntity.Value,
+                State = destinationEntity.ObjectState
             };
         }
 

@@ -1,5 +1,6 @@
 ﻿using Printpress.Application.Mappers;
 using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application
 {
@@ -9,12 +10,12 @@ namespace Printpress.Application
         {
             return new Item
             {
-                Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
+                Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 Name = destinationEntity.Name,
                 Price = destinationEntity.Price,
                 Quantity = destinationEntity.Quantity,
-                State = destinationEntity.ObjectState.MapToTrackingState(),
-                IsDeleted = destinationEntity.ObjectState == ObjectState.Deleted,
+                State = destinationEntity.ObjectState,
+                IsDeleted = destinationEntity.ObjectState == TrackingState.Deleted,
                 Details = itemDetailsMapper.MapFromDestinationToSource(destinationEntity.Details)
             };
 

@@ -1,4 +1,5 @@
 ﻿using Printpress.Domain.Entities;
+using Printpress.Domain.Enums;
 
 namespace Printpress.Application
 {
@@ -8,9 +9,9 @@ namespace Printpress.Application
         {
             return new OrderGroupService
             {
-                Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
+                Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
-                State = destinationEntity.ObjectState.MapToTrackingState()
+                State = destinationEntity.ObjectState
             };
         }
 

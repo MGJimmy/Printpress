@@ -1,4 +1,6 @@
-﻿namespace Printpress.Application
+﻿using Printpress.Domain.Enums;
+
+namespace Printpress.Application
 {
     internal class OrderServiceMapper : BaseMapper<Domain.Entities.OrderService, OrderServiceUpsertDTO>
     {
@@ -6,9 +8,9 @@
         {
             return new Domain.Entities.OrderService
             {
-                Id = destinationEntity.ObjectState == ObjectState.Added ? 0 : destinationEntity.Id,
+                Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
-                State = destinationEntity.ObjectState.MapToTrackingState(),
+                State = destinationEntity.ObjectState,
                 Price = destinationEntity.Price
             };
         }

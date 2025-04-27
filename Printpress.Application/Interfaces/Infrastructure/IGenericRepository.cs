@@ -27,5 +27,6 @@ namespace Printpress.Application
         void Remove(T entity);
         Task<T> AddAsync(T entity);
         T Update(T entity);
+        void AddOrUpdate(T entity);
     }
 }

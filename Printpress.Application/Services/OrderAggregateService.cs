@@ -146,7 +146,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
-        _IUnitOfWork.OrderRepository.Update(order);
+        _IUnitOfWork.OrderRepository.AddOrUpdate(order);
 
         await _IUnitOfWork.SaveChangesAsync();
     }

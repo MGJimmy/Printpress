@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Printpress.Application;
+using Printpress.Domain;
 using Printpress.Domain.Entities;
 using System.Linq.Expressions;
 
@@ -14,7 +16,7 @@ namespace Printpress.Infrastructure.Repository
         protected ApplicationDbContext Context { get; set; }
         public async Task<List<T>> AllAsync(params string[] includes)
         {
-            var Items = Context.Set<T>().AsQueryable();
+            var Items = Context.Set<T>().AsNoTracking().AsQueryable();
 
             if (includes?.Any() == true)
             {
