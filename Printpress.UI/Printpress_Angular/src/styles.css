@@ -15,3 +15,8 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+
+input{
+    border: 0.5px solid #a9a9a9;
+}

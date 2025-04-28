@@ -206,4 +206,14 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
     return true;
   }
+
+  protected onClickSave() {
+    if (!this.tableData || this.tableData.length == 0) {
+      this.alertService.showError("لا يمكن حفظ خدمات المجموعة فارغة");
+      return;
+    }
+
+    this.currentComponentDialogRef.close(true);
+
+  }
 }
