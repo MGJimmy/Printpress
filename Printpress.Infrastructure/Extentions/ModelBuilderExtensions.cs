@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Printpress.Domain.Entities;
+using Printpress.Domain.Interfaces;
 
 namespace Printpress.Infrastructure
 {
@@ -20,6 +22,31 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<ItemDetails>().Configure();
             modelBuilder.Entity<ItemDetailsKey_LKP>().Configure();
             modelBuilder.Entity<ServiceCategory_LKP>().Configure();
+
+
+            modelBuilder.ApplyGlobalQueryFilters();
+        }
+
+        private static void ApplyGlobalQueryFilters(this ModelBuilder modelBuilder)
+        {
+            ExcludeSoftDeletedRowsFilter(modelBuilder);
+        } 
+
+        private static void ExcludeSoftDeletedRowsFilter(ModelBuilder modelBuilder)
+        {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                // Apply only to entities that implement ISoftDelete
+                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                {
+                    var parameter = Expression.Parameter(entityType.ClrType, "e");
+                    var prop = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+                    var condition = Expression.Equal(prop, Expression.Constant(false));
+                    var lambda = Expression.Lambda(condition, parameter);
+
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+                }
+            }
         }
 
         private static void Configure(this EntityTypeBuilder<OrderTransaction> entity)
