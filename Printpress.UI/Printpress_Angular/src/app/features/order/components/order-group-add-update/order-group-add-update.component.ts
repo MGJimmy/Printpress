@@ -89,14 +89,14 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       quantity: 20,
       price: 15,
       groupId: 3,
-      objectState: ObjectStateEnum.updated,
+      objectState: ObjectStateEnum.modified,
       details: [
         {
           id: 5,
           itemId: 3,
           key: itemDetailsKeyEnum.StapledItemsCount,
           value: "200",
-          objectState: ObjectStateEnum.updated
+          objectState: ObjectStateEnum.modified
         }
       ]
     },
@@ -154,14 +154,14 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       quantity: 20,
       price: 15,
       groupId: 3,
-      objectState: ObjectStateEnum.updated,
+      objectState: ObjectStateEnum.modified,
       details: [
         {
           id: 5,
           itemId: 3,
           key: itemDetailsKeyEnum.StapledItemsCount,
           value: "200",
-          objectState: ObjectStateEnum.updated
+          objectState: ObjectStateEnum.modified
         }
       ]
     },
@@ -219,14 +219,14 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       quantity: 20,
       price: 15,
       groupId: 3,
-      objectState: ObjectStateEnum.updated,
+      objectState: ObjectStateEnum.modified,
       details: [
         {
           id: 5,
           itemId: 3,
           key: itemDetailsKeyEnum.StapledItemsCount,
           value: "200",
-          objectState: ObjectStateEnum.updated
+          objectState: ObjectStateEnum.modified
         }
       ]
     }

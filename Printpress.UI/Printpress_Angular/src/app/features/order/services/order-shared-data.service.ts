@@ -73,7 +73,7 @@ export class OrderSharedDataService {
   }
 
   public updateOrderObjectState(): void {
-    this.orderObject.objectState = this.orderObject.objectState === ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.updated;
+    this.orderObject.objectState = this.orderObject.objectState === ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.modified;
   }
 
   public getOrderObject_copy(): OrderGetDto {
@@ -167,7 +167,7 @@ export class OrderSharedDataService {
 
   public updateOrderGroup(id: number) {
     let orderGroup = this.getOrderGroup(id);
-    orderGroup.objectState = ObjectStateEnum.updated;
+    orderGroup.objectState = ObjectStateEnum.modified;
   }
 
   public saveNewOrderGroup(id: number) {
@@ -310,7 +310,7 @@ export class OrderSharedDataService {
     item.name = name;
     item.quantity = quantity;
     item.price = price;
-    item.objectState = ObjectStateEnum.updated;
+    item.objectState = ObjectStateEnum.modified;
   }
 
   public getItem_copy(orderGroupId: number, itemId: number): ItemGetDto {
