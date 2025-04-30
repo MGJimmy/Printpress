@@ -10,7 +10,7 @@
 
   <div class="services-grid mb-3">
     <ng-container *ngFor="let service of _tempServicesList; let i = index">
-      <div class="service-item" [ngClass]="service.isNew ? 'border-success bg-success bg-opacity-10' : 'border-secondary'">
+      <div *ngIf="!service.isDeleted" class="service-item" [ngClass]="(isEditMode && service.isNew) ? 'border-success bg-success bg-opacity-10' : 'border-secondary'">
         <div class="d-flex justify-content-between align-items-center gap-2">
           <span class="service-name">{{service.name}}</span>
           <span class="badge bg-success" *ngIf="service.isNew">جديد</span>

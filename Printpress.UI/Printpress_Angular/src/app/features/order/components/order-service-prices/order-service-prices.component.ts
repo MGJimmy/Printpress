@@ -25,8 +25,20 @@ import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 })
 export class OrderServicePricesComponent implements OnInit {
 
-  private _orderSharedService!: OrderSharedDataService;
-  protected _tempServicesList!: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean }[];
+  private _orderSharedService: OrderSharedDataService;
+  protected isEditMode: boolean;
+  private existingServices: OrderServicesGetDTO[];
+
+  protected _tempServicesList:
+    {
+      id: number,
+      serviceId: number,
+      name: string,
+      price: number,
+      objectState: ObjectStateEnum,
+      isNew: boolean,
+      isDeleted: boolean
+    }[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { orderSharedService: OrderSharedDataService },
@@ -36,16 +48,24 @@ export class OrderServicePricesComponent implements OnInit {
     private servicesService: ServiceService
   ) {
     this._orderSharedService = data.orderSharedService;
+
+    let orderState = this._orderSharedService.getOrderObject_copy().objectState;
+    this.isEditMode = orderState != ObjectStateEnum.temp && orderState != ObjectStateEnum.added;
+
+    this.existingServices = this._orderSharedService.getOrderServices_copy();
   }
 
   async ngOnInit() {
-    this._tempServicesList = [];
+    await this.fillFromExistingServices();
+    await this.fillFromNewGroupServices();
+  }
+
+  private async fillFromExistingServices() {
     let allOrderGroupServices = this._orderSharedService.getAllOrderGroupsServices_copy();
 
-    
-    for (let i = 0; i < allOrderGroupServices.length; i++) {
-      const currentService = allOrderGroupServices[i];
-      const serviceId = currentService.serviceId;
+    for (let i = 0; i < this.existingServices.length; i++) {
+      const orderService = this.existingServices[i];
+      const serviceId = orderService.serviceId;
       
       if (this._tempServicesList.find(x => x.serviceId == serviceId)) {
         continue;
@@ -57,19 +77,55 @@ export class OrderServicePricesComponent implements OnInit {
       if (service.serviceCategory == ServiceCategoryEnum.Selling) {
         continue;
       }
+      const groupService = allOrderGroupServices.find(x => x.serviceId == serviceId);
       
-      const orderObjectState = this._orderSharedService.getOrderObject_copy().objectState;
-      
-      let orderServices = this._orderSharedService.getOrderServices_copy();
-
-      const servicePrice = orderServices.find(x => x.serviceId == serviceId)?.price ?? service.price;
-      
-      const tempService: { serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean } = {
+      const tempService: {
+        id: number, serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean,
+        isDeleted: boolean
+      } = {
+        id: orderService.id,
         serviceId: service.id,
         name: service.name,
-        price: servicePrice,
-        objectState: currentService.objectState,
-        isNew: orderObjectState != ObjectStateEnum.added && orderObjectState != ObjectStateEnum.temp && currentService.objectState == ObjectStateEnum.added
+        price: orderService.price,
+        objectState: orderService.objectState,
+        isNew: orderService.objectState == ObjectStateEnum.temp || orderService.objectState == ObjectStateEnum.added,
+        isDeleted: (!groupService || groupService.objectState == ObjectStateEnum.deleted)
+      };
+
+      this._tempServicesList.push(tempService);
+    }
+  }
+
+  private async fillFromNewGroupServices() {
+    let allOrderGroupServices = this._orderSharedService.getAllOrderGroupsServices_copy();
+
+    for (let i = 0; i < allOrderGroupServices.length; i++) {
+      const serviceId = allOrderGroupServices[i].serviceId;
+
+      if (
+        this._tempServicesList.find(x => x.serviceId == serviceId) ||
+        this.existingServices.find(x => x.serviceId == serviceId)) {
+        continue;
+      }
+
+      const service = await this.servicesService.getServiceById(serviceId);
+
+      // Selling  services should not be edited in this page
+      if (service.serviceCategory == ServiceCategoryEnum.Selling) {
+        continue;
+      }
+
+      const tempService: {
+        id: number, serviceId: number, name: string, price: number,
+        objectState: ObjectStateEnum, isNew: boolean, isDeleted: boolean
+      } = {
+        id: 0,
+        serviceId: service.id,
+        name: service.name,
+        price: service.price,
+        objectState: ObjectStateEnum.temp,
+        isNew: true,
+        isDeleted: false
       };
 
       this._tempServicesList.push(tempService);
@@ -78,31 +134,42 @@ export class OrderServicePricesComponent implements OnInit {
 
   protected save_Click() {
 
-    // Validate
     if (!this.validateOrderPrices()) {
       return;
     }
 
     const orderServices: OrderServicesGetDTO[] = this._tempServicesList.map(x => {
+      let objectState: ObjectStateEnum;
+      if (x.isNew) {
+        objectState = ObjectStateEnum.added;
+      } else if (x.isDeleted) {
+        objectState = ObjectStateEnum.deleted;
+      } else if (x.price != this.existingServices.find(s => s.id == x.id)?.price) {
+        objectState = ObjectStateEnum.modified;
+      } else {
+        objectState = ObjectStateEnum.unchanged;
+      }
+
       return {
-        id: 0, //////////////////////////// ???
+        id: x.id,
         serviceId: x.serviceId,
         price: x.price,
-        objectState: x.objectState
+        objectState: objectState
       }
     })
 
     this._orderSharedService.setOrderServices(orderServices);
 
+    // Move to Order Component
     this._orderSharedService.updateOrderObjectState();
-    
+
     const orderDTO = this._orderSharedService.getOrderObject_copy()
 
     const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
 
     let upsertObservable = orderDTO.objectState == ObjectStateEnum.added || orderDTO.objectState == ObjectStateEnum.temp ?
-                     this.orderService.insertOrder(orderUpsertDTO) :
-                     this.orderService.updateOrder(orderUpsertDTO);
+      this.orderService.insertOrder(orderUpsertDTO) :
+      this.orderService.updateOrder(orderUpsertDTO);
 
     upsertObservable.subscribe(
       (response) => {
