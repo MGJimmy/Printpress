@@ -101,8 +101,8 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       data: { orderId: this.OrderSharedService.getOrderObject_copy().id },
       height: '550px',
       width: '1000px',
-      injector: this.injector
-      // disableClose: true,
+      injector: this.injector,
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe();
