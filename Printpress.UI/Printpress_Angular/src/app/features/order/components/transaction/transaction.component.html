@@ -1,44 +1,69 @@
 <mat-card class="transaction-container rtl">
-  <mat-card-title class="text-center">التحويلات المالية</mat-card-title>
+  <div class="d-flex justify-content-between align-items-center">
+    <button mat-icon-button class="close-button" [mat-dialog-close]>
+      <mat-icon>close</mat-icon>
+    </button>
+    <mat-card-title class="text-center flex-grow-1">التحويلات المالية</mat-card-title>
+  </div>
   <mat-card-content>
-    <div class="header d-flex justify-content-between">
-      <div class="client-info d-flex w-100 justify-content-around my-3">
-        <p><strong>اسم العميل:</strong>{{clientName}}</p>
-        <p><strong>اسم الطلبية:</strong>{{orderName}}</p>
+    <div class="header">
+      <div class="client-info d-flex justify-content-around">
+        <p><strong>اسم العميل:</strong> {{clientName}}</p>
+        <p><strong>اسم الطلبية:</strong> {{orderName}}</p>
       </div>
     </div>
 
     <div class="form-section">
       <div class="pay">
-        <strong class="ms-3">المبلغ</strong>
+        <strong>المبلغ</strong>
         <mat-form-field appearance="outline">
           <mat-label>المبلغ</mat-label>
-          <input matInput [(ngModel)]="amount" placeholder="أدخل المبلغ">
+          <input matInput 
+                 type="number" 
+                 [(ngModel)]="amount" 
+                 placeholder="أدخل المبلغ"
+                 min="1"
+                 required>
+          <mat-error *ngIf="!amount">المبلغ مطلوب</mat-error>
+          <mat-error *ngIf="amount && amount <= 0">يجب أن يكون المبلغ أكبر من صفر</mat-error>
         </mat-form-field>
       </div>
 
       <div class="note">
-        <strong class="ms-3">ملحوظة</strong>
+        <strong>ملحوظة</strong>
         <mat-form-field appearance="outline">
           <mat-label>ملاحظة</mat-label>
-          <input matInput [(ngModel)]="note" placeholder="أدخل الملحوظة">
+          <input matInput 
+                 [(ngModel)]="note" 
+                 placeholder="أدخل الملحوظة">
         </mat-form-field>
       </div>
     </div>
 
     <div class="action-buttons">
-      <button mat-raised-button style="background-color: green; color: white;" (click)="onPay()">دفع</button>
-      <button mat-raised-button color="warn" (click)="onRefund()">استرداد</button>
+      <button mat-raised-button 
+              [disabled]="!amount || amount <= 0"
+              style="background-color: #28a745; color: white;" 
+              (click)="onPay()">
+        <mat-icon>add_circle</mat-icon>
+        دفع
+      </button>
+      <button mat-raised-button 
+              [disabled]="!amount || amount <= 0"
+              color="warn" 
+              (click)="onRefund()">
+        <mat-icon>remove_circle</mat-icon>
+        استرداد
+      </button>
     </div>
 
-    <app-table-template class="m-5" *ngIf="transactions" [columnDefs]="columnDefs" [originalSource]="transactions"
-      [totalItemsCount]="totalItemsCount" (pageChanged)="onPageChanged($event)">
+    <app-table-template 
+      class="m-5" 
+      *ngIf="transactions" 
+      [columnDefs]="columnDefs" 
+      [originalSource]="transactions"
+      [totalItemsCount]="totalItemsCount" 
+      (pageChanged)="onPageChanged($event)">
     </app-table-template>
   </mat-card-content>
 </mat-card>
-
-<div class="d-flex justify-content-around">
-  <button mat-raised-button [mat-dialog-close]="true" color="warn">
-     إالغاء
-  </button>
-</div>

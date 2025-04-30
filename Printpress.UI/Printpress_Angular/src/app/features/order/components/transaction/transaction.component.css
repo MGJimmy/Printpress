@@ -1,29 +1,123 @@
 .transaction-container {
-  width: 80%;
-  margin: 2rem auto;
-  padding: 1rem;
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
 }
 
 .text-center {
   text-align: center;
-  font-weight: bold;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.header {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+}
+
+.client-info {
+  gap: 2rem;
+}
+
+.client-info p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.client-info strong {
+  color: #555;
+  margin-left: 0.5rem;
 }
 
 .form-section {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
 }
 
-.action-buttons {
+.pay, .note {
   display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
 mat-form-field {
   flex: 1;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.action-buttons button {
+  min-width: 120px;
+  padding: 0.5rem 2rem;
+  font-size: 1.1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-button {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  transition: transform 0.2s;
+}
+
+.close-button:hover {
+  transform: rotate(90deg);
+}
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Table styles */
+::ng-deep .mat-mdc-table {
+  background-color: transparent;
+  box-shadow: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+::ng-deep .mat-mdc-header-cell {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem;
+}
+
+::ng-deep .mat-mdc-cell {
+  padding: 1rem;
+  color: #555;
+}
+
+::ng-deep .mat-mdc-row:hover {
+  background-color: #f8f9fa;
 }

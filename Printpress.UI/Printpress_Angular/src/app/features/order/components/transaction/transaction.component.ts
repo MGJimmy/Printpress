@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { TransactionTypeEnum } from '../../models/enums/transaction-type.enum';
 import { OrderTransactionService } from '../../services/order-transaction.service';
@@ -16,10 +17,13 @@ import { PageChangedModel } from '../../../../shared/models/page-changed.model';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { OrderService } from '../../services/order.service';
+import { DialogService } from '../../../../shared/services/dialog.service';
+import { firstValueFrom } from 'rxjs';
+
 @Component({
   selector: 'app-transaction',
   templateUrl: './transaction.component.html',
-  styleUrls: ['./transaction.component.scss'],
+  styleUrls: ['./transaction.component.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -28,6 +32,7 @@ import { OrderService } from '../../services/order.service';
     MatCardModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatIconModule,
     TableTemplateComponent,
     MatDialogModule
   ],
@@ -57,7 +62,8 @@ export class TransactionComponent implements OnInit {
     private orderTransactionService: OrderTransactionService,
     private orderService: OrderService,
     private alertService: AlertService,
-    private orderSharedDataService: OrderSharedDataService
+    private orderSharedDataService: OrderSharedDataService,
+    private dialogService: DialogService
   ) {
     this.orderId = inputData.orderId;
     this.orderName = orderSharedDataService.getOrderObject_copy().name;
@@ -68,15 +74,35 @@ export class TransactionComponent implements OnInit {
     this.fetchTransactions();
   }
 
-  onPay(): void {
+  async onPay(): Promise<void> {
     if (this.amount) {
-      this.addTransaction(this.amount, TransactionTypeEnum.Payment, this.note);
+      const dialogData = {
+        title: 'تأكيد الدفع',
+        message: `هل أنت متأكد من دفع مبلغ ${this.amount} جنيه؟`,
+        confirmText: 'نعم',
+        cancelText: 'إلغاء',
+      };
+
+      const confirmed = await firstValueFrom(this.dialogService.confirmDialog(dialogData));
+      if (confirmed) {
+        this.addTransaction(this.amount, TransactionTypeEnum.Payment, this.note);
+      }
     }
   }
 
-  onRefund(): void {
+  async onRefund(): Promise<void> {
     if (this.amount) {
-      this.addTransaction(this.amount, TransactionTypeEnum.Refund, this.note);
+      const dialogData = {
+        title: 'تأكيد الاسترداد',
+        message: `هل أنت متأكد من استرداد مبلغ ${this.amount} جنيه؟`,
+        confirmText: 'نعم',
+        cancelText: 'إلغاء',
+      };
+
+      const confirmed = await firstValueFrom(this.dialogService.confirmDialog(dialogData));
+      if (confirmed) {
+        this.addTransaction(this.amount, TransactionTypeEnum.Refund, this.note);
+      }
     }
   }
 
