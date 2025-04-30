@@ -19,6 +19,8 @@ import { OrderSharedDataService } from '../../services/order-shared-data.service
 import { OrderService } from '../../services/order.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { firstValueFrom } from 'rxjs';
+import { OrderCommunicationService } from '../../services/order-communication.service';
+import { OrderEventType } from '../../models/enums/order-events.enum';
 
 @Component({
   selector: 'app-transaction',
@@ -63,7 +65,8 @@ export class TransactionComponent implements OnInit {
     private orderService: OrderService,
     private alertService: AlertService,
     private orderSharedDataService: OrderSharedDataService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private orderComm: OrderCommunicationService
   ) {
     this.orderId = inputData.orderId;
     this.orderName = orderSharedDataService.getOrderObject_copy().name;
@@ -119,6 +122,7 @@ export class TransactionComponent implements OnInit {
         this.alertService.showSuccess('تمت العملية بنجاح');
         this.resetForm();
         this.fetchTransactions();
+        this.orderComm.emit(OrderEventType.ORDER_UPDATED);
         this.refreshOrderMainData();
       },
       error: (error) => {
@@ -127,7 +131,7 @@ export class TransactionComponent implements OnInit {
       }
     });
   }
-  
+
   private refreshOrderMainData() {
     this.orderService.getOrderMainData(this.orderId).subscribe({
       next: (response) => {

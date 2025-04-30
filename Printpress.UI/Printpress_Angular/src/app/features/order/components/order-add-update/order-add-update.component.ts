@@ -12,9 +12,11 @@ import { AddClientComponent } from '../../../client/components/add-client/add-cl
 import { OrderServicePricesComponent } from '../order-service-prices/order-service-prices.component';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderGetDto } from '../../models/order/order-get.Dto';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { firstValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { TransactionComponent } from '../transaction/transaction.component';
+import { OrderCommunicationService } from '../../services/order-communication.service';
+import { OrderEventType } from '../../models/enums/order-events.enum';
 
 @Component({
   selector: 'app-order-add-update',
@@ -33,6 +35,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public orderName!: string;
   public orderGetDto: OrderGetDto;
   private orderUpdatedSubscription: Subscription;
+  private destroy$ = new Subject<void>();
 
   constructor(private router: Router,
     private OrderSharedService: OrderSharedDataService,
@@ -41,18 +44,27 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private alertService: AlertService,
     private activedRoute: ActivatedRoute,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private orderComm: OrderCommunicationService
   ) {
     this.componentMode = new ComponentMode(this.router);
     this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
     
-    // Subscribe to order updates
+    this.orderComm.on(OrderEventType.ORDER_UPDATED)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(payload => {
+            console.log('Order updated:', payload);
+          });
+
     this.orderUpdatedSubscription = this.OrderSharedService.orderUpdated$.subscribe(() => {
       this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
     });
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     if (this.orderUpdatedSubscription) {
       this.orderUpdatedSubscription.unsubscribe();
     }
