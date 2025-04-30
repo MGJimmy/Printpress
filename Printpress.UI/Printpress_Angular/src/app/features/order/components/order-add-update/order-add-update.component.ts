@@ -34,7 +34,6 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public orderClientId!: number
   public orderName!: string;
   public orderGetDto: OrderGetDto;
-  private orderUpdatedSubscription: Subscription;
   private destroy$ = new Subject<void>();
 
   constructor(private router: Router,
@@ -49,25 +48,20 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   ) {
     this.componentMode = new ComponentMode(this.router);
     this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
-    
-    this.orderComm.on(OrderEventType.ORDER_UPDATED)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(payload => {
-            console.log('Order updated:', payload);
-          });
 
-    this.orderUpdatedSubscription = this.OrderSharedService.orderUpdated$.subscribe(() => {
-      this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
-    });
+    this.orderComm.on(OrderEventType.ORDER_MAINDATA_UPDATED)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.orderService.getOrderMainData(this.orderGetDto.id).subscribe((response) => {
+          OrderSharedService.refreshOrderMainData(response.data);
+          this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
+        });
+      });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-
-    if (this.orderUpdatedSubscription) {
-      this.orderUpdatedSubscription.unsubscribe();
-    }
   }
 
   async ngOnInit() {
@@ -88,9 +82,9 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.orderGetDto.orderGroups));
     this.orderName = this.orderGetDto.name;
     this.orderClientId = this.orderGetDto.clientId;
-    
+
     await this.loadAllClients();
-   
+
   }
 
   async loadAllClients() {
@@ -142,7 +136,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   public openAddClientDialog() {
-     const clientDialog = this.dialog.open(AddClientComponent, {
+    const clientDialog = this.dialog.open(AddClientComponent, {
       width: '600px'
     });
 
@@ -153,13 +147,13 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     });
 
   }
-  
- private MapToOrderGroupGridViewModel( orderGroupGetDtos:OrderGroupGetDto[] ):OrderGroupGridViewModel[]{
-  if(!orderGroupGetDtos){
-    return [];
-  }
 
-  return orderGroupGetDtos.map((orderGroup, index) => {
+  private MapToOrderGroupGridViewModel(orderGroupGetDtos: OrderGroupGetDto[]): OrderGroupGridViewModel[] {
+    if (!orderGroupGetDtos) {
+      return [];
+    }
+
+    return orderGroupGetDtos.map((orderGroup, index) => {
       return {
         id: orderGroup.id,
         name: orderGroup.name,

@@ -23,9 +23,6 @@ import { Subject } from 'rxjs';
 export class OrderSharedDataService {
 
   private orderObject!: OrderGetDto;
-  private orderUpdated = new Subject<void>();
-
-  orderUpdated$ = this.orderUpdated.asObservable();
 
   constructor(
     private serviceService: ServiceService
@@ -85,8 +82,6 @@ export class OrderSharedDataService {
     this.orderObject.totalPaid = orderMainData.totalPaid ?? 0;
     this.orderObject.clientName = orderMainData.clientName;
     this.orderObject.name = orderMainData.name;
-
-    this.orderUpdated.next();
   }
 
   public getOrderPageRoute(): string {
