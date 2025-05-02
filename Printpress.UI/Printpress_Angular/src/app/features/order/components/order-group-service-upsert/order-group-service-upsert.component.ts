@@ -10,16 +10,16 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
-import { ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ServiceService } from '../../../setup/services/service.service';
 import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
+import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 
 export interface ServiceCat_interface {
   id: number;

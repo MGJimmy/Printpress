@@ -255,10 +255,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.setGroupId();
 
-    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
-
-    this.setIsEdit(currentGroup);
-    this.setCurrentGroupData(currentGroup);
+    this.setIsEdit();
+    this.setCurrentGroupData();
     this.updateDisplayedColumns();
 
     if (!this.groupItems || this.groupItems.length == 0) {
@@ -275,7 +273,10 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     }
   }
 
-  private setIsEdit(currentGroup: OrderGroupGetDto) {
+  private setIsEdit() {
+
+    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+
     if (currentGroup.objectState == ObjectStateEnum.temp || currentGroup.objectState == ObjectStateEnum.added) {
       this.isEdit = false;
     } else {
@@ -283,7 +284,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     }
   }
 
-  private setCurrentGroupData(currentGroup: OrderGroupGetDto) {
+  private setCurrentGroupData() {
+    const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
 
     this.groupName = currentGroup.name;
     this.updateDisplayedServicesNames(currentGroup.orderGroupServices);
@@ -361,6 +363,9 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
       if (confirmed) {
         this.orderSharedService.deleteItem(this.groupId, item.id);
+
+        this.setCurrentGroupData();
+
         this.alertService.showSuccess('تم حذف العنصر بنجاح!');
       }
     });
