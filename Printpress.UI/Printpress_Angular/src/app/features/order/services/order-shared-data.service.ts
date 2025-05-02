@@ -31,7 +31,7 @@ export class OrderSharedDataService {
     this.initializeOrderObject();
   }
 
-  private filterDeletedObject<T extends IObjectState>(obj: T): T{
+  private filterDeletedObject<T extends IObjectState>(obj: T): T {
    return this.filterDeletedObjectArray([obj])[0];
   }
 
@@ -102,7 +102,7 @@ export class OrderSharedDataService {
     this.orderObject.objectState = this.orderObject.objectState === ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.modified;
   }
 
-  public getOrderObject_copy(includeDeletedObjects:boolean = false): OrderGetDto {
+  public getOrderObject_copy(includeDeletedObjects: boolean = false): OrderGetDto {
     let order = this.deepCopy(this.orderObject);
     return includeDeletedObjects ? order : this.filterDeletedObject(order);
   }
@@ -188,8 +188,13 @@ export class OrderSharedDataService {
     return group;
   }
 
-  public getOrderGroups(): OrderGroupGetDto[] {
+  private getOrderGroups(): OrderGroupGetDto[] {
    return this.orderObject.orderGroups.filter(x => x.objectState !== ObjectStateEnum.deleted);
+  }
+
+  public getOrderGroups_Copy(): OrderGroupGetDto[] {
+    let orderGroups = this.deepCopy(this.getOrderGroups());
+    return this.filterDeletedObjectArray(orderGroups);
   }
 
   public updateOrderGroupName(id: number, name: string) {
