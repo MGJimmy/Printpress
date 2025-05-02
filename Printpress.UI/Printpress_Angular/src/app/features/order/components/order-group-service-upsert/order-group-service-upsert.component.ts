@@ -47,8 +47,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'مسلسل', column: 'id' },
-    { headerName: 'الخدمة', column: 'name' },
-    { headerName: 'إجراء', column: 'action' },
+    { headerName: 'الخدمة', column: 'name' }
   ];
 
   tableData: ServiceGetDto[] | null = null;
