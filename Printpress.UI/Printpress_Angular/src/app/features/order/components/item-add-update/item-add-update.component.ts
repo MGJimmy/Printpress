@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { OrderRoutingService } from '../../services/order-routing.service';
+import { DialogService } from '../../../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-item-add-update',
@@ -48,7 +49,8 @@ export class ItemAddUpdateComponent implements OnInit {
 
   constructor(private orderSharedService: OrderSharedDataService,
     private router: Router, private activateRoute: ActivatedRoute,
-    private fb: NonNullableFormBuilder,
+    private fb: NonNullableFormBuilder,    
+    private dialogService: DialogService,
     private orderRoutingService: OrderRoutingService
   ) { }
 
@@ -165,7 +167,14 @@ export class ItemAddUpdateComponent implements OnInit {
     }
   }
 
-  protected onBack(): void {
+  protected async onBack(): Promise<void> {
+    if (! await this.dialogService.confirmOnBackButton()) {
+      return;
+    }
+    if (!this.isEditMode) {
+      this.orderSharedService.deleteItem(this.groupId, this.item.id);
+    }
+
     this.navigateToGroup();
   }
 
