@@ -19,7 +19,6 @@ import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
-import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 
 export interface ServiceCat_interface {
   id: number;
@@ -131,7 +130,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     let groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
     
     if(!groupServices || groupServices.length == 0){
-      //this.tableData = [];
+      this.tableData = [];
       return;
     }
 
