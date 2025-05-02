@@ -163,7 +163,7 @@ export class OrderServicePricesComponent implements OnInit {
     // Move to Order Component
     this._orderSharedService.updateOrderObjectState();
 
-    const orderDTO = this._orderSharedService.getOrderObject_copy()
+    const orderDTO = this._orderSharedService.getOrderObject_copy(true)
 
     const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
 

@@ -11,7 +11,8 @@ import { ServiceGetDto } from '../../setup/models/service-get.dto';
 import { ItemDetailsGetDto } from '../models/item-details/item-details-get.dto';
 import { itemDetailsKeyEnum } from '../models/enums/item-details-key.enum';
 import { OrderMainDataDto } from '../models/order/order-main-data.Dto';
-import { Subject } from 'rxjs';
+import { Subject, throwIfEmpty } from 'rxjs';
+import { IObjectState } from '../../../core/models/i-object-state';
 
 /*
   Notes: 
@@ -29,6 +30,34 @@ export class OrderSharedDataService {
   ) {
     this.initializeOrderObject();
   }
+
+  private filterDeletedObject<T extends IObjectState>(obj: T): T{
+   return this.filterDeletedObjectArray([obj])[0];
+  }
+
+  private filterDeletedObjectArray<T extends IObjectState>(objs: T[]): T[] {
+    return objs
+      .filter(obj => obj.objectState !== ObjectStateEnum.deleted)
+      .map(obj => {
+        // For each property of the object
+        for (const key of Object.keys(obj)) {
+          const value = (obj as any)[key];
+  
+          // If the property is an array of objects that implement IObjectState
+          if (Array.isArray(value) && value.every(this.isObjectState)) {
+            (obj as any)[key] = this.filterDeletedObjectArray(value);
+          }
+        }
+  
+        return obj;
+      });
+  }
+  
+  // Helper to check if an object implements IObjectState
+  private isObjectState(obj: any): obj is IObjectState {
+    return obj && typeof obj === 'object' && 'objectState' in obj;
+  }
+  
 
 
 
@@ -73,8 +102,9 @@ export class OrderSharedDataService {
     this.orderObject.objectState = this.orderObject.objectState === ObjectStateEnum.temp ? ObjectStateEnum.added : ObjectStateEnum.modified;
   }
 
-  public getOrderObject_copy(): OrderGetDto {
-    return this.deepCopy(this.orderObject);
+  public getOrderObject_copy(includeDeletedObjects:boolean = false): OrderGetDto {
+    let order = this.deepCopy(this.orderObject);
+    return includeDeletedObjects ? order : this.filterDeletedObject(order);
   }
 
   public refreshOrderMainData(orderMainData: OrderMainDataDto) {
@@ -143,16 +173,23 @@ export class OrderSharedDataService {
   }
 
   public getOrderGroup_Copy(id: number): OrderGroupGetDto {
-    return this.deepCopy(this.getOrderGroup(id));
+    let orderGroup = this.deepCopy(this.getOrderGroup(id));
+    return this.filterDeletedObject(orderGroup);
   }
 
   private getOrderGroup(id: number): OrderGroupGetDto {
-    let group = this.orderObject.orderGroups.find(x => x.id == id);
+    let group = this.orderObject.orderGroups.filter(x => x.objectState !== ObjectStateEnum.deleted)
+    .find(x => x.id == id);
+    
     if (!group) {
       throw 'cannot find a group with id = ' + id;
     }
 
     return group;
+  }
+
+  public getOrderGroups(): OrderGroupGetDto[] {
+   return this.orderObject.orderGroups.filter(x => x.objectState !== ObjectStateEnum.deleted);
   }
 
   public updateOrderGroupName(id: number, name: string) {
@@ -185,7 +222,11 @@ export class OrderSharedDataService {
   }
 
   private updateGroupFlagsOnServicesCategories(group: OrderGroupGetDto) {
-    this.serviceService.getServices(group.orderGroupServices.map(s => s.serviceId)).subscribe(services => {
+
+    let groupServices = group.orderGroupServices.filter(s=>s.objectState !== ObjectStateEnum.deleted).map(x => x.serviceId);
+
+    this.serviceService.getServices(groupServices).subscribe(services => {
+
       group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
       group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
       group.isHasStaplingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Stapling);
@@ -194,10 +235,6 @@ export class OrderSharedDataService {
   //=======================
   //#endregion Group methods
   //=======================
-
-
-
-
 
 
 
@@ -309,14 +346,28 @@ export class OrderSharedDataService {
   }
 
   public getItem_copy(orderGroupId: number, itemId: number): ItemGetDto {
-    return this.deepCopy(this.getItem(orderGroupId, itemId));
+    let item = this.deepCopy(this.getItem(orderGroupId, itemId));
+    return this.filterDeletedObject(item);
   }
 
   private getItem(orderGroupId: number, itemId: number): ItemGetDto {
-    let item = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items.find(x => x.id === itemId)!;
+    let group = this.getOrderGroup(orderGroupId);
 
+    let item = group!.items.filter(x => x.objectState !== ObjectStateEnum.deleted)
+    .find(x => x.id === itemId)!;
+
+    if (item === undefined) {
+      throw new Error('item not found');
+    }
     return item;
 
+  }
+
+  public getOrderGroupItems_copy(orderGroupId: number): ItemGetDto[] {
+    let orderGroup = this.getOrderGroup(orderGroupId);
+    let items = orderGroup!.items;
+    items = this.deepCopy(items);
+    return this.filterDeletedObjectArray(items);
   }
 
   public deleteItem(groupId: number, itemId: number): void {
@@ -333,17 +384,6 @@ export class OrderSharedDataService {
       item.objectState = ObjectStateEnum.deleted;
     }
   }
-
-  // May Be used in items back button page
-  // public deleteNewlyAddedItem(groupId: number, itemId: number) {
-  //   let groupItems = this.getOrderGroup(groupId).items;
-
-  //   const index = groupItems.findIndex(x => x.id === itemId);
-  //   if (index !== -1) {
-  //     groupItems.splice(index, 1);
-  //   }
-  // }
-
 
   //=======================
   //#endregion item methods
@@ -364,18 +404,24 @@ export class OrderSharedDataService {
   //=======================
 
   public getOrderGroupServices_copy(orderGroupId: number): OrderGroupServiceGetDto[] {
-    let orderGroupServices = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.orderGroupServices;
-    return this.deepCopy(orderGroupServices);
+    let orderGroupServices = this.getOrderGroupServices(orderGroupId);
+    
+    let groupServices = this.deepCopy(orderGroupServices);
+    return this.filterDeletedObjectArray(groupServices);
   }
 
-  public getOrderGroupItems_copy(orderGroupId: number): ItemGetDto[] {
-    let items = this.orderObject.orderGroups.find(x => x.id === orderGroupId)!.items;
-    return this.deepCopy(items);
+
+  public getOrderGroupServices(orderGroupId: number): OrderGroupServiceGetDto[] {
+    let group = this.getOrderGroup(orderGroupId); 
+
+    return group!.orderGroupServices.filter(x => x.objectState !== ObjectStateEnum.deleted);
   }
+
 
   public getAllOrderGroupsServices_copy(): OrderGroupServiceGetDto[] {
-    let orderGroupsServices = this.orderObject.orderGroups.flatMap(x => x.orderGroupServices);
-    return this.deepCopy(orderGroupsServices);
+    let orderGroupsServices = this.getOrderGroups().flatMap(x => x.orderGroupServices);
+    orderGroupsServices = this.deepCopy(orderGroupsServices);
+    return this.filterDeletedObjectArray(orderGroupsServices);
   }
 
   public addOrderGroupService(orderGroupId: number, service: ServiceGetDto): void {
@@ -406,11 +452,7 @@ export class OrderSharedDataService {
 
 
   public deleteGroupService(groupId: number, serviceId: number) {
-    let orderGroup = this.orderObject.orderGroups.find(x => x.id == groupId);
-
-    if (!orderGroup) {
-      throw 'Cannot Find a group with ID = ' + groupId + 'in Shared Data';
-    }
+    let orderGroup = this.getOrderGroup(groupId);
 
     let groupServices = orderGroup.orderGroupServices;
 
@@ -451,7 +493,8 @@ export class OrderSharedDataService {
   }
 
   public getOrderServices_copy(): OrderServicesGetDTO[] {
-    return this.deepCopy(this.getOrderServices());
+    let orderServices = this.deepCopy(this.getOrderServices());
+    return this.filterDeletedObjectArray(orderServices);
   }
 
   public setOrderServices(orderServices: OrderServicesGetDTO[]) {
