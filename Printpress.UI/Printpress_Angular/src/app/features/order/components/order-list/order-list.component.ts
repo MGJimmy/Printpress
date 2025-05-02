@@ -8,6 +8,8 @@ import {DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/consta
 import { PageEvent } from '@angular/material/paginator';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
+import { OrderRoutingService } from '../../services/order-routing.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-order-view',
@@ -26,7 +28,9 @@ export class OrderListComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private alertService: AlertService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private router: Router,
+    private orderRoutingService: OrderRoutingService
   )  {
     this.dataSource = new MatTableDataSource<OrderSummaryDto>();
     this.totalCount = 0;
@@ -72,6 +76,18 @@ export class OrderListComponent implements OnInit {
         this.alertService.showError('حدث خطأ اثناء حذف الطلبيه');
       }
     }
+  }
+
+  protected onViewOrder(id: number) {
+    this.router.navigate([this.orderRoutingService.getOrderViewRoute(id)]);
+  }
+
+  protected onEditOrder(id: number) {
+    this.router.navigate([this.orderRoutingService.getOrderEditRoute(id)]);
+  }
+
+  protected onAddOrder() {
+    this.router.navigate([this.orderRoutingService.getOrderAddRoute()]);
   }
 }
 

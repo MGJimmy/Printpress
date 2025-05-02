@@ -70,7 +70,7 @@
                     <mat-card-title>
                         <span *ngIf="componentMode.isViewMode"> المجموعات</span>
                         <button *ngIf="!componentMode.isViewMode" mat-raised-button color="primary"
-                            routerLink="/order/group">إضافة مجموعة جديدة
+                            (click)="onAddGroup()">إضافة مجموعة جديدة
                         </button>
                     </mat-card-title>
                 </div>

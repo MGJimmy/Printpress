@@ -348,11 +348,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected addItem_Click() {
-    this.navigateToAddItemPage();
+    this.router.navigate([this.orderRoutingService.getItemAddRoute(this.groupId)]);
   }
 
   protected editItem_Click(item: ItemGetDto) {
-    this.navigateToEditItemPage(item.id);
+    this.router.navigate([this.orderRoutingService.getItemEditRoute(this.groupId, item.id)]);
   }
 
   protected deleteItem_Click(item: ItemGetDto) {
@@ -429,14 +429,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     } else {
       this.router.navigate([this.orderRoutingService.getOrderEditRoute(this.orderSharedService.getOrderObject_copy().id)]);
     }
-  }
-
-  private navigateToAddItemPage() {
-    this.router.navigate([this.orderRoutingService.getItemAddRoute(this.groupId)]);
-  }
-
-  private navigateToEditItemPage(itemId: number) {
-    this.router.navigate([this.orderRoutingService.getItemEditRoute(this.groupId, itemId)]);
   }
 
   private mapItemsGrid(items: ItemGetDto[]): void {
