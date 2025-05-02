@@ -94,7 +94,8 @@
                                 <td mat-cell *matCellDef="let element">
                                     <button class="mx-3" mat-raised-button color="primary"
                                         routerLink="/order/group/{{element.id}}">تعديل</button>
-                                    <button class="mx-3" mat-raised-button color="warn">حذف</button>
+                                    <button class="mx-3" mat-raised-button color="warn"
+                                        (click)="onDeleteGroup(element.id)">حذف</button>
                                 </td>
                             </ng-container>
 

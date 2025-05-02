@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';

@@ -414,7 +414,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     }
 
     if (!this.isEdit) {
-      this.orderSharedService.deleteNewlyAddedGroup(this.groupId);
+      this.orderSharedService.deleteGroup(this.groupId);
     }
 
     this.navigateToOrderPage();

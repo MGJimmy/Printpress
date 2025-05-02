@@ -12,11 +12,13 @@ import { AddClientComponent } from '../../../client/components/add-client/add-cl
 import { OrderServicePricesComponent } from '../order-service-prices/order-service-prices.component';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderGetDto } from '../../models/order/order-get.Dto';
-import { firstValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { TransactionComponent } from '../transaction/transaction.component';
 import { OrderCommunicationService } from '../../services/order-communication.service';
 import { OrderEventType } from '../../models/enums/order-events.enum';
+import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
+import { DialogService } from '../../../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-order-add-update',
@@ -44,7 +46,8 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     private alertService: AlertService,
     private activedRoute: ActivatedRoute,
     private orderService: OrderService,
-    private orderComm: OrderCommunicationService
+    private orderComm: OrderCommunicationService,
+    private dialogService: DialogService
   ) {
     this.componentMode = new ComponentMode(this.router);
     this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
@@ -79,12 +82,16 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.orderGetDto.orderGroups));
+    this.bindGroups();
     this.orderName = this.orderGetDto.name;
     this.orderClientId = this.orderGetDto.clientId;
 
     await this.loadAllClients();
 
+  }
+
+  private bindGroups(){
+    this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.OrderSharedService.getOrderGroups_Copy()));
   }
 
   async loadAllClients() {
@@ -108,6 +115,25 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe();
   }
 
+  protected onDeleteGroup(groupId: number) {
+    const dialogData: ConfirmDialogModel = {
+      title: 'تأكيد الحذف',
+      message: 'هل أنت متأكد أنك تريد حذف هذه المجموعة؟',
+      confirmText: 'نعم',
+      cancelText: 'إلغاء',
+    };
+
+    this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
+      if (confirmed) {
+
+        this.OrderSharedService.deleteGroup(groupId);
+
+        this.bindGroups();
+
+        this.alertService.showSuccess('تم حذف المجموعة بنجاح!');
+      }
+    });
+  }
   public saveOrder_Click() {
 
     if (!this.validateOrderData()) {
