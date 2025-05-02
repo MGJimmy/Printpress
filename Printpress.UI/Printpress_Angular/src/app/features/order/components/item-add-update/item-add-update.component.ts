@@ -1,23 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import { OrderGroupServiceUpsertDto } from '../../models/orderGroupService/order-group-service-upsert.Dto';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ItemGetDto } from '../../models/item/item-get.Dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ItemForm } from '../../models/form-types/Item-form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
-import { ItemDetailsGetDto } from '../../models/item-details/item-details-get.dto';
-import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
-import { ServiceService } from '../../../setup/services/service.service';
-import { ServiceGetDto } from '../../../setup/models/service-get.dto';
-import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
-import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { OrderRoutingService } from '../../services/order-routing.service';
 
@@ -46,53 +39,53 @@ export class ItemAddUpdateComponent implements OnInit {
 
   itemForm!: FormGroup<{ [K in keyof ItemForm]: FormControl<ItemForm[K]> }>;
 
-  groupId!:number;
+  groupId!: number;
   group!: OrderGroupGetDto;
 
   numberOfPages: number | undefined;
   numberOfPrintingFaces: number | undefined;
 
 
-  constructor(private orderSharedService:OrderSharedDataService,
-              private router: Router, private activateRoute: ActivatedRoute,
-              private fb: NonNullableFormBuilder,
-              private orderRoutingService : OrderRoutingService
-  ) {}
+  constructor(private orderSharedService: OrderSharedDataService,
+    private router: Router, private activateRoute: ActivatedRoute,
+    private fb: NonNullableFormBuilder,
+    private orderRoutingService: OrderRoutingService
+  ) { }
 
   ngOnInit(): void {
     this.itemForm = this.fb.group({
       name: ['', Validators.required],
-      quantity: [0, [Validators.required , Validators.min(1)]],
+      quantity: [0, [Validators.required, Validators.min(1)]],
       price: [0],
       numberOfPages: [0],
       numberOfPrintingFaces: [2],
     });
 
-    this.checkModeAndInitData();  
+    this.checkModeAndInitData();
 
-    this.group = this.orderSharedService.getOrderGroup_Copy(this.groupId);   
+    this.group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
 
     this.setDynamicFormValidators();
   }
 
   private checkModeAndInitData() {
     this.activateRoute.url.subscribe(urlSegments => {
-      this.isEditMode = urlSegments.some(x=> x.path === 'edit');
-      this.isAddMode = urlSegments.some(x=> x.path === 'add');
+      this.isEditMode = urlSegments.some(x => x.path === 'edit');
+      this.isAddMode = urlSegments.some(x => x.path === 'add');
     });
 
     this.activateRoute.params.subscribe(params => {
-      this.itemIdToEdit = this.isEditMode? +params['id'] : 0;
+      this.itemIdToEdit = this.isEditMode ? +params['id'] : 0;
       this.groupId = +params['groupId'];
     });
 
-    if(this.isAddMode){
+    if (this.isAddMode) {
       this.initAddModeData();
     }
 
-    if(this.isEditMode){
+    if (this.isEditMode) {
       this.initEditModeData();
-    }    
+    }
   }
 
   private initAddModeData() {
@@ -149,10 +142,10 @@ export class ItemAddUpdateComponent implements OnInit {
 
     this.MapValuesFromFormToItem(this.itemForm);
 
-    if(this.isAddMode){
+    if (this.isAddMode) {
       this.orderSharedService.addItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price, this.numberOfPages, this.numberOfPrintingFaces);
     }
-    else{
+    else {
       this.orderSharedService.updateItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price);
     }
     // navigate to group component after saving
@@ -171,7 +164,11 @@ export class ItemAddUpdateComponent implements OnInit {
       this.numberOfPrintingFaces = formRawValue.numberOfPrintingFaces;
     }
   }
-  
+
+  protected onBack(): void {
+    this.navigateToGroup();
+  }
+
   private navigateToGroup(): void {
     this.router.navigate([this.orderRoutingService.getGroupRoute(this.groupId)]);
   }
