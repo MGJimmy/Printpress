@@ -4,12 +4,13 @@ import { OrderAddUpdateComponent } from './features/order/components/order-add-u
 import { OrderGroupAddUpdateComponent } from './features/order/components/order-group-add-update/order-group-add-update.component';
 import { OrderGroupServiceUpsertComponent } from './features/order/components/order-group-service-upsert/order-group-service-upsert.component';
 import { ItemAddUpdateComponent } from './features/order/components/item-add-update/item-add-update.component';
+import { ORDER_ROUTES } from './features/order/constants/order-routes.constants';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'orderlist', pathMatch: 'full' },
+  { path: '', redirectTo: ORDER_ROUTES.LIST, pathMatch: 'full' },
 
   {
-    path: 'orderlist',
+    path: ORDER_ROUTES.LIST,
     loadComponent: () =>
       import(
         './features/order/components/order-list/order-list.component'
@@ -49,20 +50,20 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'order',
+    path: ORDER_ROUTES.ORDER.BASE,
     loadComponent: () =>
       import(
         './features/order/components/order-container/order-container.component'
       ).then((m) => m.OrderContainerComponent),
     children: [
-      { path: 'add', component: OrderAddUpdateComponent },
-      { path: 'edit/:id', component: OrderAddUpdateComponent },
-      { path: 'view/:id', component: OrderAddUpdateComponent },
-      { path: 'group', component: OrderGroupAddUpdateComponent },
-      { path: 'group/:id', component: OrderGroupAddUpdateComponent },
-      { path: 'groupService', component: OrderGroupServiceUpsertComponent },
-      { path: 'item/add/:groupId', component: ItemAddUpdateComponent },
-      { path: 'item/edit/:groupId/:id', component: ItemAddUpdateComponent },
+      { path: ORDER_ROUTES.ORDER.ADD, component: OrderAddUpdateComponent },
+      { path: ORDER_ROUTES.ORDER.EDIT, component: OrderAddUpdateComponent },
+      { path: ORDER_ROUTES.ORDER.VIEW, component: OrderAddUpdateComponent },
+      { path: ORDER_ROUTES.ORDER.GROUP.ADD, component: OrderGroupAddUpdateComponent },
+      { path: ORDER_ROUTES.ORDER.GROUP.EDIT, component: OrderGroupAddUpdateComponent },
+      { path: ORDER_ROUTES.ORDER.GROUP.SERVICES, component: OrderGroupServiceUpsertComponent },
+      { path: ORDER_ROUTES.ORDER.ITEM.ADD, component: ItemAddUpdateComponent },
+      { path: ORDER_ROUTES.ORDER.ITEM.EDIT, component: ItemAddUpdateComponent },
     ]
   },
   {
