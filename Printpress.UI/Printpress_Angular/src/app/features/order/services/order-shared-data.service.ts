@@ -126,6 +126,9 @@ export class OrderSharedDataService {
     return '/orderlist';
   }
 
+  public getGroupRoute(groupId : number){
+    return `/order/group/${groupId}`;
+  }
   //=======================
   //#endregion Order methods
   //=======================

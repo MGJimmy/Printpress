@@ -134,6 +134,11 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  protected onEditGroup(groupId: number) {
+    this.router.navigate([this.OrderSharedService.getGroupRoute(groupId)]);
+  }
+
   public saveOrder_Click() {
 
     if (!this.validateOrderData()) {
