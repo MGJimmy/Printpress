@@ -14,6 +14,7 @@ import { ServiceService } from '../../../setup/services/service.service';
 import { OrderServicesGetDTO } from '../../models/order-service/order-service-getDto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
+import { OrderRoutingService } from '../../services/order-routing.service';
 
 @Component({
   selector: 'app-order-service-prices',
@@ -45,7 +46,8 @@ export class OrderServicePricesComponent implements OnInit {
     private orderService: OrderService,
     private router: Router,
     private alertService: AlertService,
-    private servicesService: ServiceService
+    private servicesService: ServiceService,
+    private orderRoutingService: OrderRoutingService
   ) {
     this._orderSharedService = data.orderSharedService;
 
@@ -195,6 +197,6 @@ export class OrderServicePricesComponent implements OnInit {
   }
 
   private navigateToOrderListPage() {
-    this.router.navigate([this._orderSharedService.getOrderListRoute()]);
+    this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
   }
 }

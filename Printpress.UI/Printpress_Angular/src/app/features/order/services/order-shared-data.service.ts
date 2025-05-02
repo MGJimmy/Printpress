@@ -11,14 +11,13 @@ import { ServiceGetDto } from '../../setup/models/service-get.dto';
 import { ItemDetailsGetDto } from '../models/item-details/item-details-get.dto';
 import { itemDetailsKeyEnum } from '../models/enums/item-details-key.enum';
 import { OrderMainDataDto } from '../models/order/order-main-data.Dto';
-import { Subject, throwIfEmpty } from 'rxjs';
+import { Subject } from 'rxjs';
 import { IObjectState } from '../../../core/models/i-object-state';
 
 /*
   Notes: 
     * Return new object when returning object from the service to prevent changing the original object. using spread operator. {...object}
 */
-
 
 @Injectable()
 export class OrderSharedDataService {
@@ -114,21 +113,6 @@ export class OrderSharedDataService {
     this.orderObject.name = orderMainData.name;
   }
 
-  public getOrderPageRoute(): string {
-    if (this.orderObject.objectState == ObjectStateEnum.temp) {
-      return '/order/add';
-    } else {
-      return '/order/edit/' + this.orderObject.id;
-    }
-  }
-
-  public getOrderListRoute(): string {
-    return '/orderlist';
-  }
-
-  public getGroupRoute(groupId : number){
-    return `/order/group/${groupId}`;
-  }
   //=======================
   //#endregion Order methods
   //=======================

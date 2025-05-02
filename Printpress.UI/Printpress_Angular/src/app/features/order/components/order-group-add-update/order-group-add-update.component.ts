@@ -19,6 +19,7 @@ import { ItemGridVM } from '../../models/item/itemGridVM';
 import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
+import { OrderRoutingService } from '../../services/order-routing.service';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -242,13 +243,15 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   protected displayedColumns: string[] = [];
 
-  constructor(private alertService: AlertService,
+  constructor(
+    private alertService: AlertService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
     private orderSharedService: OrderSharedDataService,
     private injector: Injector,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private orderRoutingService: OrderRoutingService
   ) {
   }
 
@@ -421,15 +424,19 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   private navigateToOrderPage() {
-    this.router.navigate([this.orderSharedService.getOrderPageRoute()]);
+    if (this.orderSharedService.getOrderObject_copy().objectState == ObjectStateEnum.temp) {
+      this.router.navigate([this.orderRoutingService.getOrderAddRoute()]);
+    } else {
+      this.router.navigate([this.orderRoutingService.getOrderEditRoute(this.orderSharedService.getOrderObject_copy().id)]);
+    }
   }
 
   private navigateToAddItemPage() {
-    this.router.navigate(['/order/item/add', this.groupId]);
+    this.router.navigate([this.orderRoutingService.getItemAddRoute(this.groupId)]);
   }
 
   private navigateToEditItemPage(itemId: number) {
-    this.router.navigate(['/order/item/edit', this.groupId, itemId]);
+    this.router.navigate([this.orderRoutingService.getItemEditRoute(this.groupId, itemId)]);
   }
 
   private mapItemsGrid(items: ItemGetDto[]): void {

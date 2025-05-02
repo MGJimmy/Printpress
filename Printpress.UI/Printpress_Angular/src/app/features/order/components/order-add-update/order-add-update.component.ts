@@ -19,6 +19,7 @@ import { OrderCommunicationService } from '../../services/order-communication.se
 import { OrderEventType } from '../../models/enums/order-events.enum';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { DialogService } from '../../../../shared/services/dialog.service';
+import { OrderRoutingService } from '../../services/order-routing.service';
 
 @Component({
   selector: 'app-order-add-update',
@@ -47,7 +48,8 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     private activedRoute: ActivatedRoute,
     private orderService: OrderService,
     private orderComm: OrderCommunicationService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private orderRoutingService: OrderRoutingService
   ) {
     this.componentMode = new ComponentMode(this.router);
     this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
@@ -136,7 +138,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   protected onEditGroup(groupId: number) {
-    this.router.navigate([this.OrderSharedService.getGroupRoute(groupId)]);
+    this.router.navigate([this.orderRoutingService.getGroupRoute(groupId)]);
   }
 
   public saveOrder_Click() {
@@ -202,7 +204,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   public goBack() {
-    this.router.navigate(['/orderlist']);
+    this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
   }
 }
 

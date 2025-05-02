@@ -19,6 +19,7 @@ import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { OrderGroupServiceGetDto } from '../../models/orderGroupService/order-group-service-get.Dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
+import { OrderRoutingService } from '../../services/order-routing.service';
 
 @Component({
   selector: 'app-item-add-update',
@@ -54,7 +55,8 @@ export class ItemAddUpdateComponent implements OnInit {
 
   constructor(private orderSharedService:OrderSharedDataService,
               private router: Router, private activateRoute: ActivatedRoute,
-              private fb: NonNullableFormBuilder
+              private fb: NonNullableFormBuilder,
+              private orderRoutingService : OrderRoutingService
   ) {}
 
   ngOnInit(): void {
@@ -154,7 +156,7 @@ export class ItemAddUpdateComponent implements OnInit {
       this.orderSharedService.updateItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price);
     }
     // navigate to group component after saving
-    this.router.navigate(['order/group', this.groupId]);
+    this.navigateToGroup();
   }
 
   MapValuesFromFormToItem(itemForm: FormGroup) {
@@ -168,5 +170,9 @@ export class ItemAddUpdateComponent implements OnInit {
       this.numberOfPages = formRawValue.numberOfPages;
       this.numberOfPrintingFaces = formRawValue.numberOfPrintingFaces;
     }
+  }
+  
+  private navigateToGroup(): void {
+    this.router.navigate([this.orderRoutingService.getGroupRoute(this.groupId)]);
   }
 }
