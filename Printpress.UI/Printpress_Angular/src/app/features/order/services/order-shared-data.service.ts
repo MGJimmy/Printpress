@@ -292,7 +292,8 @@ export class OrderSharedDataService {
     return item.id;
   }
 
-  public addItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number, numberOfPages: number | undefined, numberOfPrintingFaces: number | undefined): void {
+  public addUpdateItem(isUpdate:boolean, orderGroupId: number, itemId: number, name: string, quantity: number, price: number, numberOfPages: number | undefined, numberOfPrintingFaces: number | undefined): void {
+    let newObjectState: ObjectStateEnum = isUpdate ? ObjectStateEnum.modified : ObjectStateEnum.added;
 
     let orderGroup = this.getOrderGroup(orderGroupId);
 
@@ -301,7 +302,7 @@ export class OrderSharedDataService {
     item.name = name;
     item.quantity = quantity;
     item.price = price;
-    item.objectState = ObjectStateEnum.added;
+    item.objectState = this.getObjectState(item.objectState, newObjectState);
 
     if (orderGroup.isHasPrintingService) {
       if (!numberOfPages || !numberOfPrintingFaces) {
@@ -312,23 +313,11 @@ export class OrderSharedDataService {
       let numberOfPrintingFacesItemDetail: ItemDetailsGetDto = item.details.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)!;
 
       numberOfPagesItemDetail.value = numberOfPages.toString();
-      numberOfPagesItemDetail.objectState = ObjectStateEnum.added;
+      numberOfPagesItemDetail.objectState = this.getObjectState(numberOfPagesItemDetail.objectState, newObjectState);
 
       numberOfPrintingFacesItemDetail.value = numberOfPrintingFaces.toString();
-      numberOfPrintingFacesItemDetail.objectState = ObjectStateEnum.added;
+      numberOfPrintingFacesItemDetail.objectState = this.getObjectState(numberOfPrintingFacesItemDetail.objectState, newObjectState);
     }
-
-
-  }
-
-  public updateItem(orderGroupId: number, itemId: number, name: string, quantity: number, price: number): void {
-
-    let item: ItemGetDto = this.getItem(orderGroupId, itemId)!;
-
-    item.name = name;
-    item.quantity = quantity;
-    item.price = price;
-    item.objectState = this.getObjectState(item.objectState, ObjectStateEnum.modified);
   }
 
   public getItem_copy(orderGroupId: number, itemId: number): ItemGetDto {

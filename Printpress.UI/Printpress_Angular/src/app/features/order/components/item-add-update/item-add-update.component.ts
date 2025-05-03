@@ -145,10 +145,10 @@ export class ItemAddUpdateComponent implements OnInit {
     this.MapValuesFromFormToItem(this.itemForm);
 
     if (this.isAddMode) {
-      this.orderSharedService.addItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price, this.numberOfPages, this.numberOfPrintingFaces);
+      this.orderSharedService.addUpdateItem(false, this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price, this.numberOfPages, this.numberOfPrintingFaces);
     }
     else {
-      this.orderSharedService.updateItem(this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price);
+      this.orderSharedService.addUpdateItem(true, this.groupId, this.item.id, this.item.name, this.item.quantity, this.item.price, this.numberOfPages, this.numberOfPrintingFaces);
     }
     // navigate to group component after saving
     this.navigateToGroup();
