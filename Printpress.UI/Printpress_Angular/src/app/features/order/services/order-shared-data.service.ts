@@ -191,10 +191,12 @@ export class OrderSharedDataService {
 
   public updateOrderGroup(id: number) {
     let orderGroup = this.getOrderGroup(id);
-    orderGroup.objectState = ObjectStateEnum.modified;
+    orderGroup.objectState = this.getObjectState(orderGroup.objectState, ObjectStateEnum.modified);
   }
 
-  public saveNewOrderGroup(id: number) {
+
+
+  public addOrderGroup(id: number) {
     let orderGroup = this.getOrderGroup(id);
     orderGroup.objectState = ObjectStateEnum.added;
   }
@@ -326,7 +328,7 @@ export class OrderSharedDataService {
     item.name = name;
     item.quantity = quantity;
     item.price = price;
-    item.objectState = ObjectStateEnum.modified;
+    item.objectState = this.getObjectState(item.objectState, ObjectStateEnum.modified);
   }
 
   public getItem_copy(orderGroupId: number, itemId: number): ItemGetDto {
@@ -497,7 +499,14 @@ export class OrderSharedDataService {
   //=======================
 
 
+  private getObjectState(currentState: ObjectStateEnum, newState: ObjectStateEnum): ObjectStateEnum {
+    // if modifing a newly added object, it should be added not modified
+    if (currentState == ObjectStateEnum.added && newState == ObjectStateEnum.modified) {
+      return ObjectStateEnum.added;
+    }
 
+    return newState;
+  }
 
 
   private generateTempId(ids: number[]): number {
@@ -511,4 +520,6 @@ export class OrderSharedDataService {
   private deepCopy<T>(obj: T): T {
     return JSON.parse(JSON.stringify(obj)) as T;
   }
+
+
 }

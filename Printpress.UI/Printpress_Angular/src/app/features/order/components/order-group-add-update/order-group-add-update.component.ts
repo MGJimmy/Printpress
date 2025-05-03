@@ -194,7 +194,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     if (this.isEdit) {
       this.orderSharedService.updateOrderGroup(this.groupId);
     } else {
-      this.orderSharedService.saveNewOrderGroup(this.groupId);
+      this.orderSharedService.addOrderGroup(this.groupId);
     }
 
     this.navigateToOrderPage();
