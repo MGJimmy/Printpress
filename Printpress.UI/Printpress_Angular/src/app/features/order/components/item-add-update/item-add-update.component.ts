@@ -101,8 +101,8 @@ export class ItemAddUpdateComponent implements OnInit {
   }
 
   private fillFormWithItemData(item: ItemGetDto) {
-    this.numberOfPages = (item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)?.value || 0) as number;
-    this.numberOfPrintingFaces = (item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)?.value || 0) as number;
+    this.numberOfPages = Number(item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPages)?.value || 0);
+    this.numberOfPrintingFaces = Number(item.details?.find(x => x.key === itemDetailsKeyEnum.NumberOfPrintingFaces)?.value || 0);
 
     this.itemForm.patchValue({
       name: item.name,
