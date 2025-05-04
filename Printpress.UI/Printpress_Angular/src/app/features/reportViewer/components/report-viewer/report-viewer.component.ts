@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ReportViewerService } from '../../services/report-viewer.service';
+import { ReportViewerService, ReportType } from '../../services/report-viewer.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-report-viewer',
@@ -19,33 +20,29 @@ import { TableTemplateComponent } from '../../../../shared/components/table-temp
   styleUrl: './report-viewer.component.css'
 })
 export class ReportViewerComponent implements OnInit {
-  firstPtData: any[] = [
-    {subject: "غلاف عربي", division: 'ابتدائي', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف فرنسي", division: 'ابتدائي', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف عربي", division: 'روضة', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف انجليزي", division: 'ابتدائي', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف عربي", division: 'ابتدائي', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف متابعة", division: 'روضة', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف عربي", division: 'ابتدائي', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف عربي", division: 'ابتدائي', pages: 20, copies: 2000, category: 6, total: 7000},
-    {subject: "غلاف عربي", division: 'ابتدائي', pages: 20, copies: 2000, category: 6, total: 7000}
-  ];
-  originalSource : any[] = this.firstPtData;
   pdfUrl: SafeResourceUrl | null = null;
+  reportType: ReportType = ReportType.Invoice;
+  id: number = 0;
 
-  columnDefsPtOne:TableColDefinitionModel[] = [
-    { headerName: 'المادة', column: 'subject' },
-    { headerName: ' الفرقة', column: 'division' },
-    { headerName: 'الصفحات', column: 'pages' },
-    { headerName: 'عدد النسخ', column: 'copies' },
-    { headerName: 'الفئة', column: 'category' },
-    { headerName: 'الإجمالي', column: 'total' },
-  ];
-
-  constructor(private reportViewerService: ReportViewerService, private sanitizer: DomSanitizer) {}
+  constructor(
+    private reportViewerService: ReportViewerService, 
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.reportViewerService.getReport().subscribe((blob :BlobPart ) => {
+    this.route.queryParams.subscribe(params => {
+      this.reportType = params['type'] as ReportType || ReportType.Invoice;
+      this.id = Number(params['id']) || 0;
+      
+      if (this.id) {
+        this.loadReport();
+      }
+    });
+  }
+
+  private loadReport(): void {
+    this.reportViewerService.getReport(this.reportType, this.id).subscribe((blob: BlobPart) => {
       const pdfBlob = new Blob([blob], { type: 'application/pdf' });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl);

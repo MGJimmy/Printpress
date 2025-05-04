@@ -133,35 +133,38 @@ public class InvoiceDocument : IDocument
     }
     void ComposeTable(IContainer container, OrderGroup orderGroup)
     {
-        var servicesNames = string.Join(',', orderGroup.OrderGroupServices.Select(orderGroupService => orderGroupService.Service.Name).ToList());
-        var groubHeader = $"{orderGroup.Name} + ({servicesNames})";
+        var servicesNames = string.Join(',', orderGroup.OrderGroupServices.Select(orderGroupService => orderGroupService.Service.Name));
+        var groupHeader = $"{orderGroup.Name} + ({servicesNames})";
+        var isPrinting = IsPrintingService(orderGroup);
+        uint columnCount = (uint)(isPrinting ? 7 : 5); // Adjusted based on whether printing columns are present
 
         container.Table(table =>
         {
             table.ColumnsDefinition(columns =>
             {
-                columns.RelativeColumn();
-                columns.RelativeColumn();
-                columns.RelativeColumn();
-                columns.RelativeColumn();
-                columns.RelativeColumn();
+                columns.RelativeColumn(); // #
+                columns.RelativeColumn(); // النوع
+                columns.RelativeColumn(); // سعر الوحده
 
-                if (IsPrintingService(orderGroup))
+                if (isPrinting)
                 {
-                    columns.RelativeColumn();
-                    columns.RelativeColumn();
+                    columns.RelativeColumn(); // عدد الصفحات
+                    columns.RelativeColumn(); // عدد الاوجه
                 }
 
+                columns.RelativeColumn(); // الكميه
+                columns.RelativeColumn(); // الاجمالي
             });
 
             table.Header(header =>
             {
-                header.Cell().ColumnSpan(7).Element(CellStyle).AlignCenter().Text(groubHeader).FontColor(Colors.Blue.Darken2);
+                header.Cell().ColumnSpan(columnCount).Element(CellStyle).AlignCenter().Text(groupHeader).FontColor(Colors.Blue.Darken2);
+
                 header.Cell().Element(CellStyle).AlignCenter().Text("#");
                 header.Cell().Element(CellStyle).AlignCenter().Text("النوع");
                 header.Cell().Element(CellStyle).AlignCenter().Text("سعر الوحده");
 
-                if (IsPrintingService(orderGroup))
+                if (isPrinting)
                 {
                     header.Cell().Element(CellStyle).AlignCenter().Text("عدد الصفحات");
                     header.Cell().Element(CellStyle).AlignCenter().Text("عدد الاوجه");
@@ -170,39 +173,29 @@ public class InvoiceDocument : IDocument
                 header.Cell().Element(CellStyle).AlignCenter().Text("الكميه");
                 header.Cell().Element(CellStyle).AlignCenter().Text("الاجمالي");
 
-
-
-
                 static IContainer CellStyle(IContainer container)
                 {
                     return container.DefaultTextStyle(x => x.SemiBold()).Border(1, Unit.Mil).BorderColor(Colors.Black).PaddingVertical(8);
                 }
             });
 
-
-
             foreach (var item in orderGroup.Items)
             {
-
                 table.Cell().Element(CellStyle).AlignCenter().Text((orderGroup.Items.IndexOf(item) + 1).ToString()).FontSize(12);
                 table.Cell().Element(CellStyle).AlignCenter().Text(item.Name).FontSize(12);
                 table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price}").FontSize(12);
 
-                if (IsPrintingService(orderGroup))
+                if (isPrinting)
                 {
-                    var noOfPages = item.Details.FirstOrDefault(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value;
-                    var numberOfPrintingFaces = item.Details.FirstOrDefault(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value;
+                    var noOfPages = item.Details.FirstOrDefault(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value ?? "";
+                    var numberOfPrintingFaces = item.Details.FirstOrDefault(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value ?? "";
 
                     table.Cell().Element(CellStyle).AlignCenter().Text(noOfPages).FontSize(12);
                     table.Cell().Element(CellStyle).AlignCenter().Text(numberOfPrintingFaces).FontSize(12);
-
                 }
 
                 table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString()).FontSize(12);
                 table.Cell().Element(CellStyle).AlignCenter().Text($"{item.Price * item.Quantity}").FontSize(12);
-
-
-
 
                 static IContainer CellStyle(IContainer container)
                 {
@@ -210,7 +203,7 @@ public class InvoiceDocument : IDocument
                 }
             }
 
-            table.Cell().ColumnSpan(6).Element(FooterCellStyle).AlignCenter().Text("إجمالي المجموعه");
+            table.Cell().ColumnSpan(columnCount - 1).Element(FooterCellStyle).AlignCenter().Text("إجمالي المجموعه");
             table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{orderGroup.Items.Sum(item => item.Price * item.Quantity)}");
 
             static IContainer FooterCellStyle(IContainer container)
@@ -222,19 +215,14 @@ public class InvoiceDocument : IDocument
                                .Background(Colors.Grey.Lighten5);
             }
 
-            static bool IsPrintingService(OrderGroup orderGroup)
-            {
-                return orderGroup.OrderGroupServices.Any(grbService => grbService.Service.ServiceCategory == ServiceCategoryEnum.Printing);
-            }
 
         });
 
-
-
-
+        static bool IsPrintingService(OrderGroup orderGroup)
+        {
+            return orderGroup.OrderGroupServices.Any(grbService => grbService.Service.ServiceCategory == ServiceCategoryEnum.Printing);
+        }
     }
-
-
 
 
 

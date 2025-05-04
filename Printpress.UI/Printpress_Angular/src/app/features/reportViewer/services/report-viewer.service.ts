@@ -4,17 +4,24 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 
+export enum ReportType {
+  Invoice = 'invoice',
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ReportViewerService {
+  constructor(private http: HttpService) {}
 
-  private apiUrl = 'https://localhost:7259/home/contact'; // Replace with your API URL
+  getReport(reportType: ReportType, id: number): Observable<BlobPart> {
+    let param = {};
+    switch (reportType) {
+      case ReportType.Invoice:
+        return this.http.getBlob(ApiUrlResource.Report.OrderReport(id), param);
 
-  constructor(private http:HttpService) {}
-
-  getReport():Observable<BlobPart> { 
-    let param ={}
-    return this.http.getBlob(ApiUrlResource.Report.OrderReport, param);
+      default:
+        throw new Error('Invalid report type');
+    }
   }
 }

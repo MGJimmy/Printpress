@@ -210,7 +210,14 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public goBack() {
     this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
   }
+
+  public generateInvoice_Click(){
+    window.open(`report-viewer?type=invoice&id=${this.orderGetDto.id}`, "_blank");
+  }
 }
+
+
+
 
 interface OrderGroupGridViewModel {
   name: string;

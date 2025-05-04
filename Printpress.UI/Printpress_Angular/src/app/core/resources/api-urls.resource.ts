@@ -21,9 +21,11 @@ export class ApiUrlResource {
     delete: (id:number) => `${ApiUrlResource.Order_URL}/delete/${id}`,
   };
 
-  private static Report_URL = '/report';
+  private static Report_URL = '/api/report';
   public static readonly Report = {
-    OrderReport: ApiUrlResource.Report_URL + '/orderReport',
+    OrderReport: (id:number) => ApiUrlResource.Report_URL + `/generateInvoiceReport/${id}`,
+    OrderSummaryReport: (id:number) => ApiUrlResource.Report_URL + `/generateOrderSummaryReport/${id}`,
+    ClientStatementReport: (id:number) => ApiUrlResource.Report_URL + `/generateClientStatementReport/${id}`
   };
 
   private static OrderTransaction_URL = '/api/OrderTransaction';
