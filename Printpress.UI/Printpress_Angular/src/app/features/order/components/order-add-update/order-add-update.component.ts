@@ -212,7 +212,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   public generateInvoice_Click(){
-    window.open(`report-viewer?type=invoice&id=${this.orderGetDto.id}`, "_blank");
+    window.open(`report-viewer?reportName=invoice&id=${this.orderGetDto.id}`, "_blank");
   }
 }
 

@@ -1,58 +1,43 @@
-﻿using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
+﻿using System.Collections.Specialized;
+using QuestPDF.Fluent;
 
 namespace Printpress.API.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Report(IUnitOfWork _unitOfWork) : ControllerBase
+    public class Report(IEnumerable<IReportFactory> reportFactories) : ControllerBase
     {
-        [HttpGet]
-        [Route("generateInvoiceReportTest/{id}")] // this for testing purpose only
-        public async Task<IActionResult> GenerateInvoiceReportTest(int id)
-        {
-            QuestPDF.Settings.License = LicenseType.Community;
-
-            string[] includes = [
-                     nameof(Order.Client),             
-                     $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(Item.Details)}",
-                     $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}"
-            ];
-
-            var model = await _unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == id, true, includes);
-
-            var document = new InvoiceDocument { Model = model };
-
-            document.GeneratePdfAndShow();
-
-            return Ok();
-
-         
-        }
-
-
 
         [HttpGet]
-        [Route("generateInvoiceReport/{id}")]
-        public async Task<IActionResult> GenerateInvoiceReport(int id)
+        [Route("generateReport")]
+        public async Task<IActionResult> GenerateRepor()
         {
-            QuestPDF.Settings.License = LicenseType.Community;
 
-            string[] includes = [
-                     nameof(Order.Client),
-                     $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(Item.Details)}",
-                     $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}"
-            ];
+            NameValueCollection queryParams = new NameValueCollection();
 
-            var model = await _unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == id, true, includes);
+            foreach (var pair in Request.Query)
+            {
+                queryParams.Add(pair.Key, pair.Value);
+            }
 
-            var document = new InvoiceDocument { Model = model };
+            var reportFactory = reportFactories.FirstOrDefault(x => x.ReportName == queryParams["reportName"]);
 
-            var tempFilePath = Path.GetTempFileName();
+            if (reportFactory == null)
+            {
+                return NotFound("Report not found");
+            }
+            var document = await reportFactory.GenerateReport(queryParams);
+            if (document == null)
+            {
+                return NotFound("Document not found");
+            }
+            // Generate the PDF and return it as a file
+            var result = new FileContentResult(document.GeneratePdf(), "application/pdf")
+            {
+                FileDownloadName = $"{queryParams["reportName"]}.pdf"
+            };
 
-            document.GeneratePdf(tempFilePath);
-
-            return File(new FileStream(tempFilePath, FileMode.Open), "application/pdf", "invoice.pdf");
+            return result;
 
         }
     }

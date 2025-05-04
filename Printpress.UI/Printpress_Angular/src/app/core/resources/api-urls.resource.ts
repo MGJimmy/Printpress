@@ -23,9 +23,7 @@ export class ApiUrlResource {
 
   private static Report_URL = '/api/report';
   public static readonly Report = {
-    OrderReport: (id:number) => ApiUrlResource.Report_URL + `/generateInvoiceReport/${id}`,
-    OrderSummaryReport: (id:number) => ApiUrlResource.Report_URL + `/generateOrderSummaryReport/${id}`,
-    ClientStatementReport: (id:number) => ApiUrlResource.Report_URL + `/generateClientStatementReport/${id}`
+    OrderReport:  ApiUrlResource.Report_URL + `/generateReport`, 
   };
 
   private static OrderTransaction_URL = '/api/OrderTransaction';

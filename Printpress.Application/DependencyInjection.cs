@@ -28,6 +28,11 @@ public static class DependencyInjection
         services.AddScoped<ItemDetailsMapper>();
 
 
+
+        //reports
+        services.AddScoped<IReportFactory, InvoiceReportFactory>();
+
+
         return services;
 
     }

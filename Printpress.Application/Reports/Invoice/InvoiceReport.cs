@@ -1,4 +1,5 @@
-﻿using Printpress.Domain.Entities;
+﻿using System.Collections.Specialized;
+using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -6,7 +7,7 @@ using QuestPDF.Infrastructure;
 
 namespace Printpress.Application;
 
-public class InvoiceDocument : IDocument
+public class InvoiceReport : IDocument
 {
     public required Order Model { get; set; }
 
@@ -224,8 +225,7 @@ public class InvoiceDocument : IDocument
         }
     }
 
-
-
+  
 }
 
 
