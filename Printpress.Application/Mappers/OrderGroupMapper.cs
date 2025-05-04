@@ -15,7 +15,7 @@ namespace Printpress.Application
             };
 
             group.Items = _itemMapper.MapFromDestinationToSource(destinationEntity.Items);
-            group.Services = _groupServiceMapper.MapFromDestinationToSource(destinationEntity.OrderGroupServices);
+            group.OrderGroupServices = _groupServiceMapper.MapFromDestinationToSource(destinationEntity.OrderGroupServices);
 
             return group;
         }

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Printpress.Application;
-using Printpress.Domain.Entities;
-using QuestPDF.Fluent;
+﻿using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 
 namespace Printpress.API.Controllers.Api
@@ -11,14 +8,18 @@ namespace Printpress.API.Controllers.Api
     public class Report(IUnitOfWork _unitOfWork) : ControllerBase
     {
         [HttpGet]
-        [Route("generateInvoiceReport")]
-        public async Task<IActionResult> GenerateInvoiceReport()
+        [Route("generateInvoiceReport/{id}")]
+        public async Task<IActionResult> GenerateInvoiceReport(int id)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
-            string[] includes = [nameof(Order.Client), nameof(Order.OrderGroups), $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}"];
+            string[] includes = [
+                     nameof(Order.Client),             
+                     $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(Item.Details)}",
+                     $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}"
+            ];
 
-            var model = await _unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == 1, true, includes);
+            var model = await _unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == id, true, includes);
 
             var document = new InvoiceDocument { Model = model };
 

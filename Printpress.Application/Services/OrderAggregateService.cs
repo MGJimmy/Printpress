@@ -24,8 +24,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             $"{nameof(Order.OrderGroups)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(Item.Details)}",
-            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}",
-            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Services)}.{nameof(OrderGroupService.Service)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}",
             $"{nameof(Order.Services)}",
             $"{nameof(Order.Client)}"];
 
@@ -80,7 +80,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         var allServices = await _IUnitOfWork.ServiceRepository.AllAsync();
 
-        var groupServicesIds = new HashSet<int>(group.Services.Select(d => d.ServiceId));
+        var groupServicesIds = new HashSet<int>(group.OrderGroupServices.Select(d => d.ServiceId));
         var currentGroupServices = allServices.Where(s => groupServicesIds.Contains(s.Id)).ToList();
 
         if (currentGroupServices.Exists(x => x.ServiceCategory == ServiceCategoryEnum.Selling))

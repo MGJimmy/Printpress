@@ -33,7 +33,7 @@ namespace Printpress.Application
                 Id = orderService.Id,
                 Name = orderService.Name,
                 OrderId = orderService.OrderId,
-                OrderGroupServices = orderService.Services.MapAsList(MapToGroupServiceDTO),
+                OrderGroupServices = orderService.OrderGroupServices.MapAsList(MapToGroupServiceDTO),
                 Items = orderService.Items.MapAsList(MapToItemDTO),
                 ObjectState = TrackingState.Unchanged
             };
