@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    internal interface ITrackingState
+    public interface ITrackingState
     {
         public TrackingState ObjectState { get; set; }
     }
