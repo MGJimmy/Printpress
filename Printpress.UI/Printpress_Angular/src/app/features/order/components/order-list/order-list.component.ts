@@ -89,5 +89,9 @@ export class OrderListComponent implements OnInit {
   protected onAddOrder() {
     this.router.navigate([this.orderRoutingService.getOrderAddRoute()]);
   }
+
+  protected generateInvoice_Click(orderId: number) {
+    window.open(`report-viewer?reportName=invoice&id=${orderId}`, "_blank");
+  }
 }
 
