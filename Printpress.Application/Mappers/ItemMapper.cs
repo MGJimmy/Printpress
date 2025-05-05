@@ -14,7 +14,7 @@ namespace Printpress.Application
                 Name = destinationEntity.Name,
                 Price = destinationEntity.Price,
                 Quantity = destinationEntity.Quantity,
-                State = destinationEntity.ObjectState,
+                ObjectState = destinationEntity.ObjectState,
                 IsDeleted = destinationEntity.ObjectState == TrackingState.Deleted,
                 Details = itemDetailsMapper.MapFromDestinationToSource(destinationEntity.Details)
             };

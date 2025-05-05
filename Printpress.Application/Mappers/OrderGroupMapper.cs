@@ -11,7 +11,7 @@ namespace Printpress.Application
             {
                 Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 Name = destinationEntity.Name,
-                State = destinationEntity.ObjectState
+                ObjectState = destinationEntity.ObjectState
             };
 
             group.Items = _itemMapper.MapFromDestinationToSource(destinationEntity.Items);

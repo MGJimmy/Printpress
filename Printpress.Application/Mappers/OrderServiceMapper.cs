@@ -10,7 +10,7 @@ namespace Printpress.Application
             {
                 Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
-                State = destinationEntity.ObjectState,
+                ObjectState = destinationEntity.ObjectState,
                 Price = destinationEntity.Price
             };
         }

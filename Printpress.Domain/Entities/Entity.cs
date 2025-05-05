@@ -6,5 +6,5 @@ namespace Printpress.Domain.Entities;
 public class Entity : ITrackedEntity
 {
     [NotMapped]
-    public TrackingState State { get; set; }
+    public TrackingState ObjectState { get; set; }
 }

@@ -12,7 +12,7 @@ namespace Printpress.Application
     {
         public static IEnumerable<T> NotDeleted<T>(this IEnumerable<T> source) where T : ITrackedEntity
         {
-            return source.Where(x => x.State != TrackingState.Deleted);
+            return source.Where(x => x.ObjectState != TrackingState.Deleted);
         }
     }
 }
