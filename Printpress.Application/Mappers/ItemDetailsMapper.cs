@@ -18,7 +18,7 @@ namespace Printpress.Application.Mappers
                 ItemId = destinationEntity.ItemId,
                 ItemDetailsKey = destinationEntity.Key,
                 Value = destinationEntity.Value,
-                State = destinationEntity.ObjectState
+                ObjectState = destinationEntity.ObjectState
             };
         }
 

@@ -4,5 +4,5 @@ namespace Printpress.Domain;
 
 public interface ITrackedEntity
 {
-    public TrackingState State { get; set; }
+    public TrackingState ObjectState { get; set; }
 }

@@ -1,4 +1,6 @@
-﻿using Printpress.Application.Validators;
+﻿using Microsoft.EntityFrameworkCore;
+using Printpress.Application.Validators;
+using Printpress.Domain;
 using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
 namespace Printpress.Application;
@@ -66,11 +68,11 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         decimal totalOrderPrice = 0;
 
-        foreach (var group in order.OrderGroups)
+        foreach (var group in order.OrderGroups.NotDeleted())
         {
             await SetGroupItemPrices(group, order.Services);
 
-            totalOrderPrice += group.Items.Sum(i => i.Price * i.Quantity);
+            totalOrderPrice += group.Items.NotDeleted().Sum(i => i.Price * i.Quantity);
         }
 
         return totalOrderPrice;
@@ -80,7 +82,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         var allServices = await _IUnitOfWork.ServiceRepository.AllAsync();
 
-        var groupServicesIds = new HashSet<int>(group.OrderGroupServices.Select(d => d.ServiceId));
+        var groupServicesIds = new HashSet<int>(group.OrderGroupServices.NotDeleted().Select(d => d.ServiceId));
         var currentGroupServices = allServices.Where(s => groupServicesIds.Contains(s.Id)).ToList();
 
         if (currentGroupServices.Exists(x => x.ServiceCategory == ServiceCategoryEnum.Selling))
@@ -95,7 +97,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         // Validate incoming data to be .... ???/???/???
 
-        foreach (var item in group.Items)
+        foreach (var item in group.Items.NotDeleted())
         {
             decimal itemPrice = 0;
 
@@ -124,7 +126,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
             decimal GetservicePrice(Service service)
             {
-                return orderService.Find(x => service.Id == x.ServiceId).Price.GetValueOrDefault();
+                return orderService.NotDeleted().First(x => service.Id == x.ServiceId).Price.GetValueOrDefault();
             }
         }
     }

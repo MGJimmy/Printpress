@@ -12,7 +12,7 @@ internal class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMappe
             Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
-            State = destinationEntity.ObjectState
+            ObjectState = destinationEntity.ObjectState
 
         };
 

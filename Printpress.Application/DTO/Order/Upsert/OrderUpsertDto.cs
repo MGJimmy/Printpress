@@ -1,10 +1,8 @@
-﻿using Printpress.Domain.Enums;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Printpress.Application;
 
-public class OrderUpsertDto : ITrackingState
+public class OrderUpsertDto : TrackedDTO
 {
     public int Id { get; set; }
 
@@ -14,8 +12,6 @@ public class OrderUpsertDto : ITrackingState
     [Required]
     public int ClientId { get; set; }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public TrackingState ObjectState { get; set; }
     public List<OrderGroupUpsertDTO> OrderGroups { get; set; }
     public List<OrderServiceUpsertDTO> OrderServices { get; set; }
 }

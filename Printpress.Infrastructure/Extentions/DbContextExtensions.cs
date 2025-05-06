@@ -30,7 +30,7 @@ public static class DbContextExtensions
 
         var entry = db.Entry(entity);
 
-        entry.State = entity.State switch
+        entry.State = entity.ObjectState switch
         {
             TrackingState.Added => EntityState.Added,
             TrackingState.Modified => EntityState.Modified,
