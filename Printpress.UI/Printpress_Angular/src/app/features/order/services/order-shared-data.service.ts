@@ -486,9 +486,9 @@ export class OrderSharedDataService {
     return this.orderObject.orderServices;
   }
 
-  public getOrderServices_copy(): OrderServicesGetDTO[] {
+  public getOrderServices_copy(includeDeleted: boolean = false): OrderServicesGetDTO[] {
     let orderServices = this.deepCopy(this.getOrderServices());
-    return this.filterDeletedObjectArray(orderServices);
+    return includeDeleted ? orderServices : this.filterDeletedObjectArray(orderServices);
   }
 
   public setOrderServices(orderServices: OrderServicesGetDTO[]) {

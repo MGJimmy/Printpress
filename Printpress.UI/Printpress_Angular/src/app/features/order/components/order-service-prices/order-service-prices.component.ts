@@ -54,11 +54,13 @@ export class OrderServicePricesComponent implements OnInit {
     let orderState = this._orderSharedService.getOrderObject_copy().objectState;
     this.isEditMode = orderState != ObjectStateEnum.temp && orderState != ObjectStateEnum.added;
 
-    this.existingServices = this._orderSharedService.getOrderServices_copy();
+    this.existingServices = this._orderSharedService.getOrderServices_copy(true);
   }
 
   async ngOnInit() {
-    await this.fillFromExistingServices();
+    if(this.isEditMode){
+      await this.fillFromExistingServices();
+    }
     await this.fillFromNewGroupServices();
   }
 
