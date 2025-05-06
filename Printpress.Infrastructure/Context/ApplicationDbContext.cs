@@ -6,12 +6,13 @@ using Printpress.Domain.Interfaces;
 
 namespace Printpress.Infrastructure;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
     public DbSet<Client> Client { get; set; }
+ 
     public DbSet<PrintingServiceDetails> PrintingServiceDetails { get; set; }
     public DbSet<PrintingType> PrintingType { get; set; }
     public DbSet<ProductStock> ProductStock { get; set; }

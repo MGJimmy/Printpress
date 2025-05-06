@@ -1,5 +1,4 @@
-﻿using System.Collections.Specialized;
-using Printpress.Domain.Entities;
+﻿using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -225,7 +224,7 @@ public class InvoiceReport : IDocument
         }
     }
 
-  
+
 }
 
 

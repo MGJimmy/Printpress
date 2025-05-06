@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Specialized;
 using Printpress.Domain.Entities;
-using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 
 namespace Printpress.Application
@@ -29,7 +23,7 @@ namespace Printpress.Application
 
             var document = new InvoiceReport { Model = model };
 
-            return document;        
+            return document;
 
         }
     }

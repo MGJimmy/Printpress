@@ -1,12 +1,6 @@
-﻿global using System.Text;
-global using Microsoft.AspNetCore.Authentication.JwtBearer;
-global using Microsoft.AspNetCore.Identity;
-global using Microsoft.AspNetCore.Mvc;
-global using Microsoft.IdentityModel.Tokens;
+﻿global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.OpenApi.Models;
 global using Printpress.API.Middlewares;
 global using Printpress.Application;
-global using Printpress.Domain.Entities;
 global using Printpress.Infrastructure;
-global using SecurityProvider;
 global using Swashbuckle.AspNetCore.SwaggerGen;

@@ -23,545 +23,545 @@ namespace Printpress.Infrastructure.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Printpress.Domain.Entities.Client", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                b.Property<string>("Address")
+                    .HasMaxLength(500)
+                    .HasColumnType("character varying(500)");
 
-                    b.Property<string>("Mobile")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                b.Property<string>("Mobile")
+                    .HasMaxLength(20)
+                    .HasColumnType("character varying(20)");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Client", (string)null);
-                });
+                b.ToTable("Client", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.Property<int>("OrderGroupId")
-                        .HasColumnType("integer");
+                b.Property<int>("OrderGroupId")
+                    .HasColumnType("integer");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                b.Property<decimal>("Price")
+                    .HasColumnType("numeric");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                b.Property<int>("Quantity")
+                    .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("OrderGroupId");
+                b.HasIndex("OrderGroupId");
 
-                    b.ToTable("Item", (string)null);
-                });
+                b.ToTable("Item", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ItemDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
-                    b.Property<int>("ItemDetailsKeyId")
-                        .HasColumnType("integer");
+                b.Property<int>("ItemDetailsKeyId")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer");
+                b.Property<int>("ItemId")
+                    .HasColumnType("integer");
 
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                b.Property<string>("Value")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("character varying(100)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("ItemDetailsKeyId");
+                b.HasIndex("ItemDetailsKeyId");
 
-                    b.HasIndex("ItemId");
+                b.HasIndex("ItemId");
 
-                    b.ToTable("ItemDetails", (string)null);
-                });
+                b.ToTable("ItemDetails", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ItemDetailsKey_LKP", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("character varying(100)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("ItemDetailsKey_LKP", (string)null);
-                });
+                b.ToTable("ItemDetailsKey_LKP", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
+                b.Property<int>("ClientId")
+                    .HasColumnType("integer");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                b.Property<int>("Status")
+                    .HasColumnType("integer");
 
-                    b.Property<decimal?>("TotalPaid")
-                        .HasColumnType("numeric");
+                b.Property<decimal?>("TotalPaid")
+                    .HasColumnType("numeric");
 
-                    b.Property<decimal?>("TotalPrice")
-                        .HasColumnType("numeric");
+                b.Property<decimal?>("TotalPrice")
+                    .HasColumnType("numeric");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
+                b.HasIndex("ClientId");
 
-                    b.ToTable("Order", (string)null);
-                });
+                b.ToTable("Order", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DeliveryDate")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime?>("DeliveryDate")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DeliveryName")
-                        .HasColumnType("text");
+                b.Property<string>("DeliveryName")
+                    .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                b.Property<int>("OrderId")
+                    .HasColumnType("integer");
 
-                    b.Property<string>("ReceiverName")
-                        .HasColumnType("text");
+                b.Property<string>("ReceiverName")
+                    .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                b.Property<int>("Status")
+                    .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                b.HasIndex("OrderId");
 
-                    b.ToTable("OrderGroup", (string)null);
-                });
+                b.ToTable("OrderGroup", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroupService", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
-                    b.Property<int>("OrderGroupId")
-                        .HasColumnType("integer");
+                b.Property<int>("OrderGroupId")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                b.Property<int>("ServiceId")
+                    .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("OrderGroupId");
+                b.HasIndex("OrderGroupId");
 
-                    b.HasIndex("ServiceId");
+                b.HasIndex("ServiceId");
 
-                    b.ToTable("OrderGroupService", (string)null);
-                });
+                b.ToTable("OrderGroupService", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderService", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                b.Property<int>("OrderId")
+                    .HasColumnType("integer");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("numeric");
+                b.Property<decimal?>("Price")
+                    .HasColumnType("numeric");
 
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                b.Property<int>("ServiceId")
+                    .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                b.HasIndex("OrderId");
 
-                    b.HasIndex("ServiceId");
+                b.HasIndex("ServiceId");
 
-                    b.ToTable("OrderService", (string)null);
-                });
+                b.ToTable("OrderService", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderTransaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
+                b.Property<decimal>("Amount")
+                    .HasColumnType("numeric");
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime>("CreatedOn")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                b.Property<string>("Notes")
+                    .HasMaxLength(500)
+                    .HasColumnType("character varying(500)");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                b.Property<int>("OrderId")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("TransactionType")
-                        .HasColumnType("integer");
+                b.Property<int>("TransactionType")
+                    .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                b.HasIndex("OrderId");
 
-                    b.ToTable("OrderTransaction", (string)null);
-                });
+                b.ToTable("OrderTransaction", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.PrintingServiceDetails", b =>
-                {
-                    b.Property<int>("ServiceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("ServiceId")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ServiceId"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ServiceId"));
 
-                    b.Property<int>("PrintingTypeId")
-                        .HasColumnType("integer");
+                b.Property<int>("PrintingTypeId")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("ProductStockId")
-                        .HasColumnType("integer");
+                b.Property<int>("ProductStockId")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("ServiceId1")
-                        .HasColumnType("integer");
+                b.Property<int>("ServiceId1")
+                    .HasColumnType("integer");
 
-                    b.HasKey("ServiceId");
+                b.HasKey("ServiceId");
 
-                    b.HasIndex("PrintingTypeId");
+                b.HasIndex("PrintingTypeId");
 
-                    b.HasIndex("ProductStockId");
+                b.HasIndex("ProductStockId");
 
-                    b.HasIndex("ServiceId1");
+                b.HasIndex("ServiceId1");
 
-                    b.ToTable("PrintingServiceDetails", (string)null);
-                });
+                b.ToTable("PrintingServiceDetails", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.PrintingType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("PrintingType", (string)null);
-                });
+                b.ToTable("PrintingType", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ProductStock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                b.Property<int>("Quantity")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("StockCategory")
-                        .HasColumnType("integer");
+                b.Property<int>("StockCategory")
+                    .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("ProductStock", (string)null);
-                });
+                b.ToTable("ProductStock", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Service", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("numeric");
+                b.Property<decimal?>("Price")
+                    .HasColumnType("numeric");
 
-                    b.Property<int>("ServiceCategoryId")
-                        .HasColumnType("integer");
+                b.Property<int>("ServiceCategoryId")
+                    .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("ServiceCategoryId");
+                b.HasIndex("ServiceCategoryId");
 
-                    b.ToTable("Service", (string)null);
-                });
+                b.ToTable("Service", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ServiceCategory_LKP", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("character varying(100)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("ServiceCategory_LKP", (string)null);
-                });
+                b.ToTable("ServiceCategory_LKP", (string)null);
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.OrderGroup", "OrderGroup")
-                        .WithMany("Items")
-                        .HasForeignKey("OrderGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.OrderGroup", "OrderGroup")
+                    .WithMany("Items")
+                    .HasForeignKey("OrderGroupId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("OrderGroup");
-                });
+                b.Navigation("OrderGroup");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.ItemDetails", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.ItemDetailsKey_LKP", "ItemDetailsKey_LKP")
-                        .WithMany()
-                        .HasForeignKey("ItemDetailsKeyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.ItemDetailsKey_LKP", "ItemDetailsKey_LKP")
+                    .WithMany()
+                    .HasForeignKey("ItemDetailsKeyId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("Printpress.Domain.Entities.Item", "Item")
-                        .WithMany("Details")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.HasOne("Printpress.Domain.Entities.Item", "Item")
+                    .WithMany("Details")
+                    .HasForeignKey("ItemId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Item");
+                b.Navigation("Item");
 
-                    b.Navigation("ItemDetailsKey_LKP");
-                });
+                b.Navigation("ItemDetailsKey_LKP");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.Client", "Client")
-                        .WithMany("Orders")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.Client", "Client")
+                    .WithMany("Orders")
+                    .HasForeignKey("ClientId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Client");
-                });
+                b.Navigation("Client");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroup", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.Order", "Order")
-                        .WithMany("OrderGroups")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.Order", "Order")
+                    .WithMany("OrderGroups")
+                    .HasForeignKey("OrderId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Order");
-                });
+                b.Navigation("Order");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroupService", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.OrderGroup", "OrderGroup")
-                        .WithMany("Services")
-                        .HasForeignKey("OrderGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.OrderGroup", "OrderGroup")
+                    .WithMany("Services")
+                    .HasForeignKey("OrderGroupId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("Printpress.Domain.Entities.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.HasOne("Printpress.Domain.Entities.Service", "Service")
+                    .WithMany()
+                    .HasForeignKey("ServiceId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("OrderGroup");
+                b.Navigation("OrderGroup");
 
-                    b.Navigation("Service");
-                });
+                b.Navigation("Service");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderService", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.Order", "Order")
-                        .WithMany("Services")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.Order", "Order")
+                    .WithMany("Services")
+                    .HasForeignKey("OrderId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("Printpress.Domain.Entities.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.HasOne("Printpress.Domain.Entities.Service", "Service")
+                    .WithMany()
+                    .HasForeignKey("ServiceId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Order");
+                b.Navigation("Order");
 
-                    b.Navigation("Service");
-                });
+                b.Navigation("Service");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderTransaction", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.Order", "Order")
-                        .WithMany("Transactions")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.Order", "Order")
+                    .WithMany("Transactions")
+                    .HasForeignKey("OrderId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Order");
-                });
+                b.Navigation("Order");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.PrintingServiceDetails", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.PrintingType", "PrintingType")
-                        .WithMany()
-                        .HasForeignKey("PrintingTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.PrintingType", "PrintingType")
+                    .WithMany()
+                    .HasForeignKey("PrintingTypeId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("Printpress.Domain.Entities.ProductStock", "ProductStock")
-                        .WithMany()
-                        .HasForeignKey("ProductStockId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.HasOne("Printpress.Domain.Entities.ProductStock", "ProductStock")
+                    .WithMany()
+                    .HasForeignKey("ProductStockId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("Printpress.Domain.Entities.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.HasOne("Printpress.Domain.Entities.Service", "Service")
+                    .WithMany()
+                    .HasForeignKey("ServiceId1")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("PrintingType");
+                b.Navigation("PrintingType");
 
-                    b.Navigation("ProductStock");
+                b.Navigation("ProductStock");
 
-                    b.Navigation("Service");
-                });
+                b.Navigation("Service");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Service", b =>
-                {
-                    b.HasOne("Printpress.Domain.Entities.ServiceCategory_LKP", "ServiceCategory_LKP")
-                        .WithMany()
-                        .HasForeignKey("ServiceCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Printpress.Domain.Entities.ServiceCategory_LKP", "ServiceCategory_LKP")
+                    .WithMany()
+                    .HasForeignKey("ServiceCategoryId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("ServiceCategory_LKP");
-                });
+                b.Navigation("ServiceCategory_LKP");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Client", b =>
-                {
-                    b.Navigation("Orders");
-                });
+            {
+                b.Navigation("Orders");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Item", b =>
-                {
-                    b.Navigation("Details");
-                });
+            {
+                b.Navigation("Details");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.Order", b =>
-                {
-                    b.Navigation("OrderGroups");
+            {
+                b.Navigation("OrderGroups");
 
-                    b.Navigation("Services");
+                b.Navigation("Services");
 
-                    b.Navigation("Transactions");
-                });
+                b.Navigation("Transactions");
+            });
 
             modelBuilder.Entity("Printpress.Domain.Entities.OrderGroup", b =>
-                {
-                    b.Navigation("Items");
+            {
+                b.Navigation("Items");
 
-                    b.Navigation("Services");
-                });
+                b.Navigation("Services");
+            });
 #pragma warning restore 612, 618
         }
     }

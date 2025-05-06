@@ -14,7 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderTransactionService, OrderTransactionService>();
         services.AddScoped<IOrderAggregateService, OrderAggregateService>();
         services.AddScoped<IServiceService, ServiceService>();
-        services.AddScoped<IAccountService, AccountService>();
+  
 
         //Mappers
         services.AddScoped<ClientMapper>();

@@ -1,20 +1,33 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Printpress.Application;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Printpress.Application.Commands;
+using UserService;
 
 namespace Printpress.API.Controllers.Account
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IAccountService _IAccountService) : ControllerBase
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
     {
-        [HttpPost]
-        [Route("login")]
-        [AllowAnonymous]
-        public IActionResult Login(string username, string password)
+        private readonly IMediator _mediator;
+
+        public AccountController(IMediator mediator)
         {
-            var result = _IAccountService.Login(username,password);
+            _mediator = mediator;
+        }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginCommand request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterCommand request)
+        {
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
     }

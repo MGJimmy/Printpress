@@ -1,5 +1,7 @@
 ﻿
 
+using UserService;
+
 namespace Printpress.API;
 
 public static class IServiceCollectionExtensions
@@ -13,39 +15,12 @@ public static class IServiceCollectionExtensions
         services.RegisterInfrastructureServices(configuration);
         services.AddExceptionHandler<GlobalExceptionMiddleWare>();
         services.AddCros();
-        services.AddAuthentication(configuration);
         services.AddAuthorization(configuration);
-        services.AddIdentity(configuration);
-        services.AddTokenProvider();
+        services.AddUserServices(configuration);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+      
     }
-    private static IServiceCollection AddAuthentication(this IServiceCollection service, IConfiguration configuration)
-    {
-        var jwtSettingsSection = configuration.GetSection("JwtOption");
-
-        service.Configure<JwtOption>(jwtSettingsSection);
-
-        var jwtSettings = jwtSettingsSection.Get<JwtOption>();
-
-        var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
-
-        service.AddAuthentication(option =>
-        {
-            option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-        }).AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters()
-            {
-                ValidIssuer = jwtSettings.Issuer,
-                ValidAudience = jwtSettings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateLifetime = true,
-            };
-        });
-
-        return service;
-    }
+  
     private static IServiceCollection AddAuthorization(this IServiceCollection service, IConfiguration configuration)
     {
         service.AddAuthorization();
@@ -111,22 +86,6 @@ public static class IServiceCollectionExtensions
 
         return services;
     }
-    private static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-        {
-            options.User.RequireUniqueEmail = true;
-            options.Password.RequiredLength = 12;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-        })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
-
-        services.AddIdentityProvider<ApplicationUser>();
-
-        return services;
-    }
+   
 
 }

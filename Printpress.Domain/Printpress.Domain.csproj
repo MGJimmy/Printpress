@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SecurityProvider\SecurityProvider.csproj" />
+    <ProjectReference Include="..\SecurityProvider\UserService.csproj" />
   </ItemGroup>
 
 </Project>
