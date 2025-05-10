@@ -18,7 +18,7 @@ The `UserService` project is a .NET application designed to manage user authenti
 - **Interfaces/**: Contains interfaces for abstraction, such as `IApplicationUser`, `ITokenProvider`, and `IPermissionProvider`.
 - **Migrations/**: Entity Framework migrations for database schema changes.
 - **Options/**: Configuration options like `JwtOption`.
-- **Presistance/**: Database context (`UserDbContext`).
+- **Persistence/**: Database context (`UserDbContext`).
 - **Providers/**: Implementation of providers for identity, roles, and tokens.
 - **Responses/**: Response models like `LoginResponse` and `RegistrationResponse`.
 
@@ -47,15 +47,21 @@ The `UserService` project is a .NET application designed to manage user authenti
 ### Database Update
 To apply migrations to the database, use the following command:
 
+
+```Package Consol Manager
+update-database -Context UserDbContext
+```
+
 ```bash
 dotnet ef database update -Context UserDbContext
 ```
+
 
 This ensures that the database schema is up-to-date with the latest migrations.
 
 ## Usage
 - Configure JWT options in `appsettings.json` under the `Jwt` section.
-- Use the `AddIdentity` method to set up ASP.NET Identity.
+- Use the `AddUserServices` method to set up UserService In Your Project.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.

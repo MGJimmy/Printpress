@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿namespace UserService;
 
-namespace UserService;
-
-public interface IApplicationUser 
+public interface IApplicationUser
 {
     string Id { get; set; }
     string UserName { get; set; }

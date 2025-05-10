@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using UserService.Entities;
 
 namespace UserService.Presistance
 {
-    internal class UserDbContext : IdentityDbContext<User>
+    public class UserDbContext : IdentityDbContext<User>
     {
         public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
         {

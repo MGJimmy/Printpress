@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UserService;
 
@@ -14,7 +15,7 @@ internal sealed class RoleAuthorizationHandler : AuthorizationHandler<RoleRequir
 
         foreach (var role in roles)
         {
-            var canAccess = context.User.Claims.Any(c => c.Type == CustomClaims.UserRoles && c.Value == role);
+            var canAccess = context.User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == role);
 
             if (canAccess)
             {

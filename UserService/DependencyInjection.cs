@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using UserService.Entities;
 using UserService.Presistance;
+
 
 namespace UserService
 {
@@ -19,8 +21,12 @@ namespace UserService
             services.AddJwtOptions(configuration);
             services.AddRolePolicyProvider();
             services.AddTokenProvider();
-            services.AddMediatRServices();
+            services.AddMediateRServices();
             services.AddAuthentication(configuration);
+            services.AddUserContextService();
+            services.AddIdentityProvider();
+            services.AddPolicy(configuration);
+            services.AddAuthorization(configuration);
             return services;
         }
         private static IServiceCollection AddUserDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -29,9 +35,9 @@ namespace UserService
                 options.UseNpgsql(configuration.GetConnectionString("UserConnectionString")));
             return services;
         }
-        private static IServiceCollection AddIdentityProvider<TUser>(this IServiceCollection services) where TUser : class, IApplicationUser
+        private static IServiceCollection AddIdentityProvider(this IServiceCollection services)
         {
-            services.AddScoped<IdmProvider<TUser>, AspIdentityProvider<TUser>>();
+            services.AddScoped<IIdmProvider<User>, IdmProviderService<User>>();
             return services;
         }
         private static IServiceCollection AddRolePolicyProvider(this IServiceCollection service)
@@ -42,7 +48,7 @@ namespace UserService
         }
         private static IServiceCollection AddTokenProvider(this IServiceCollection service)
         {
-            service.AddSingleton<ITokenProvider, JwtTokenProvider>();
+            service.AddSingleton<ITokenProvider, TokenService>();
             return service;
         }
         private static IServiceCollection AddIdentity(this IServiceCollection services)
@@ -55,12 +61,12 @@ namespace UserService
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
-     
+
             })
             .AddEntityFrameworkStores<UserDbContext>()
             .AddDefaultTokenProviders();
 
-            services.AddIdentityProvider<User>();
+
 
             return services;
         }
@@ -75,7 +81,7 @@ namespace UserService
             services.Configure<JwtOption>(jwtSection);
             return services;
         }
-        private static IServiceCollection AddMediatRServices(this IServiceCollection services)
+        private static IServiceCollection AddMediateRServices(this IServiceCollection services)
         {
             services.AddMediatR(cfg =>
             {
@@ -109,6 +115,23 @@ namespace UserService
                 };
             });
 
+            return service;
+        }
+        private static IServiceCollection AddUserContextService(this IServiceCollection services)
+        {
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserContextService, UserContextService>();
+            return services;
+        }
+        private static IServiceCollection AddPolicy(this IServiceCollection service, IConfiguration configuration)
+        {
+            service.AddSingleton<IAuthorizationPolicyProvider, RolePolicyProvider>();
+            service.AddSingleton<IAuthorizationHandler, RoleAuthorizationHandler>();
+            return service;
+        }
+        private static IServiceCollection AddAuthorization(this IServiceCollection service, IConfiguration configuration)
+        {
+            service.AddAuthorization();
             return service;
         }
     }

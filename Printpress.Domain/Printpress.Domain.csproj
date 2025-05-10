@@ -10,8 +10,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.15" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SecurityProvider\UserService.csproj" />
-  </ItemGroup>
-
 </Project>
