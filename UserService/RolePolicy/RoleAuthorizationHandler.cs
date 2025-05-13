@@ -15,7 +15,7 @@ internal sealed class RoleAuthorizationHandler : AuthorizationHandler<RoleRequir
 
         foreach (var role in roles)
         {
-            var canAccess = context.User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == role);
+            var canAccess = context.User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.ToLower() == role.ToLower());
 
             if (canAccess)
             {
