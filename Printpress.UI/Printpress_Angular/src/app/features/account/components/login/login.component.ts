@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth.service';
+
 import { Router } from '@angular/router';
-import { AlertService } from '../../../core/services/alert.service';
-import { ErrorHandlingService } from '../../../core/helpers/error-handling.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../../../core/services/auth.service';
+import { AlertService } from '../../../../core/services/alert.service';
+import { ErrorHandlingService } from '../../../../core/helpers/error-handling.service';
 
 
 
@@ -43,17 +44,30 @@ export class LoginComponent {
     if (this.loginForm.invalid) {
       return;
     }
+      const returnUrl = this.router.routerState.snapshot.root.queryParams['returnUrl'] || '/clients';
 
       const username = this.loginForm.value.username;
       const password = this.loginForm.value.password;
-    try {
-      this.authService.login(username, password);
-      this.alertService.showSuccess('تم تسجيل الدخول بنجاح');
-      const returnUrl = this.router.routerState.snapshot.root.queryParams['returnUrl'] || '/clients';
-      this.router.navigate([returnUrl]);
-    } catch (error) {
-      this.errorHandler.handleError(error);
-    }
+
+      this.authService.login(username, password)
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.authService.saveToken(response.token.token);
+            this.alertService.showSuccess('تم تسجيل الدخول بنجاح');
+            this.router.navigate([returnUrl]);
+          } else {
+            this.alertService.showError('Login failed:', response.message);
+
+            console.error('Login failed:', response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+            this.alertService.showError('Login error:', error);
+
+        }
+      });
   }
 
   togglePasswordVisibility(): void {

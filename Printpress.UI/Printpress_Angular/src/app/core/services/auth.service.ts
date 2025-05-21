@@ -1,11 +1,15 @@
 import { Injectable } from "@angular/core";
+import { HttpService } from "./http.service";
+import { ApiUrlResource } from "../resources/api-urls.resource";
+import { loginResponseDto } from "../models/auth/login-response.dto";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
-  constructor() { 
+  constructor(private httpService: HttpService) { 
     const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6InJhc2hhZCBhbGhhc2htaWUiLCJpYXQiOjE1MTYyMzkwMjIgLCAidXNlcklkIjoiYjNkODlhNzMtMjQ5OS00ZTI1LWIyZGItN2ExOWYxODk0ZTQ5In0=.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
     localStorage.setItem('token', mockToken);
   }
@@ -30,8 +34,8 @@ export class AuthService {
     this.clearToken();
   }
 
-  public login(username:string , password:string): void {
-    this.saveToken('mockToken');
+  public login(username:string , password:string): Observable<loginResponseDto> {
+    return this.httpService.post<loginResponseDto>(ApiUrlResource.AccountAPI.login, { username, password });
   }
 
 

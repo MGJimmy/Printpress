@@ -70,7 +70,7 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: ()=>
       import(
-        './shared/components/login/login.component'
+        './features/account/components/login/login.component'
       ).then((m)=> m.LoginComponent)
   }
 ];
