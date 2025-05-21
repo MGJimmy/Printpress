@@ -5,11 +5,13 @@ import { OrderGroupServiceGetDto } from "../orderGroupService/order-group-servic
 
 export interface OrderGroupGetDto extends IObjectState {
     id: number;
-    orderId: number;
+    name: string;
     deliveryDate?: Date;
+    deliveredTo?: string;
+    deliveryNotes?: string;
+    orderId: number;
     deliveryName?: string
     receiverName?: string
-    name: string;
     isHasPrintingService: boolean;
     isHasSellingService: boolean;
     isHasStaplingService: boolean;

@@ -1,0 +1,48 @@
+<div class="container p-4 rtl">
+    <h2 class="text-center mb-4">تسليم المجموعة</h2>
+
+    <form [formGroup]="deliveryForm" (ngSubmit)="onSubmit()">
+        <!-- Delivery Date -->
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>تاريخ التسليم</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="deliveryDate" required>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="deliveryForm.get('deliveryDate')?.hasError('required')">
+                تاريخ التسليم مطلوب
+            </mat-error>
+        </mat-form-field>
+
+          <!-- Delivery From -->
+          <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>تم التسليم من</mat-label>
+            <input matInput formControlName="deliveredFrom" required>
+            <mat-error *ngIf="deliveryForm.get('deliveredFrom')?.hasError('required')">
+                اسم المسلم مطلوب
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Delivery To -->
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>تم التسليم إلى</mat-label>
+            <input matInput formControlName="deliveredTo" required>
+            <mat-error *ngIf="deliveryForm.get('deliveredTo')?.hasError('required')">
+                اسم المستلم مطلوب
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Delivery Notes -->
+        <mat-form-field appearance="outline" class="w-100 mb-4">
+            <mat-label>ملاحظات التسليم</mat-label>
+            <textarea matInput formControlName="deliveryNotes" rows="3"></textarea>
+        </mat-form-field>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2">
+            <button mat-button type="button" (click)="onCancel()">إلغاء</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!deliveryForm.valid">
+                تأكيد التسليم
+            </button>
+        </div>
+    </form>
+</div>

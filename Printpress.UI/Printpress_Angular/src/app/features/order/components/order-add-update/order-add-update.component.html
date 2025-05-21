@@ -1,125 +1,165 @@
 <div class="container mt-5 rtl">
-
+    <!-- Header Section -->
     <div class="text-center mb-5 border-bottom pb-3 text-primary">
-        <h1 *ngIf="componentMode.isEditMode"> تعديل طلبية</h1>
+        <h1 *ngIf="componentMode.isEditMode">تعديل طلبية</h1>
         <h1 *ngIf="componentMode.isaddMode">إضافة طلبية</h1>
-
     </div>
 
+    <!-- Order Summary Section -->
     <div class="border border-primary p-3">
-        <div *ngIf="componentMode.isEditMode" class="row d-flex justify-content-around mb-3">
-            <button class="col-3 m-2 " mat-raised-button color="primary" (click)="manageTransactions_Click()">التحويلات
-                المالية</button>
-            <button class="col-3 m-2" mat-raised-button color="primary">تحديث العناصر المنتهية </button>
-        </div>
-        <div class="row">
-            <label class="col-3 m-2 "> الاجمالي : {{orderGetDto.totalPrice || 0}}</label>
-            <label class="col-3 m-2"> المدفوع : {{orderGetDto.totalPaid || 0}}</label>
-            <label class="col-3 m-2"> الباقي : {{(orderGetDto.totalPrice || 0) - (orderGetDto.totalPaid || 0)}}</label>
+        <div class="row d-flex justify-content-around mb-3">
+            <button class="col-3 m-2" mat-raised-button color="primary" (click)="manageTransactions_Click()">
+                التحويلات المالية
+            </button>
         </div>
 
         <div class="row">
-            <label class="col-3 m-2 "> اسم الطلبية:{{orderGetDto.name}}</label>
-            <label class="col-3 m-2"> اسم العميل: {{orderGetDto.clientName}}</label>
-            <label class="col-3 m-2"> حالة الطلبية: غير منتهية </label>
+            <label class="col-4">الاجمالي: {{orderGetDto.totalPrice || 0}}</label>
+            <label class="col-4">المدفوع: {{orderGetDto.totalPaid || 0}}</label>
+            <label class="col-4">الباقي: {{(orderGetDto.totalPrice || 0) - (orderGetDto.totalPaid || 0)}}</label>
+        </div>
+
+        <div class="row">
+            <label class="col-4">اسم الطلبية: {{orderGetDto.name}}</label>
+            <label class="col-4">اسم العميل: {{orderGetDto.clientName}}</label>
+            <label class="col-4">حالة الطلبية: غير منتهية</label>
         </div>
     </div>
 
-    <br>
-    <div *ngIf="componentMode.isEditMode||componentMode.isaddMode" class="m-1">
+    <!-- Form Section -->
+    <div *ngIf="componentMode.isEditMode || componentMode.isaddMode" class="m-1">
         <form class="row g-3">
             <!-- Order Name -->
-            <div class="col-md-3 ">
+            <div class="col-md-3">
                 <label for="orderName" class="form-label">اسم الطلبية</label>
-                <input type="text" [(ngModel)]="orderName" [ngModelOptions]="{standalone: true}"
-                    (blur)="onOrderNameInputBlur()" class="form-control" id="orderName" required>
+                <input type="text" 
+                       [(ngModel)]="orderName" 
+                       [ngModelOptions]="{standalone: true}"
+                       (blur)="onOrderNameInputBlur()" 
+                       class="form-control" 
+                       id="orderName" 
+                       required>
             </div>
-
-
 
             <!-- Customer Name with Add Button -->
             <div class="col-md-4">
                 <div class="row input-group">
                     <label for="clientSelect" class="form-label">اسم العميل</label>
                     <mat-form-field appearance="outline" class="col-7">
-                        <mat-select [(value)]="orderClientId" panelClass="custom-panel"
-                            (selectionChange)="onClientSelectChange()">
-                            <!-- Dropdown Options -->
+                        <mat-select [(value)]="orderClientId" 
+                                  panelClass="custom-panel"
+                                  (selectionChange)="onClientSelectChange()">
                             <mat-option *ngFor="let client of clients" [value]="client.id">
-                                {{ client.name }}
+                                {{client.name}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                     <div class="col-1"></div>
-                    <button class="col-4" mat-raised-button color="primary" (click)="openAddClientDialog()">
+                    <button class="col-4" 
+                            mat-raised-button 
+                            color="primary" 
+                            (click)="openAddClientDialog()">
                         <i class="bi bi-plus-circle me-1"></i>
                         إضافة عميل
                     </button>
                 </div>
             </div>
-
-
         </form>
     </div>
 
+    <!-- Groups Section -->
     <div class="mt-5">
         <mat-card>
             <mat-card-header class="text-center">
                 <div class="text-center">
                     <mat-card-title>
-                        <span *ngIf="componentMode.isViewMode"> المجموعات</span>
-                        <button *ngIf="!componentMode.isViewMode" mat-raised-button color="primary"
-                            (click)="onAddGroup()">إضافة مجموعة جديدة
+                        <span *ngIf="componentMode.isViewMode">المجموعات</span>
+                        <button *ngIf="!componentMode.isViewMode" 
+                                mat-raised-button 
+                                color="primary"
+                                (click)="onAddGroup()">
+                            إضافة مجموعة جديدة
                         </button>
                     </mat-card-title>
                 </div>
             </mat-card-header>
+
             <mat-card-content>
                 <div class="mt-4">
                     <div class="custom-table">
                         <table mat-table [dataSource]="orderGroupGridDataSource">
+                            <!-- Name Column -->
                             <ng-container matColumnDef="name">
-                                <th mat-header-cell *matHeaderCellDef> اسم المجموعة </th>
-                                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                                <th mat-header-cell *matHeaderCellDef>اسم المجموعة</th>
+                                <td mat-cell *matCellDef="let element">{{element.name}}</td>
                             </ng-container>
 
+                            <!-- Delivery Date Column -->
                             <ng-container matColumnDef="deliveryDate">
-                                <th mat-header-cell *matHeaderCellDef> تاريخ التسليم</th>
-                                <td mat-cell *matCellDef="let element"> {{element.deliveryDate??"لم يتم التسليم"}} </td>
+                                <th mat-header-cell *matHeaderCellDef>تاريخ التسليم</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.deliveryDate | date:'yyyy-MM-dd'}}
+                                </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="action">
-                                <th mat-header-cell *matHeaderCellDef> إجراء </th>
+                            <!-- Delivered To Column -->
+                            <ng-container matColumnDef="deliveredTo">
+                                <th mat-header-cell *matHeaderCellDef>تم التسليم إلى</th>
                                 <td mat-cell *matCellDef="let element">
-                                    <button class="mx-3" mat-raised-button color="primary"
-                                    (click)="onEditGroup(element.id)">تعديل</button>
-                                    <button class="mx-3" mat-raised-button color="warn"
-                                        (click)="onDeleteGroup(element.id)">حذف</button>
+                                    {{element.deliveredTo || 'لم يتم التسليم'}}
+                                </td>
+                            </ng-container>
+
+                            <!-- Action Column -->
+                            <ng-container matColumnDef="action">
+                                <th mat-header-cell *matHeaderCellDef>إجراء</th>
+                                <td mat-cell *matCellDef="let element">
+                                    <button *ngIf="componentMode.isEditMode" class="mx-3" 
+                                            mat-raised-button 
+                                            color="primary" 
+                                            (click)="onEditGroup(element.id)">
+                                        تعديل
+                                    </button>
+                                    <button *ngIf="componentMode.isEditMode" class="mx-3" 
+                                            mat-raised-button 
+                                            color="warn"
+                                            (click)="onDeleteGroup(element.id)">
+                                        حذف
+                                    </button>
+                                    <button *ngIf="componentMode.isViewMode" class="mx-3" 
+                                            mat-raised-button 
+                                            color="primary"
+                                            (click)="onDeleverGroup(element.id)">
+                                        تسليم المجموعة
+                                    </button>
                                 </td>
                             </ng-container>
 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
                         </table>
 
-                        <app-shared-pagination class="ltr" [totalItems]="10"> </app-shared-pagination>
+                        <app-shared-pagination class="ltr" [totalItems]="10"></app-shared-pagination>
                     </div>
-
                 </div>
             </mat-card-content>
         </mat-card>
     </div>
-    <br>
 
+    <!-- Action Buttons -->
     <div class="d-flex justify-content-start mb-3">
-        <button *ngIf="!componentMode.isViewMode" class="mx-3" mat-raised-button color="primary"
-            (click)="saveOrder_Click()">حفظ</button>
-        <button mat-raised-button color="primary" (click)="goBack()">
+        <button *ngIf="!componentMode.isViewMode" 
+                class="mx-3" 
+                mat-raised-button 
+                color="primary"
+                (click)="saveOrder_Click()">
+            حفظ
+        </button>
+        <button mat-raised-button 
+                color="primary" 
+                (click)="goBack()">
             <i class="material-icons">arrow_back</i>
             رجوع
         </button>
     </div>
-
-
 </div>

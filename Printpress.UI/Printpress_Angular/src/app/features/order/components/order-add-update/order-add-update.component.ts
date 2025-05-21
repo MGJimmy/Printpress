@@ -20,6 +20,7 @@ import { OrderEventType } from '../../models/enums/order-events.enum';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
+import { GroupDeleveryPopupComponent } from '../popup/group-delevery-popup/group-delevery-popup/group-delevery-popup.component';
 
 @Component({
   selector: 'app-order-add-update',
@@ -31,7 +32,7 @@ import { OrderRoutingService } from '../../services/order-routing.service';
 export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   public componentMode: ComponentMode;
-  public displayedColumns = ['name', 'deliveryDate', 'action'];
+  public displayedColumns = ['name', 'deliveryDate', 'deliveredTo', 'action'];
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public clients: ClientGetDto[] = [];
   public orderClientId!: number
@@ -72,9 +73,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   async ngOnInit() {
 
     if (this.componentMode.isViewMode || this.componentMode.isEditMode) {
-      if (this.componentMode.isViewMode) {
-        this.displayedColumns = this.displayedColumns.filter(col => col !== 'action')
-      }
+     
       let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));
 
       if (this.orderGetDto.id != orderId) {
@@ -190,11 +189,13 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       return [];
     }
 
-    return orderGroupGetDtos.map((orderGroup, index) => {
+    return orderGroupGetDtos.map((orderGroup) => {
       return {
         id: orderGroup.id,
         name: orderGroup.name,
-        deliveryDate: orderGroup.deliveryDate
+        deliveryDate: orderGroup.deliveryDate,
+        deliveredTo: orderGroup.deliveredTo,
+        deliveryNotes: orderGroup.deliveryNotes
       }
     });
   }
@@ -210,15 +211,46 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public goBack() {
     this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
   }
+
+  onDeleverGroup(groupId: number) {
+    const dialogRef = this.dialog.open(GroupDeleveryPopupComponent, {
+      width: '500px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Update the group with delivery information
+        console.log(result);
+        console.log(groupId);
+        const group = this.OrderSharedService.getOrderGroups_Copy().find(g => g.id === groupId);
+        if (group) {
+          group.deliveryDate = result.deliveryDate;
+          group.deliveredTo = result.deliveredTo;
+          group.deliveryNotes = result.deliveryNotes;
+          
+          // Refresh the grid
+          this.bindGroups();
+          
+          this.alertService.showSuccess('تم تسليم المجموعة بنجاح');
+        }
+      }
+    });
+  }
+  
 }
 
 
 
 
 interface OrderGroupGridViewModel {
+  id: number;
   name: string;
   deliveryDate?: Date;
+  deliveredTo?: string;
+  deliveryNotes?: string;
 }
+
 
 
 

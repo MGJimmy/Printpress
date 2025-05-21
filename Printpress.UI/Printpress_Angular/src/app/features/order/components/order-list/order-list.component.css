@@ -1,0 +1,101 @@
+.order-link {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #007bff;
+}
+
+.order-link:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+/* Container and Card Styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+mat-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  margin-bottom: 2rem;
+}
+
+/* Header Styles */
+.text-primary h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+/* Table Styles */
+.custom-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th.mat-header-cell {
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  font-weight: 600;
+  padding: 16px;
+  text-align: right;
+}
+
+td.mat-cell {
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+tr.mat-row:hover {
+  background-color: #f8f9fa;
+}
+
+/* Button Styles */
+.toolbar button {
+  padding: 8px 24px;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.toolbar button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Action Buttons */
+td.mat-cell button {
+  margin: 0 4px;
+  min-width: 100px;
+}
+
+/* Status Column */
+td.mat-cell:has(ng-container[matColumnDef="orderStatus"]) {
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .toolbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  td.mat-cell button {
+    min-width: 80px;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+  }
+}
