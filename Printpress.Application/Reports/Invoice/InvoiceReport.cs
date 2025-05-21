@@ -218,6 +218,7 @@ public class InvoiceReport : IDocument
 
         });
 
+        // need to move to orderGroup service
         static bool IsPrintingService(OrderGroup orderGroup)
         {
             return orderGroup.OrderGroupServices.Any(grbService => grbService.Service.ServiceCategory == ServiceCategoryEnum.Printing);
