@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
+using UserService.Consts;
 
 namespace UserService;
 
@@ -15,7 +16,7 @@ public class UserContextService : IUserContextService
 
     public string GetCurrentUserId()
     {
-        return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return _httpContextAccessor.HttpContext?.User?.FindFirst(AppClaimType.NameIdentifier)?.Value;
     }
 
     public string GetCurrentUserName()
@@ -25,7 +26,7 @@ public class UserContextService : IUserContextService
 
     public IEnumerable<string> GetCurrentUserRoles()
     {
-        var roles = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Role);
+        var roles = _httpContextAccessor.HttpContext?.User?.FindFirst(AppClaimType.Role);
 
         if (roles != null)
         {
