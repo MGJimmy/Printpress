@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth-guard.guard';
+import { authGuard } from './core/guards/auth.guard';
 import { OrderAddUpdateComponent } from './features/order/components/order-add-update/order-add-update.component';
 import { OrderGroupAddUpdateComponent } from './features/order/components/order-group-add-update/order-group-add-update.component';
 import { OrderGroupServiceUpsertComponent } from './features/order/components/order-group-service-upsert/order-group-service-upsert.component';
 import { ItemAddUpdateComponent } from './features/order/components/item-add-update/item-add-update.component';
 import { ORDER_ROUTES } from './features/order/constants/order-routes.constants';
+import { UserRoleEnum } from './core/models/user-role.enum';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: ORDER_ROUTES.LIST, pathMatch: 'full' },
@@ -15,7 +17,8 @@ export const routes: Routes = [
       import(
         './features/order/components/order-list/order-list.component'
       ).then((m) => m.OrderListComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data:{'roles': [UserRoleEnum.admin, UserRoleEnum.user]}
   },
   {
     path: 'client/add',
@@ -23,7 +26,8 @@ export const routes: Routes = [
       import(
         './features/client/components/add-client/add-client.component'
       ).then((m) => m.AddClientComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data:{'roles': [UserRoleEnum.admin]}
   },
   {
     path: 'clients',
@@ -31,7 +35,8 @@ export const routes: Routes = [
       import(
         './features/client/components/client-list/client-list.component'
       ).then((m) => m.ClientListComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+        data:{'roles': [UserRoleEnum.admin]}
   },
   {
     path: 'services',
@@ -39,7 +44,8 @@ export const routes: Routes = [
       import(
         './features/setup/components/service-list/service-list.component'
       ).then((m) => m.ServiceListComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+        data:{'roles': [UserRoleEnum.admin]}
   },
   {
     path: 'report-viewer',
@@ -47,7 +53,8 @@ export const routes: Routes = [
       import(
         './features/reportViewer/components/report-viewer/report-viewer.component'
       ).then((m) => m.ReportViewerComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+        data:{'roles': [UserRoleEnum.admin ,UserRoleEnum.user]}
   },
   {
     path: ORDER_ROUTES.ORDER.BASE,
@@ -64,7 +71,9 @@ export const routes: Routes = [
       { path: ORDER_ROUTES.ORDER.GROUP.SERVICES, component: OrderGroupServiceUpsertComponent },
       { path: ORDER_ROUTES.ORDER.ITEM.ADD, component: ItemAddUpdateComponent },
       { path: ORDER_ROUTES.ORDER.ITEM.EDIT, component: ItemAddUpdateComponent },
-    ]
+    ],
+        canActivate: [authGuard, roleGuard],
+    data:{'roles': [UserRoleEnum.admin]}
   },
   {
     path: 'login',
@@ -72,5 +81,12 @@ export const routes: Routes = [
       import(
         './features/account/components/login/login.component'
       ).then((m)=> m.LoginComponent)
+  },
+  {
+    path: 'unauthorized',
+    loadComponent: ()=>
+      import(
+        './core/component/unauthorized/unauthorized.component'
+      ).then((m)=> m.UnauthorizedComponent)
   }
 ];

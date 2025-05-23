@@ -3,6 +3,8 @@ import { HttpService } from "./http.service";
 import { ApiUrlResource } from "../resources/api-urls.resource";
 import { loginResponseDto } from "../models/auth/login-response.dto";
 import { Observable } from "rxjs";
+import { jwtDecode } from 'jwt-decode';
+import { UserRoleEnum } from "../models/user-role.enum";
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +12,6 @@ import { Observable } from "rxjs";
 export class AuthService {
 
   constructor(private httpService: HttpService) { 
-    const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6InJhc2hhZCBhbGhhc2htaWUiLCJpYXQiOjE1MTYyMzkwMjIgLCAidXNlcklkIjoiYjNkODlhNzMtMjQ5OS00ZTI1LWIyZGItN2ExOWYxODk0ZTQ5In0=.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-    localStorage.setItem('token', mockToken);
   }
 
   public saveToken(token: string): void {
@@ -38,6 +38,27 @@ export class AuthService {
     return this.httpService.post<loginResponseDto>(ApiUrlResource.AccountAPI.login, { username, password });
   }
 
+  getRoles(): string[] | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded = jwtDecode<TokenPayload>(token);
+      return decoded.roles;
+    }
+    return null;
+  }
 
+  hasAnyMatchingRole(routeRoles: UserRoleEnum[]): boolean {
+    const userRoles = this.getRoles();
+    if (userRoles) {
+      return userRoles.some(userRole => 
+        routeRoles.some(routeRole => userRole.toLocaleLowerCase() == routeRole.toLocaleLowerCase())
+      );
+    }
+    return false;
+  }
+}
 
+interface TokenPayload {
+  roles: string[];
+  exp: number;
 }

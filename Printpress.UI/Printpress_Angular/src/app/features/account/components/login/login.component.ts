@@ -44,7 +44,7 @@ export class LoginComponent {
     if (this.loginForm.invalid) {
       return;
     }
-      const returnUrl = this.router.routerState.snapshot.root.queryParams['returnUrl'] || '/clients';
+      const returnUrl = this.router.routerState.snapshot.root.queryParams['returnUrl'] || '';
 
       const username = this.loginForm.value.username;
       const password = this.loginForm.value.password;

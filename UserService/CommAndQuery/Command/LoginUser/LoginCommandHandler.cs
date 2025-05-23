@@ -35,7 +35,7 @@ namespace UserService
                 new Claim(AppClaimType.Email, user.Email) ,
                 new Claim(AppClaimType.NameIdentifier,user.Id),
                 new Claim(AppClaimType.Username, user.UserName),
-                new Claim(AppClaimType.Role,rolesJson ,JsonClaimValueTypes.Json)
+                new Claim(AppClaimType.Roles,rolesJson ,JsonClaimValueTypes.Json)
                 };
 
                 var token = _tokenProvider.GenerateAccessToken(claims);

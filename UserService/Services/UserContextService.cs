@@ -26,7 +26,7 @@ public class UserContextService : IUserContextService
 
     public IEnumerable<string> GetCurrentUserRoles()
     {
-        var roles = _httpContextAccessor.HttpContext?.User?.FindFirst(AppClaimType.Role);
+        var roles = _httpContextAccessor.HttpContext?.User?.FindFirst(AppClaimType.Roles);
 
         if (roles != null)
         {
