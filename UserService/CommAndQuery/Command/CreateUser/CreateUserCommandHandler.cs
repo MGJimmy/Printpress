@@ -34,6 +34,7 @@ namespace UserService
                 {
                     Success = false,
                     Message = registrationResult.ErrorMessage,
+                    UserId = user.Id
                 };
             }
 

@@ -32,9 +32,9 @@
 
   <div class="logout-section list-group-item list-group-item-action"
   >
-    <button (click)="handleLoginLogout()" class="logout-btn">
-      <fa-icon class="mx-2" [icon]="isLoggedIn ? faSignOutAlt : faSignInAlt"></fa-icon>
-      <span>{{ isLoggedIn ? 'تسجيل الخروج' : 'تسجيل الدخول' }}</span>
+    <button (click)="confirmLogout()" class="logout-btn">
+      <fa-icon class="mx-2" [icon]="faSignOutAlt"></fa-icon>
+      <span>تسجيل الخروج</span>
     </button>
   </div>
 

@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
 using MediatR;
+using UserService.Consts;
 using UserService.Entities;
 
 namespace UserService
@@ -31,10 +32,10 @@ namespace UserService
                 // Generate confirmation token
                 var claims = new List<Claim>
                 {
-                new Claim(ClaimTypes.Email, user.Email) ,
-                new Claim(ClaimTypes.NameIdentifier,user.Id),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role,rolesJson ,JsonClaimValueTypes.Json)
+                new Claim(AppClaimType.Email, user.Email) ,
+                new Claim(AppClaimType.NameIdentifier,user.Id),
+                new Claim(AppClaimType.Username, user.UserName),
+                new Claim(AppClaimType.Roles,rolesJson ,JsonClaimValueTypes.Json)
                 };
 
                 var token = _tokenProvider.GenerateAccessToken(claims);

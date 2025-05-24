@@ -6,6 +6,7 @@ namespace UserService
     {
         public bool Success { get; set; }
         public string Message { get; set; }
+        public string UserId { get; set; }
     }
 
     public class CreateUserCommand : IRequest<CreateUserResponse>

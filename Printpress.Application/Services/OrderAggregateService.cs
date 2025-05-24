@@ -124,6 +124,9 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
             item.Price = itemPrice;
 
+            // update unchanged status to modified to update database with new calcuated item price
+            item.ObjectState = item.ObjectState == TrackingState.Unchanged ? TrackingState.Modified : item.ObjectState;
+
             decimal GetservicePrice(Service service)
             {
                 return orderService.NotDeleted().First(x => service.Id == x.ServiceId).Price.GetValueOrDefault();

@@ -1,5 +1,5 @@
 <div class="login-container">
-  <h2>الأدمن</h2>
+  <h2>تسجيل الدخول</h2>
   <form [formGroup]="loginForm" (keydown.enter)="onLogin()" (ngSubmit)="onLogin()" class="login-form">
     <div class="form-group">
       <label for="username">اسم المستخدم</label>
@@ -36,7 +36,7 @@
     </div>
 
     <button type="submit" [disabled]="loginForm.invalid" class="login-button">
-      Login
+      تسجيل الدخول
     </button>
   </form>
   <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>

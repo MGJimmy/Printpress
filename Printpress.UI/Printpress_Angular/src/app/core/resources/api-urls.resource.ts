@@ -1,5 +1,9 @@
 export class ApiUrlResource {
 
+  private static Account_URL = '/api/Account';
+  public static readonly AccountAPI = {
+    login: ApiUrlResource.Account_URL + '/login'
+  };
 
   private static Cliet_URL = '/api/client';
   public static readonly ClientAPI = {

@@ -24,6 +24,7 @@
     "@primeng/themes": "^18.0.2",
     "bootstrap": "^5.3.3",
     "i": "^0.3.7",
+    "jwt-decode": "^4.0.0",
     "ngx-toastr": "^19.0.0",
     "npm": "^11.0.0",
     "primeng": "^18.0.2",
