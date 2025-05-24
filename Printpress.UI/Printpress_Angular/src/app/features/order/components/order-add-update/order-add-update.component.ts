@@ -20,7 +20,7 @@ import { OrderEventType } from '../../models/enums/order-events.enum';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
-import { GroupDeleveryPopupComponent } from '../popup/group-delevery-popup/group-delevery-popup/group-delevery-popup.component';
+import { GroupDeleveryPopupComponent } from '../popup/group-delevery-popup/group-delevery-popup.component';
 
 @Component({
   selector: 'app-order-add-update',

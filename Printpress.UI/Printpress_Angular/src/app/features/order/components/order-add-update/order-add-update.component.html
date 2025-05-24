@@ -7,7 +7,7 @@
 
     <!-- Order Summary Section -->
     <div class="border border-primary p-3">
-        <div class="row d-flex justify-content-around mb-3">
+        <div *ngIf="componentMode.isViewMode" class="row d-flex justify-content-around mb-3">
             <button class="col-3 m-2" mat-raised-button color="primary" (click)="manageTransactions_Click()">
                 التحويلات المالية
             </button>
