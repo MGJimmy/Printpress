@@ -5,13 +5,15 @@ import { loginResponseDto } from "../models/auth/login-response.dto";
 import { Observable } from "rxjs";
 import { jwtDecode } from 'jwt-decode';
 import { UserRoleEnum } from "../models/user-role.enum";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
-  constructor(private httpService: HttpService) { 
+  constructor(private httpService: HttpService,
+    private router: Router) { 
   }
 
   public saveToken(token: string): void {
@@ -32,6 +34,7 @@ export class AuthService {
 
   public logout(): void {
     this.clearToken();
+    this.router.navigate(['login']);
   }
 
   public login(username:string , password:string): Observable<loginResponseDto> {

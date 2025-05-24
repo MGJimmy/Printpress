@@ -2,11 +2,11 @@ import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { DialogService } from '../../services/dialog.service';
-import { ConfirmDialogModel } from '../../../core/models/confirm-dialog.model';
+import { DialogService } from '../../../shared/services/dialog.service';
+import { ConfirmDialogModel } from '../../models/confirm-dialog.model';
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 import {
   faBars,
@@ -30,11 +30,7 @@ import {
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnDestroy {
-  @Input() toggled = false;
-  @Input() isLoggedIn = false;
-  @Output() toggle = new EventEmitter<boolean>();
-  @Output() logout = new EventEmitter<void>();
-  @Output() login = new EventEmitter<void>();
+   toggled: boolean = false;
 
   faBars = faBars;
   faTimes = faTimes;
@@ -54,17 +50,9 @@ export class SidebarComponent implements OnDestroy {
 
   toggleSidebar(): void {
     this.toggled = !this.toggled;
-    this.toggle.emit(this.toggled);
+    //this.toggle.emit(this.toggled);
   }
 
-  handleLoginLogout(): void {
-    if (this.isLoggedIn) {
-      this.confirmLogout();
-    } else {
-      this.login.emit();
-      this.router.navigate(['/login']);
-    }
-  }
 
   confirmLogout(): void {
     const dialogData: ConfirmDialogModel = {
@@ -78,9 +66,7 @@ export class SidebarComponent implements OnDestroy {
       .confirmDialog(dialogData)
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.logout.emit();
-          this.authService.clearToken();
-          this.router.navigate(['login']);
+          this.authService.logout();
         }
       });
 

@@ -1,17 +1,3 @@
 <app-loader></app-loader>
 
-<div  class="app-container" [class.toggled]="isSidebarToggled">
-  <div class="sidebar" [class.toggled]="isSidebarToggled">
-    <app-sidebar
-      [toggled]="isSidebarToggled"
-      [isLoggedIn] = "isLoggedIn"
-      (toggle)="toggleSidebar()"
-      (logout)="onLogout()"
-      (login)="onLoginSuccess()"
-      >
-    </app-sidebar>
-  </div>
-  <div class="main-content">
-    <router-outlet></router-outlet>
-  </div>
-</div>
+<router-outlet></router-outlet>
