@@ -17,7 +17,7 @@ public static class ApplicationPipelineExtensions
 
         app.UseHttpsRedirection();
 
-        //app.UseAuthentication(); TODO: uncomment this line to enable authentication
+        app.UseAuthentication();
 
         app.UseAuthorization();
 

@@ -4,8 +4,8 @@ namespace Printpress.API;
 
 
 [Route("api/[controller]")]
-[ApiController]
-public class ServiceController(IServiceService _serviceService) : ControllerBase
+
+public class ServiceController(IServiceService _serviceService) : AppBaseController
 {
     [HttpGet]
     [Route("getAll")]

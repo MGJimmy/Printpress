@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Printpress.Application;
-using Printpress.Domain.Entities;
-namespace Printpress.API;
+﻿namespace Printpress.API;
 
 [Route("api/[controller]")]
-[ApiController]
-public class OrderController(IOrderAggregateService _IOrderService , IOrderGroupService orderGroupService) : ControllerBase
+
+public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupService orderGroupService) : AppBaseController
 {
     [HttpGet]
     [Route("getOrderSummaryList")]
@@ -41,7 +38,7 @@ public class OrderController(IOrderAggregateService _IOrderService , IOrderGroup
     [Route("update/{id}")]
     public async Task<IActionResult> Update(int id, OrderUpsertDto order)
     {
-        await _IOrderService.UpdateOrder(id,order);
+        await _IOrderService.UpdateOrder(id, order);
         return Ok();
     }
 

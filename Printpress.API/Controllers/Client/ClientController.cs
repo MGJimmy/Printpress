@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Printpress.Application;
-namespace Printpress.API;
+﻿namespace Printpress.API;
 
 
 [Route("api/[controller]")]
-[ApiController]
-public class ClientController(IClientService _IClientService) : ControllerBase
+
+public class ClientController(IClientService _IClientService) : AppBaseController
 {
     [HttpGet]
     [Route("getByPage")]

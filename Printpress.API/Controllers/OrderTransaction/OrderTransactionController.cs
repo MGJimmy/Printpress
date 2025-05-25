@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Printpress.Application;
-namespace Printpress.API;
+﻿namespace Printpress.API;
 
 
 [Route("api/[controller]")]
-[ApiController]
-public class OrderTransactionController(IOrderTransactionService _orderTransactionService) : ControllerBase
+
+public class OrderTransactionController(IOrderTransactionService _orderTransactionService) : AppBaseController
 {
     [HttpGet]
     [Route("getByPage")]

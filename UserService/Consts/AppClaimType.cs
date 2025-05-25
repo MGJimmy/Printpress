@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace UserService.Consts
 {
-    internal class AppClaimType
+    public class AppClaimType
     {
-        internal const string Roles = "roles";
-        internal const string Email = "email";
-        internal const string Username = "username";
-        internal const string NameIdentifier = "nameIdentifier";
+        public const string Roles = "roles";
+        public const string Email = "email";
+        public const string Username = "username";
+        public const string NameIdentifier = "nameIdentifier";
     }
 }
