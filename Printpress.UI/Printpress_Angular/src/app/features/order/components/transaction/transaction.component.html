@@ -1,48 +1,62 @@
-<mat-card class="transaction-container rtl">
-  <div class="d-flex justify-content-between align-items-center">
+<mat-card class="transaction-container rtl h-100">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <button mat-icon-button class="close-button" [mat-dialog-close]>
       <mat-icon>close</mat-icon>
     </button>
     <mat-card-title class="text-center flex-grow-1">التحويلات المالية</mat-card-title>
   </div>
-  <mat-card-content>
-    <div class="header">
+
+  <mat-card-content class="d-flex flex-column">
+    <!-- Client Information Section -->
+    <div class="header mb-4">
       <div class="client-info d-flex justify-content-around">
-        <p><strong>اسم العميل:</strong> {{clientName}}</p>
-        <p><strong>اسم الطلبية:</strong> {{orderName}}</p>
+        <p class="mb-0"><strong>اسم العميل:</strong> {{clientName}}</p>
+        <p class="mb-0"><strong>اسم الطلبية:</strong> {{orderName}}</p>
       </div>
     </div>
 
-    <div class="form-section">
-      <div class="pay">
-        <strong>المبلغ</strong>
-        <mat-form-field appearance="outline">
-          <mat-label>المبلغ</mat-label>
-          <input matInput 
-                 type="number" 
-                 [(ngModel)]="amount" 
-                 placeholder="أدخل المبلغ"
-                 min="1"
-                 required>
-          <mat-error *ngIf="!amount">المبلغ مطلوب</mat-error>
-          <mat-error *ngIf="amount && amount <= 0">يجب أن يكون المبلغ أكبر من صفر</mat-error>
-        </mat-form-field>
-      </div>
+    <!-- Form Section -->
+    <div class="form-section mb-4">
+      <div class="row g-3">
+        <!-- Amount Field -->
+        <div class="col-md-6">
+          <div class="pay h-100">
+            <strong class="d-block mb-2">المبلغ</strong>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>المبلغ</mat-label>
+              <input matInput 
+                     type="number" 
+                     [(ngModel)]="amount" 
+                     placeholder="أدخل المبلغ"
+                     min="1"
+                     required>
+              <mat-error *ngIf="!amount">المبلغ مطلوب</mat-error>
+              <mat-error *ngIf="amount && amount <= 0">يجب أن يكون المبلغ أكبر من صفر</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
 
-      <div class="note">
-        <strong>ملحوظة</strong>
-        <mat-form-field appearance="outline">
-          <mat-label>ملاحظة</mat-label>
-          <input matInput 
-                 [(ngModel)]="note" 
-                 placeholder="أدخل الملحوظة">
-        </mat-form-field>
+        <!-- Note Field -->
+        <div class="col-md-6">
+          <div class="note h-100">
+            <strong class="d-block mb-2">ملحوظة</strong>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>ملاحظة</mat-label>
+              <input matInput 
+                     [(ngModel)]="note" 
+                     placeholder="أدخل الملحوظة">
+            </mat-form-field>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="action-buttons">
+    <!-- Action Buttons Section -->
+    <div class="action-buttons d-flex justify-content-center gap-3 mb-4">
       <button mat-raised-button 
               [disabled]="!amount || amount <= 0"
+              class="px-4"
               style="background-color: #28a745; color: white;" 
               (click)="onPay()">
         <mat-icon>add_circle</mat-icon>
@@ -50,6 +64,7 @@
       </button>
       <button mat-raised-button 
               [disabled]="!amount || amount <= 0"
+              class="px-4"
               color="warn" 
               (click)="onRefund()">
         <mat-icon>remove_circle</mat-icon>
@@ -57,13 +72,15 @@
       </button>
     </div>
 
-    <app-table-template 
-      class="m-5" 
-      *ngIf="transactions" 
-      [columnDefs]="columnDefs" 
-      [originalSource]="transactions"
-      [totalItemsCount]="totalItemsCount" 
-      (pageChanged)="onPageChanged($event)">
-    </app-table-template>
+    <!-- Transactions Table Section -->
+    <div class="flex-grow-1">
+      <app-table-template 
+        *ngIf="transactions" 
+        [columnDefs]="columnDefs" 
+        [originalSource]="transactions"
+        [totalItemsCount]="totalItemsCount" 
+        (pageChanged)="onPageChanged($event)">
+      </app-table-template>
+    </div>
   </mat-card-content>
 </mat-card>

@@ -107,7 +107,6 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   private openTransactionModal() {
     let dialogRef = this.dialog.open(TransactionComponent, {
       data: { orderId: this.OrderSharedService.getOrderObject_copy().id },
-      height: '550px',
       width: '1000px',
       injector: this.injector,
       disableClose: true
@@ -166,7 +165,6 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   private openServicePricesDialog() {
     this.dialog.open(OrderServicePricesComponent, {
       data: { orderSharedService: this.OrderSharedService },
-      height: '550px',
       width: '1000px'
     });
   }
