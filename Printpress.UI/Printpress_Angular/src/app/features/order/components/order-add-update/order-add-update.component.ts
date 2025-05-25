@@ -221,25 +221,20 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+
         result.id = groupId;
 
         this.orderService.deliverOrderGroup(result).subscribe((response) => { 
-          const group = this.OrderSharedService.getOrderGroups_Copy().find(g => g.id === groupId);
-          if (group) {
-            // Update the group's delivery information
-            group.deliveryDate = result.deliveryDate;
-            group.deliveredFrom = result.deliveredFrom;
-            group.deliveredTo = result.deliveredTo;
-            group.deliveryNotes = result.deliveryNotes;
-            
-            // Refresh the grid
-            this.bindGroups();
-            
-            // Broadcast event to refresh all tabs
-            this.orderComm.emit(OrderEventType.ORDER_MAINDATA_UPDATED);
-            
-            this.alertService.showSuccess('تم تسليم المجموعة بنجاح');
-          }
+
+          let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));
+
+          if (orderId) {
+              this.orderService.getOrderById(orderId).subscribe(res=>{
+              this.orderGetDto = res.data
+              this.OrderSharedService.setOrderObject(this.orderGetDto);      
+              this.bindGroups()
+              this.alertService.showSuccess('تم تسليم المجموعة بنجاح');
+            })}
         })   
       }
     });
