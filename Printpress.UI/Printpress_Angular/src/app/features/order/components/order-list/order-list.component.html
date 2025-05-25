@@ -69,11 +69,11 @@
                   <mat-icon>receipt</mat-icon>
                   إصدار فاتورة
                 </button>
-                <button mat-raised-button color="primary" (click)="onEditOrder(element.id)">
+                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-raised-button color="primary" (click)="onEditOrder(element.id)">
                   <mat-icon>edit</mat-icon>
                   تعديل
                 </button>
-                <button mat-raised-button color="warn" (click)="onDeleteOrder(element.id)">
+                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-raised-button color="warn" (click)="onDeleteOrder(element.id)">
                   <mat-icon>delete</mat-icon>
                   حذف
                 </button>

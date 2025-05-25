@@ -114,17 +114,23 @@
                             <ng-container matColumnDef="action">
                                 <th mat-header-cell *matHeaderCellDef>إجراء</th>
                                 <td mat-cell *matCellDef="let element">
-                                    <button *ngIf="componentMode.isEditMode" class="mx-3" 
+                                    <button *ngIf="componentMode.isEditMode && !element.deliveryDate" class="mx-3" 
                                             mat-raised-button 
                                             color="primary" 
                                             (click)="onEditGroup(element.id)">
                                         تعديل
                                     </button>
-                                    <button *ngIf="componentMode.isEditMode" class="mx-3" 
+                                    <button *ngIf="componentMode.isEditMode && !element.deliveryDate" class="mx-3" 
                                             mat-raised-button 
                                             color="warn"
                                             (click)="onDeleteGroup(element.id)">
                                         حذف
+                                    </button>
+                                    <button *ngIf="componentMode.isEditMode && element.deliveryDate" class="mx-3" 
+                                            mat-raised-button 
+                                            color="primary"
+                                            (click)="onDeliveryDetails(element.id)">
+                                        تفاصيل التسليم
                                     </button>
                                     <button *ngIf="componentMode.isViewMode && !element.deliveryDate" class="mx-3" 
                                             mat-raised-button 
@@ -135,8 +141,8 @@
                                     <button *ngIf="componentMode.isViewMode && element.deliveryDate" class="mx-3" 
                                             mat-raised-button 
                                             color="primary"
-                                           (click)="onDeliveryDetails(element.id)">
-                                         تفاصيل التسليم
+                                            (click)="onDeliveryDetails(element.id)">
+                                        تفاصيل التسليم
                                     </button>
                                 </td>
                             </ng-container>
