@@ -33,7 +33,7 @@ public class Program
                 dbContext.Database.Migrate();
 
                 //use this in development only
-                seedingDbContext.SeedingMockData();
+                //seedingDbContext.SeedingMockData();
 
                 //use this to add lockup data
                 seedingDbContext.SeedingLockupData();
