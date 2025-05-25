@@ -64,20 +64,23 @@
           <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef class="fw-bold">أجراء</th>
             <td mat-cell *matCellDef="let element">
-              <div class="d-flex gap-2">
-                <button mat-raised-button class="bg-success text-white" (click)="generateInvoice_Click(element.id)">
+              <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="generateInvoice_Click(element.id)">
                   <mat-icon>receipt</mat-icon>
-                  إصدار فاتورة
+                  <span>إصدار فاتورة</span>
                 </button>
-                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-raised-button color="primary" (click)="onEditOrder(element.id)">
+                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onEditOrder(element.id)">
                   <mat-icon>edit</mat-icon>
-                  تعديل
+                  <span>تعديل</span>
                 </button>
-                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-raised-button color="warn" (click)="onDeleteOrder(element.id)">
+                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onDeleteOrder(element.id)">
                   <mat-icon>delete</mat-icon>
-                  حذف
+                  <span>حذف</span>
                 </button>
-              </div>
+              </mat-menu>
             </td>
           </ng-container>
 

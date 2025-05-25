@@ -10,7 +10,7 @@ import { SharedPaginationComponent } from '../../../../shared/components/shared-
 import { RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-
+import { MatMenuModule } from '@angular/material/menu';
 
 export const imports = [
   CommonModule,
@@ -24,5 +24,6 @@ export const imports = [
   SharedPaginationComponent,
   RouterModule,
   MatSelectModule,
-  MatDialogModule
+  MatDialogModule,
+  MatMenuModule
 ];

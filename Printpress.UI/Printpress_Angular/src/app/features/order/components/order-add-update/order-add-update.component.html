@@ -106,7 +106,9 @@
                             <ng-container matColumnDef="deliveredTo">
                                 <th mat-header-cell *matHeaderCellDef>تم التسليم إلى</th>
                                 <td mat-cell *matCellDef="let element">
-                                    {{element.deliveredTo || 'لم يتم التسليم'}}
+                                    <span class="badge" [ngClass]="{'badge-success': element.deliveredTo, 'badge-secondary': !element.deliveredTo}">
+                                        {{element.deliveredTo || 'لم يتم التسليم'}}
+                                    </span>
                                 </td>
                             </ng-container>
 
@@ -114,36 +116,41 @@
                             <ng-container matColumnDef="action">
                                 <th mat-header-cell *matHeaderCellDef>إجراء</th>
                                 <td mat-cell *matCellDef="let element">
-                                    <button *ngIf="componentMode.isEditMode && !element.deliveryDate" class="mx-3" 
-                                            mat-raised-button 
-                                            color="primary" 
-                                            (click)="onEditGroup(element.id)">
-                                        تعديل
+                                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                                        <mat-icon>more_vert</mat-icon>
                                     </button>
-                                    <button *ngIf="componentMode.isEditMode && !element.deliveryDate" class="mx-3" 
-                                            mat-raised-button 
-                                            color="warn"
-                                            (click)="onDeleteGroup(element.id)">
-                                        حذف
-                                    </button>
-                                    <button *ngIf="componentMode.isEditMode && element.deliveryDate" class="mx-3" 
-                                            mat-raised-button 
-                                            color="primary"
-                                            (click)="onDeliveryDetails(element.id)">
-                                        تفاصيل التسليم
-                                    </button>
-                                    <button *ngIf="componentMode.isViewMode && !element.deliveryDate" class="mx-3" 
-                                            mat-raised-button 
-                                            color="primary"
-                                            (click)="onDeleverGroup(element.id)">
-                                        تسليم المجموعة
-                                    </button>
-                                    <button *ngIf="componentMode.isViewMode && element.deliveryDate" class="mx-3" 
-                                            mat-raised-button 
-                                            color="primary"
-                                            (click)="onDeliveryDetails(element.id)">
-                                        تفاصيل التسليم
-                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
+                                                mat-menu-item
+                                                (click)="onEditGroup(element.id)">
+                                            <mat-icon>edit</mat-icon>
+                                            <span>تعديل</span>
+                                        </button>
+                                        <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
+                                                mat-menu-item
+                                                (click)="onDeleteGroup(element.id)">
+                                            <mat-icon>delete</mat-icon>
+                                            <span>حذف</span>
+                                        </button>
+                                        <button *ngIf="componentMode.isEditMode && element.deliveryDate" 
+                                                mat-menu-item
+                                                (click)="onDeliveryDetails(element.id)">
+                                            <mat-icon>info</mat-icon>
+                                            <span>تفاصيل التسليم</span>
+                                        </button>
+                                        <button *ngIf="componentMode.isViewMode && !element.deliveryDate" 
+                                                mat-menu-item
+                                                (click)="onDeleverGroup(element.id)">
+                                            <mat-icon>local_shipping</mat-icon>
+                                            <span>تسليم المجموعة</span>
+                                        </button>
+                                        <button *ngIf="componentMode.isViewMode && element.deliveryDate" 
+                                                mat-menu-item
+                                                (click)="onDeliveryDetails(element.id)">
+                                            <mat-icon>info</mat-icon>
+                                            <span>تفاصيل التسليم</span>
+                                        </button>
+                                    </mat-menu>
                                 </td>
                             </ng-container>
 
