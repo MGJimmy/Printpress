@@ -1,4 +1,5 @@
 ﻿using Printpress.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Printpress.Application;
 
@@ -10,6 +11,8 @@ public record OrderSummaryDto
     public decimal? TotalAmount { get; set; }
     public decimal? PaidAmount { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrderStatusEnum OrderStatus { get; set; }
 
 }

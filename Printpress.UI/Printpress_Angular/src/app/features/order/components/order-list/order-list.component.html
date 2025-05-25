@@ -48,7 +48,7 @@
           <ng-container matColumnDef="orderStatus">
             <th mat-header-cell *matHeaderCellDef class="fw-bold">حالة الطلبيه</th>
             <td mat-cell *matCellDef="let element">
-              <span class="badge bg-success">جاهزه</span>
+              <span class="badge" [ngClass]="getStatusBadgeClass(element.orderStatus)">{{getStatusText(element.orderStatus)}}</span>
             </td>
           </ng-container>
 

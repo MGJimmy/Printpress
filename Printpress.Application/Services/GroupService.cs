@@ -3,7 +3,7 @@ using Printpress.Enums;
 
 namespace Printpress.Application;
 
-internal sealed class OrderGroupSere(IUnitOfWork unitOfWork ) : IOrderGroupService
+internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
 {
     public async Task<bool> DeliverGroup(DeliverGroupDto groupDeliveryDto)
     {

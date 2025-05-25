@@ -10,6 +10,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import { Router } from '@angular/router';
+import { OrderStatus } from '../../models/enums/order-status.enum';
 
 @Component({
   selector: 'app-order-view',
@@ -19,7 +20,7 @@ import { Router } from '@angular/router';
   styleUrl: './order-list.component.css'
 })
 export class OrderListComponent implements OnInit {
-
+  public OrderStatus = OrderStatus; // Make enum available in template
   public dataSource : MatTableDataSource<OrderSummaryDto>;
   public totalCount:number ;
   public isEditMode:boolean ;
@@ -92,6 +93,36 @@ export class OrderListComponent implements OnInit {
 
   protected generateInvoice_Click(orderId: number) {
     window.open(`report-viewer?reportName=invoice&id=${orderId}`, "_blank");
+  }
+
+  getStatusBadgeClass(status: OrderStatus): string {
+    switch (status) {
+      case OrderStatus.New:
+        return 'bg-primary';
+      case OrderStatus.InProgress:
+        return 'bg-warning';
+      case OrderStatus.Completed:
+        return 'bg-success';
+      case OrderStatus.Delivered:
+        return 'bg-info';
+      default:
+        return 'bg-secondary';
+    }
+  }
+
+  getStatusText(status: OrderStatus): string {
+    switch (status) {
+      case OrderStatus.New:
+        return 'جديد';
+      case OrderStatus.InProgress:
+        return 'قيد التنفيذ';
+      case OrderStatus.Completed:
+        return 'مكتمل';
+      case OrderStatus.Delivered:
+        return 'تم التسليم';
+      default:
+        return 'غير معروف';
+    }
   }
 }
 
