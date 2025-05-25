@@ -73,6 +73,7 @@ export class OrderSharedDataService {
       name: '',
       clientId: 0,
       clientName: '',
+      status:'',
       objectState: ObjectStateEnum.temp,
       orderGroups: [],
       orderServices: []

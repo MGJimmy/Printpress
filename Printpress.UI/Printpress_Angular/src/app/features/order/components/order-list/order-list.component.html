@@ -1,83 +1,101 @@
 <div class="container mt-5 mb-5 pb-5 rtl">
-
-  <div>
-    <div class="text-center mb-5 border-bottom pb-3 text-primary">
-      <h1> قائمة الطلبات</h1>
-    </div>
+  <!-- Header Section -->
+  <div class="page-header mb-4">
+    <h1 class="text-center text-primary border-bottom pb-3">قائمة الطلبات</h1>
   </div>
 
-  <div>
-    <mat-card>
-      <mat-card-content>
-        <div class="toolbar d-flex justify-content-between align-items-center">
-          <button mat-raised-button color="primary" (click)="onAddOrder()">إضافة طلبيه جديد</button>
-        </div>
-        <div class="mt-4">
-          <div class="custom-table">
-            <table mat-table [dataSource]="dataSource">
+  <!-- Main Content -->
+  <mat-card class="shadow-sm">
+    <mat-card-content>
+      <!-- Toolbar Section -->
+      <div class="toolbar d-flex justify-content-between align-items-center mb-4">
+        <button mat-raised-button color="primary" (click)="onAddOrder()">
+          <mat-icon>add</mat-icon>
+          إضافة طلبيه جديد
+        </button>
+      </div>
 
-              <ng-container matColumnDef="orderName">
-                <th mat-header-cell *matHeaderCellDef> ألاسم</th>
-                <td mat-cell *matCellDef="let element">      
-                   <a (click)="onViewOrder(element.id)" class="order-link">{{element.orderName}}</a>
-                </td>
-              </ng-container>
+      <!-- Table Section -->
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource" class="w-100">
+          <!-- Order Name Column -->
+          <ng-container matColumnDef="orderName">
+            <th mat-header-cell *matHeaderCellDef class="fw-bold">ألاسم</th>
+            <td mat-cell *matCellDef="let element">      
+              <a (click)="onViewOrder(element.id)" class="order-link text-primary cursor-pointer">{{element.orderName}}</a>
+            </td>
+          </ng-container>
 
-              <ng-container matColumnDef="clientName">
-                <th mat-header-cell *matHeaderCellDef> اسم العميل </th>
-                <td mat-cell *matCellDef="let element"> {{element.clientName}} </td>
-              </ng-container>
+          <!-- Client Name Column -->
+          <ng-container matColumnDef="clientName">
+            <th mat-header-cell *matHeaderCellDef class="fw-bold">اسم العميل</th>
+            <td mat-cell *matCellDef="let element">{{element.clientName}}</td>
+          </ng-container>
 
-              <ng-container matColumnDef="totalAmount">
-                <th mat-header-cell *matHeaderCellDef> الاجمالي </th>
-                <td mat-cell *matCellDef="let element"> {{element.totalAmount}} </td>
-              </ng-container>
+          <!-- Total Amount Column -->
+          <ng-container matColumnDef="totalAmount">
+            <th mat-header-cell *matHeaderCellDef class="fw-bold">الاجمالي</th>
+            <td mat-cell *matCellDef="let element">{{element.totalAmount | currency:'EGP'}}</td>
+          </ng-container>
 
-              <ng-container matColumnDef="paidAmount">
-                <th mat-header-cell *matHeaderCellDef> المدفوع </th>
-                <td mat-cell *matCellDef="let element">
-                  {{element.paidAmount}}
-                </td>
-              </ng-container>
+          <!-- Paid Amount Column -->
+          <ng-container matColumnDef="paidAmount">
+            <th mat-header-cell *matHeaderCellDef class="fw-bold">المدفوع</th>
+            <td mat-cell *matCellDef="let element">{{element.paidAmount | currency:'EGP'}}</td>
+          </ng-container>
 
-              <ng-container matColumnDef="orderStatus">
-                <th mat-header-cell *matHeaderCellDef> حالة الطلبيه </th>
-                <td mat-cell *matCellDef="let element">
-                  جاهزه
-                </td>
-              </ng-container>
+          <!-- Order Status Column -->
+          <ng-container matColumnDef="orderStatus">
+            <th mat-header-cell *matHeaderCellDef class="fw-bold">حالة الطلبيه</th>
+            <td mat-cell *matCellDef="let element">
+              <span class="badge bg-success">جاهزه</span>
+            </td>
+          </ng-container>
 
-              <ng-container matColumnDef="createdAt">
-                <th mat-header-cell *matHeaderCellDef> تاريخ ألانشاء </th>
-                <td mat-cell *matCellDef="let element">
-                  {{element.createdAt | date: 'yyyy-MM-dd'}}
-                </td>
-              </ng-container>
+          <!-- Created At Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef class="fw-bold">تاريخ ألانشاء</th>
+            <td mat-cell *matCellDef="let element">
+              {{element.createdAt | date: 'yyyy-MM-dd'}}
+            </td>
+          </ng-container>
 
-              <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef> أجراء </th>
-                <td mat-cell *matCellDef="let element">
-                  <button class="col-3 m-2" mat-raised-button style="background-color: rgb(103, 184, 107);" (click)="generateInvoice_Click(element.id)"> إصدار فاتورة </button>
-                  <button class="mx-3" mat-raised-button color="primary" (click)="onEditOrder(element.id)">تعديل</button>
-                  <button class="mx-3" mat-raised-button color="warn" (click)="onDeleteOrder(element.id)">حذف</button>
-                </td>
-              </ng-container>
+          <!-- Actions Column -->
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef class="fw-bold">أجراء</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex gap-2">
+                <button mat-raised-button class="bg-success text-white" (click)="generateInvoice_Click(element.id)">
+                  <mat-icon>receipt</mat-icon>
+                  إصدار فاتورة
+                </button>
+                <button mat-raised-button color="primary" (click)="onEditOrder(element.id)">
+                  <mat-icon>edit</mat-icon>
+                  تعديل
+                </button>
+                <button mat-raised-button color="warn" (click)="onDeleteOrder(element.id)">
+                  <mat-icon>delete</mat-icon>
+                  حذف
+                </button>
+              </div>
+            </td>
+          </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-light"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
 
-            </table>
-            <app-shared-pagination class="ltr" [totalItems]="totalCount" (onPageChange)="onPageChange($event)">
-            </app-shared-pagination>
-          </div>
-
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
+      <!-- Pagination -->
+      <div class="mt-4">
+        <app-shared-pagination class="ltr" [totalItems]="totalCount" (onPageChange)="onPageChange($event)">
+        </app-shared-pagination>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
 
+<!-- Order Add/Update Modal -->
 <div>
   <app-order-add-update *ngIf="isEditMode"></app-order-add-update>
 </div>

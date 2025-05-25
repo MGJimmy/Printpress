@@ -9,7 +9,7 @@ export interface OrderGetDto extends IObjectState {
     name:string;
     clientId:number;
     clientName:string,
-
+    status :string,
     orderGroups: OrderGroupGetDto[];
     orderServices: OrderServicesGetDTO[];
 }

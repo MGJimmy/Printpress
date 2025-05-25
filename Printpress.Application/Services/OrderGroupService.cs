@@ -54,7 +54,6 @@ internal sealed class OrderGroupSere(IUnitOfWork unitOfWork ) : IOrderGroupServi
         }
 
         order.Status = OrderStatusEnum.Delivered;
-        unitOfWork.OrderRepository.Update(order);
         await unitOfWork.SaveChangesAsync();
     }
 

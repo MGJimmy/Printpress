@@ -19,6 +19,7 @@ namespace Printpress.Application
                 ClientName = order.Client.Name,
                 TotalPaid = order.TotalPaid,
                 TotalPrice = order.TotalPrice,
+                Status= order.Status,
                 OrderServices = order.Services.MapAsList(MapToOrderServiceDTO),
                 OrderGroups = order.OrderGroups.MapAsList(MapToOrderGroupDTO),
                 ObjectState = TrackingState.Unchanged
