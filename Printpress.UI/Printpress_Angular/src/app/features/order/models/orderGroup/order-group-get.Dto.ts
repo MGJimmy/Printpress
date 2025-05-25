@@ -7,8 +7,10 @@ export interface OrderGroupGetDto extends IObjectState {
     id: number;
     name: string;
     deliveryDate?: Date;
+    deliveredFrom?: string;
     deliveredTo?: string;
     deliveryNotes?: string;
+    status?:string;
     orderId: number;
     deliveryName?: string
     receiverName?: string

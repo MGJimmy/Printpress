@@ -26,15 +26,20 @@ namespace Printpress.Application
 
             return orderDto;
         }
-        public static OrderGroupDTO MapToOrderGroupDTO(this OrderGroup orderService)
+        public static OrderGroupDTO MapToOrderGroupDTO(this OrderGroup OrderGroup)
         {
             var orderGroupDTO = new OrderGroupDTO
             {
-                Id = orderService.Id,
-                Name = orderService.Name,
-                OrderId = orderService.OrderId,
-                OrderGroupServices = orderService.OrderGroupServices.MapAsList(MapToGroupServiceDTO),
-                Items = orderService.Items.MapAsList(MapToItemDTO),
+                Id = OrderGroup.Id,
+                Name = OrderGroup.Name,
+                DeliveredFrom = OrderGroup.DeliveryName,
+                DeliveredTo = OrderGroup.ReceiverName,
+                DeliveryDate = OrderGroup.DeliveryDate,
+                DeliveryNotes =OrderGroup.DeliveryNotes,
+                OrderId = OrderGroup.OrderId,
+                Status = OrderGroup.Status,
+                OrderGroupServices = OrderGroup.OrderGroupServices.MapAsList(MapToGroupServiceDTO),
+                Items = OrderGroup.Items.MapAsList(MapToItemDTO),
                 ObjectState = TrackingState.Unchanged
             };
 

@@ -1,5 +1,5 @@
 <div class="container p-4 rtl">
-    <h2 class="text-center mb-4">تسليم المجموعة</h2>
+    <h2 class="text-center mb-4">{{isViewMode ? 'تفاصيل التسليم' : 'تسليم المجموعة'}}</h2>
 
     <form [formGroup]="deliveryForm" (ngSubmit)="onSubmit()">
         <!-- Delivery Date -->
@@ -39,8 +39,10 @@
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end gap-2">
-            <button mat-button type="button" (click)="onCancel()">إلغاء</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="!deliveryForm.valid">
+            <button mat-button type="button" (click)="onCancel()">
+                {{isViewMode ? 'إغلاق' : 'إلغاء'}}
+            </button>
+            <button *ngIf="!isViewMode" mat-raised-button color="primary" type="submit" [disabled]="!deliveryForm.valid">
                 تأكيد التسليم
             </button>
         </div>

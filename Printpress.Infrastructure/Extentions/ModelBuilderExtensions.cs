@@ -1,8 +1,10 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Printpress.Domain;
 using Printpress.Domain.Entities;
 using Printpress.Domain.Interfaces;
+using Printpress.Enums;
 
 namespace Printpress.Infrastructure
 {
@@ -118,6 +120,17 @@ namespace Printpress.Infrastructure
                 .Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(200);
+
+            entity.Property(x => x.DeliveryName)
+                .HasMaxLength(200);
+            entity.Property(x => x.ReceiverName)
+                .HasMaxLength(200);
+
+            entity.Property(x => x.DeliveryNotes)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.Status)
+                .HasDefaultValue(GroupStatusEnum.New);
         }
 
         private static void Configure(this EntityTypeBuilder<Item> entity)

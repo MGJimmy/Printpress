@@ -51,4 +51,8 @@ export class OrderService {
   public deleteOrder(id: number): Observable<any> {
     return this.httpService.delete<any>(ApiUrlResource.OrderAPI.delete(id));
   }
+
+  public deliverOrderGroup(deliverGroupDto:any): Observable<any> {
+    return this.httpService.post<any>( `${ApiUrlResource.OrderAPI.deliverOrderGroup}`,deliverGroupDto);
+  }
 }

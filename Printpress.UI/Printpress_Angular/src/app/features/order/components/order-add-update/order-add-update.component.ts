@@ -212,36 +212,61 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
   }
 
-  onDeleverGroup(groupId: number) {
+  public onDeleverGroup(groupId: number) {
     const dialogRef = this.dialog.open(GroupDeleveryPopupComponent, {
       width: '500px',
-      disableClose: true
+      disableClose: true,
+      data : {
+        isViewMode: false
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Update the group with delivery information
-        console.log(result);
-        console.log(groupId);
-        const group = this.OrderSharedService.getOrderGroups_Copy().find(g => g.id === groupId);
-        if (group) {
-          group.deliveryDate = result.deliveryDate;
-          group.deliveredTo = result.deliveredTo;
-          group.deliveryNotes = result.deliveryNotes;
-          
-          // Refresh the grid
-          this.bindGroups();
-          
-          this.alertService.showSuccess('تم تسليم المجموعة بنجاح');
-        }
+        result.id = groupId;
+
+        this.orderService.deliverOrderGroup(result).subscribe((response) => { 
+          const group = this.OrderSharedService.getOrderGroups_Copy().find(g => g.id === groupId);
+          if (group) {
+            // Update the group's delivery information
+            group.deliveryDate = result.deliveryDate;
+            group.deliveredFrom = result.deliveredFrom;
+            group.deliveredTo = result.deliveredTo;
+            group.deliveryNotes = result.deliveryNotes;
+            
+            // Refresh the grid
+            this.bindGroups();
+            
+            // Broadcast event to refresh all tabs
+            this.orderComm.emit(OrderEventType.ORDER_MAINDATA_UPDATED);
+            
+            this.alertService.showSuccess('تم تسليم المجموعة بنجاح');
+          }
+        })   
       }
     });
   }
+
+  public onDeliveryDetails(groupId: number){
+    const group = this.OrderSharedService.getOrderGroups_Copy().find(g => g.id === groupId);
+    if (!group) return;
+
+    const dialogRef = this.dialog.open(GroupDeleveryPopupComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        deliveryDate: group.deliveryDate,
+        deliveredFrom: group.deliveredFrom,
+        deliveredTo: group.deliveredTo,
+        deliveryNotes: group.deliveryNotes,
+        isViewMode: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe();
+  }
   
 }
-
-
-
 
 interface OrderGroupGridViewModel {
   id: number;

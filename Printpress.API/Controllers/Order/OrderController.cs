@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Printpress.Application;
+using Printpress.Domain.Entities;
 namespace Printpress.API;
 
 [Route("api/[controller]")]
 [ApiController]
-public class OrderController(IOrderAggregateService _IOrderService) : ControllerBase
+public class OrderController(IOrderAggregateService _IOrderService , IOrderGroupService orderGroupService) : ControllerBase
 {
     [HttpGet]
     [Route("getOrderSummaryList")]
@@ -51,4 +52,13 @@ public class OrderController(IOrderAggregateService _IOrderService) : Controller
         await _IOrderService.DeleteOrder(id);
         return Ok();
     }
+
+    [HttpPost]
+    [Route("DeliverOrderGroup")]
+    public async Task<IActionResult> DeliverOrderGroup(DeliverGroupDto groupDeliveryDto)
+    {
+        var result = await orderGroupService.DeliverGroup(groupDeliveryDto);
+        return Ok(result);
+    }
+
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Printpress.Domain.Entities;
 using Printpress.Domain.Interfaces;
 
@@ -12,7 +10,7 @@ public class ApplicationDbContext : DbContext
     {
     }
     public DbSet<Client> Client { get; set; }
- 
+
     public DbSet<PrintingServiceDetails> PrintingServiceDetails { get; set; }
     public DbSet<PrintingType> PrintingType { get; set; }
     public DbSet<ProductStock> ProductStock { get; set; }
@@ -31,20 +29,6 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Configure();
-
-        modelBuilder.Entity<IdentityRole>().HasData(
-            new IdentityRole
-            {
-                Name = "Admin",
-                NormalizedName = "ADMIN"
-            },
-            new IdentityRole
-            {
-                Name = "User",
-                NormalizedName = "USER"
-            }
-        );
-
 
 
     }
