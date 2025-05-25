@@ -52,5 +52,10 @@
 </ng-template>
 
 <ng-template #dataTemplate let-element = "element" let-column = "column">
-  {{element[column]}}
+  <ng-container *ngIf="column === 'amount'">
+    {{element[column] | number:'1.2-2'}} جنيه
+  </ng-container>
+  <ng-container *ngIf="column !== 'amount'">
+    {{element[column]}}
+  </ng-container>
 </ng-template>
