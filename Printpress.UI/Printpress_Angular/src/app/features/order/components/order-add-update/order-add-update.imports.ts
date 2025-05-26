@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 export const imports = [
   CommonModule,
@@ -25,5 +26,6 @@ export const imports = [
   RouterModule,
   MatSelectModule,
   MatDialogModule,
-  MatMenuModule
+  MatMenuModule,
+  MatExpansionModule
 ];
