@@ -12,6 +12,11 @@ import { Router } from "@angular/router";
 })
 export class AuthService {
 
+  private readonly skipTokenUrls: string[] = [
+    '/api/Account/login'
+    // add more here or load from config
+  ];
+
   constructor(private httpService: HttpService,
     private router: Router) { 
   }
@@ -58,6 +63,11 @@ export class AuthService {
       );
     }
     return false;
+  }
+
+  shouldSkipAuth(url: string): boolean {
+    let loweredUrl = url.toLowerCase();
+    return this.skipTokenUrls.some(skipUrl => loweredUrl.includes(skipUrl.toLowerCase()));
   }
 }
 
