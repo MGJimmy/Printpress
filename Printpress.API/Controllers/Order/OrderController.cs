@@ -48,7 +48,7 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
     [Route("delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _IOrderService.DeleteOrder(id);
+        await _IOrderService.DeleteOrder(id, UserId);
         return Ok();
     }
 
@@ -56,7 +56,7 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
     [Route("DeliverOrderGroup")]
     public async Task<IActionResult> DeliverOrderGroup(DeliverGroupDto groupDeliveryDto)
     {
-        var result = await orderGroupService.DeliverGroup(groupDeliveryDto);
+        var result = await orderGroupService.DeliverGroup(groupDeliveryDto, UserId);
         return Ok(result);
     }
 

@@ -11,21 +11,21 @@ namespace Printpress.Application
 
             Service service = serviceMapper.MapFromDestinationToSource(payload);
 
-            await _unitOfWork.ServiceRepository.AddAsync(service, userId);
+            await _unitOfWork.ServiceRepository.AddAsync(service);
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(userId);
 
             return serviceMapper.MapFromSourceToDestination(service);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Service service = await _unitOfWork.ServiceRepository.FindAsync(id);
 
             if (service is null) throw new ValidationExeption("Service not found");
 
             _unitOfWork.ServiceRepository.Remove(service);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(userId);
         }
 
         public async Task<List<ServiceDto>> GetAll()
@@ -53,10 +53,10 @@ namespace Printpress.Application
                 throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
             }
 
-            var client = _unitOfWork.ServiceRepository.Update(serviceMapper.MapFromDestinationToSource(id, payload), userId);
+            var client = _unitOfWork.ServiceRepository.Update(serviceMapper.MapFromDestinationToSource(id, payload));
 
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(userId);
 
             return serviceMapper.MapFromSourceToDestination(client);
         }

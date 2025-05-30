@@ -99,9 +99,9 @@ namespace Printpress.Infrastructure
             }
         }
 
-
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(string userId)
         {
+            _context.CurrentUserId = userId;
             await _context.SaveChangesAsync();
         }
     }

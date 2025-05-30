@@ -8,10 +8,10 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
     {
         // Make validation
 
-        var client = await _unitOfWork.ClientRepository.AddAsync(_clientMapper.MapFromDestinationToSource(payload), userId);
+        var client = await _unitOfWork.ClientRepository.AddAsync(_clientMapper.MapFromDestinationToSource(payload));
 
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(userId);
 
         return _clientMapper.MapFromSourceToDestination(client);
     }
@@ -25,10 +25,10 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
         }
 
-        var client = _unitOfWork.ClientRepository.Update(_clientMapper.MapFromDestinationToSource(id, payload), userId);
+        var client = _unitOfWork.ClientRepository.Update(_clientMapper.MapFromDestinationToSource(id, payload));
 
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(userId);
 
         return _clientMapper.MapFromSourceToDestination(client);
     }
@@ -43,7 +43,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
         return _clientMapper.MapFromSourceToDestination(client);
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id, string userId)
     {
         var entity = await _unitOfWork.ClientRepository.FindAsync(id);
 
@@ -54,7 +54,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
 
         _unitOfWork.ClientRepository.Remove(entity);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(userId);
     }
 
     public async Task<PagedList<ClientDto>> GetByPage(int pageNumber, int pageSize)

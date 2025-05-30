@@ -12,6 +12,5 @@ public interface IUnitOfWork
 
     IGenericRepository<OrderGroup> OrderGroupRepository { get; }
 
-
-    Task SaveChangesAsync();
+    Task SaveChangesAsync(string userId);
 }

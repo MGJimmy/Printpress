@@ -5,7 +5,7 @@ namespace Printpress.Application;
 
 internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
 {
-    public async Task<bool> DeliverGroup(DeliverGroupDto groupDeliveryDto)
+    public async Task<bool> DeliverGroup(DeliverGroupDto groupDeliveryDto, string userId)
     {
 
         var orderGroup = await unitOfWork.OrderGroupRepository.FirstOrDefaultAsync(x => x.Id == groupDeliveryDto.Id);
@@ -26,12 +26,12 @@ internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
         orderGroup.DeliveryNotes = groupDeliveryDto.DeliveryNotes;
         orderGroup.Status = GroupStatusEnum.Delivered;
 
-        await unitOfWork.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync(userId);
 
         bool allDelivered = IsAllOrderGroupDelivered(orderGroup.OrderId);
         if (allDelivered)
         {
-            await MarkOrderAsDelivered(orderGroup.OrderId);
+            await MarkOrderAsDelivered(orderGroup.OrderId, userId);
         }
 
         return true;
@@ -44,7 +44,7 @@ internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
         return notDeliveredCount == 0;
 
     }
-    private async Task MarkOrderAsDelivered(int orderId)
+    private async Task MarkOrderAsDelivered(int orderId, string userId)
     {
         var order = await unitOfWork.OrderRepository.FirstOrDefaultAsync(x => x.Id == orderId);
 
@@ -54,7 +54,7 @@ internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
         }
 
         order.Status = OrderStatusEnum.Delivered;
-        await unitOfWork.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync(userId);
     }
 
 }

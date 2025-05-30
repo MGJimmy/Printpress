@@ -59,9 +59,9 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
-        await _IUnitOfWork.OrderRepository.AddAsync(order, userId);
+        await _IUnitOfWork.OrderRepository.AddAsync(order);
 
-        await _IUnitOfWork.SaveChangesAsync();
+        await _IUnitOfWork.SaveChangesAsync(userId);
     }
 
     private async Task<decimal?> CalculateOrderTotalPrice(Order order)
@@ -151,12 +151,12 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
-        _IUnitOfWork.OrderRepository.AddOrUpdate(order, userId);
+        _IUnitOfWork.OrderRepository.AddOrUpdate(order);
 
-        await _IUnitOfWork.SaveChangesAsync();
+        await _IUnitOfWork.SaveChangesAsync(userId);
     }
 
-    public async Task DeleteOrder(int id)
+    public async Task DeleteOrder(int id, string userId)
     {
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync(o => o.Id == id);
         
@@ -164,6 +164,6 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             ValidationExeption.FireValidationException("Order with ID {0} not found", id);
 
         _IUnitOfWork.OrderRepository.Remove(order);
-        await _IUnitOfWork.SaveChangesAsync();
+        await _IUnitOfWork.SaveChangesAsync(userId);
     }
 }

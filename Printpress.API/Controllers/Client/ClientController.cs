@@ -51,7 +51,7 @@ public class ClientController(IClientService _IClientService) : AppBaseControlle
     [Route("delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _IClientService.DeleteAsync(id);
+        await _IClientService.DeleteAsync(id, UserId);
         return Ok();
     }
 }

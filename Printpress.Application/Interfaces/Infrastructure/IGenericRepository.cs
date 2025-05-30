@@ -25,8 +25,8 @@ namespace Printpress.Application
         T FirstOrDefault(Expression<Func<T, bool>> query, params string[] includes);
         void RemoveAll(Expression<Func<T, bool>> query);
         void Remove(T entity);
-        Task<T> AddAsync(T entity, string userId);
-        T Update(T entity, string userId);
-        void AddOrUpdate(T entity, string userId);
+        Task<T> AddAsync(T entity);
+        T Update(T entity);
+        void AddOrUpdate(T entity);
     }
 }

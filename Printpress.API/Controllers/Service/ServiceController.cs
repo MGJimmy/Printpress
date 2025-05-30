@@ -44,7 +44,7 @@ public class ServiceController(IServiceService _serviceService) : AppBaseControl
     [Route("delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _serviceService.DeleteAsync(id);
+        await _serviceService.DeleteAsync(id, UserId);
         return Ok();
     }
 }

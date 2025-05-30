@@ -2,5 +2,5 @@
 
 public interface IOrderGroupService
 {
-    Task<bool> DeliverGroup(DeliverGroupDto groupDeliveryDto);
+    Task<bool> DeliverGroup(DeliverGroupDto groupDeliveryDto, string userId);
 }

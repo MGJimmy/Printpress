@@ -14,7 +14,7 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
         ValidatePayloadAmountComparedToOrder(order, payload);
 
         
-        var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload), userId);
+        var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
 
         var isPayment = EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Payment;
 
@@ -22,9 +22,9 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
 
         order.TotalPaid = order.TotalPaid.GetValueOrDefault() + transactionAmount;
 
-        _unitOfWork.OrderRepository.Update(order, userId);
+        _unitOfWork.OrderRepository.Update(order);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(userId);
 
         return _orderTransactionMapper.MapFromSourceToDestination(client);
     }
