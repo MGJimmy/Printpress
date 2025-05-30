@@ -100,28 +100,3 @@ td.mat-cell:has(ng-container[matColumnDef="orderStatus"]) {
   }
 }
 
-.gradient-table {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-  border-radius: 8px;
-  padding: 1px;
-}
-
-.gradient-table table {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.gradient-table .mat-mdc-row:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-.gradient-table .mat-mdc-header-row {
-  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
-  color: white;
-}
-
-.gradient-table .mat-mdc-header-cell {
-  color: white;
-  font-weight: 500;
-}

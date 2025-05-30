@@ -1,4 +1,4 @@
-<div class="container mt-5 rtl">
+<div class="container mt-1 rtl">
     <!-- Header Section -->
     <div class="text-center mb-5 border-bottom pb-3 text-primary">
         <h1 *ngIf="componentMode.isEditMode">تعديل طلبية</h1>
@@ -6,167 +6,240 @@
     </div>
 
     <!-- Order Summary Section -->
-    <div class="border border-primary p-3">
-        <div *ngIf="componentMode.isViewMode" class="row d-flex justify-content-around mb-3">
-            <button class="col-3 m-2" mat-raised-button color="primary" (click)="manageTransactions_Click()">
-                التحويلات المالية
-            </button>
-        </div>
-
-        <div class="row">
-            <label class="col-4">الاجمالي: {{orderGetDto.totalPrice || 0}}</label>
-            <label class="col-4">المدفوع: {{orderGetDto.totalPaid || 0}}</label>
-            <label class="col-4">الباقي: {{(orderGetDto.totalPrice || 0) - (orderGetDto.totalPaid || 0)}}</label>
-        </div>
-
-        <div class="row">
-            <label class="col-4">اسم الطلبية: {{orderGetDto.name}}</label>
-            <label class="col-4">اسم العميل: {{orderGetDto.clientName}}</label>
-            <label class="col-4">حالة الطلبية: غير منتهية</label>
-        </div>
-    </div>
-
-    <!-- Form Section -->
-    <div *ngIf="componentMode.isEditMode || componentMode.isaddMode" class="m-1">
-        <form class="row g-3">
-            <!-- Order Name -->
-            <div class="col-md-3">
-                <label for="orderName" class="form-label">اسم الطلبية</label>
-                <input type="text" 
-                       [(ngModel)]="orderName" 
-                       [ngModelOptions]="{standalone: true}"
-                       (blur)="onOrderNameInputBlur()" 
-                       class="form-control" 
-                       id="orderName" 
-                       required>
+    <mat-expansion-panel *ngIf="!componentMode.isaddMode" class="mb-5" [expanded]="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                ملخص الطلبية
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-card-content>
+            <!-- Financial Transactions Button -->
+            <div *ngIf="componentMode.isViewMode" class="row d-flex justify-content-around mb-3">
+                <button class="col-3 m-2" mat-raised-button color="primary" (click)="manageTransactions_Click()">
+                    <mat-icon class="me-1">payments</mat-icon>
+                    التحويلات المالية
+                </button>
             </div>
 
-            <!-- Customer Name with Add Button -->
-            <div class="col-md-4">
-                <div class="row input-group">
-                    <label for="clientSelect" class="form-label">اسم العميل</label>
-                    <mat-form-field appearance="outline" class="col-7">
-                        <mat-select [(value)]="orderClientId" 
-                                  panelClass="custom-panel"
-                                  (selectionChange)="onClientSelectChange()">
-                            <mat-option *ngFor="let client of clients" [value]="client.id">
-                                {{client.name}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <div class="col-1"></div>
-                    <button class="col-4" 
-                            mat-raised-button 
-                            color="primary" 
-                            (click)="openAddClientDialog()">
-                        <i class="bi bi-plus-circle me-1"></i>
-                        إضافة عميل
-                    </button>
+            <!-- Order Details -->
+            <div class="row g-3 mb-2">
+                <div class="col-md-4">
+                    <mat-card class="bg-primary text-white">
+                        <mat-card-content>
+                            <div class="d-flex align-items-center">
+                                <mat-icon class="me-2">attach_money</mat-icon>
+                                <span>الاجمالي: {{(orderGetDto.totalPrice || 0) | number:'1.2-2'}} جنيه</span>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="col-md-4">
+                    <mat-card class="bg-success text-white">
+                        <mat-card-content>
+                            <div class="d-flex align-items-center">
+                                <mat-icon class="me-2">payments</mat-icon>
+                                <span>المدفوع: {{(orderGetDto.totalPaid || 0)| number:'1.2-2'}} جنيه</span>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="col-md-4">
+                    <mat-card class="bg-warning text-dark">
+                        <mat-card-content>
+                            <div class="d-flex align-items-center">
+                                <mat-icon class="me-2">account_balance_wallet</mat-icon>
+                                <span>الباقي: {{((orderGetDto.totalPrice || 0) - (orderGetDto.totalPaid || 0)) | number:'1.2-2'}} جنيه</span>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
                 </div>
             </div>
-        </form>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <mat-card class="bg-info text-white">
+                        <mat-card-content>
+                            <div class="d-flex align-items-center">
+                                <mat-icon class="me-2">shopping_cart</mat-icon>
+                                <span>اسم الطلبية: {{orderGetDto.name}}</span>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="col-md-4">
+                    <mat-card class="bg-secondary text-white">
+                        <mat-card-content>
+                            <div class="d-flex align-items-center">
+                                <mat-icon class="me-2">person</mat-icon>
+                                <span>اسم العميل: {{orderGetDto.clientName}}</span>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="col-md-4">
+                    <mat-card class="bg-danger text-white">
+                        <mat-card-content>
+                            <div class="d-flex align-items-center">
+                                <mat-icon class="me-2">pending_actions</mat-icon>
+                                <span>حالة الطلبية: غير منتهية</span>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-expansion-panel>
+
+    <!-- Form Section -->
+    <div *ngIf="componentMode.isEditMode || componentMode.isaddMode" class="mb-4">
+        <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    تفاصيل الطلبية
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-card-content>
+                <form class="row g-3">
+                    <!-- Order Name -->
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>اسم الطلبية</mat-label>
+                            <input matInput
+                                   [(ngModel)]="orderName" 
+                                   [ngModelOptions]="{standalone: true}"
+                                   (blur)="onOrderNameInputBlur()" 
+                                   required>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Customer Selection -->
+                    <div class="col-md-8">
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>اسم العميل</mat-label>
+                                    <mat-select [(value)]="orderClientId" 
+                                              panelClass="custom-panel"
+                                              (selectionChange)="onClientSelectChange()">
+                                        <mat-option *ngFor="let client of clients" [value]="client.id">
+                                            {{client.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-4">
+                                <button class="" 
+                                        mat-raised-button 
+                                        color="primary" 
+                                        (click)="openAddClientDialog()">
+                                    <mat-icon class="me-1">add_circle</mat-icon>
+                                    إضافة عميل
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-expansion-panel>
     </div>
 
     <!-- Groups Section -->
-    <div class="mt-5">
-        <mat-card>
-            <mat-card-header class="text-center">
-                <div class="text-center">
-                    <mat-card-title>
-                        <span *ngIf="componentMode.isViewMode">المجموعات</span>
-                        <button *ngIf="!componentMode.isViewMode" 
-                                mat-raised-button 
-                                color="primary"
-                                (click)="onAddGroup()">
-                            إضافة مجموعة جديدة
-                        </button>
-                    </mat-card-title>
-                </div>
-            </mat-card-header>
+    <mat-expansion-panel class="mt-4" [expanded]="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <span>المجموعات</span>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
 
-            <mat-card-content>
-                <div class="mt-4">
-                    <div class="custom-table">
-                        <table mat-table [dataSource]="orderGroupGridDataSource">
-                            <!-- Name Column -->
-                            <ng-container matColumnDef="name">
-                                <th mat-header-cell *matHeaderCellDef>اسم المجموعة</th>
-                                <td mat-cell *matCellDef="let element">{{element.name}}</td>
-                            </ng-container>
+        <div class="mt-4">
+            <div class="mb-2">
+                <button *ngIf="!componentMode.isViewMode" 
+                mat-raised-button 
+                color="primary"
+                (click)="onAddGroup()">
+               إضافة مجموعة جديدة
+               </button>
+            </div>
+          
+            <div class="table-responsive gradient-table custom-table"> 
+                <table mat-table [dataSource]="orderGroupGridDataSource">        
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>اسم المجموعة</th>
+                        <td mat-cell *matCellDef="let element">{{element.name}}</td>
+                    </ng-container>
 
-                            <!-- Delivery Date Column -->
-                            <ng-container matColumnDef="deliveryDate">
-                                <th mat-header-cell *matHeaderCellDef>تاريخ التسليم</th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{ (element.deliveryDate | date:'yyyy-MM-dd') || 'لم يتم التسليم'}}
-                                </td>
-                            </ng-container>
+                    <!-- Delivery Date Column -->
+                    <ng-container matColumnDef="deliveryDate">
+                        <th mat-header-cell *matHeaderCellDef>تاريخ التسليم</th>
+                        <td mat-cell *matCellDef="let element">
+                            {{ (element.deliveryDate | date:'yyyy-MM-dd') || 'لم يتم التسليم'}}
+                        </td>
+                    </ng-container>
 
-                            <!-- Delivered To Column -->
-                            <ng-container matColumnDef="deliveredTo">
-                                <th mat-header-cell *matHeaderCellDef>تم التسليم إلى</th>
-                                <td mat-cell *matCellDef="let element">
-                                    <span class="badge" [ngClass]="{'badge-success': element.deliveredTo, 'badge-secondary': !element.deliveredTo}">
-                                        {{element.deliveredTo || 'لم يتم التسليم'}}
-                                    </span>
-                                </td>
-                            </ng-container>
+                    <!-- Delivered To Column -->
+                    <ng-container matColumnDef="deliveredTo">
+                        <th mat-header-cell *matHeaderCellDef>تم التسليم إلى</th>
+                        <td mat-cell *matCellDef="let element">
+                            <span class="badge" [ngClass]="{'badge-success': element.deliveredTo, 'badge-secondary': !element.deliveredTo}">
+                                {{element.deliveredTo || 'لم يتم التسليم'}}
+                            </span>
+                        </td>
+                    </ng-container>
 
-                            <!-- Action Column -->
-                            <ng-container matColumnDef="action">
-                                <th mat-header-cell *matHeaderCellDef>إجراء</th>
-                                <td mat-cell *matCellDef="let element">
-                                    <button mat-icon-button [matMenuTriggerFor]="menu">
-                                        <mat-icon>more_vert</mat-icon>
-                                    </button>
-                                    <mat-menu #menu="matMenu">
-                                        <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
-                                                mat-menu-item
-                                                (click)="onEditGroup(element.id)">
-                                            <mat-icon>edit</mat-icon>
-                                            <span>تعديل</span>
-                                        </button>
-                                        <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
-                                                mat-menu-item
-                                                (click)="onDeleteGroup(element.id)">
-                                            <mat-icon>delete</mat-icon>
-                                            <span>حذف</span>
-                                        </button>
-                                        <button *ngIf="componentMode.isEditMode && element.deliveryDate" 
-                                                mat-menu-item
-                                                (click)="onDeliveryDetails(element.id)">
-                                            <mat-icon>info</mat-icon>
-                                            <span>تفاصيل التسليم</span>
-                                        </button>
-                                        <button *ngIf="componentMode.isViewMode && !element.deliveryDate" 
-                                                mat-menu-item
-                                                (click)="onDeleverGroup(element.id)">
-                                            <mat-icon>local_shipping</mat-icon>
-                                            <span>تسليم المجموعة</span>
-                                        </button>
-                                        <button *ngIf="componentMode.isViewMode && element.deliveryDate" 
-                                                mat-menu-item
-                                                (click)="onDeliveryDetails(element.id)">
-                                            <mat-icon>info</mat-icon>
-                                            <span>تفاصيل التسليم</span>
-                                        </button>
-                                    </mat-menu>
-                                </td>
-                            </ng-container>
+                    <!-- Action Column -->
+                    <ng-container matColumnDef="action">
+                        <th mat-header-cell *matHeaderCellDef>إجراء</th>
+                        <td mat-cell *matCellDef="let element">
+                            <button mat-icon-button [matMenuTriggerFor]="menu">
+                                <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu">
+                                <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
+                                        mat-menu-item
+                                        (click)="onEditGroup(element.id)">
+                                    <mat-icon>edit</mat-icon>
+                                    <span>تعديل</span>
+                                </button>
+                                <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
+                                        mat-menu-item
+                                        (click)="onDeleteGroup(element.id)">
+                                    <mat-icon>delete</mat-icon>
+                                    <span>حذف</span>
+                                </button>
+                                <button *ngIf="componentMode.isEditMode && element.deliveryDate" 
+                                        mat-menu-item
+                                        (click)="onDeliveryDetails(element.id)">
+                                    <mat-icon>info</mat-icon>
+                                    <span>تفاصيل التسليم</span>
+                                </button>
+                                <button *ngIf="componentMode.isViewMode && !element.deliveryDate" 
+                                        mat-menu-item
+                                        (click)="onDeleverGroup(element.id)">
+                                    <mat-icon>local_shipping</mat-icon>
+                                    <span>تسليم المجموعة</span>
+                                </button>
+                                <button *ngIf="componentMode.isViewMode && element.deliveryDate" 
+                                        mat-menu-item
+                                        (click)="onDeliveryDetails(element.id)">
+                                    <mat-icon>info</mat-icon>
+                                    <span>تفاصيل التسليم</span>
+                                </button>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
 
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                        </table>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
 
-                        <app-shared-pagination class="ltr" [totalItems]="10"></app-shared-pagination>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
+                <app-shared-pagination class="ltr" [totalItems]="10"></app-shared-pagination>
+            </div>
+        </div>
+    </mat-expansion-panel>
 
     <!-- Action Buttons -->
-    <div class="d-flex justify-content-start mb-3">
+    <div class="d-flex justify-content-start mt-4 mb-3">
         <button *ngIf="!componentMode.isViewMode" 
                 class="mx-3" 
                 mat-raised-button 
