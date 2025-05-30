@@ -2,6 +2,7 @@
   <div class="sidebar-heading">القائمة</div>
   <div class="list-group list-group-flush">
     <a
+      *appHasRole="userRoleEnum.admin"
       routerLink="/clients"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"
@@ -10,6 +11,7 @@
       <fa-icon [icon]="faUserGroup" class="fa-icon mx-2"></fa-icon>
       <span>قائمة العملاء</span>
     </a>
+
     <a
       routerLink="/orderlist"
       routerLinkActive="active-link"
@@ -19,7 +21,9 @@
       <fa-icon [icon]="faCartArrowDown" class="fa-icon mx-2"></fa-icon>
       <span>قائمة الطلبات</span>
     </a>
+
     <a
+      *appHasRole="userRoleEnum.admin"
       routerLink="/services"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"

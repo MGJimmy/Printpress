@@ -8,7 +8,9 @@
   <mat-card class="shadow-sm">
     <mat-card-content>
       <!-- Toolbar Section -->
-      <div class="toolbar d-flex justify-content-between align-items-center mb-4">
+      <div *appHasRole="userRoleEnum.admin" 
+           [ngClass]="{'d-flex': true, 'justify-content-between': true, 'align-items-center': true, 'mb-4': true}"
+      class="toolbar d-flex justify-content-between align-items-center mb-4">
         <button mat-raised-button color="primary" (click)="onAddOrder()">
           <mat-icon>add</mat-icon>
           إضافة طلبيه جديد
@@ -72,14 +74,17 @@
                   <mat-icon>receipt</mat-icon>
                   <span>إصدار فاتورة</span>
                 </button>
-                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onEditOrder(element.id)">
-                  <mat-icon>edit</mat-icon>
-                  <span>تعديل</span>
-                </button>
-                <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onDeleteOrder(element.id)">
-                  <mat-icon>delete</mat-icon>
-                  <span>حذف</span>
-                </button>
+                
+                <div *appHasRole="userRoleEnum.admin" >
+                  <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onEditOrder(element.id)">
+                    <mat-icon>edit</mat-icon>
+                    <span>تعديل</span>
+                  </button>
+                  <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onDeleteOrder(element.id)">
+                    <mat-icon>delete</mat-icon>
+                    <span>حذف</span>
+                  </button>
+                </div>
               </mat-menu>
             </td>
           </ng-container>

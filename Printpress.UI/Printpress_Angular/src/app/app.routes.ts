@@ -70,7 +70,10 @@ export const routes: Routes = [
         children: [
           { path: ORDER_ROUTES.ORDER.ADD, component: OrderAddUpdateComponent },
           { path: ORDER_ROUTES.ORDER.EDIT, component: OrderAddUpdateComponent },
-          { path: ORDER_ROUTES.ORDER.VIEW, component: OrderAddUpdateComponent },
+          { 
+            path: ORDER_ROUTES.ORDER.VIEW, component: OrderAddUpdateComponent, 
+            canActivate: [authGuard, roleGuard], data: { 'roles': [UserRoleEnum.admin, UserRoleEnum.user] } 
+          },
           { path: ORDER_ROUTES.ORDER.GROUP.ADD, component: OrderGroupAddUpdateComponent },
           { path: ORDER_ROUTES.ORDER.GROUP.EDIT, component: OrderGroupAddUpdateComponent },
           { path: ORDER_ROUTES.ORDER.GROUP.SERVICES, component: OrderGroupServiceUpsertComponent },

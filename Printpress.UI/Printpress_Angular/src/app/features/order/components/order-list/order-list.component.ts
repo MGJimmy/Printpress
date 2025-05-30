@@ -11,6 +11,7 @@ import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import { Router } from '@angular/router';
 import { OrderStatus } from '../../models/enums/order-status.enum';
+import { UserRoleEnum } from '../../../../core/models/user-role.enum';
 
 @Component({
   selector: 'app-order-view',
@@ -25,6 +26,7 @@ export class OrderListComponent implements OnInit {
   public totalCount:number ;
   public isEditMode:boolean ;
   public displayedColumns : string[];
+  protected userRoleEnum = UserRoleEnum;
 
   constructor(
     private orderService: OrderService,

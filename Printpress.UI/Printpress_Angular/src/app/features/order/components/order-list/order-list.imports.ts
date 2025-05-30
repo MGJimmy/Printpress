@@ -10,6 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { OrderAddUpdateComponent } from '../order-add-update/order-add-update.component';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { RouterModule } from '@angular/router';
+import { HasRoleDirective } from '../../../../core/directives/has-role.directive';
 
 export const imports = [
   CommonModule,
@@ -25,4 +26,5 @@ export const imports = [
   SharedPaginationComponent,
   OrderAddUpdateComponent,
   RouterModule,
+  HasRoleDirective
 ];

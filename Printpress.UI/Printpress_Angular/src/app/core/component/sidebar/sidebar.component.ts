@@ -7,6 +7,8 @@ import { ConfirmDialogModel } from '../../models/confirm-dialog.model';
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UserRoleEnum } from '../../models/user-role.enum';
+import { HasRoleDirective } from '../../directives/has-role.directive';
 
 import {
   faBars,
@@ -25,12 +27,14 @@ import {
     RouterModule,
     CommonModule,
     FontAwesomeModule,
+    HasRoleDirective
   ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnDestroy {
-   toggled: boolean = false;
+  userRoleEnum = UserRoleEnum;
+  toggled: boolean = false;
 
   faBars = faBars;
   faTimes = faTimes;
