@@ -4,11 +4,11 @@ namespace Printpress.Application;
 
 internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) : IClientService
 {
-    public async Task<ClientDto> AddAsync(ClientUpsertDto payload)
+    public async Task<ClientDto> AddAsync(ClientUpsertDto payload, string userId)
     {
         // Make validation
 
-        var client = await _unitOfWork.ClientRepository.AddAsync(_clientMapper.MapFromDestinationToSource(payload));
+        var client = await _unitOfWork.ClientRepository.AddAsync(_clientMapper.MapFromDestinationToSource(payload), userId);
 
 
         await _unitOfWork.SaveChangesAsync();
@@ -16,7 +16,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
         return _clientMapper.MapFromSourceToDestination(client);
     }
 
-    public async Task<ClientDto> UpdateAsync(int id, ClientUpsertDto payload)
+    public async Task<ClientDto> UpdateAsync(int id, ClientUpsertDto payload, string userId)
     {
         // Make validation
 
@@ -25,7 +25,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
         }
 
-        var client = _unitOfWork.ClientRepository.Update(_clientMapper.MapFromDestinationToSource(id, payload));
+        var client = _unitOfWork.ClientRepository.Update(_clientMapper.MapFromDestinationToSource(id, payload), userId);
 
 
         await _unitOfWork.SaveChangesAsync();

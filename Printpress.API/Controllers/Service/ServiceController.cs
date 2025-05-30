@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Printpress.Application;
 namespace Printpress.API;
 
 
 [Route("api/[controller]")]
-
+[Authorize]
 public class ServiceController(IServiceService _serviceService) : AppBaseController
 {
     [HttpGet]
@@ -27,7 +28,7 @@ public class ServiceController(IServiceService _serviceService) : AppBaseControl
     [Route("add")]
     public async Task<IActionResult> Add(ServiceUpsertDto payload)
     {
-        var result = await _serviceService.AddAsync(payload);
+        var result = await _serviceService.AddAsync(payload, UserId);
         return Ok(result);
     }
 
@@ -35,7 +36,7 @@ public class ServiceController(IServiceService _serviceService) : AppBaseControl
     [Route("update/{id}")]
     public async Task<IActionResult> Update(int id, ServiceUpsertDto payload)
     {
-        var result = await _serviceService.UpdateAsync(id, payload);
+        var result = await _serviceService.UpdateAsync(id, payload, UserId);
         return Ok(result);
     }
 

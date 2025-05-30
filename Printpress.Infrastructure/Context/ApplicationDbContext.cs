@@ -6,6 +6,7 @@ namespace Printpress.Infrastructure;
 
 public class ApplicationDbContext : DbContext
 {
+    public string CurrentUserId { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
@@ -35,26 +36,32 @@ public class ApplicationDbContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        HandleSoftDelete();
+        ApplyCustomSaveLogic();
         return base.SaveChangesAsync(cancellationToken);
     }
 
     public override int SaveChanges()
     {
-        HandleSoftDelete();
+        ApplyCustomSaveLogic();
         return base.SaveChanges();
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-        HandleSoftDelete();
+        ApplyCustomSaveLogic();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
-        HandleSoftDelete();
+        ApplyCustomSaveLogic();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void ApplyCustomSaveLogic()
+    {
+        HandleSoftDelete();
+        SetAuditFields();
     }
 
     private void HandleSoftDelete()
@@ -69,6 +76,39 @@ public class ApplicationDbContext : DbContext
         }
     }
 
+    private void SetAuditFields()
+    {
+        // Only check for user ID if there are added or modified entities
+        var auditableAddedUpdatedEntries = ChangeTracker.Entries<IAuditableEntity>()
+            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+            .ToList();
+
+        if (auditableAddedUpdatedEntries.Any() && string.IsNullOrEmpty(CurrentUserId))
+        {
+            throw new InvalidOperationException("CurrentUserId must be set before saving changes.");
+        }
+
+        var utcDateNow = DateTime.UtcNow;
+        foreach (var entry in auditableAddedUpdatedEntries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedBy = CurrentUserId;
+                    entry.Entity.CreatedAt = utcDateNow;
+                    entry.Entity.UpdatedBy = CurrentUserId;
+                    entry.Entity.UpdatedAt = utcDateNow;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.UpdatedBy = CurrentUserId;
+                    entry.Entity.UpdatedAt = utcDateNow;
+                    // Prevent accidental changes to CreatedBy/CreatedAt
+                    entry.Property(e => e.CreatedBy).IsModified = false;
+                    entry.Property(e => e.CreatedAt).IsModified = false;
+                    break;
+            }
+        }
+    }
 }
 
 

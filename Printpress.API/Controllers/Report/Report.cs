@@ -1,10 +1,11 @@
 ﻿using System.Collections.Specialized;
+using Microsoft.AspNetCore.Authorization;
 using QuestPDF.Fluent;
 
 namespace Printpress.API;
 
 [Route("api/[controller]")]
-
+[Authorize]
 public class Report(IEnumerable<IReportFactory> reportFactories) : AppBaseController
 {
 

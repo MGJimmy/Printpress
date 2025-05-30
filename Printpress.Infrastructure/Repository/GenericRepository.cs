@@ -213,17 +213,23 @@ namespace Printpress.Infrastructure.Repository
         {
             Context.Set<T>().Where(query).ExecuteDelete();
         }
-        public void AddOrUpdate(T entity)
+        public void AddOrUpdate(T entity, string userId)
         {
+            Context.CurrentUserId = userId;
+
             Context.ChangeTrackedEntityStates(entity);
         }
-        public async Task<T> AddAsync(T entity)
+        public async Task<T> AddAsync(T entity, string userId)
         {
+            Context.CurrentUserId = userId;
+
             await Context.AddAsync(entity);
             return entity;
         }
-        public T Update(T entity)
+        public T Update(T entity, string userId)
         {
+            Context.CurrentUserId = userId;
+
             Context.Attach(entity);
             Context.Entry(entity).State = EntityState.Modified;
 

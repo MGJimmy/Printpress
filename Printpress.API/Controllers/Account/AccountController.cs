@@ -26,7 +26,7 @@ public class AccountController : AppBaseController
     }
 
     [HttpPost("create-user")]
-    [AllowAnonymous]
+    [Role(RoleName.Admin)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand request)
     {
         var result = await _mediator.Send(request);
@@ -34,7 +34,7 @@ public class AccountController : AppBaseController
     }
 
     [HttpPost("assign-user-role")]
-    [AllowAnonymous]
+    [Role(RoleName.Admin)]
     public async Task<IActionResult> AssignRolesToUser([FromBody] AssignUserRolesCommand request)
     {
         var result = await _mediator.Send(request);

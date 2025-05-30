@@ -48,7 +48,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         return order.MapToOrderMainDataDto();
     }
-    public async Task InsertOrder(OrderUpsertDto orderDTO)
+    public async Task InsertOrder(OrderUpsertDto orderDTO, string userId)
     {
 
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
@@ -59,7 +59,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
-        await _IUnitOfWork.OrderRepository.AddAsync(order);
+        await _IUnitOfWork.OrderRepository.AddAsync(order, userId);
 
         await _IUnitOfWork.SaveChangesAsync();
     }
@@ -145,13 +145,13 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         return price * noOfPages / noOfPrintingFaces;
     }
 
-    public async Task UpdateOrder(int id,OrderUpsertDto orderDTO)
+    public async Task UpdateOrder(int id,OrderUpsertDto orderDTO, string userId)
     {
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
 
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
-        _IUnitOfWork.OrderRepository.AddOrUpdate(order);
+        _IUnitOfWork.OrderRepository.AddOrUpdate(order, userId);
 
         await _IUnitOfWork.SaveChangesAsync();
     }

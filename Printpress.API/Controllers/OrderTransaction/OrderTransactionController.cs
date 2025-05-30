@@ -1,8 +1,10 @@
-﻿namespace Printpress.API;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Printpress.API;
 
 
 [Route("api/[controller]")]
-
+[Authorize]
 public class OrderTransactionController(IOrderTransactionService _orderTransactionService) : AppBaseController
 {
     [HttpGet]
@@ -17,7 +19,7 @@ public class OrderTransactionController(IOrderTransactionService _orderTransacti
     [Route("add")]
     public async Task<IActionResult> Add(OrderTransactionAddDto payload)
     {
-        var result = await _orderTransactionService.AddAsync(payload);
+        var result = await _orderTransactionService.AddAsync(payload, UserId);
         return Ok(result);
     }
 }

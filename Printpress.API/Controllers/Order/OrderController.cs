@@ -1,7 +1,9 @@
-﻿namespace Printpress.API;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Printpress.API;
 
 [Route("api/[controller]")]
-
+[Authorize]
 public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupService orderGroupService) : AppBaseController
 {
     [HttpGet]
@@ -31,14 +33,14 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
     [Route("insert")]
     public async Task<IActionResult> Insert(OrderUpsertDto order)
     {
-        await _IOrderService.InsertOrder(order);
+        await _IOrderService.InsertOrder(order, UserId);
         return Ok();
     }
     [HttpPut]
     [Route("update/{id}")]
     public async Task<IActionResult> Update(int id, OrderUpsertDto order)
     {
-        await _IOrderService.UpdateOrder(id, order);
+        await _IOrderService.UpdateOrder(id, order, UserId);
         return Ok();
     }
 

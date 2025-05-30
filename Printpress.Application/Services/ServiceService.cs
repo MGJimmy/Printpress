@@ -5,13 +5,13 @@ namespace Printpress.Application
     internal sealed class ServiceService(IUnitOfWork _unitOfWork, ServiceMapper serviceMapper) : IServiceService
     {
 
-        public async Task<ServiceDto> AddAsync(ServiceUpsertDto payload)
+        public async Task<ServiceDto> AddAsync(ServiceUpsertDto payload, string userId)
         {
             // Make validation
 
             Service service = serviceMapper.MapFromDestinationToSource(payload);
 
-            await _unitOfWork.ServiceRepository.AddAsync(service);
+            await _unitOfWork.ServiceRepository.AddAsync(service, userId);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -44,7 +44,7 @@ namespace Printpress.Application
             return serviceMapper.MapFromSourceToDestination(service);
         }
 
-        public async Task<ServiceDto> UpdateAsync(int id, ServiceUpsertDto payload)
+        public async Task<ServiceDto> UpdateAsync(int id, ServiceUpsertDto payload, string userId)
         {
             // Make validation
 
@@ -53,7 +53,7 @@ namespace Printpress.Application
                 throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
             }
 
-            var client = _unitOfWork.ServiceRepository.Update(serviceMapper.MapFromDestinationToSource(id, payload));
+            var client = _unitOfWork.ServiceRepository.Update(serviceMapper.MapFromDestinationToSource(id, payload), userId);
 
 
             await _unitOfWork.SaveChangesAsync();

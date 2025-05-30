@@ -1,8 +1,10 @@
-﻿namespace Printpress.API;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Printpress.API;
 
 
 [Route("api/[controller]")]
-
+[Authorize]
 public class ClientController(IClientService _IClientService) : AppBaseController
 {
     [HttpGet]
@@ -33,7 +35,7 @@ public class ClientController(IClientService _IClientService) : AppBaseControlle
     [Route("add")]
     public async Task<IActionResult> Add(ClientUpsertDto payload)
     {
-        var result = await _IClientService.AddAsync(payload);
+        var result = await _IClientService.AddAsync(payload, UserId);
         return Ok(result);
     }
 
@@ -41,7 +43,7 @@ public class ClientController(IClientService _IClientService) : AppBaseControlle
     [Route("update/{id}")]
     public async Task<IActionResult> Update(int id, ClientUpsertDto payload)
     {
-        var result = await _IClientService.UpdateAsync(id, payload);
+        var result = await _IClientService.UpdateAsync(id, payload, UserId);
         return Ok(result);
     }
 

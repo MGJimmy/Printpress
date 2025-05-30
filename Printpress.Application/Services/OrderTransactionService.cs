@@ -5,7 +5,7 @@ namespace Printpress.Application;
 
 internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper) : IOrderTransactionService
 {
-    public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload)
+    public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload, string userId)
     {
         ValidateTransactionPayload(payload);
 
@@ -14,7 +14,7 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
         ValidatePayloadAmountComparedToOrder(order, payload);
 
         
-        var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
+        var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload), userId);
 
         var isPayment = EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Payment;
 
@@ -22,7 +22,7 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
 
         order.TotalPaid = order.TotalPaid.GetValueOrDefault() + transactionAmount;
 
-        _unitOfWork.OrderRepository.Update(order);
+        _unitOfWork.OrderRepository.Update(order, userId);
 
         await _unitOfWork.SaveChangesAsync();
 
