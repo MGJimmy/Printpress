@@ -13,10 +13,6 @@ export class roleGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
 
     let targetRoute = route;
-    //  to get the childe route roles
-    while (targetRoute.firstChild) {
-      targetRoute = targetRoute.firstChild;
-    }
 
     const routeRoles : UserRoleEnum[] = targetRoute.data['roles'];
 

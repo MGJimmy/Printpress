@@ -72,7 +72,8 @@ export const routes: Routes = [
           { path: ORDER_ROUTES.ORDER.EDIT, component: OrderAddUpdateComponent },
           { 
             path: ORDER_ROUTES.ORDER.VIEW, component: OrderAddUpdateComponent, 
-            canActivate: [authGuard, roleGuard], data: { 'roles': [UserRoleEnum.admin, UserRoleEnum.user] } 
+            canActivate: [roleGuard],
+            data: { 'roles': [UserRoleEnum.user]} 
           },
           { path: ORDER_ROUTES.ORDER.GROUP.ADD, component: OrderGroupAddUpdateComponent },
           { path: ORDER_ROUTES.ORDER.GROUP.EDIT, component: OrderGroupAddUpdateComponent },
