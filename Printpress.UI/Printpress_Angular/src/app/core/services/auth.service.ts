@@ -57,6 +57,9 @@ export class AuthService {
 
   hasAnyMatchingRole(routeRoles: UserRoleEnum[]): boolean {
     const userRoles = this.getRoles();
+    if (!routeRoles || routeRoles.length === 0) {
+      return true; // No roles required for the route
+    }
     if (userRoles) {
       return userRoles.some(userRole => 
         routeRoles.some(routeRole => userRole.toLocaleLowerCase() == routeRole.toLocaleLowerCase())
