@@ -1,43 +1,49 @@
-<div class="login-container">
-  <h2>تسجيل الدخول</h2>
-  <form [formGroup]="loginForm" (keydown.enter)="onLogin()" (ngSubmit)="onLogin()" class="login-form">
-    <div class="form-group">
-      <label for="username">اسم المستخدم</label>
-      <input
-        type="text"
-        id="username"
-        formControlName="username"
-        placeholder="إدخل اسم المستخدم"
-        [class.invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
-      />
-      <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="error-message">
-        اسم المستخدم مطلوب
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="password">كلمة السر</label>
-      <div class="password-input-container">
+<div class="split-container">
+  <div class="login-container">
+    <h2>تسجيل الدخول</h2>
+    <form [formGroup]="loginForm" (keydown.enter)="onLogin()" (ngSubmit)="onLogin()" class="login-form">
+      <div class="form-group">
+        <label for="username">اسم المستخدم</label>
         <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          formControlName="password"
-          placeholder="أدخل كلمة السر"
-          minlength="4"
-          [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          type="text"
+          id="username"
+          formControlName="username"
+          placeholder="إدخل اسم المستخدم"
+          [class.invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
         />
-        <button *ngIf="loginForm.get('password')?.value" type="button" class="eye-button" (click)="togglePasswordVisibility()">
-          <i [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
-        </button>
+        <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="error-message">
+          اسم المستخدم مطلوب
+        </div>
       </div>
-      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
-        كلمة السر مطلوبة
-      </div>
-    </div>
 
-    <button type="submit" [disabled]="loginForm.invalid" class="login-button">
-      تسجيل الدخول
-    </button>
-  </form>
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div class="form-group">
+        <label for="password">كلمة السر</label>
+        <div class="password-input-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            placeholder="أدخل كلمة السر"
+            minlength="4"
+            [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          />
+          <button *ngIf="loginForm.get('password')?.value" type="button" class="eye-button" (click)="togglePasswordVisibility()">
+            <i [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </button>
+        </div>
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
+          كلمة السر مطلوبة
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid" class="login-button">
+        تسجيل الدخول
+      </button>
+    </form>
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  </div>
+  <div class="logo-section">
+    <img src="assets/images/logo.svg" alt="Logo" class="login-logo">
+  </div>
+ 
 </div>
