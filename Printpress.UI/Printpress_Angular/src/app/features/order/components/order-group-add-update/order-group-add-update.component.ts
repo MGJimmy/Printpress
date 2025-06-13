@@ -130,7 +130,6 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private openServicesModal() {
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
       data: { groupId: this.groupId },
-      height: '550px',
       width: '1000px',
       disableClose: true,
       injector: this.injector

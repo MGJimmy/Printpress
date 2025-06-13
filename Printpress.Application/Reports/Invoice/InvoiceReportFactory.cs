@@ -15,6 +15,7 @@ namespace Printpress.Application
 
             string[] includes = [
                      nameof(Order.Client),
+                     nameof(Order.Services),
                      $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(Item.Details)}",
                      $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}"
             ];
