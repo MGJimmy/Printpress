@@ -1,4 +1,5 @@
-﻿using Printpress.Domain.Entities;
+﻿using Microsoft.Extensions.Configuration;
+using Printpress.Domain.Entities;
 using Printpress.Domain.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -11,10 +12,20 @@ namespace Printpress.Application;
 /// </summary>
 public class InvoiceReport : IDocument
 {
+    private readonly string _companyName;
+    private readonly string _companyPhone;
+
     /// <summary>
     /// Gets or sets the order model for the invoice
     /// </summary>
-    public required Order Model { get; set; }
+    private Order _model { get; set; }
+
+    public InvoiceReport(Order model, IConfiguration configuration)
+    {
+        _companyName = configuration.GetRequiredSection("CompanyInfo:Name").Value;
+        _companyPhone = configuration.GetRequiredSection("CompanyInfo:Phone").Value;
+        _model = model;
+    }
 
     /// <inheritdoc />
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
@@ -44,14 +55,41 @@ public class InvoiceReport : IDocument
     {
         container.Column(column =>
         {
+            column.Item().PaddingHorizontal(40).PaddingVertical(10).Row(row =>
+            {
+                row.RelativeItem().AlignRight().Column(col =>
+                {
+                    col.Item().AlignRight().Row(row =>
+                    {
+                        row.AutoItem().Text(text =>
+                        {
+                            text.Span(_companyName).ExtraBold().FontSize(20);
+                        });
+                    });
+                });
+
+
+                row.RelativeItem().AlignLeft().AlignMiddle().Column(col =>
+                {
+                    col.Item().AlignRight().Row(row =>
+                    {
+                        row.AutoItem().Text(text =>
+                        {
+                            
+                            text.Span("ت: " + _companyPhone).SemiBold();
+                        });
+                    });
+                });
+
+            });
+
             // Title
             column.Item()
                   .PaddingHorizontal(5)
                   .AlignCenter()
-                  .Text("فاتوره")
+                  .Text("فاتورة مبيعات")
                   .FontSize(20)
-                  .SemiBold()
-                  .FontColor(Colors.Blue.Medium);
+                  .SemiBold();
 
             // Client Information
             column.Item()
@@ -94,7 +132,7 @@ public class InvoiceReport : IDocument
                row.AutoItem()
                   .Text(text => text.Span(" عنوان العميل :").SemiBold());
                row.AutoItem()
-                  .Text(text => text.Span(Model.Client.Address));
+                  .Text(text => text.Span(_model.Client.Address));
            });
     }
 
@@ -108,7 +146,7 @@ public class InvoiceReport : IDocument
                row.AutoItem()
                   .Text(text => text.Span("أسم العميل : ").SemiBold());
                row.AutoItem()
-                  .Text(text => text.Span(Model.Client.Name));
+                  .Text(text => text.Span(_model.Client.Name));
            });
 
         col.Item()
@@ -119,7 +157,7 @@ public class InvoiceReport : IDocument
                row.AutoItem()
                   .Text(text => text.Span("تيلفون العميل : ").SemiBold());
                row.AutoItem()
-                  .Text(text => text.Span(Model.Client.Mobile));
+                  .Text(text => text.Span(_model.Client.Mobile));
            });
     }
 
@@ -128,42 +166,11 @@ public class InvoiceReport : IDocument
         container.Padding(40)
                  .Column(column =>
                  {
-                     decimal total = 0;
 
-                     var services = Model.Services.Select(s => s.Service);
-
-                     // Services Section
-                     column.Item()
-                           .PaddingHorizontal(30)
-                           .PaddingVertical(10)
-                           .Element(x =>
-                           {
-                               x.Table(table =>
-                               {
-                                   table.ColumnsDefinition(columns =>
-                                   {
-                                       columns.RelativeColumn(); // Service Name
-                                       columns.RelativeColumn(); // Price
-                                   });
-                                   table.Header(header =>
-                                   {
-                                       header.Cell().Element(CellStyle).Text("الخدمه").SemiBold().AlignCenter();
-                                       header.Cell().Element(CellStyle).Text("السعر").SemiBold().AlignCenter();
-                                   });
-
-                                   foreach (var service in services)
-                                   {
-                                       table.Cell().Element(CellStyle).Text(service.Name).AlignCenter();
-                                       table.Cell().Element(CellStyle).Text(service.Price.ToString()).AlignCenter();
-                                   }
-
-
-                               });
-                           });
-
+                     AddServicesPrices(column, _model.Services.Select(s => s.Service));
 
                      // group section
-                     foreach (var group in Model.OrderGroups)
+                     foreach (var group in _model.OrderGroups)
                      {
                          column.Spacing(5);
                          column.Item()
@@ -171,31 +178,111 @@ public class InvoiceReport : IDocument
                                .PaddingVertical(10)
                                .Element(x => ComposeTable(x, group));
                          column.Spacing(5);
-                         total += group.Items.Sum(item => item.Price * item.Quantity);
                      }
 
-                     // Total Section
-                     column.Item()
-                           .Padding(30)
-                           .Border(1)
-                           .Row(row =>
-                           {
-                               row.AutoItem()
-                                  .Padding(10)
-                                  .Text("الأجمالي الكلي  :")
-                                  .SemiBold();
-                               row.AutoItem()
-                                  .PaddingVertical(10)
-                                  .Text(total.ToString())
-                                  .SemiBold();
-                           });
+                     AddTotles(column);
+                     AddDeliveryDetails(column);
                  });
     }
+
+    private void AddServicesPrices(ColumnDescriptor column, IEnumerable<Service> services)
+    {
+        column.Item()
+      .PaddingHorizontal(30)
+      .PaddingVertical(10)
+      .Element(x =>
+      {
+          x.Table(table =>
+          {
+              table.ColumnsDefinition(columns =>
+              {
+                  columns.RelativeColumn(); // Service Name
+                  columns.RelativeColumn(); // Price
+              });
+              table.Header(header =>
+              {
+                  header.Cell().Element(CellStyle).Text("الخدمه").SemiBold().AlignCenter();
+                  header.Cell().Element(CellStyle).Text("السعر").SemiBold().AlignCenter();
+              });
+
+              foreach (var service in services)
+              {
+                  table.Cell().Element(CellStyle).Text(service.Name).AlignCenter();
+                  table.Cell().Element(CellStyle).Text(service.Price.ToString()).AlignCenter();
+              }
+
+
+          });
+      });
+
+    }
+
+    private void AddTotles(ColumnDescriptor column)
+    {
+        column.Item().PaddingHorizontal(30).PaddingTop(30).Border(1).Row(row =>
+        {
+            void AddText(string content, int paddingRight = 5, bool isBold = false)
+            {
+                var text = row.AutoItem().PaddingVertical(10).PaddingRight(paddingRight).Text(content);
+                if (isBold)
+                    text.ExtraBold();
+                else
+                    text.SemiBold();
+            }
+
+            var totalPaid = _model.TotalPaid ?? 0;
+
+            AddText("الأجمالي الكلي  :", 10, true);
+            AddText(_model.TotalPrice.ToString());
+            AddText("المدفوع  :", 40, true);
+            AddText(totalPaid.ToString());
+            AddText("الباقي  :", 40, true);
+            AddText((_model.TotalPrice - totalPaid).ToString());
+        });
+
+    }
+
+    private void AddDeliveryDetails(ColumnDescriptor column)
+    {
+        column.Item().PaddingHorizontal(30).PaddingTop(10).Border(1).Row(row =>
+        {
+            void AddText(string content, int paddingRight = 5, bool isBold = false)
+            {
+                var text = row.AutoItem().PaddingVertical(10).PaddingRight(paddingRight).Text(content);
+                if (isBold)
+                    text.ExtraBold();
+                else
+                    text.SemiBold();
+            }
+
+            AddText("اسم المسلم  :", 10, true);
+            AddText("التوقيع  :", 110, true);
+            AddText("التاريخ  :", 110, true);
+        });
+
+        column.Item().PaddingHorizontal(30).PaddingTop(10).Border(1).Row(row =>
+        {
+            void AddText(string content, int paddingRight = 5, bool isBold = false)
+            {
+                var text = row.AutoItem().PaddingVertical(10).PaddingRight(paddingRight).Text(content);
+                if (isBold)
+                    text.ExtraBold();
+                else
+                    text.SemiBold();
+            }
+
+            AddText("اسم المستلم  :", 10, true);
+            AddText("التوقيع  :", 110, true);
+            AddText("التاريخ  :", 110, true);
+        });
+
+    }
+
 
     private void ComposeTable(IContainer container, OrderGroup orderGroup)
     {
         var servicesNames = string.Join(',', orderGroup.OrderGroupServices.Select(s => s.Service.Name));
-        var groupHeader = $"{orderGroup.Name} + ({servicesNames})";
+        var groupHeader = $"{orderGroup.Name}: ({servicesNames})";
         var isPrinting = IsPrintingService(orderGroup);
         uint columnCount = (uint)(isPrinting ? 7 : 5);
 
@@ -235,12 +322,11 @@ public class InvoiceReport : IDocument
                   .ColumnSpan(columnCount)
                   .Element(CellStyle)
                   .AlignCenter()
-                  .Text(groupHeader)
-                  .FontColor(Colors.Blue.Darken2);
+                  .Text(groupHeader);
 
             header.Cell().Element(CellStyle).AlignCenter().Text("#");
-            header.Cell().Element(CellStyle).AlignCenter().Text("النوع");
-            header.Cell().Element(CellStyle).AlignCenter().Text("سعر الوحده");
+            header.Cell().Element(CellStyle).AlignCenter().Text("اسم العنصر");
+            header.Cell().Element(CellStyle).AlignCenter().Text("السعر");
 
             if (isPrinting)
             {

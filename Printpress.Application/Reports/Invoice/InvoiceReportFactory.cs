@@ -1,10 +1,12 @@
 ﻿using System.Collections.Specialized;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
 using Printpress.Domain.Entities;
 using QuestPDF.Infrastructure;
 
 namespace Printpress.Application
 {
-    internal class InvoiceReportFactory(IUnitOfWork unitOfWork) : IReportFactory
+    internal class InvoiceReportFactory(IUnitOfWork unitOfWork, IConfiguration configuration) : IReportFactory
     {
         public string ReportName => "invoice";
         public async Task<IDocument> GenerateReport(NameValueCollection queryParams)
@@ -22,7 +24,7 @@ namespace Printpress.Application
 
             var model = await unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == id, true, includes);
 
-            var document = new InvoiceReport { Model = model };
+            var document = new InvoiceReport(model, configuration);
 
             return document;
 
