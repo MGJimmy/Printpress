@@ -21,6 +21,9 @@ import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import { GroupDeleveryPopupComponent } from '../popup/group-delevery-popup/group-delevery-popup.component';
+import { OrderServicesGetDTO } from '../../models/order-service/order-service-getDto';
+import { mapOrderGetToUpsert } from '../../models/order-mapper';
+import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 
 @Component({
   selector: 'app-order-add-update',
@@ -144,29 +147,64 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   public saveOrder_Click() {
-
     if (!this.validateOrderData()) {
       return;
     }
 
-    this.openServicePricesDialog();
+    const dialogRef = this.dialog.open(OrderServicePricesComponent, {
+      data: { orderSharedService: this.OrderSharedService },
+      width: '1000px'
+    });
+
+    dialogRef.afterClosed().subscribe((orderServices: OrderServicesGetDTO[] | undefined) => {
+      if (orderServices) {
+        this.OrderSharedService.setOrderServices(orderServices);
+        this.OrderSharedService.updateOrderObjectState();
+        
+        const orderDTO = this.OrderSharedService.getOrderObject_copy(true);
+        const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
+
+        let upsertObservable = orderDTO.objectState == ObjectStateEnum.added || orderDTO.objectState == ObjectStateEnum.temp ?
+          this.orderService.insertOrder(orderUpsertDTO) :
+          this.orderService.updateOrder(orderUpsertDTO);
+
+          upsertObservable.subscribe({
+            next: (response) => {
+              this.alertService.showSuccess('تم حفظ الطلبية بنجاح');
+              this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
+            },
+            error: (error) => {
+              this.alertService.showError('حدث خطأ أثناء حفظ الطلبية');
+            }
+          });
+          
+      }
+    });
+    
   }
 
+
+
   private validateOrderData(): boolean {
-    const emptyGroupsList = this.OrderSharedService.getOrderObject_copy().orderGroups.length == 0;
+
+
+    debugger;
+    const order= this.OrderSharedService.getOrderObject_copy()
+    const emptyGroupsList = order.orderGroups.length == 0;
     if (emptyGroupsList) {
       this.alertService.showError('يجب إضافة مجموعات للطلبية');
       return false;
     }
+    if(!order.name){
+      this.alertService.showError("يجب إدخال اسم الطلبية")
+      return false;
+    }
+    if(!order.clientId){
+      this.alertService.showError("يجب اختيار العميل")
+      return false;
+    }
 
     return true;
-  }
-
-  private openServicePricesDialog() {
-    this.dialog.open(OrderServicePricesComponent, {
-      data: { orderSharedService: this.OrderSharedService },
-      width: '1000px'
-    });
   }
 
   public openAddClientDialog() {
