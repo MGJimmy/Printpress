@@ -1,5 +1,5 @@
 <div class="header">
-  <h2 mat-dialog-title id="dialog-title">{{ data.title || 'Confirmation' }}</h2>
+  <h2 mat-dialog-title id="dialog-title">{{ data.title || 'تأكيد' }}</h2>
   <button
     mat-icon-button
     [mat-dialog-close]="false"
@@ -11,7 +11,7 @@
 </div>
 
 <mat-dialog-content id="dialog-content">
-  <p>{{ data.message || 'Are you sure you want to proceed?' }}</p>
+  <p>{{ data.message || 'هل انت متاكد من تنفيذ الاجراء؟' }}</p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="center">
@@ -21,7 +21,7 @@
     color="warn"
     title="Cancel"
   >
-    {{ data.cancelText || 'Cancel' }}
+    {{ data.cancelText || 'إلغاء' }}
   </button>
   <button
     mat-raised-button
@@ -29,6 +29,6 @@
     (click)="closeDialog(true)"
     title="Confirm"
   >
-    {{ data.confirmText || 'Confirm' }}
+    {{ data.confirmText || 'تأكيد' }}
   </button>
 </mat-dialog-actions>

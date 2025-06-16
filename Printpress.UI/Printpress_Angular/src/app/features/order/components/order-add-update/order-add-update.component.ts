@@ -170,6 +170,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
           upsertObservable.subscribe({
             next: (response) => {
+              this.OrderSharedService.onOrderSaved();
               this.alertService.showSuccess('تم حفظ الطلبية بنجاح');
               this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
             },

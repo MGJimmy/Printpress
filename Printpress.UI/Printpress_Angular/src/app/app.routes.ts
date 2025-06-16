@@ -8,6 +8,7 @@ import { ORDER_ROUTES } from './features/order/constants/order-routes.constants'
 import { UserRoleEnum } from './core/models/user-role.enum';
 import { roleGuard } from './core/guards/role.guard';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
+import { CanDeactivateGuard } from './core/guards/can-deactivate.guard';
 
 export const routes: Routes = [
   {
@@ -80,6 +81,7 @@ export const routes: Routes = [
           { path: ORDER_ROUTES.ORDER.ITEM.ADD, component: ItemAddUpdateComponent },
           { path: ORDER_ROUTES.ORDER.ITEM.EDIT, component: ItemAddUpdateComponent },
         ],
+        canDeactivate:[CanDeactivateGuard],
         canActivate: [authGuard, roleGuard],
         data: { 'roles': [UserRoleEnum.admin] }
       },

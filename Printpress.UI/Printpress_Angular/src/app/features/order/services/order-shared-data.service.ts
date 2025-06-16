@@ -23,6 +23,7 @@ import { IObjectState } from '../../../core/models/i-object-state';
 export class OrderSharedDataService {
 
   private orderObject!: OrderGetDto;
+  private orderSaved: boolean = false;
 
   constructor(
     private serviceService: ServiceService
@@ -64,6 +65,13 @@ export class OrderSharedDataService {
   //#region Order methods
   //=======================
 
+  public isOrderSaved(): boolean {
+    return this.orderSaved;
+  }
+
+  public onOrderSaved(): void {
+    this.orderSaved = true;
+  }
 
   private initializeOrderObject(): void {
     this.orderObject = {
