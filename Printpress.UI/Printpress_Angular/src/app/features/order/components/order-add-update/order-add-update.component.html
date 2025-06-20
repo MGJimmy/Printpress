@@ -197,13 +197,13 @@
                     <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #menu="matMenu">
-                    <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
+                    <button *ngIf="(componentMode.isEditMode||componentMode.isaddMode) && !element.deliveryDate" 
                             mat-menu-item
                             (click)="onEditGroup(element.id)">
                         <mat-icon>edit</mat-icon>
                         <span>تعديل</span>
                     </button>
-                    <button *ngIf="componentMode.isEditMode && !element.deliveryDate" 
+                    <button *ngIf="(componentMode.isEditMode||componentMode.isaddMode) && !element.deliveryDate" 
                             mat-menu-item
                             (click)="onDeleteGroup(element.id)">
                         <mat-icon>delete</mat-icon>
