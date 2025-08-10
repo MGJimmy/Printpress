@@ -75,6 +75,8 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
 
+
+
     if (this.componentMode.isViewMode || this.componentMode.isEditMode) {
      
       let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));
@@ -84,6 +86,12 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
         this.orderGetDto = response.data
         this.OrderSharedService.setOrderObject(this.orderGetDto);
       }
+    }
+
+    // Temp solution to prevent unsaved changes warning in case of view mode
+    // This should be handled better in the future
+    if (this.componentMode.isViewMode){
+      this.OrderSharedService.onOrderSaved();
     }
 
     this.bindGroups();
