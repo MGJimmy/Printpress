@@ -167,7 +167,7 @@ public class InvoiceReport : IDocument
                  .Column(column =>
                  {
 
-                     AddServicesPrices(column, _model.Services.Select(s => s.Service));
+                     AddServicesPrices(column, _model.Services);
 
                      // group section
                      foreach (var group in _model.OrderGroups)
@@ -185,7 +185,7 @@ public class InvoiceReport : IDocument
                  });
     }
 
-    private void AddServicesPrices(ColumnDescriptor column, IEnumerable<Service> services)
+    private void AddServicesPrices(ColumnDescriptor column, IEnumerable<OrderService> orderServices)
     {
         column.Item()
       .PaddingHorizontal(30)
@@ -205,10 +205,10 @@ public class InvoiceReport : IDocument
                   header.Cell().Element(CellStyle).Text("السعر").SemiBold().AlignCenter();
               });
 
-              foreach (var service in services)
+              foreach (var orderService in orderServices)
               {
-                  table.Cell().Element(CellStyle).Text(service.Name).AlignCenter();
-                  table.Cell().Element(CellStyle).Text(service.Price.ToString()).AlignCenter();
+                  table.Cell().Element(CellStyle).Text(orderService.Service.Name).AlignCenter();
+                  table.Cell().Element(CellStyle).Text(orderService.Price.ToString()).AlignCenter();
               }
 
 
