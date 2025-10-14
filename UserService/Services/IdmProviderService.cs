@@ -26,6 +26,13 @@ namespace UserService
                 return LoginStatus.WrongEmail;
             }
 
+            bool isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+
+            if (!isValidPassword)
+            {
+                return LoginStatus.WrongCredentials;
+            }
+
             return LoginStatus.Succeeded;
         }
         public async Task<List<string>> GetUserRoles(TUser user)

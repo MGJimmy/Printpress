@@ -48,7 +48,7 @@ namespace UserService
         }
         private static IServiceCollection AddTokenProvider(this IServiceCollection service)
         {
-            service.AddSingleton<ITokenProvider, TokenService>();
+            service.AddScoped<ITokenProvider, TokenService>();
             return service;
         }
         private static IServiceCollection AddIdentity(this IServiceCollection services)
