@@ -32,6 +32,29 @@ public class AccountController : AppBaseController
         return Ok(result.LoginResponse);
     }
 
+    [HttpPost("logout")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Logout()
+    {
+        if (!Request.Cookies.TryGetValue(ApiConstants.RefreshTokenKey, out string? refreshToken) || string.IsNullOrEmpty(refreshToken))
+        {
+            return Unauthorized(new LogoutCommandResponse
+            {
+                Success = false,
+                Message = "Refresh token is missing."
+            });
+        }
+
+        var request = new LogoutCommand { RefreshToken = refreshToken };
+
+        LogoutCommandResponse response = await _mediator.Send(request);
+
+        Response.Cookies.Delete(ApiConstants.RefreshTokenKey);
+
+        return Ok(response);
+    }
+
+
     [HttpPost("refreshToken")]
     [AllowAnonymous]
     public async Task<IActionResult> RefreshToken()
@@ -41,7 +64,7 @@ public class AccountController : AppBaseController
             return Unauthorized(new AccessTokenResponse
             {
                 Success = false,
-                Message = "Refresh token is missing or invalid."
+                Message = "Refresh token is missing."
             });
         }
 
