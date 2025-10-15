@@ -5,7 +5,7 @@ namespace UserService
 {
     public interface ITokenProvider
     {
-        Task<AccessToken> GenerateAccessToken(IEnumerable<Claim> claims);
+        Task<AccessToken> GenerateAccessToken(User user);
         Task<string> GenerateRefreshToken(string userId);
         Task<RefreshToken?> GetRefreshTokenAsync(string token);
         Task SaveRefreshTokenAsync(RefreshToken refreshToken);

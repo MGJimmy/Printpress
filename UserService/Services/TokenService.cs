@@ -5,9 +5,11 @@ using System.Security.Claims;
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using UserService.Consts;
 using UserService.Entities;
 using UserService.Presistance;
 
@@ -18,15 +20,30 @@ namespace UserService
     {
         private readonly JwtOption _jwtConfigration;
         private readonly UserDbContext _context;
+        private readonly IIdmProvider<User> _idmProvider;
 
-        public TokenService(IOptions<JwtOption> jwtOptions, UserDbContext context)
+        public TokenService(IOptions<JwtOption> jwtOptions, IIdmProvider<User> idmProvider, UserDbContext context)
         {
             _jwtConfigration = jwtOptions.Value;
             _context = context;
+            _idmProvider = idmProvider;
         }
 
-        public Task<AccessToken> GenerateAccessToken(IEnumerable<Claim> claims)
+        public async Task<AccessToken> GenerateAccessToken(User user)
         {
+            List<string> userRoles = await _idmProvider.GetUserRoles(user);
+
+            string rolesJson = JsonSerializer.Serialize(userRoles);
+
+            // Generate confirmation token
+            IEnumerable<Claim> claims = new List<Claim>
+            {
+                new Claim(AppClaimType.Email, user.Email) ,
+                new Claim(AppClaimType.NameIdentifier,user.Id),
+                new Claim(AppClaimType.Username, user.UserName),
+                new Claim(AppClaimType.Roles, rolesJson, JsonClaimValueTypes.Json)
+            };
+
             var key = Encoding.UTF8.GetBytes(_jwtConfigration.SecretKey);
 
             var symmetricSecurityKey = new SymmetricSecurityKey(key);
@@ -52,7 +69,7 @@ namespace UserService
                 ExpirationTime = expires
             };
 
-            return Task.FromResult(accessToken);
+            return accessToken;
         }
 
 
@@ -83,7 +100,7 @@ namespace UserService
 
         public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
         {
-            return await _context.RefreshTokens
+            return await _context.RefreshTokens.Include(rt => rt.User)
                 .FirstOrDefaultAsync(rt => rt.Token == token && !rt.IsRevoked);
         }
 

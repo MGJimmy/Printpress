@@ -30,7 +30,7 @@ namespace UserService
             {
                 return new LoginCommandResponse
                 {
-                    LoginResponse = new LoginResponse
+                    LoginResponse = new AccessTokenResponse
                     {
                         Success = false,
                         Token = null,
@@ -41,23 +41,12 @@ namespace UserService
             }
 
 
-            var userRoles = await _idmProvider.GetUserRoles(user);
-            string rolesJson = JsonSerializer.Serialize(userRoles);
 
-            // Generate confirmation token
-            var claims = new List<Claim>
-            {
-                new Claim(AppClaimType.Email, user.Email) ,
-                new Claim(AppClaimType.NameIdentifier,user.Id),
-                new Claim(AppClaimType.Username, user.UserName),
-                new Claim(AppClaimType.Roles, rolesJson, JsonClaimValueTypes.Json)
-            };
-
-            var token = await _tokenProvider.GenerateAccessToken(claims);
+            var token = await _tokenProvider.GenerateAccessToken(user);
 
             string refreshToken = await _tokenProvider.GenerateRefreshToken(user.Id);
 
-            var loginResponse = new LoginResponse
+            var loginResponse = new AccessTokenResponse
             {
                 Success = true,
                 Token = token

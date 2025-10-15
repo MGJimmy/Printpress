@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
+using Printpress.API.Constants;
 using UserService;
 using UserService.Consts;
 
@@ -31,24 +32,26 @@ public class AccountController : AppBaseController
         return Ok(result.LoginResponse);
     }
 
-    private void SetRefreshTokenCookie(string? refreshToken)
+    [HttpPost("refreshToken")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RefreshToken()
     {
-        if (string.IsNullOrEmpty(refreshToken)) return;
-
-
-
-        int refreshTokenExpirationDays = int.TryParse(_configuration.GetRequiredSection("Jwt:RefreshTokenExpirationDays").Value, out int parsedValue) ? parsedValue : 7;
-
-        var cookieOptions = new CookieOptions
+        if (!Request.Cookies.TryGetValue(ApiConstants.RefreshTokenKey, out string? refreshToken) || string.IsNullOrEmpty(refreshToken))
         {
-            HttpOnly = true,
-            Secure = true, // Use only over HTTPS
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(7),
-            Path = "/"
-        };
+            return Unauthorized(new AccessTokenResponse
+            {
+                Success = false,
+                Message = "Refresh token is missing or invalid."
+            });
+        }
 
-        Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        var request = new RefreshTokenCommand { RefreshToken = refreshToken };
+
+        RefreshTokenCommandResponse result = await _mediator.Send(request);
+
+        SetRefreshTokenCookie(result.RefreshToken);
+
+        return Ok(result.LoginResponse);
     }
 
     [HttpPost("create-user")]
@@ -91,5 +94,31 @@ public class AccountController : AppBaseController
         var query = new GetUserRolesQuery { Username = username };
         return Ok(await _mediator.Send(query));
     }
+
+
+    #region Private Methods
+
+    private void SetRefreshTokenCookie(string? refreshToken)
+    {
+        if (string.IsNullOrEmpty(refreshToken)) return;
+
+
+
+        int refreshTokenExpirationDays = int.TryParse(_configuration.GetRequiredSection("Jwt:RefreshTokenExpirationDays").Value, out int parsedValue) ? parsedValue : 7;
+
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true, // Use only over HTTPS
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(7),
+            Path = "/"
+        };
+
+        Response.Cookies.Append(ApiConstants.RefreshTokenKey, refreshToken, cookieOptions);
+    }
+
+
+    #endregion
 }
 
