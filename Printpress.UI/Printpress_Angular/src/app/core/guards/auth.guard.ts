@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class authGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-
+/*
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
     if (this.auth.isLoggedIn()) {
       return true;
@@ -19,5 +19,10 @@ export class authGuard implements CanActivate {
       queryParams: { returnUrl: state.url },
     });
     return false;
+  }
+
+  */
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
+    return true;
   }
 }

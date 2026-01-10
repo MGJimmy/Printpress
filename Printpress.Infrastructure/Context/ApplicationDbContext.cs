@@ -83,10 +83,10 @@ public class ApplicationDbContext : DbContext
             .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
             .ToList();
 
-        if (auditableAddedUpdatedEntries.Any() && string.IsNullOrEmpty(CurrentUserId))
-        {
-            throw new InvalidOperationException("CurrentUserId must be set before saving changes.");
-        }
+        //if (auditableAddedUpdatedEntries.Any() && string.IsNullOrEmpty(CurrentUserId))
+        //{
+        //    throw new InvalidOperationException("CurrentUserId must be set before saving changes.");
+        //}
 
         var utcDateNow = DateTime.UtcNow;
         foreach (var entry in auditableAddedUpdatedEntries)
