@@ -3,7 +3,7 @@
 namespace Printpress.API;
 
 [Route("api/[controller]")]
-[Authorize]
+[AllowAnonymous]
 public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupService orderGroupService) : AppBaseController
 {
     [HttpGet]
