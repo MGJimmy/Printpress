@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { OrderRoutingService } from '../../services/order-routing.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -30,6 +31,8 @@ import { OrderRoutingService } from '../../services/order-routing.service';
   styleUrl: './order-group-add-update.component.css'
 })
 export class OrderGroupAddUpdateComponent implements OnInit {
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   private groupId!: number;
 
@@ -259,5 +262,205 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       itemVMList.push(itemVM);
     }
     this.itemsGridSource = itemVMList;
+  }
+
+  // Excel Import Methods
+  protected importFromExcel_Click(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  protected onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+    this.processExcelFile(file);
+
+    // Reset file input to allow re-importing same file
+    input.value = '';
+  }
+
+  private processExcelFile(file: File): void {
+    const reader = new FileReader();
+
+    reader.onload = (e: any) => {
+      try {
+        // Parse Excel file
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        // Get first sheet
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+
+        // Convert to JSON (array of arrays)
+        const rows: any[][] = XLSX.utils.sheet_to_json(firstSheet, {
+          header: 1,  // Return array of arrays (no header processing)
+          defval: '',  // Default value for empty cells
+          blankrows: false  // Skip completely blank rows
+        });
+
+        // Import items
+        this.importItemsFromRows(rows);
+
+      } catch (error) {
+        console.error('Error processing Excel file:', error);
+        this.alertService.showError('خطأ في قراءة ملف Excel');
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  }
+
+  private importItemsFromRows(rows: any[][]): void {
+    const group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+    if (!group) {
+      this.alertService.showError('خطأ: لم يتم العثور على المجموعة');
+      return;
+    }
+
+    let successCount = 0;
+    let failedCount = 0;
+    const failedItems: { row: number, reason: string, data: any }[] = [];
+
+    rows.forEach((row, index) => {
+      const rowNumber = index + 1;
+
+      // Skip empty rows
+      if (this.isEmptyRow(row)) {
+        return;
+      }
+
+      try {
+        // Parse and validate row data
+        const itemData = this.parseRowData(row, group.isHasPrintingService, group.isHasSellingService);
+
+        this.createItemFromData(itemData);
+
+        successCount++;
+
+      } catch (error: any) {
+        failedCount++;
+        failedItems.push({
+          row: rowNumber,
+          reason: error.message || 'خطأ غير معروف',
+          data: row
+        });
+      }
+    });
+
+    // Refresh grid display
+    this.loadItems();
+
+    // Show summary and log errors
+    this.showImportSummary(successCount, failedCount, failedItems);
+  }
+
+  private isEmptyRow(row: any[]): boolean {
+    return !row || row.length === 0 || !row[0];
+  }
+
+  private parseRowData(
+    row: any[],
+    hasPrintingService: boolean,
+    hasSellingService: boolean
+  ): { name: string, quantity: number, price: number, numberOfPages?: number, numberOfPrintingFaces?: number } {
+
+    // Parse common fields
+    const name = row[0]?.toString().trim() || '';
+    const quantity = parseFloat(row[1]) || 0;
+
+    // Validate common fields
+    if (!name) {
+      throw new Error('اسم العنصر مطلوب');
+    }
+    if (quantity < 1) {
+      throw new Error('الكمية يجب أن تكون 1 على الأقل');
+    }
+
+    let price: number;
+    let numberOfPages: number | undefined;
+    let numberOfPrintingFaces: number | undefined;
+
+    // Parse based on service configuration
+    if (hasPrintingService) {
+      price = 0;
+      numberOfPages = parseFloat(row[2]) || undefined;
+      numberOfPrintingFaces = row[3] ? parseFloat(row[3]) : 2;
+
+      this.validatePrintingData(numberOfPages, numberOfPrintingFaces);
+
+    } else if (hasSellingService) {
+      price = parseFloat(row[2]) || 0;
+      numberOfPages = undefined;
+      numberOfPrintingFaces = undefined;
+
+      this.validateSellingData(price);
+
+    } else {
+      price = 0;
+      numberOfPages = undefined;
+      numberOfPrintingFaces = undefined;
+    }
+
+    return { name, quantity, price, numberOfPages, numberOfPrintingFaces };
+  }
+
+  private validatePrintingData(numberOfPages: number | undefined, numberOfPrintingFaces: number | undefined): void {
+    if (!numberOfPages || numberOfPages < 1) {
+      throw new Error('عدد الصفحات يجب أن يكون 1 على الأقل');
+    }
+    if (numberOfPrintingFaces !== 1 && numberOfPrintingFaces !== 2) {
+      throw new Error('عدد الوجوه يجب أن يكون 1 أو 2');
+    }
+  }
+
+  private validateSellingData(price: number): void {
+    if (price < 1) {
+      throw new Error('السعر يجب أن يكون 1 على الأقل');
+    }
+  }
+
+  private createItemFromData(data: {
+    name: string,
+    quantity: number,
+    price: number,
+    numberOfPages?: number,
+    numberOfPrintingFaces?: number
+  }): void {
+    const tempItemId = this.orderSharedService.initializeTempItem(this.groupId);
+    this.orderSharedService.addUpdateItem(
+      false,  // isUpdate = false (new item)
+      this.groupId,
+      tempItemId,
+      data.name,
+      data.quantity,
+      data.price,
+      data.numberOfPages,
+      data.numberOfPrintingFaces
+    );
+  }
+
+  private loadItems(): void {
+    this.setCurrentGroupData();
+  }
+
+  private showImportSummary(
+    successCount: number,
+    failedCount: number,
+    failedItems: { row: number, reason: string, data: any }[]
+  ): void {
+    const message = `تم استيراد ${successCount} عنصر بنجاح${failedCount > 0 ? `\nفشل استيراد ${failedCount} صف` : ''}`;
+    this.alertService.showInfo(message);
+
+    // Log failed items to console
+    if (failedItems.length > 0) {
+      console.group('Failed Excel Import Rows:');
+      failedItems.forEach(item => {
+        console.error(`Row ${item.row}: ${item.reason}`, item.data);
+      });
+      console.groupEnd();
+    }
   }
 }

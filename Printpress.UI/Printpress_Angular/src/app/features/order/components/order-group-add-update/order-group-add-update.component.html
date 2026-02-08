@@ -20,6 +20,10 @@
     </div>
     <div class="my-5">
         <button mat-raised-button color="accent" (click)="addItem_Click()">إضافة عنصر</button>
+        <button mat-raised-button color="accent" (click)="importFromExcel_Click()" class="ms-2">
+            استيراد من Excel
+        </button>
+        <input #fileInput type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" style="display: none;">
 
         <table mat-table [dataSource]="itemsGridSource" class="custom-table">
             <ng-container matColumnDef="index">
