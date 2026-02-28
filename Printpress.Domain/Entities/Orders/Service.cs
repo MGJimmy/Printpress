@@ -1,6 +1,5 @@
-﻿using Printpress.Domain.Enums;
-
-namespace Printpress.Domain.Entities
+﻿
+namespace Printpress.Domain
 {
     public class Service : Entity
     {

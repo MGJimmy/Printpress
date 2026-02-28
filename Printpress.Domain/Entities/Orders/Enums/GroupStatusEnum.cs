@@ -1,4 +1,4 @@
-﻿namespace Printpress.Enums;
+﻿namespace Printpress.Domain;
 
 public enum GroupStatusEnum
 {

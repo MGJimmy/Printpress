@@ -1,4 +1,4 @@
-﻿namespace Printpress.Application.Validators;
+﻿namespace Printpress.Application;
 
 public class Class
 {

@@ -1,6 +1,5 @@
-﻿using Printpress.Domain.Interfaces;
-
-namespace Printpress.Domain.Entities
+﻿
+namespace Printpress.Domain
 {
     public class OrderService : Entity ,ISoftDelete
     {

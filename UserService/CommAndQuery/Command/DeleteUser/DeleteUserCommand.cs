@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace UserService
+namespace Identity.Service
 {
     public class DeleteUserResponse
     {

@@ -6,11 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using UserService.Entities;
-using UserService.Presistance;
 
 
-namespace UserService
+namespace Identity.Service
 {
     public static class DependencyInjection
     {

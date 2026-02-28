@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace UserService
+namespace Identity.Service
 {
     public class LogoutCommand : IRequest<LogoutCommandResponse>
     {

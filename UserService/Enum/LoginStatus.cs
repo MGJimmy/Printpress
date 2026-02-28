@@ -1,4 +1,4 @@
-﻿namespace UserService;
+﻿namespace Identity.Service;
 
 public enum LoginStatus
 {

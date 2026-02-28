@@ -1,4 +1,4 @@
-﻿namespace UserService;
+﻿namespace Identity.Service;
 public class JwtOption
 {
     public string SecretKey { get; init; } = string.Empty;

@@ -3,28 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Printpress.Domain.Entities;
-using Printpress.Domain.Enums;
+using Printpress.Domain;
 
-namespace Printpress.Application.Mappers
+namespace Printpress.Application;
+
+internal class ItemDetailsMapper : BaseMapper<OrderItemDetails, ItemDetailsUpsertDTO>
 {
-    internal class ItemDetailsMapper : BaseMapper<OrderItemDetails, ItemDetailsUpsertDTO>
+    public override OrderItemDetails MapFromDestinationToSource(ItemDetailsUpsertDTO destinationEntity)
     {
-        public override OrderItemDetails MapFromDestinationToSource(ItemDetailsUpsertDTO destinationEntity)
+        return new OrderItemDetails
         {
-            return new OrderItemDetails
-            {
-                Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
-                ItemId = destinationEntity.ItemId,
-                ItemDetailsKey = destinationEntity.Key,
-                Value = destinationEntity.Value,
-                ObjectState = destinationEntity.ObjectState
-            };
-        }
+            Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
+            ItemId = destinationEntity.ItemId,
+            ItemDetailsKey = destinationEntity.Key,
+            Value = destinationEntity.Value,
+            ObjectState = destinationEntity.ObjectState
+        };
+    }
 
-        public override ItemDetailsUpsertDTO MapFromSourceToDestination(OrderItemDetails sourceEntity)
-        {
-            throw new NotImplementedException();
-        }
+    public override ItemDetailsUpsertDTO MapFromSourceToDestination(OrderItemDetails sourceEntity)
+    {
+        throw new NotImplementedException();
     }
 }

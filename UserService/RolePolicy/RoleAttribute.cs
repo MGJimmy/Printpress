@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace UserService;
+namespace Identity.Service;
 
 public class RoleAttribute : AuthorizeAttribute
 {

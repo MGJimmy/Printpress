@@ -9,12 +9,9 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using UserService.Consts;
-using UserService.Entities;
-using UserService.Presistance;
 
 
-namespace UserService
+namespace Identity.Service
 {
     internal sealed class TokenService : ITokenProvider
     {

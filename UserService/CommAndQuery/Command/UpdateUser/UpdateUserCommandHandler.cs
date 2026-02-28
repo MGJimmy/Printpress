@@ -1,6 +1,6 @@
 using MediatR;
-using UserService;
-using UserService.Entities;
+
+namespace Identity.Service;
 
 public class UpdateUserCommanddHandler : IRequestHandler<UpdateUserCommand, UpdateUserResponse>
 {

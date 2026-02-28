@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace UserService.Presistance
+namespace Identity.Service
 {
     public class IdentityDbContextFactory : IDesignTimeDbContextFactory<IdentityDbContext>
     {

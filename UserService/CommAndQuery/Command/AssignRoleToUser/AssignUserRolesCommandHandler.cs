@@ -1,7 +1,6 @@
 using MediatR;
-using UserService.Entities;
 
-namespace UserService;
+namespace Identity.Service;
 internal class AssignUserRolesCommandHandler : IRequestHandler<AssignUserRolesCommand, AssignUserRolesResponse>
 {
     private readonly IIdmProvider<User> _idmProviderService;

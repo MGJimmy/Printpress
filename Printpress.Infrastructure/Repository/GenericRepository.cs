@@ -2,10 +2,9 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Printpress.Application;
 using Printpress.Domain;
-using Printpress.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace Printpress.Infrastructure.Repository
+namespace Printpress.Infrastructure
 {
     internal class GenericRepository<T> : IGenericRepository<T> where T : Entity
     {

@@ -1,4 +1,4 @@
-﻿namespace Printpress.Domain.Constants
+﻿namespace Printpress.Domain
 {
     internal class FileName
     {

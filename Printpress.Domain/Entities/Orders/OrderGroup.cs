@@ -1,7 +1,5 @@
-﻿using Printpress.Domain.Interfaces;
-using Printpress.Enums;
-
-namespace Printpress.Domain.Entities
+﻿
+namespace Printpress.Domain
 {
     public class OrderGroup : Entity, ISoftDelete
     {

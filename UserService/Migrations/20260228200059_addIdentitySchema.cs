@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace UserService.Migrations
+namespace Identity.Service
 {
     /// <inheritdoc />
     public partial class addIdentitySchema : Migration

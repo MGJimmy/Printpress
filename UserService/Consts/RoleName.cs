@@ -1,4 +1,4 @@
-﻿namespace UserService.Consts
+﻿namespace Identity.Service
 {
     public static class RoleName
     {

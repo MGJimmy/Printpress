@@ -1,4 +1,4 @@
-﻿using Printpress.Domain.Entities;
+﻿using Printpress.Domain;
 
 namespace Printpress.Application;
 

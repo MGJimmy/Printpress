@@ -2,9 +2,6 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Printpress.Domain;
-using Printpress.Domain.Entities;
-using Printpress.Domain.Interfaces;
-using Printpress.Enums;
 
 namespace Printpress.Infrastructure
 {

@@ -1,4 +1,4 @@
-﻿using Printpress.Enums;
+﻿using Printpress.Domain;
 using System.Text.Json.Serialization;
 
 namespace Printpress.Application

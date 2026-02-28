@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace UserService
+namespace Identity.Service
 {
     public sealed class IdmProviderService<TUser> : IIdmProvider<TUser> where TUser : class, IApplicationUser
     {

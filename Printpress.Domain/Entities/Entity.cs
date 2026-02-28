@@ -1,8 +1,6 @@
-﻿using Printpress.Domain.Enums;
-using Printpress.Domain.Interfaces;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Printpress.Domain.Entities;
+namespace Printpress.Domain;
 
 public abstract class Entity : IAuditableEntity, ITrackedEntity
 {

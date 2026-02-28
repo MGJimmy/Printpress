@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using UserService.Consts;
-using UserService.Entities;
 
-namespace UserService.Presistance
+namespace Identity.Service
 {
     public class IdentityDbContext : IdentityDbContext<User>
     {

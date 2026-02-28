@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Printpress.Domain;
-using Printpress.Domain.Enums;
 
 namespace Printpress.Application
 {

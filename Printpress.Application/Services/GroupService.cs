@@ -1,5 +1,5 @@
-﻿using Printpress.Domain.Enums;
-using Printpress.Enums;
+﻿using Printpress.Domain;
+using Printpress.Domain;
 
 namespace Printpress.Application;
 

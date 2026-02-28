@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
-using Printpress.Domain.Entities;
+using Printpress.Domain;
 using QuestPDF.Infrastructure;
 
 namespace Printpress.Application

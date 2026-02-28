@@ -3,10 +3,8 @@ using System.Security.Claims;
 using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using UserService.Consts;
-using UserService.Entities;
 
-namespace UserService
+namespace Identity.Service
 {
 
     public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginCommandResponse>

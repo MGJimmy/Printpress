@@ -4,7 +4,18 @@
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
       "Bash(dotnet build Printpress.Infrastructure/Printpress.Infrastructure.csproj)",
-      "Bash(git check-ignore -v .claude/settings.local.json)"
+      "Bash(git check-ignore -v .claude/settings.local.json)",
+      "Bash(while read f)",
+      "Bash(do)",
+      "Bash(perl -0777 -i -pe ':*)",
+      "Bash(done)",
+      "Bash(__NEW_LINE_2d67c7aaf2f958b5__ echo \"=== Application - remaining sub-namespace Domain usings ===\")",
+      "Bash(__NEW_LINE_4db571a3947daca2__ echo \"=== Remaining wrong UserService namespaces ===\")",
+      "Bash(__NEW_LINE_57b71647c9f2f19a__ echo \"=== Remaining intra-UserService usings ===\")",
+      "Bash(__NEW_LINE_cf4088bd7d1c5a14__ echo \"=== Remaining wrong namespaces in Migrations ===\")",
+      "Bash(__NEW_LINE_a782065f9a92fd3a__ echo \"=== Remaining wrong API namespaces ===\")",
+      "Bash(__NEW_LINE_32a476af29b485f5__ echo \"=== Remaining UserService sub-namespace usings in API ===\")",
+      "Bash(dotnet build Printpress.sln)"
     ]
   }
 }

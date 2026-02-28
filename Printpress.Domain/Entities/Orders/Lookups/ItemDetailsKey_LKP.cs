@@ -1,4 +1,4 @@
-﻿namespace Printpress.Domain.Entities
+﻿namespace Printpress.Domain
 {
     public class ItemDetailsKey_LKP
     {

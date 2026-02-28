@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace UserService.Migrations
+namespace Identity.Service
 {
     /// <inheritdoc />
     public partial class migratedata : Migration

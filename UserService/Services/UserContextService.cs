@@ -1,9 +1,8 @@
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
-using UserService.Consts;
 
-namespace UserService;
+namespace Identity.Service;
 
 public class UserContextService : IUserContextService
 {

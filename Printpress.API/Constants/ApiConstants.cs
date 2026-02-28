@@ -1,4 +1,4 @@
-﻿namespace Printpress.API.Constants
+﻿namespace Printpress.API
 {
     public static class ApiConstants
     {

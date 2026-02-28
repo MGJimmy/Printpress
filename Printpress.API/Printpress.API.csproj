@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Printpress.API</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +24,7 @@
     <ProjectReference Include="..\Printpress.Application\Printpress.Application.csproj" />
     <ProjectReference Include="..\Printpress.Domain\Printpress.Domain.csproj" />
     <ProjectReference Include="..\Printpress.Infrastructure\Printpress.Infrastructure.csproj" />
-    <ProjectReference Include="..\UserService\IdentityService.csproj" />
+    <ProjectReference Include="..\UserService\Identity.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

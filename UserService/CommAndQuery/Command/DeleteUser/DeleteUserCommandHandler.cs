@@ -1,7 +1,6 @@
 using MediatR;
-using UserService.Entities;
 
-namespace UserService
+namespace Identity.Service
 {
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, DeleteUserResponse>
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UserService.Consts
+namespace Identity.Service
 {
     public class AppClaimType
     {

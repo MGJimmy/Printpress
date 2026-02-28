@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace UserService;
+namespace Identity.Service;
 internal sealed class RolePolicyProvider : DefaultAuthorizationPolicyProvider
 {
     private readonly AuthorizationOptions _options;

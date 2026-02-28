@@ -1,4 +1,4 @@
-﻿namespace Printpress.Domain.Interfaces;
+﻿namespace Printpress.Domain;
 
 public interface ISoftDelete
 {

@@ -1,9 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
-using Printpress.API.Constants;
-using UserService;
-using UserService.Consts;
+using Identity.Service;
 
 namespace Printpress.API;
 

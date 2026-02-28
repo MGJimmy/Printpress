@@ -1,4 +1,4 @@
-﻿namespace UserService;
+﻿namespace Identity.Service;
 
 public interface IApplicationUser
 {

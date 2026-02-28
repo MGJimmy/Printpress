@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Printpress.Domain.Entities;
-using Printpress.Domain.Interfaces;
+using Printpress.Domain;
 
 namespace Printpress.Infrastructure;
 

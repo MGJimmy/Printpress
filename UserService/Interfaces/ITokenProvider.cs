@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
-using UserService.Entities;
 
-namespace UserService
+namespace Identity.Service
 {
     public interface ITokenProvider
     {

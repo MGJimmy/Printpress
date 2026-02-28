@@ -1,5 +1,4 @@
-﻿using Printpress.Domain.Entities;
-using Printpress.Domain.Enums;
+﻿using Printpress.Domain;
 using Printpress.Infrastructure;
 
 namespace Printpress.MigrationRunner;

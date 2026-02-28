@@ -1,4 +1,4 @@
-﻿namespace Printpress.Domain.Enums
+﻿namespace Printpress.Domain
 {
     public enum ItemDetailsKeyEnum
     {

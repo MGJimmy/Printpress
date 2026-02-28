@@ -1,6 +1,5 @@
 ﻿using Printpress.Application;
-using Printpress.Domain.Entities;
-using Printpress.Infrastructure.Repository;
+using Printpress.Domain;
 
 namespace Printpress.Infrastructure
 {

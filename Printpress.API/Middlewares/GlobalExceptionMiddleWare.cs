@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Printpress.Application;
 
-namespace Printpress.API.Middlewares;
+namespace Printpress.API;
 
 public class GlobalExceptionMiddleWare : IExceptionHandler
 {

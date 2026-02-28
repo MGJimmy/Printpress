@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Printpress.Application.Validators;
 using Printpress.Domain;
-using Printpress.Domain.Entities;
-using Printpress.Domain.Enums;
 namespace Printpress.Application;
 
 internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : IOrderAggregateService

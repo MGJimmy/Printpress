@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using UserService.Presistance;
 
 #nullable disable
 
-namespace UserService.Migrations
+namespace Identity.Service
 {
     [DbContext(typeof(IdentityDbContext))]
     partial class UserDbContextModelSnapshot : ModelSnapshot

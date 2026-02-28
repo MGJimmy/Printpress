@@ -5,11 +5,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using UserService.Presistance;
 
 #nullable disable
 
-namespace UserService.Migrations
+namespace Identity.Service
 {
     [DbContext(typeof(IdentityDbContext))]
     [Migration("20250506220132_addUserService")]

@@ -1,9 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using UserService.Entities;
-using UserService.Presistance;
 
-namespace UserService
+namespace Identity.Service
 {
     public class GetAlluserQueryHandler : IRequestHandler<GetAlluserQuery, List<User>>
     {

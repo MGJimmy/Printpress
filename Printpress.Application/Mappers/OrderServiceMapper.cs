@@ -1,12 +1,12 @@
-﻿using Printpress.Domain.Enums;
+﻿using Printpress.Domain;
 
 namespace Printpress.Application
 {
-    internal class OrderServiceMapper : BaseMapper<Domain.Entities.OrderService, OrderServiceUpsertDTO>
+    internal class OrderServiceMapper : BaseMapper<OrderService, OrderServiceUpsertDTO>
     {
-        public override Domain.Entities.OrderService MapFromDestinationToSource(OrderServiceUpsertDTO destinationEntity)
+        public override OrderService MapFromDestinationToSource(OrderServiceUpsertDTO destinationEntity)
         {
-            return new Domain.Entities.OrderService
+            return new OrderService
             {
                 Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
@@ -15,7 +15,7 @@ namespace Printpress.Application
             };
         }
 
-        public override OrderServiceUpsertDTO MapFromSourceToDestination(Domain.Entities.OrderService sourceEntity)
+        public override OrderServiceUpsertDTO MapFromSourceToDestination(OrderService sourceEntity)
         {
             throw new NotImplementedException();
         }

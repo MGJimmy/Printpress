@@ -1,8 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using UserService.Consts;
 
-namespace UserService;
+namespace Identity.Service;
 
 internal sealed class RoleAuthorizationHandler : AuthorizationHandler<RoleRequirement>
 {
