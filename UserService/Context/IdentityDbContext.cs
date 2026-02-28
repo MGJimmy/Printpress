@@ -19,6 +19,8 @@ namespace UserService.Presistance
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.HasDefaultSchema("Identity");
+
             base.OnModelCreating(builder);
 
             builder.Entity<IdentityRole>().HasData(
