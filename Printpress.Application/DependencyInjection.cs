@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Printpress.Application;
@@ -8,6 +9,7 @@ public static class DependencyInjection
 
     public static IServiceCollection RegisterApplicationService(this IServiceCollection services, IConfiguration configuration)
     {
+        #region Orders
         //services
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IOrderTransactionService, OrderTransactionService>();
@@ -30,6 +32,15 @@ public static class DependencyInjection
 
         //reports
         services.AddScoped<IReportFactory, InvoiceReportFactory>();
+        #endregion
+
+
+        #region Inventory
+        services.AddScoped<IInventoryItemService, InventoryItemService>();
+        services.AddScoped<InventoryItemMapper>();
+        services.AddScoped<IValidator<InventoryItemAddDto>, InventoryItemAddDtoValidator>();
+        services.AddScoped<IValidator<InventoryItemUpdateDto>, InventoryItemUpdateDtoValidator>();
+        #endregion
 
 
         return services;

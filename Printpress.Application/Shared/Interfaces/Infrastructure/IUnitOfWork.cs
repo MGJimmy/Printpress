@@ -11,6 +11,7 @@ public interface IUnitOfWork
     IGenericRepository<OrderItemDetails> ItemDetailsRepository { get; }
 
     IGenericRepository<OrderGroup> OrderGroupRepository { get; }
+    IGenericRepository<InventoryItem> InventoryItemRepository { get; }
 
     Task SaveChangesAsync(string userId);
 }
