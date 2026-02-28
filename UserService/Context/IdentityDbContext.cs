@@ -7,9 +7,9 @@ using UserService.Entities;
 
 namespace UserService.Presistance
 {
-    public class UserDbContext : IdentityDbContext<User>
+    public class IdentityDbContext : IdentityDbContext<User>
     {
-        public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
         }
 

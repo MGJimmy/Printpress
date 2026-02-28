@@ -31,7 +31,7 @@ namespace UserService
         }
         private static IServiceCollection AddUserDbContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<UserDbContext>(options =>
+            services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("UserConnectionString")));
             return services;
         }
@@ -63,7 +63,7 @@ namespace UserService
                 options.Password.RequireDigit = false;
 
             })
-            .AddEntityFrameworkStores<UserDbContext>()
+            .AddEntityFrameworkStores<IdentityDbContext>()
             .AddDefaultTokenProviders();
 
 

@@ -19,10 +19,10 @@ namespace UserService
     internal sealed class TokenService : ITokenProvider
     {
         private readonly JwtOption _jwtConfigration;
-        private readonly UserDbContext _context;
+        private readonly IdentityDbContext _context;
         private readonly IIdmProvider<User> _idmProvider;
 
-        public TokenService(IOptions<JwtOption> jwtOptions, IIdmProvider<User> idmProvider, UserDbContext context)
+        public TokenService(IOptions<JwtOption> jwtOptions, IIdmProvider<User> idmProvider, IdentityDbContext context)
         {
             _jwtConfigration = jwtOptions.Value;
             _context = context;

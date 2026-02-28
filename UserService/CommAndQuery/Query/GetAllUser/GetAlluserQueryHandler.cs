@@ -7,9 +7,9 @@ namespace UserService
 {
     public class GetAlluserQueryHandler : IRequestHandler<GetAlluserQuery, List<User>>
     {
-        private readonly UserDbContext _context;
+        private readonly IdentityDbContext _context;
 
-        public GetAlluserQueryHandler(UserDbContext context)
+        public GetAlluserQueryHandler(IdentityDbContext context)
         {
             _context = context;
         }

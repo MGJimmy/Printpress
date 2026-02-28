@@ -11,7 +11,7 @@ using UserService.Presistance;
 
 namespace UserService.Migrations
 {
-    [DbContext(typeof(UserDbContext))]
+    [DbContext(typeof(IdentityDbContext))]
     [Migration("20251009003557_refershToken")]
     partial class refershToken
     {

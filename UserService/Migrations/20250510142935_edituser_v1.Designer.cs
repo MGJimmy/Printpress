@@ -11,7 +11,7 @@ using UserService.Presistance;
 
 namespace UserService.Migrations
 {
-    [DbContext(typeof(UserDbContext))]
+    [DbContext(typeof(IdentityDbContext))]
     [Migration("20250510142935_edituser_v1")]
     partial class edituser_v1
     {

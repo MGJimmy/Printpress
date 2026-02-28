@@ -11,7 +11,7 @@ using UserService.Presistance;
 
 namespace UserService.Migrations
 {
-    [DbContext(typeof(UserDbContext))]
+    [DbContext(typeof(IdentityDbContext))]
     [Migration("20250513142733_migrate-data")]
     partial class migratedata
     {

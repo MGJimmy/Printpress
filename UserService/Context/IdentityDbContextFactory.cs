@@ -5,9 +5,9 @@ using System.IO;
 
 namespace UserService.Presistance
 {
-    public class UserDbContextFactory : IDesignTimeDbContextFactory<UserDbContext>
+    public class IdentityDbContextFactory : IDesignTimeDbContextFactory<IdentityDbContext>
     {
-        public UserDbContext CreateDbContext(string[] args)
+        public IdentityDbContext CreateDbContext(string[] args)
         {
             var basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Printpress.API");
 
@@ -16,11 +16,11 @@ namespace UserService.Presistance
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
 
-            var optionsBuilder = new DbContextOptionsBuilder<UserDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
             var connectionString = configuration.GetConnectionString("UserConnectionString");
             optionsBuilder.UseNpgsql(connectionString);
 
-            return new UserDbContext(optionsBuilder.Options);
+            return new IdentityDbContext(optionsBuilder.Options);
         }
     }
 }

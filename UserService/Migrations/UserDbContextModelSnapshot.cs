@@ -10,7 +10,7 @@ using UserService.Presistance;
 
 namespace UserService.Migrations
 {
-    [DbContext(typeof(UserDbContext))]
+    [DbContext(typeof(IdentityDbContext))]
     partial class UserDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
