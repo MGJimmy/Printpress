@@ -23,7 +23,7 @@
     <ProjectReference Include="..\Printpress.Application\Printpress.Application.csproj" />
     <ProjectReference Include="..\Printpress.Domain\Printpress.Domain.csproj" />
     <ProjectReference Include="..\Printpress.Infrastructure\Printpress.Infrastructure.csproj" />
-    <ProjectReference Include="..\UserService\UserService.csproj" />
+    <ProjectReference Include="..\UserService\IdentityService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,6 +8,7 @@ namespace Printpress.Domain.Entities
 {
     public class InventoryTransaction : Entity
     {
+        public int Id { get; set; }
         public int InventoryItemId { get; set; }
         public InventoryTransactionType InventoryTransactionType { get; set; }
         public int Quantity { get; set; }

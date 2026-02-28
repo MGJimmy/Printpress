@@ -10,6 +10,7 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
+    #region Orders
     public DbSet<Client> Client { get; set; }
     public DbSet<Service> Service { get; set; }
     public DbSet<Order> Order { get; set; }
@@ -21,13 +22,21 @@ public class ApplicationDbContext : DbContext
     public DbSet<OrderTransaction> OrderTransaction { get; set; }
     public DbSet<ItemDetailsKey_LKP> ItemDetailsKey_LKP { get; set; }
     public DbSet<ServiceCategory_LKP> ServiceCategory_LKP { get; set; }
+    #endregion
+
+
+    #region Inventory
+    public DbSet<InventoryItem> InventoryItem { get; set; }
+    public DbSet<InventoryTransaction> InventoryTransaction { get; set; }
+    public DbSet<InventoryItemCategory_LKP> InventoryItemCategory_LKP { get; set; }
+    #endregion
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Configure();
-
-
+        modelBuilder.ConfigureOrders();
+        modelBuilder.ConfigureInventory();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

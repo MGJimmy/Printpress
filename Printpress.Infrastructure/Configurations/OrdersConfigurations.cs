@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Printpress.Domain;
@@ -8,10 +8,14 @@ using Printpress.Enums;
 
 namespace Printpress.Infrastructure
 {
-    public static class ModelBuilderExtensions
+    public static class OrdersConfigurations
     {
-        public static void Configure(this ModelBuilder modelBuilder)
+        private const string Schema = "Orders";
+
+        public static void ConfigureOrders(this ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema(Schema);
+
             modelBuilder.Entity<OrderTransaction>().Configure();
             modelBuilder.Entity<Service>().Configure();
             modelBuilder.Entity<Client>().Configure();
@@ -29,7 +33,7 @@ namespace Printpress.Infrastructure
         private static void ApplyGlobalQueryFilters(this ModelBuilder modelBuilder)
         {
             ExcludeSoftDeletedRowsFilter(modelBuilder);
-        } 
+        }
 
         private static void ExcludeSoftDeletedRowsFilter(ModelBuilder modelBuilder)
         {
@@ -50,6 +54,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderTransaction> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Notes)
                 .HasMaxLength(500);
@@ -57,6 +63,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<Service> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Name)
                 .HasMaxLength(200);
@@ -70,6 +78,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<Client> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Name)
                 .HasMaxLength(200);
@@ -85,6 +95,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<Order> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Name)
                 .IsRequired()
@@ -93,6 +105,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderGroup> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Name)
                 .IsRequired()
@@ -112,6 +126,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderItem> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Name)
                 .IsRequired()
@@ -120,6 +136,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderItemDetails> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Value)
                 .IsRequired()
@@ -134,6 +152,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<ItemDetailsKey_LKP> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Name)
                 .IsRequired()
@@ -142,6 +162,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<ServiceCategory_LKP> entity)
         {
+            entity.SetSchemaTable(Schema);
+
             entity
                 .Property(x => x.Name)
                 .IsRequired()

@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(dotnet build Printpress.Infrastructure/Printpress.Infrastructure.csproj)",
+      "Bash(git check-ignore -v .claude/settings.local.json)"
     ]
   }
 }
