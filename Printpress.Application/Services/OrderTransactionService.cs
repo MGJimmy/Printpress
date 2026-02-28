@@ -16,7 +16,7 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
         
         var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
 
-        var isPayment = EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Payment;
+        var isPayment = EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Payment;
 
         var transactionAmount = isPayment ? payload.Amount : (-1 * payload.Amount);
 
@@ -31,7 +31,7 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
 
     private void ValidateTransactionPayload(OrderTransactionAddDto payload)
     {
-        if (!EnumHelper.IsValidEnumValue(typeof(TransactionType), payload.TransactionType))
+        if (!EnumHelper.IsValidEnumValue(typeof(OrderTransactionType), payload.TransactionType))
         {
             throw new ValidationExeption("Transaction type cannot be identified!");
         }
@@ -43,12 +43,12 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
 
     private void ValidatePayloadAmountComparedToOrder(Order order, OrderTransactionAddDto payload)
     {
-        if (EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Payment &&
+        if (EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Payment &&
             payload.Amount > (order.TotalPrice - order.TotalPaid))
         {
             throw new ValidationExeption("Payment Amount cannot exceed remaining!");
         }
-        if (EnumHelper.MapStringToEnum<TransactionType>(payload.TransactionType) == TransactionType.Refund &&
+        if (EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Refund &&
             payload.Amount > order.TotalPaid)
         {
             throw new ValidationExeption("Refund Amount cannot exceed order total paid!");

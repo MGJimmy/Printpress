@@ -18,7 +18,7 @@ namespace Printpress.Infrastructure
         private IGenericRepository<Order> _orderRepository;
         private IGenericRepository<Client> _clientRepository;
         private IGenericRepository<OrderTransaction> _orderTransactionRepository;
-        private IGenericRepository<ItemDetails> _itemDetailsRepository;
+        private IGenericRepository<OrderItemDetails> _itemDetailsRepository;
         private IGenericRepository<OrderGroup> _orderGroupRepository;
 
 
@@ -38,13 +38,13 @@ namespace Printpress.Infrastructure
                 return _serviceRepository;
             }
         }
-        public IGenericRepository<ItemDetails> ItemDetailsRepository
+        public IGenericRepository<OrderItemDetails> ItemDetailsRepository
         {
             get
             {
                 if (_itemDetailsRepository == null)
                 {
-                    _itemDetailsRepository = new GenericRepository<ItemDetails>(_context);
+                    _itemDetailsRepository = new GenericRepository<OrderItemDetails>(_context);
                 }
 
                 return _itemDetailsRepository;

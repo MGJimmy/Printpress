@@ -72,7 +72,7 @@ namespace Printpress.Application
 
             return orderGroupServiceDTO;
         }
-        public static ItemDTO MapToItemDTO(this Item item)
+        public static ItemDTO MapToItemDTO(this OrderItem item)
         {
             var itemDTO = new ItemDTO
             {
@@ -88,7 +88,7 @@ namespace Printpress.Application
             return itemDTO;
         }
 
-        public static ItemDetailsDTO MapToItemDetailsDTO(this ItemDetails itemDetails)
+        public static ItemDetailsDTO MapToItemDetailsDTO(this OrderItemDetails itemDetails)
         {
             var itemDTO = new ItemDetailsDTO
             {

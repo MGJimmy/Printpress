@@ -2,7 +2,7 @@
 
 namespace Printpress.Domain.Entities
 {
-    public class Item : Entity , ISoftDelete
+    public class OrderItem : Entity , ISoftDelete
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -12,6 +12,6 @@ namespace Printpress.Domain.Entities
         public bool IsDeleted { get; set; }
 
         public virtual OrderGroup OrderGroup { get; set; }
-        public virtual List<ItemDetails> Details { get; set; }
+        public virtual List<OrderItemDetails> Details { get; set; }
     }
 }

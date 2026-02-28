@@ -8,7 +8,7 @@ public interface IUnitOfWork
     IGenericRepository<Client> ClientRepository { get; }
     IGenericRepository<Order> OrderRepository { get; }
     IGenericRepository<OrderTransaction> OrderTransactionRepository { get; }
-    IGenericRepository<ItemDetails> ItemDetailsRepository { get; }
+    IGenericRepository<OrderItemDetails> ItemDetailsRepository { get; }
 
     IGenericRepository<OrderGroup> OrderGroupRepository { get; }
 

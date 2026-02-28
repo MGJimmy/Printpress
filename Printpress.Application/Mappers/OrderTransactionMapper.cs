@@ -11,7 +11,7 @@ namespace Printpress.Application
             {
                 OrderId = destinationEntity.OrderId,
                 Amount = destinationEntity.Amount,
-                TransactionType = EnumHelper.MapStringToEnum<TransactionType>(destinationEntity.TransactionType)
+                TransactionType = EnumHelper.MapStringToEnum<OrderTransactionType>(destinationEntity.TransactionType)
             };
         }
 
@@ -32,7 +32,7 @@ namespace Printpress.Application
             {
                 OrderId = destinationEntity.OrderId,
                 Amount = destinationEntity.Amount,
-                TransactionType = EnumHelper.MapStringToEnum<TransactionType>(destinationEntity.TransactionType)
+                TransactionType = EnumHelper.MapStringToEnum<OrderTransactionType>(destinationEntity.TransactionType)
             };
         }
     }

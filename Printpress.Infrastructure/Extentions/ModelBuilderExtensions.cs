@@ -14,14 +14,11 @@ namespace Printpress.Infrastructure
         {
             modelBuilder.Entity<OrderTransaction>().Configure();
             modelBuilder.Entity<Service>().Configure();
-            modelBuilder.Entity<ProductStock>().Configure();
-            modelBuilder.Entity<PrintingType>().Configure();
-            modelBuilder.Entity<PrintingServiceDetails>().Configure();
             modelBuilder.Entity<Client>().Configure();
             modelBuilder.Entity<Order>().Configure();
             modelBuilder.Entity<OrderGroup>().Configure();
-            modelBuilder.Entity<Item>().Configure();
-            modelBuilder.Entity<ItemDetails>().Configure();
+            modelBuilder.Entity<OrderItem>().Configure();
+            modelBuilder.Entity<OrderItemDetails>().Configure();
             modelBuilder.Entity<ItemDetailsKey_LKP>().Configure();
             modelBuilder.Entity<ServiceCategory_LKP>().Configure();
 
@@ -71,26 +68,6 @@ namespace Printpress.Infrastructure
             entity.Ignore(x => x.ServiceCategory);
         }
 
-        private static void Configure(this EntityTypeBuilder<ProductStock> entity)
-        {
-            entity
-                .Property(x => x.Name)
-                .HasMaxLength(200);
-        }
-
-        private static void Configure(this EntityTypeBuilder<PrintingType> entity)
-        {
-            entity
-                .Property(x => x.Name)
-                .HasMaxLength(200);
-        }
-
-        private static void Configure(this EntityTypeBuilder<PrintingServiceDetails> entity)
-        {
-            entity
-                .HasKey(x => x.ServiceId);
-        }
-
         private static void Configure(this EntityTypeBuilder<Client> entity)
         {
             entity
@@ -133,7 +110,7 @@ namespace Printpress.Infrastructure
                 .HasDefaultValue(GroupStatusEnum.New);
         }
 
-        private static void Configure(this EntityTypeBuilder<Item> entity)
+        private static void Configure(this EntityTypeBuilder<OrderItem> entity)
         {
             entity
                 .Property(x => x.Name)
@@ -141,7 +118,7 @@ namespace Printpress.Infrastructure
                 .HasMaxLength(200);
         }
 
-        private static void Configure(this EntityTypeBuilder<ItemDetails> entity)
+        private static void Configure(this EntityTypeBuilder<OrderItemDetails> entity)
         {
             entity
                 .Property(x => x.Value)

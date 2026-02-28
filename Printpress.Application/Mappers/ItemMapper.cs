@@ -4,11 +4,11 @@ using Printpress.Domain.Enums;
 
 namespace Printpress.Application
 {
-    internal class ItemMapper (ItemDetailsMapper itemDetailsMapper) : BaseMapper<Item, ItemUpsertDTO>
+    internal class ItemMapper (ItemDetailsMapper itemDetailsMapper) : BaseMapper<OrderItem, ItemUpsertDTO>
     {
-        public override Item MapFromDestinationToSource(ItemUpsertDTO destinationEntity)
+        public override OrderItem MapFromDestinationToSource(ItemUpsertDTO destinationEntity)
         {
-            return new Item
+            return new OrderItem
             {
                 Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 Name = destinationEntity.Name,
@@ -21,7 +21,7 @@ namespace Printpress.Application
 
         }
 
-        public override ItemUpsertDTO MapFromSourceToDestination(Item sourceEntity)
+        public override ItemUpsertDTO MapFromSourceToDestination(OrderItem sourceEntity)
         {
             throw new NotImplementedException();
         }

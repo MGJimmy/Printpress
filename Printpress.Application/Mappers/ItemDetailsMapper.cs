@@ -8,11 +8,11 @@ using Printpress.Domain.Enums;
 
 namespace Printpress.Application.Mappers
 {
-    internal class ItemDetailsMapper : BaseMapper<ItemDetails, ItemDetailsUpsertDTO>
+    internal class ItemDetailsMapper : BaseMapper<OrderItemDetails, ItemDetailsUpsertDTO>
     {
-        public override ItemDetails MapFromDestinationToSource(ItemDetailsUpsertDTO destinationEntity)
+        public override OrderItemDetails MapFromDestinationToSource(ItemDetailsUpsertDTO destinationEntity)
         {
-            return new ItemDetails
+            return new OrderItemDetails
             {
                 Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
                 ItemId = destinationEntity.ItemId,
@@ -22,7 +22,7 @@ namespace Printpress.Application.Mappers
             };
         }
 
-        public override ItemDetailsUpsertDTO MapFromSourceToDestination(ItemDetails sourceEntity)
+        public override ItemDetailsUpsertDTO MapFromSourceToDestination(OrderItemDetails sourceEntity)
         {
             throw new NotImplementedException();
         }

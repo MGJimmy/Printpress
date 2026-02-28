@@ -25,7 +25,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         string[] includes = [
             $"{nameof(Order.OrderGroups)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
-            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(Item.Details)}",
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(OrderItem.Details)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}",
             $"{nameof(Order.Services)}",
@@ -134,7 +134,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         }
     }
 
-    private decimal CalculatePrintingServicePrice(Item item, decimal price)
+    private decimal CalculatePrintingServicePrice(OrderItem item, decimal price)
     {
         string stringNoOfPages = item.Details.Find(x => x.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value;
         var noOfPages = string.IsNullOrEmpty(stringNoOfPages) ? 1 : int.Parse(stringNoOfPages);
