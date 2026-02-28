@@ -244,6 +244,7 @@ internal sealed class SeedingDbContext
     {
         SeedingItemDetailsKeyLKP();
         SeedingServiceCategoryLKP();
+        SeedingInventoryItemCategoryLKP();
     }
 
     private void SeedingItemDetailsKeyLKP()
@@ -265,6 +266,18 @@ internal sealed class SeedingDbContext
             if (!_dbContext.ServiceCategory_LKP.Any(i => i.Id == (int)serviceCategory))
             {
                 _dbContext.ServiceCategory_LKP.Add(new ServiceCategory_LKP { Id = (int)serviceCategory, Name = serviceCategory.ToString() });
+            }
+        }
+    }
+
+    private void SeedingInventoryItemCategoryLKP()
+    {
+        foreach (var inventoryItemCategory in Enum.GetValues(typeof(InventoryItemCategoryEnum)))
+        {
+            if (!_dbContext.InventoryItemCategory_LKP.Any(i => i.Id == (int)inventoryItemCategory))
+            {
+                _dbContext.InventoryItemCategory_LKP.Add(new InventoryItemCategory_LKP { Id = (int)inventoryItemCategory, Name = inventoryItemCategory.ToString() });
+
             }
         }
     }
