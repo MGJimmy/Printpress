@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,9 +38,9 @@ public static class DependencyInjection
 
         #region Inventory
         services.AddScoped<IInventoryItemService, InventoryItemService>();
-        services.AddScoped<InventoryItemMapper>();
         services.AddScoped<IValidator<InventoryItemAddDto>, InventoryItemAddDtoValidator>();
         services.AddScoped<IValidator<InventoryItemUpdateDto>, InventoryItemUpdateDtoValidator>();
+        services.AddAutoMapper(typeof(InventoryItemProfile));
         #endregion
 
 

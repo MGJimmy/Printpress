@@ -1,3 +1,4 @@
+using AutoMapper;
 using FluentValidation;
 using Printpress.Domain;
 
@@ -5,7 +6,7 @@ namespace Printpress.Application;
 
 internal sealed class InventoryItemService(
     IUnitOfWork _unitOfWork,
-    InventoryItemMapper _mapper,
+    IMapper _mapper,
     IValidator<InventoryItemAddDto> _addValidator,
     IValidator<InventoryItemUpdateDto> _updateValidator) : IInventoryItemService
 {
@@ -13,12 +14,12 @@ internal sealed class InventoryItemService(
     {
         await ValidateAsync(_addValidator, payload);
 
-        var entity = _mapper.MapFromAddDto(payload);
+        var entity = _mapper.Map<InventoryItem>(payload);
         var saved = await _unitOfWork.InventoryItemRepository.AddAsync(entity);
 
         await _unitOfWork.SaveChangesAsync(userId);
 
-        return _mapper.MapFromSourceToDestination(saved);
+        return _mapper.Map<InventoryItemDto>(saved);
     }
 
     public async Task<InventoryItemDto> UpdateAsync(int id, InventoryItemUpdateDto payload, string userId)
@@ -26,12 +27,14 @@ internal sealed class InventoryItemService(
         await ValidateAsync(_updateValidator, payload);
         EnsureItemExists(id);
 
-        var entity = _mapper.MapFromUpdateDto(id, payload);
+        var entity = _mapper.Map<InventoryItem>(payload);
+        entity.Id = id;
+
         var updated = _unitOfWork.InventoryItemRepository.Update(entity);
 
         await _unitOfWork.SaveChangesAsync(userId);
 
-        return _mapper.MapFromSourceToDestination(updated);
+        return _mapper.Map<InventoryItemDto>(updated);
     }
 
     public async Task<InventoryItemDto> GetByIdAsync(int id)
@@ -41,13 +44,13 @@ internal sealed class InventoryItemService(
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
 
-        return _mapper.MapFromSourceToDestination(item);
+        return _mapper.Map<InventoryItemDto>(item);
     }
 
     public async Task<List<InventoryItemDto>> GetAllAsync()
     {
         var items = await _unitOfWork.InventoryItemRepository.AllAsync();
-        return _mapper.MapFromSourceToDestination(items);
+        return _mapper.Map<List<InventoryItemDto>>(items);
     }
 
     public async Task DeleteAsync(int id, string userId)
