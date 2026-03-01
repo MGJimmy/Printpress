@@ -7,9 +7,9 @@ namespace Printpress.API;
 public class InventoryController(IInventoryItemService _inventoryItemService) : AppBaseController
 {
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _inventoryItemService.GetAllAsync();
+        var result = await _inventoryItemService.GetAllAsync(new Paging(pageNumber, pageSize));
         return Ok(result);
     }
 

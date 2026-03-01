@@ -86,6 +86,19 @@ export const routes: Routes = [
         data: { 'roles': [UserRoleEnum.admin] }
       },
       {
+        path: 'inventory',
+        children: [
+          {
+            path: 'items',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/inventory-item-list/inventory-item-list.component'
+              ).then((m) => m.InventoryItemListComponent),
+            canActivate: [authGuard],
+          }
+        ]
+      },
+      {
         path: 'unauthorized',
         loadComponent: () =>
           import(

@@ -45,4 +45,12 @@ export class ApiUrlResource {
     delete:(id:number) => `${ApiUrlResource.Service_URL}/delete/${id}`,
   };
 
+  private static Inventory_URL = '/api/Inventory';
+  public static readonly InventoryAPI = {
+    getAll: ApiUrlResource.Inventory_URL + '/getAll',
+    add: ApiUrlResource.Inventory_URL + '/add',
+    update: (id: number) => `${ApiUrlResource.Inventory_URL}/update/${id}`,
+    delete: (id: number) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
+  };
+
 }

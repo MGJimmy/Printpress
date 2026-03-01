@@ -47,10 +47,16 @@ internal sealed class InventoryItemService(
         return _mapper.Map<InventoryItemDto>(item);
     }
 
-    public async Task<List<InventoryItemDto>> GetAllAsync()
+    public async Task<PagedList<InventoryItemDto>> GetAllAsync(Paging paging)
     {
-        var items = await _unitOfWork.InventoryItemRepository.AllAsync();
-        return _mapper.Map<List<InventoryItemDto>>(items);
+        var result = await _unitOfWork.InventoryItemRepository.AllAsync(paging);
+        return new PagedList<InventoryItemDto>
+        {
+            Items = _mapper.Map<List<InventoryItemDto>>(result.Items),
+            TotalCount = result.TotalCount,
+            PageNumber = result.PageNumber,
+            PageSize = result.PageSize
+        };
     }
 
     public async Task DeleteAsync(int id, string userId)
