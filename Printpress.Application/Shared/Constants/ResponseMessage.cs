@@ -29,5 +29,17 @@ namespace Printpress.Application
             }
             return $"Invalid {paramterValueName} value must be one of the following options [{string.Join(" - ", Enum.GetNames(enumType))}]";
         }
+
+        public static string Required(string fieldName)
+            => $"{fieldName} is required.";
+
+        public static string MaxLength(string fieldName, int maxLength)
+            => $"{fieldName} must not exceed {maxLength} characters.";
+
+        public static string MustBeBetween(string fieldName, int min, int max)
+            => $"{fieldName} must be between {min} and {max}.";
+
+        public static string MustBePositive(string fieldName)
+            => $"{fieldName} must be greater than 0.";
     }
 }
