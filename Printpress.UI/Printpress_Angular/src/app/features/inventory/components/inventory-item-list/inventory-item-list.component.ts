@@ -42,8 +42,8 @@ export class InventoryItemListComponent implements OnInit {
     this.inventoryService.getAll(pageSize, pageNumber).subscribe({
       next: (response) => {
         console.log(response);
-        this.items = response.items as InventoryItemDto[];
-        this.totalCount = response.totalCount;
+        this.items = response.data.items as InventoryItemDto[];
+        this.totalCount = response.data.totalCount;
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');
