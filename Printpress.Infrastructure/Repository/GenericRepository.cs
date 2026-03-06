@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Printpress.Application;
 using Printpress.Domain;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Printpress.Infrastructure
@@ -228,6 +229,16 @@ namespace Printpress.Infrastructure
             Context.Entry(entity).State = EntityState.Modified;
 
             return entity;
+        }
+
+        public async Task<bool> AllExistAsync(IEnumerable<int> ids, CancellationToken cancellationToken = default)
+        {
+            var distinctIds = ids.Distinct().ToList();
+            var count = await Context.Set<T>()
+                .AsNoTracking()
+                .CountAsync(x => distinctIds.Contains(x.Id), cancellationToken);
+
+            return count == distinctIds.Count;
         }
 
     }

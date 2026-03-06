@@ -3,7 +3,6 @@ namespace Printpress.Domain
 {
     public class OrderItemDetails : Entity , ISoftDelete
     {
-        public int Id { get; set; }
         public int ItemId { get; set; }
         public bool IsDeleted { get; set; }
 

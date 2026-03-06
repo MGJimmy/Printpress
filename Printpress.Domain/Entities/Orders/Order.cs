@@ -3,7 +3,6 @@ namespace Printpress.Domain
 {
     public class Order : Entity , ISoftDelete
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public int ClientId { get; set; }
         public decimal? TotalPrice { get; set; }

@@ -4,7 +4,6 @@ namespace Printpress.Domain
 {
     public class InventoryItem : Entity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public InventoryItemCategoryEnum InventoryItemCategory
         {
