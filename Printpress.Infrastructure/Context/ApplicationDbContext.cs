@@ -28,6 +28,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<InventoryItem> InventoryItem { get; set; }
     public DbSet<InventoryTransaction> InventoryTransaction { get; set; }
     public DbSet<InventoryItemCategory_LKP> InventoryItemCategory_LKP { get; set; }
+    public DbSet<PurchaseInvoice> PurchaseInvoice { get; set; }
+    public DbSet<PurchaseInvoiceLine> PurchaseInvoiceLine { get; set; }
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

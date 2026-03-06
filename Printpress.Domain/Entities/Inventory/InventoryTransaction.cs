@@ -8,8 +8,8 @@ namespace Printpress.Domain
         public InventoryTransactionType InventoryTransactionType { get; set; }
         public int Quantity { get; set; }
         public InventoryTransactionReferenceType ReferenceType { get; set; }
-        
-        // Id of the table that transaction related to (Order - InventoryInvoices - ...) 
+
+        // Id of the table that transaction related to (Order - PurchaseInvoiceLine - ...) 
         public int ReferenceId { get; set; }
 
         public string Notes { get; set; }

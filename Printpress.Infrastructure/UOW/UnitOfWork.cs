@@ -20,6 +20,8 @@ namespace Printpress.Infrastructure
         private IGenericRepository<OrderItemDetails> _itemDetailsRepository;
         private IGenericRepository<OrderGroup> _orderGroupRepository;
         private IGenericRepository<InventoryItem> _inventoryItemRepository;
+        private IGenericRepository<PurchaseInvoice> _purchaseInvoiceRepository;
+        private IGenericRepository<PurchaseInvoiceLine> _purchaseInvoiceLineRepository;
 
 
 
@@ -106,6 +108,26 @@ namespace Printpress.Infrastructure
                 if (_inventoryItemRepository == null)
                     _inventoryItemRepository = new GenericRepository<InventoryItem>(_context);
                 return _inventoryItemRepository;
+            }
+        }
+
+        public IGenericRepository<PurchaseInvoice> PurchaseInvoiceRepository
+        {
+            get
+            {
+                if (_purchaseInvoiceRepository == null)
+                    _purchaseInvoiceRepository = new GenericRepository<PurchaseInvoice>(_context);
+                return _purchaseInvoiceRepository;
+            }
+        }
+
+        public IGenericRepository<PurchaseInvoiceLine> PurchaseInvoiceLineRepository
+        {
+            get
+            {
+                if (_purchaseInvoiceLineRepository == null)
+                    _purchaseInvoiceLineRepository = new GenericRepository<PurchaseInvoiceLine>(_context);
+                return _purchaseInvoiceLineRepository;
             }
         }
 

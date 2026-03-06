@@ -23,5 +23,7 @@ namespace Printpress.Domain
         public int ExpectedProductionWastePercent { get; set; }
 
         public virtual InventoryItemCategory_LKP InventoryItemCategory_LKP { get; set; }
+
+        public virtual ICollection<InventoryTransaction> InventoryTransactions { get; set; }
     }
 }

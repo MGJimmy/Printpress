@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Printpress.Domain;
 
 namespace Printpress.Application;
 
@@ -41,6 +42,10 @@ public static class DependencyInjection
         services.AddScoped<IValidator<InventoryItemAddDto>, InventoryItemAddDtoValidator>();
         services.AddScoped<IValidator<InventoryItemUpdateDto>, InventoryItemUpdateDtoValidator>();
         services.AddAutoMapper(typeof(InventoryItemProfile));
+
+        services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+        services.AddScoped<IValidator<PurchaseInvoiceCreateDto>, PurchaseInvoiceCreateDtoValidator>();
+        services.AddAutoMapper(typeof(PurchaseInvoiceProfile));
         #endregion
 
 

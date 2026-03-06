@@ -13,6 +13,8 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<InventoryItem>().Configure();
             modelBuilder.Entity<InventoryTransaction>().Configure();
             modelBuilder.Entity<InventoryItemCategory_LKP>().Configure();
+            modelBuilder.Entity<PurchaseInvoice>().Configure();
+            modelBuilder.Entity<PurchaseInvoiceLine>().Configure();
         }
 
         private static void Configure(this EntityTypeBuilder<InventoryItem> entity)
@@ -49,6 +51,36 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(200);
+        }
+
+        private static void Configure(this EntityTypeBuilder<PurchaseInvoice> entity)
+        {
+            entity.SetSchemaTable(Schema);
+
+            entity.Property(x => x.InvoiceNumber)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.SupplierName)
+                .IsRequired()
+                .HasMaxLength(300);
+
+            entity.Property(x => x.AttachmentFilePath)
+                .IsRequired()
+                .HasMaxLength(500);
+        }
+
+        private static void Configure(this EntityTypeBuilder<PurchaseInvoiceLine> entity)
+        {
+            entity.SetSchemaTable(Schema);
+
+            entity.HasOne(x => x.PurchaseInvoice)
+                .WithMany(x => x.PurchaseInvoiceLines)
+                .HasForeignKey(x => x.PurchaseInvoiceId);
+
+            entity.HasOne(x => x.InventoryItem)
+                .WithMany()
+                .HasForeignKey(x => x.InventoryItemId);
         }
     }
 }
