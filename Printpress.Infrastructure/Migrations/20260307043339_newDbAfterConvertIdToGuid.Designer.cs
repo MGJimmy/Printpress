@@ -12,7 +12,7 @@ using Printpress.Infrastructure;
 namespace Printpress.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260307042700_newDbAfterConvertIdToGuid")]
+    [Migration("20260307043339_newDbAfterConvertIdToGuid")]
     partial class newDbAfterConvertIdToGuid
     {
         /// <inheritdoc />
