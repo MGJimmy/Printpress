@@ -4,7 +4,7 @@ namespace Printpress.Domain
     public class Order : Entity , ISoftDelete
     {
         public string Name { get; set; }
-        public int ClientId { get; set; }
+        public Guid ClientId { get; set; }
         public decimal? TotalPrice { get; set; }
         public decimal? TotalPaid { get; set; }
         public bool IsDeleted { get; set; }

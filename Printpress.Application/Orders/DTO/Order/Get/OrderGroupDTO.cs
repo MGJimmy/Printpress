@@ -5,9 +5,9 @@ namespace Printpress.Application
 {
     public class OrderGroupDTO : TrackedDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public string DeliveredFrom { get; set; }
         public string DeliveredTo { get; set; }

@@ -5,7 +5,7 @@ namespace Printpress.Application;
 
 public record InventoryItemDto
 {
-    public int Id { get; init; }
+    public Guid Id { get; init; }
     public string Name { get; init; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

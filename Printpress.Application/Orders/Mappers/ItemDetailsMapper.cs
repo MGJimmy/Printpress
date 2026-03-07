@@ -13,7 +13,7 @@ internal class ItemDetailsMapper : BaseMapper<OrderItemDetails, ItemDetailsUpser
     {
         return new OrderItemDetails
         {
-            Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
+            Id = destinationEntity.ObjectState == TrackingState.Added ? Guid.Empty : destinationEntity.Id,
             ItemId = destinationEntity.ItemId,
             ItemDetailsKey = destinationEntity.Key,
             Value = destinationEntity.Value,

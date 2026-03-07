@@ -30,6 +30,6 @@ namespace Printpress.Application
         T Update(T entity);
         void AddOrUpdate(T entity);
 
-        Task<bool> AllExistAsync(IEnumerable<int> ids, CancellationToken cancellationToken = default);
+        Task<bool> AllExistAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
     }
 }

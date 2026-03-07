@@ -18,7 +18,7 @@ public class ServiceController(IServiceService _serviceService) : AppBaseControl
 
     [HttpGet]
     [Route("getById")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _serviceService.GetById(id);
         return Ok(result);
@@ -34,7 +34,7 @@ public class ServiceController(IServiceService _serviceService) : AppBaseControl
 
     [HttpPut]
     [Route("update/{id}")]
-    public async Task<IActionResult> Update(int id, ServiceUpsertDto payload)
+    public async Task<IActionResult> Update(Guid id, ServiceUpsertDto payload)
     {
         var result = await _serviceService.UpdateAsync(id, payload, UserId);
         return Ok(result);
@@ -42,7 +42,7 @@ public class ServiceController(IServiceService _serviceService) : AppBaseControl
 
     [HttpDelete]
     [Route("delete/{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         await _serviceService.DeleteAsync(id, UserId);
         return Ok();

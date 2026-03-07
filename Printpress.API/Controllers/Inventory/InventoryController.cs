@@ -14,7 +14,7 @@ public class InventoryController(IInventoryItemService _inventoryItemService) : 
     }
 
     [HttpGet("getById/{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _inventoryItemService.GetByIdAsync(id);
         return Ok(result);
@@ -28,14 +28,14 @@ public class InventoryController(IInventoryItemService _inventoryItemService) : 
     }
 
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> Update(int id, InventoryItemUpdateDto payload)
+    public async Task<IActionResult> Update(Guid id, InventoryItemUpdateDto payload)
     {
         var result = await _inventoryItemService.UpdateAsync(id, payload, UserId);
         return Ok(result);
     }
 
     [HttpDelete("delete/{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         await _inventoryItemService.DeleteAsync(id, UserId);
         return Ok();

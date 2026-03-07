@@ -8,7 +8,8 @@ internal sealed class PurchaseInvoiceService(
     IUnitOfWork _unitOfWork,
     IMapper _mapper,
     IValidator<PurchaseInvoiceCreateDto> _createValidator,
-    IInventoryTransactionService _inventoryTransactionService) : IPurchaseInvoiceService
+    IInventoryTransactionService _inventoryTransactionService,
+    IGuidGenerator _guidGenerator) : IPurchaseInvoiceService
 {
     public async Task<PurchaseInvoiceDto> CreateAsync(PurchaseInvoiceCreateDto payload, string userId)
     {
@@ -17,10 +18,11 @@ internal sealed class PurchaseInvoiceService(
             throw new ValidationExeption(validationResult.Errors.First().ErrorMessage);
 
         var entity = new PurchaseInvoice(payload.InvoiceNumber, payload.InvoiceDate, payload.SupplierName, payload.AttachmentFilePath);
+        entity.Id = _guidGenerator.NewGuid();
 
         payload.Lines.ForEach(line =>
         {
-            entity.AddLine(line.InventoryItemId, line.Quantity, line.UnitPrice);
+            entity.AddLine(_guidGenerator.NewGuid(), line.InventoryItemId, line.Quantity, line.UnitPrice);
         });
 
         var saved = await _unitOfWork.PurchaseInvoiceRepository.AddAsync(entity);

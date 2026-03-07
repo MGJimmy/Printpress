@@ -17,7 +17,7 @@ public class ClientController(IClientService _IClientService) : AppBaseControlle
 
     [HttpGet]
     [Route("getById")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _IClientService.GetClientById(id);
         return Ok(result);
@@ -41,7 +41,7 @@ public class ClientController(IClientService _IClientService) : AppBaseControlle
 
     [HttpPost]
     [Route("update/{id}")]
-    public async Task<IActionResult> Update(int id, ClientUpsertDto payload)
+    public async Task<IActionResult> Update(Guid id, ClientUpsertDto payload)
     {
         var result = await _IClientService.UpdateAsync(id, payload, UserId);
         return Ok(result);
@@ -49,7 +49,7 @@ public class ClientController(IClientService _IClientService) : AppBaseControlle
 
     [HttpDelete]
     [Route("delete/{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         await _IClientService.DeleteAsync(id, UserId);
         return Ok();

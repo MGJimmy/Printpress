@@ -2,9 +2,9 @@
 {
     public class OrderServiceDTO
     {
-        public int Id { get; set; }
-        public int OrderId { get; set; }
-        public int ServiceId { get; set; }
+        public Guid Id { get; set; }
+        public Guid OrderId { get; set; }
+        public Guid ServiceId { get; set; }
         public decimal? Price { get; set; }
     }
 }

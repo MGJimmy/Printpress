@@ -5,7 +5,7 @@ namespace Printpress.Application;
 
 public record OrderSummaryDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string OrderName { get; set; }
     public string ClientName { get; set; }
     public decimal? TotalAmount { get; set; }

@@ -2,7 +2,7 @@
 using Printpress.Domain;
 namespace Printpress.Application;
 
-internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper) : IOrderAggregateService
+internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper, IGuidGenerator _guidGenerator) : IOrderAggregateService
 {
     public async Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize)
     {
@@ -17,7 +17,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         return _OrderMapper.MapToOrderSummeryDto(orders);
     }
 
-    public async Task<OrderDto> GetOrderDTOAsync(int orderId)
+    public async Task<OrderDto> GetOrderDTOAsync(Guid orderId)
     {
         string[] includes = [
             $"{nameof(Order.OrderGroups)}",
@@ -37,7 +37,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         return orderDTO;
     }
 
-    public async Task<OrderMainDataDto> GetOrderMainDataAsync(int orderId)
+    public async Task<OrderMainDataDto> GetOrderMainDataAsync(Guid orderId)
     {
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, nameof(Order.Client));
 
@@ -50,9 +50,26 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
 
+        order.Id = _guidGenerator.NewGuid();
         order.Status = OrderStatusEnum.New;
-
         order.TotalPaid = 0;
+
+        foreach (var group in order.OrderGroups ?? [])
+        {
+            group.Id = _guidGenerator.NewGuid();
+            group.OrderId = order.Id;
+            foreach (var item in group.Items ?? [])
+            {
+                item.Id = _guidGenerator.NewGuid();
+                item.OrderGroupId = group.Id;
+                foreach (var detail in item.Details ?? [])
+                    detail.Id = _guidGenerator.NewGuid();
+            }
+            foreach (var gs in group.OrderGroupServices ?? [])
+                gs.Id = _guidGenerator.NewGuid();
+        }
+        foreach (var os in order.Services ?? [])
+            os.Id = _guidGenerator.NewGuid();
 
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
@@ -79,7 +96,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         var allServices = await _IUnitOfWork.ServiceRepository.AllAsync();
 
-        var groupServicesIds = new HashSet<int>(group.OrderGroupServices.NotDeleted().Select(d => d.ServiceId));
+        var groupServicesIds = new HashSet<Guid>(group.OrderGroupServices.NotDeleted().Select(d => d.ServiceId));
         var currentGroupServices = allServices.Where(s => groupServicesIds.Contains(s.Id)).ToList();
 
         if (currentGroupServices.Exists(x => x.ServiceCategory == ServiceCategoryEnum.Selling))
@@ -142,7 +159,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         return price * noOfPages / noOfPrintingFaces;
     }
 
-    public async Task UpdateOrder(int id,OrderUpsertDto orderDTO, string userId)
+    public async Task UpdateOrder(Guid id, OrderUpsertDto orderDTO, string userId)
     {
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
 
@@ -153,7 +170,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         await _IUnitOfWork.SaveChangesAsync(userId);
     }
 
-    public async Task DeleteOrder(int id, string userId)
+    public async Task DeleteOrder(Guid id, string userId)
     {
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync(o => o.Id == id);
         

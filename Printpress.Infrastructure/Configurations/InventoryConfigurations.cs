@@ -19,6 +19,8 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<InventoryItem> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
+
             entity.SetSchemaTable(Schema);
 
             entity.Property(x => x.Name)
@@ -34,6 +36,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<InventoryTransaction> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity.Property(x => x.Notes)
@@ -55,6 +58,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<PurchaseInvoice> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity.Property(x => x.InvoiceNumber)
@@ -72,6 +76,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<PurchaseInvoiceLine> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity.HasOne(x => x.PurchaseInvoice)

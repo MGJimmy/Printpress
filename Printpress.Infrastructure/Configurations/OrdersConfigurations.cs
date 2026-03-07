@@ -51,6 +51,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderTransaction> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity
@@ -60,6 +61,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<Service> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity
@@ -75,6 +77,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<Client> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity
@@ -92,6 +95,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<Order> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity
@@ -102,6 +106,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderGroup> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity
@@ -123,6 +128,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderItem> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity
@@ -133,6 +139,7 @@ namespace Printpress.Infrastructure
 
         private static void Configure(this EntityTypeBuilder<OrderItemDetails> entity)
         {
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity

@@ -20,7 +20,7 @@ namespace Printpress.Application
             };
         }
 
-        public Client MapFromDestinationToSource(int id, ClientUpsertDto destinationEntity)
+        public Client MapFromDestinationToSource(Guid id, ClientUpsertDto destinationEntity)
         {
             var x = MapFromDestinationToSource(destinationEntity);
             x.Id = id;

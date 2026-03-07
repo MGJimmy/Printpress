@@ -5,8 +5,8 @@ namespace Printpress.Application
 {
     public class ItemDetailsDTO
     {
-        public int Id { get; set; }
-        public int ItemId { get; set; }
+        public Guid Id { get; set; }
+        public Guid ItemId { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ItemDetailsKeyEnum Key { get; set; }

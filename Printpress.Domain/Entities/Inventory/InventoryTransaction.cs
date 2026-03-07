@@ -4,13 +4,13 @@ namespace Printpress.Domain
 {
     public class InventoryTransaction : Entity
     {
-        public int InventoryItemId { get; private set; }
+        public Guid InventoryItemId { get; private set; }
         public InventoryTransactionType InventoryTransactionType { get; private set; }
         public int Quantity { get; private set; }
         public InventoryTransactionReferenceType ReferenceType { get; private set; }
 
-        // Id of the table that transaction related to (Order - PurchaseInvoiceLine - ...) 
-        public int ReferenceId { get; private set; }
+        // Id of the table that transaction related to (Order - PurchaseInvoiceLine - ...)
+        public Guid ReferenceId { get; private set; }
 
         public string Notes { get; private set; }
 
@@ -22,11 +22,11 @@ namespace Printpress.Domain
         }
 
         public InventoryTransaction(
-        int inventoryItemId,
+        Guid inventoryItemId,
         InventoryTransactionType type,
         int quantity,
         InventoryTransactionReferenceType referenceType,
-        int referenceId,
+        Guid referenceId,
         string notes)
         {
             InventoryItemId = inventoryItemId;

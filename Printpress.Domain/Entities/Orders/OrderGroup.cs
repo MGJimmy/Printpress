@@ -4,7 +4,7 @@ namespace Printpress.Domain
     public class OrderGroup : Entity, ISoftDelete
     {
         public string Name { get; set; }
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public string DeliveryName { get; set; }
         public string ReceiverName { get; set; }

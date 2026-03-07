@@ -16,7 +16,7 @@ namespace Printpress.Application
             return $"Invalid {parameterName} data";
         }
 
-        public static string CreateIdNotExistMessage(int id)
+        public static string CreateIdNotExistMessage(Guid id)
         {
             return $"No data exist for id ({id})";
         }

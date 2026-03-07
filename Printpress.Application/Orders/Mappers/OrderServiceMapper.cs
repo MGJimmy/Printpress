@@ -8,7 +8,7 @@ namespace Printpress.Application
         {
             return new OrderService
             {
-                Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
+                Id = destinationEntity.ObjectState == TrackingState.Added ? Guid.Empty : destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
                 ObjectState = destinationEntity.ObjectState,
                 Price = destinationEntity.Price

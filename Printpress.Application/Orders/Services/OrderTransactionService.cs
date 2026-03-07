@@ -54,7 +54,7 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
         }
     }
 
-    public async Task<PagedList<OrderTransactionDto>> GetByPage(int orderId, int pageNumber, int pageSize)
+    public async Task<PagedList<OrderTransactionDto>> GetByPage(Guid orderId, int pageNumber, int pageSize)
     {
 
         PagedList<OrderTransaction> pagedList = await _unitOfWork.OrderTransactionRepository.FilterAsync(

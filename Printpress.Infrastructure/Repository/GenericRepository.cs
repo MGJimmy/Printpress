@@ -238,7 +238,7 @@ namespace Printpress.Infrastructure
             return entity;
         }
 
-        public async Task<bool> AllExistAsync(IEnumerable<int> ids, CancellationToken cancellationToken = default)
+        public async Task<bool> AllExistAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
         {
             var distinctIds = ids.Distinct().ToList();
             var count = await Context.Set<T>()

@@ -36,14 +36,14 @@ internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
         return true;
 
     }
-    private bool IsAllOrderGroupDelivered(int orderId)
+    private bool IsAllOrderGroupDelivered(Guid orderId)
     {
         var notDeliveredCount = unitOfWork.OrderGroupRepository.Count(x => x.OrderId == orderId && x.Status != GroupStatusEnum.Delivered && !x.IsDeleted);
 
         return notDeliveredCount == 0;
 
     }
-    private async Task MarkOrderAsDelivered(int orderId, string userId)
+    private async Task MarkOrderAsDelivered(Guid orderId, string userId)
     {
         var order = await unitOfWork.OrderRepository.FirstOrDefaultAsync(x => x.Id == orderId);
 

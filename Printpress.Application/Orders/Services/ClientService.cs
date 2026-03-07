@@ -2,13 +2,15 @@
 
 namespace Printpress.Application;
 
-internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper) : IClientService
+internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper, IGuidGenerator _guidGenerator) : IClientService
 {
     public async Task<ClientDto> AddAsync(ClientUpsertDto payload, string userId)
     {
         // Make validation
 
-        var client = await _unitOfWork.ClientRepository.AddAsync(_clientMapper.MapFromDestinationToSource(payload));
+        var entity = _clientMapper.MapFromDestinationToSource(payload);
+        entity.Id = _guidGenerator.NewGuid();
+        var client = await _unitOfWork.ClientRepository.AddAsync(entity);
 
 
         await _unitOfWork.SaveChangesAsync(userId);
@@ -16,7 +18,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
         return _clientMapper.MapFromSourceToDestination(client);
     }
 
-    public async Task<ClientDto> UpdateAsync(int id, ClientUpsertDto payload, string userId)
+    public async Task<ClientDto> UpdateAsync(Guid id, ClientUpsertDto payload, string userId)
     {
         // Make validation
 
@@ -33,7 +35,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
         return _clientMapper.MapFromSourceToDestination(client);
     }
 
-    public async Task<ClientDto> GetClientById(int id)
+    public async Task<ClientDto> GetClientById(Guid id)
     {
 
         var client = await _unitOfWork.ClientRepository.FindAsync(id);
@@ -43,7 +45,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
         return _clientMapper.MapFromSourceToDestination(client);
     }
 
-    public async Task DeleteAsync(int id, string userId)
+    public async Task DeleteAsync(Guid id, string userId)
     {
         var entity = await _unitOfWork.ClientRepository.FindAsync(id);
 

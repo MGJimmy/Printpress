@@ -11,7 +11,7 @@ namespace Printpress.Application
         public string ReportName => "invoice";
         public async Task<IDocument> GenerateReport(NameValueCollection queryParams)
         {
-            int id = int.Parse(queryParams.GetValues("id").FirstOrDefault());
+            Guid id = Guid.Parse(queryParams.GetValues("id").FirstOrDefault());
 
             QuestPDF.Settings.License = LicenseType.Community;
 

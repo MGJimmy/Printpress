@@ -3,8 +3,8 @@ namespace Printpress.Domain
 {
     public class OrderService : Entity ,ISoftDelete
     {
-        public int OrderId { get; set; }
-        public int ServiceId { get; set; }
+        public Guid OrderId { get; set; }
+        public Guid ServiceId { get; set; }
         public decimal? Price { get; set; }
         public bool IsDeleted { get; set; }
 

@@ -8,7 +8,7 @@ internal class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMappe
     {
         var order = new Order
         {
-            Id = destinationEntity.ObjectState == TrackingState.Added ? 0 : destinationEntity.Id,
+            Id = destinationEntity.ObjectState == TrackingState.Added ? Guid.Empty : destinationEntity.Id,
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
             ObjectState = destinationEntity.ObjectState

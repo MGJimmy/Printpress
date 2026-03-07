@@ -1,4 +1,4 @@
-﻿using Printpress.Domain;
+using Printpress.Domain;
 using Printpress.Infrastructure;
 
 namespace Printpress.MigrationRunner;
@@ -12,6 +12,8 @@ internal sealed class SeedingDbContext
     {
         _dbContext = dbContext;
     }
+
+    private static Guid G(int n) => Guid.Parse($"00000000-0000-0000-0000-{n:D12}");
 
     #region Seeding mock data
     public void SeedingMockData()
@@ -31,20 +33,20 @@ internal sealed class SeedingDbContext
     {
         List<Order> orders =
         [
-            new Order { Id = 1, Name = "طلبيه  1 ", ClientId = 1, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 2, Name = "طلبيه  2 ", ClientId = 2, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 3, Name = "طلبيه  3 ", ClientId = 3, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 4, Name = "طلبيه  4 ", ClientId = 4, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 5, Name = "طلبيه  5 ", ClientId = 5, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 6, Name = "طلبيه  6 ", ClientId = 6, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 7, Name = "طلبيه  7 ", ClientId = 7, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 8, Name = "طلبيه 10 ", ClientId = 8, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 9, Name = "طلبيه 11 ", ClientId = 9, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 10, Name = "طلبيه 21 ", ClientId = 10, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 11, Name = "طلبيه 31 ", ClientId = 11, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 12, Name = "طلبيه 41 ", ClientId = 12, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 13, Name = "طلبيه 51 ", ClientId = 13, TotalPrice = 500, TotalPaid = 50 },
-            new Order { Id = 14, Name = "طلبيه 61 ", ClientId = 14, TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(1), Name = "طلبيه  1 ", ClientId = G(1), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(2), Name = "طلبيه  2 ", ClientId = G(2), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(3), Name = "طلبيه  3 ", ClientId = G(3), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(4), Name = "طلبيه  4 ", ClientId = G(4), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(5), Name = "طلبيه  5 ", ClientId = G(5), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(6), Name = "طلبيه  6 ", ClientId = G(6), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(7), Name = "طلبيه  7 ", ClientId = G(7), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(8), Name = "طلبيه 10 ", ClientId = G(8), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(9), Name = "طلبيه 11 ", ClientId = G(9), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(10), Name = "طلبيه 21 ", ClientId = G(10), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(11), Name = "طلبيه 31 ", ClientId = G(11), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(12), Name = "طلبيه 41 ", ClientId = G(12), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(13), Name = "طلبيه 51 ", ClientId = G(13), TotalPrice = 500, TotalPaid = 50 },
+            new Order { Id = G(14), Name = "طلبيه 61 ", ClientId = G(14), TotalPrice = 500, TotalPaid = 50 },
         ];
 
 
@@ -63,52 +65,52 @@ internal sealed class SeedingDbContext
     {
         List<OrderGroup> orderGroup =
         [
-        new OrderGroup { Id = 1, Name = "مجموعة 1", OrderId = 1 },
-        new OrderGroup { Id = 2, Name = "مجموعة 2", OrderId = 1 },
-        new OrderGroup { Id = 3, Name = "مجموعة 3", OrderId = 1 },
-        new OrderGroup { Id = 4, Name = "مجموعة 4", OrderId = 1 },
+        new OrderGroup { Id = G(1), Name = "مجموعة 1", OrderId = G(1) },
+        new OrderGroup { Id = G(2), Name = "مجموعة 2", OrderId = G(1) },
+        new OrderGroup { Id = G(3), Name = "مجموعة 3", OrderId = G(1) },
+        new OrderGroup { Id = G(4), Name = "مجموعة 4", OrderId = G(1) },
 
-        new OrderGroup { Id = 5, Name = "مجموعة 1", OrderId = 2 },
-        new OrderGroup { Id = 6, Name = "مجموعة 2", OrderId = 2 },
-        new OrderGroup { Id = 7, Name = "مجموعة 3", OrderId = 2 },
-        new OrderGroup { Id = 8, Name = "مجموعة 4", OrderId = 2 },
+        new OrderGroup { Id = G(5), Name = "مجموعة 1", OrderId = G(2) },
+        new OrderGroup { Id = G(6), Name = "مجموعة 2", OrderId = G(2) },
+        new OrderGroup { Id = G(7), Name = "مجموعة 3", OrderId = G(2) },
+        new OrderGroup { Id = G(8), Name = "مجموعة 4", OrderId = G(2) },
 
-        new OrderGroup { Id = 9, Name = "مجموعة  1", OrderId = 3 },
-        new OrderGroup { Id = 10, Name = "مجموعة 2", OrderId = 3 },
-        new OrderGroup { Id = 11, Name = "مجموعة 3", OrderId = 3 },
-        new OrderGroup { Id = 12, Name = "مجموعة 4", OrderId = 3 },
+        new OrderGroup { Id = G(9), Name = "مجموعة  1", OrderId = G(3) },
+        new OrderGroup { Id = G(10), Name = "مجموعة 2", OrderId = G(3) },
+        new OrderGroup { Id = G(11), Name = "مجموعة 3", OrderId = G(3) },
+        new OrderGroup { Id = G(12), Name = "مجموعة 4", OrderId = G(3) },
 
-        new OrderGroup { Id = 13, Name = "مجموعة 1", OrderId = 4 },
-        new OrderGroup { Id = 14, Name = "مجموعة 2", OrderId = 4 },
-        new OrderGroup { Id = 15, Name = "مجموعة 3", OrderId = 4 },
-        new OrderGroup { Id = 16, Name = "مجموعة 4", OrderId = 4 },
+        new OrderGroup { Id = G(13), Name = "مجموعة 1", OrderId = G(4) },
+        new OrderGroup { Id = G(14), Name = "مجموعة 2", OrderId = G(4) },
+        new OrderGroup { Id = G(15), Name = "مجموعة 3", OrderId = G(4) },
+        new OrderGroup { Id = G(16), Name = "مجموعة 4", OrderId = G(4) },
 
-        new OrderGroup { Id = 17, Name = "مجموعة 1", OrderId = 5 },
-        new OrderGroup { Id = 18, Name = "مجموعة 2", OrderId = 5 },
-        new OrderGroup { Id = 19, Name = "مجموعة 3", OrderId = 5 },
-        new OrderGroup { Id = 20, Name = "مجموعة 4", OrderId = 5 },
+        new OrderGroup { Id = G(17), Name = "مجموعة 1", OrderId = G(5) },
+        new OrderGroup { Id = G(18), Name = "مجموعة 2", OrderId = G(5) },
+        new OrderGroup { Id = G(19), Name = "مجموعة 3", OrderId = G(5) },
+        new OrderGroup { Id = G(20), Name = "مجموعة 4", OrderId = G(5) },
 
-        new OrderGroup { Id = 21, Name = "مجموعة 1", OrderId = 6 },
-        new OrderGroup { Id = 22, Name = "مجموعة 2", OrderId = 6 },
-        new OrderGroup { Id = 23, Name = "مجموعة 3", OrderId = 6 },
-        new OrderGroup { Id = 24, Name = "مجموعة 4", OrderId = 6 },
+        new OrderGroup { Id = G(21), Name = "مجموعة 1", OrderId = G(6) },
+        new OrderGroup { Id = G(22), Name = "مجموعة 2", OrderId = G(6) },
+        new OrderGroup { Id = G(23), Name = "مجموعة 3", OrderId = G(6) },
+        new OrderGroup { Id = G(24), Name = "مجموعة 4", OrderId = G(6) },
 
-        new OrderGroup { Id = 25, Name = "مجموعة 1", OrderId = 7 },
-        new OrderGroup { Id = 26, Name = "مجموعة 2", OrderId = 7 },
-        new OrderGroup { Id = 27, Name = "مجموعة 3", OrderId = 7 },
-        new OrderGroup { Id = 28, Name = "مجموعة 4", OrderId = 7 },
+        new OrderGroup { Id = G(25), Name = "مجموعة 1", OrderId = G(7) },
+        new OrderGroup { Id = G(26), Name = "مجموعة 2", OrderId = G(7) },
+        new OrderGroup { Id = G(27), Name = "مجموعة 3", OrderId = G(7) },
+        new OrderGroup { Id = G(28), Name = "مجموعة 4", OrderId = G(7) },
 
-        new OrderGroup { Id = 29, Name = "مجموعة 1", OrderId = 8 },
-        new OrderGroup { Id = 30, Name = "مجموعة 2", OrderId = 8 },
-        new OrderGroup { Id = 31, Name = "مجموعة 3", OrderId = 8 },
-        new OrderGroup { Id = 32, Name = "مجموعة 4", OrderId = 8 },
+        new OrderGroup { Id = G(29), Name = "مجموعة 1", OrderId = G(8) },
+        new OrderGroup { Id = G(30), Name = "مجموعة 2", OrderId = G(8) },
+        new OrderGroup { Id = G(31), Name = "مجموعة 3", OrderId = G(8) },
+        new OrderGroup { Id = G(32), Name = "مجموعة 4", OrderId = G(8) },
 
-        new OrderGroup { Id = 33, Name = "مجموعة 1", OrderId = 9 },
-        new OrderGroup { Id = 34, Name = "مجموعة 2", OrderId = 10 },
-        new OrderGroup { Id = 35, Name = "مجموعة 3", OrderId = 11 },
-        new OrderGroup { Id = 36, Name = "مجموعة 4", OrderId = 12 },
-        new OrderGroup { Id = 37, Name = "مجموعة 4", OrderId = 13 },
-        new OrderGroup { Id = 38, Name = "مجموعة 4", OrderId = 14 },
+        new OrderGroup { Id = G(33), Name = "مجموعة 1", OrderId = G(9) },
+        new OrderGroup { Id = G(34), Name = "مجموعة 2", OrderId = G(10) },
+        new OrderGroup { Id = G(35), Name = "مجموعة 3", OrderId = G(11) },
+        new OrderGroup { Id = G(36), Name = "مجموعة 4", OrderId = G(12) },
+        new OrderGroup { Id = G(37), Name = "مجموعة 4", OrderId = G(13) },
+        new OrderGroup { Id = G(38), Name = "مجموعة 4", OrderId = G(14) },
 
 
 
@@ -151,7 +153,7 @@ internal sealed class SeedingDbContext
             {
                 var newItem = new OrderItem
                 {
-                    Id = itemId++, // Assuming it's auto-generated by the database
+                    Id = G(itemId++),
                     Name = arabicItemNames[i],
                     OrderGroupId = group.Id,
                     Quantity = (i + 1) * 2, // Example: 2, 4, 6, 8, 10
@@ -180,21 +182,21 @@ internal sealed class SeedingDbContext
     {
         List<Client> clients =
         [
-            new Client { Id = 1, Name = "عميل 1", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 2, Name = "عميل 2", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 3, Name = "عميل 3", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 4, Name = "عميل 4", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 5, Name = "عميل 5", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 6, Name = "عميل 6", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 7, Name = "عميل 7", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 8, Name = "عميل 8", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 9, Name = "عميل 9", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 10, Name = "عميل 10", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 11, Name = "عميل 11", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 12, Name = "عميل 12", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 13, Name = "عميل 13", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 14, Name = "عميل 14", Mobile = "0111284858", Address = "first streat 488" },
-            new Client { Id = 15, Name = "عميل 15", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(1), Name = "عميل 1", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(2), Name = "عميل 2", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(3), Name = "عميل 3", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(4), Name = "عميل 4", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(5), Name = "عميل 5", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(6), Name = "عميل 6", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(7), Name = "عميل 7", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(8), Name = "عميل 8", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(9), Name = "عميل 9", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(10), Name = "عميل 10", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(11), Name = "عميل 11", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(12), Name = "عميل 12", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(13), Name = "عميل 13", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(14), Name = "عميل 14", Mobile = "0111284858", Address = "first streat 488" },
+            new Client { Id = G(15), Name = "عميل 15", Mobile = "0111284858", Address = "first streat 488" },
         ];
 
 
@@ -217,12 +219,12 @@ internal sealed class SeedingDbContext
     {
         List<Service> services =
         [
-           new Service { Id = 1, Name = "طباعة ورق 70 جم الوان", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Printing },
-           new Service { Id = 2, Name = "طباعة ورق 80 جم الوان", Price = 0.7m, ServiceCategory = ServiceCategoryEnum.Printing },
-           new Service { Id = 3, Name = "قص", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Cutting },
-           new Service { Id = 4, Name = "لصق", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Clueing },
-           new Service { Id = 5, Name = "تدبيس", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Stapling },
-           new Service { Id = 6, Name = "بيع", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
+           new Service { Id = G(1), Name = "طباعة ورق 70 جم الوان", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Printing },
+           new Service { Id = G(2), Name = "طباعة ورق 80 جم الوان", Price = 0.7m, ServiceCategory = ServiceCategoryEnum.Printing },
+           new Service { Id = G(3), Name = "قص", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Cutting },
+           new Service { Id = G(4), Name = "لصق", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Clueing },
+           new Service { Id = G(5), Name = "تدبيس", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Stapling },
+           new Service { Id = G(6), Name = "بيع", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
         ];
 
 

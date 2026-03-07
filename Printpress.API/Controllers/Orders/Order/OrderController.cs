@@ -16,7 +16,7 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
 
     [HttpGet]
     [Route("getById/{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var orderDto = await _IOrderService.GetOrderDTOAsync(id);
         return Ok(orderDto);
@@ -24,7 +24,7 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
 
     [HttpGet]
     [Route("getMainData/{id}")]
-    public async Task<IActionResult> GetMainData(int id)
+    public async Task<IActionResult> GetMainData(Guid id)
     {
         var orderDto = await _IOrderService.GetOrderMainDataAsync(id);
         return Ok(orderDto);
@@ -38,7 +38,7 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
     }
     [HttpPut]
     [Route("update/{id}")]
-    public async Task<IActionResult> Update(int id, OrderUpsertDto order)
+    public async Task<IActionResult> Update(Guid id, OrderUpsertDto order)
     {
         await _IOrderService.UpdateOrder(id, order, UserId);
         return Ok();
@@ -46,7 +46,7 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
 
     [HttpDelete]
     [Route("delete/{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         await _IOrderService.DeleteOrder(id, UserId);
         return Ok();

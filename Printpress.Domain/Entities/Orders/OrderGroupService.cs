@@ -3,8 +3,8 @@ namespace Printpress.Domain
 {
     public class OrderGroupService : Entity,ISoftDelete
     {
-        public int OrderGroupId { get; set; }
-        public int ServiceId { get; set; }
+        public Guid OrderGroupId { get; set; }
+        public Guid ServiceId { get; set; }
         public bool IsDeleted { get; set; }
 
         public virtual OrderGroup OrderGroup { get; set; }

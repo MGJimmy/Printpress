@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    internal sealed class ServiceService(IUnitOfWork _unitOfWork, ServiceMapper serviceMapper) : IServiceService
+    internal sealed class ServiceService(IUnitOfWork _unitOfWork, ServiceMapper serviceMapper, IGuidGenerator _guidGenerator) : IServiceService
     {
 
         public async Task<ServiceDto> AddAsync(ServiceUpsertDto payload, string userId)
@@ -10,6 +10,7 @@ namespace Printpress.Application
             // Make validation
 
             Service service = serviceMapper.MapFromDestinationToSource(payload);
+            service.Id = _guidGenerator.NewGuid();
 
             await _unitOfWork.ServiceRepository.AddAsync(service);
 
@@ -18,7 +19,7 @@ namespace Printpress.Application
             return serviceMapper.MapFromSourceToDestination(service);
         }
 
-        public async Task DeleteAsync(int id, string userId)
+        public async Task DeleteAsync(Guid id, string userId)
         {
             Service service = await _unitOfWork.ServiceRepository.FindAsync(id);
 
@@ -35,7 +36,7 @@ namespace Printpress.Application
             return serviceMapper.MapFromSourceToDestination(services);
         }
 
-        public async Task<ServiceDto> GetById(int id)
+        public async Task<ServiceDto> GetById(Guid id)
         {
             Service service = await _unitOfWork.ServiceRepository.FindAsync(id);
 
@@ -44,7 +45,7 @@ namespace Printpress.Application
             return serviceMapper.MapFromSourceToDestination(service);
         }
 
-        public async Task<ServiceDto> UpdateAsync(int id, ServiceUpsertDto payload, string userId)
+        public async Task<ServiceDto> UpdateAsync(Guid id, ServiceUpsertDto payload, string userId)
         {
             // Make validation
 

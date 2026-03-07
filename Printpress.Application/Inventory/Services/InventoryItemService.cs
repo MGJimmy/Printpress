@@ -8,13 +8,15 @@ internal sealed class InventoryItemService(
     IUnitOfWork _unitOfWork,
     IMapper _mapper,
     IValidator<InventoryItemAddDto> _addValidator,
-    IValidator<InventoryItemUpdateDto> _updateValidator) : IInventoryItemService
+    IValidator<InventoryItemUpdateDto> _updateValidator,
+    IGuidGenerator _guidGenerator) : IInventoryItemService
 {
     public async Task<InventoryItemDto> AddAsync(InventoryItemAddDto payload, string userId)
     {
         await ValidateAsync(_addValidator, payload);
 
         var entity = _mapper.Map<InventoryItem>(payload);
+        entity.Id = _guidGenerator.NewGuid();
         var saved = await _unitOfWork.InventoryItemRepository.AddAsync(entity);
 
         await _unitOfWork.SaveChangesAsync(userId);
@@ -22,7 +24,7 @@ internal sealed class InventoryItemService(
         return _mapper.Map<InventoryItemDto>(saved);
     }
 
-    public async Task<InventoryItemDto> UpdateAsync(int id, InventoryItemUpdateDto payload, string userId)
+    public async Task<InventoryItemDto> UpdateAsync(Guid id, InventoryItemUpdateDto payload, string userId)
     {
         await ValidateAsync(_updateValidator, payload);
         EnsureItemExists(id);
@@ -37,7 +39,7 @@ internal sealed class InventoryItemService(
         return _mapper.Map<InventoryItemDto>(updated);
     }
 
-    public async Task<InventoryItemDto> GetByIdAsync(int id)
+    public async Task<InventoryItemDto> GetByIdAsync(Guid id)
     {
         var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);
 
@@ -59,7 +61,7 @@ internal sealed class InventoryItemService(
         };
     }
 
-    public async Task DeleteAsync(int id, string userId)
+    public async Task DeleteAsync(Guid id, string userId)
     {
         var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);
 
@@ -77,7 +79,7 @@ internal sealed class InventoryItemService(
             throw new ValidationExeption(result.Errors.First().ErrorMessage);
     }
 
-    private void EnsureItemExists(int id)
+    private void EnsureItemExists(Guid id)
     {
         if (!_unitOfWork.InventoryItemRepository.Any(x => x.Id == id))
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));

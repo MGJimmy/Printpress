@@ -7,8 +7,8 @@ public class PurchaseInvoiceLineCreateDtoValidator : AbstractValidator<PurchaseI
     public PurchaseInvoiceLineCreateDtoValidator()
     {
         RuleFor(x => x.InventoryItemId)
-            .GreaterThan(0)
-            .WithMessage(ResponseMessage.MustBePositive(nameof(PurchaseInvoiceLineCreateDto.InventoryItemId)));
+            .NotEmpty()
+            .WithMessage(ResponseMessage.Required(nameof(PurchaseInvoiceLineCreateDto.InventoryItemId)));
 
         RuleFor(x => x.Quantity)
             .GreaterThan(0)

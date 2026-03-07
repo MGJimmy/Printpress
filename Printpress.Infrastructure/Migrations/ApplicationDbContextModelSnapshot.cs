@@ -25,11 +25,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.Client", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Address")
                         .HasMaxLength(500)
@@ -62,11 +59,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.InventoryItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -127,11 +121,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.InventoryTransaction", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -139,8 +130,8 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
-                    b.Property<int>("InventoryItemId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("InventoryItemId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("InventoryTransactionType")
                         .HasColumnType("integer");
@@ -152,8 +143,8 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ReferenceId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ReferenceId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("ReferenceType")
                         .HasColumnType("integer");
@@ -191,14 +182,11 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.Order", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -238,11 +226,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.OrderGroup", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -269,8 +254,8 @@ namespace Printpress.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ReceiverName")
                         .HasMaxLength(200)
@@ -296,11 +281,9 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.OrderGroupService", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -311,11 +294,11 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("OrderGroupId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrderGroupId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -334,11 +317,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.OrderItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -354,8 +334,8 @@ namespace Printpress.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("OrderGroupId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrderGroupId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -378,11 +358,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.OrderItemDetails", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -396,8 +373,8 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<int>("ItemDetailsKeyId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -421,11 +398,9 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.OrderService", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -436,14 +411,14 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -462,11 +437,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.OrderTransaction", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
@@ -484,8 +456,8 @@ namespace Printpress.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("TransactionType")
                         .HasColumnType("integer");
@@ -505,11 +477,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.PurchaseInvoice", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("AttachmentFilePath")
                         .IsRequired()
@@ -551,11 +520,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.PurchaseInvoiceLine", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -563,17 +529,17 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
-                    b.Property<int>("InventoryItemId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("InventoryItemId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("LineTotal")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("PurchaseInvoiceId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("PurchaseInvoiceId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("numeric");
@@ -595,11 +561,8 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.Service", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");

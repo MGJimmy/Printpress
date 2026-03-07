@@ -2,7 +2,7 @@
 {
     public class OrderGroupServiceUpsertDTO : TrackedDTO
     {
-        public int Id { get; set; }
-        public int ServiceId { get; set; }
+        public Guid Id { get; set; }
+        public Guid ServiceId { get; set; }
     }
 }

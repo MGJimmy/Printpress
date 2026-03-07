@@ -6,10 +6,10 @@ public interface IOrderAggregateService
 
     Task InsertOrder(OrderUpsertDto order, string userId);
 
-    Task<OrderDto> GetOrderDTOAsync(int orderId);
-    Task UpdateOrder(int id, OrderUpsertDto orderDTO, string userId);
+    Task<OrderDto> GetOrderDTOAsync(Guid orderId);
+    Task UpdateOrder(Guid id, OrderUpsertDto orderDTO, string userId);
 
-    Task<OrderMainDataDto> GetOrderMainDataAsync(int orderId);
+    Task<OrderMainDataDto> GetOrderMainDataAsync(Guid orderId);
 
-    Task DeleteOrder(int id, string userId);
+    Task DeleteOrder(Guid id, string userId);
 }

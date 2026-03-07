@@ -8,9 +8,9 @@ namespace Printpress.Domain
 {
     public class PurchaseInvoiceLine : Entity
     {
-        public int PurchaseInvoiceId { get; set; }
-        public int InventoryItemId { get; set; }
-        public int Quantity { get; set; }
+        public Guid PurchaseInvoiceId { get; set; }
+        public Guid InventoryItemId { get; set; }
+        public decimal Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal LineTotal { get; set; }
 
