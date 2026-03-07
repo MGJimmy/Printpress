@@ -32,8 +32,8 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 })
 export class TableTemplateComponent implements OnInit {
 
-  @Output() editClicked: EventEmitter<number> = new EventEmitter<number>();
-  @Output() deleteClicked: EventEmitter<number> = new EventEmitter<number>();
+  @Output() editClicked: EventEmitter<string> = new EventEmitter<string>();
+  @Output() deleteClicked: EventEmitter<string> = new EventEmitter<string>();
   @Output() pageChanged: EventEmitter<PageChangedModel> = new EventEmitter<PageChangedModel>();
 
   @Input() columnDefs: TableColDefinitionModel[] = [];

@@ -14,15 +14,15 @@ export class OrderRoutingService {
         return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.ADD}`;
     }
 
-    public getOrderEditRoute(orderId: number): string {
+    public getOrderEditRoute(orderId: string): string {
         return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.EDIT.replace(':id', orderId.toString())}`;
     }
 
-    public getOrderViewRoute(orderId: number): string {
+    public getOrderViewRoute(orderId: string): string {
         return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.VIEW.replace(':id', orderId.toString())}`;
     }
 
-    public getGroupRoute(groupId: number): string {
+    public getGroupRoute(groupId: string): string {
         return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.GROUP.EDIT.replace(':id', groupId.toString())}`;
     }
 
@@ -30,11 +30,11 @@ export class OrderRoutingService {
         return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.GROUP.ADD}`;
     }
 
-    public getItemAddRoute(groupId: number): string {
+    public getItemAddRoute(groupId: string): string {
         return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.ITEM.ADD.replace(':groupId', groupId.toString())}`;
     }
 
-    public getItemEditRoute(groupId: number, itemId: number): string {
+    public getItemEditRoute(groupId: string, itemId: string): string {
         return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.ITEM.EDIT
             .replace(':groupId', groupId.toString())
             .replace(':id', itemId.toString())}`;

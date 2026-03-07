@@ -1,5 +1,5 @@
 export interface InventoryItemDto {
-  id: number;
+  id: string;
   name: string;
   inventoryItemCategory: string;
   packsPerCarton: number | null;

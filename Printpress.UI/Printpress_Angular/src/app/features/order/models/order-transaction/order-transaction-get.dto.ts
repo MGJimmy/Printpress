@@ -1,6 +1,6 @@
 export interface OrderTransactionGetDto {
-    id: number;
-    orderId: number;
+    id: string;
+    orderId: string;
     transactionType: string;
     amount: number;
     createdOn: Date;

@@ -36,11 +36,11 @@ export class ItemAddUpdateComponent implements OnInit {
 
   item!: ItemGetDto;
 
-  itemIdToEdit!: number;
+  itemIdToEdit!: string;
 
   itemForm!: FormGroup<{ [K in keyof ItemForm]: FormControl<ItemForm[K]> }>;
 
-  groupId!: number;
+  groupId!: string;
   group!: OrderGroupGetDto;
 
   numberOfPages: number | undefined;
@@ -77,8 +77,8 @@ export class ItemAddUpdateComponent implements OnInit {
     });
 
     this.activateRoute.params.subscribe(params => {
-      this.itemIdToEdit = this.isEditMode ? +params['id'] : 0;
-      this.groupId = +params['groupId'];
+      this.itemIdToEdit = this.isEditMode ? params['id'] : '';
+      this.groupId = params['groupId'];
     });
 
     if (this.isAddMode) {

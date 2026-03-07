@@ -31,8 +31,8 @@ export class OrderServicePricesComponent implements OnInit {
 
   protected _tempServicesList:
     {
-      id: number,
-      serviceId: number,
+      id: string,
+      serviceId: string,
       name: string,
       price: number,
       objectState: ObjectStateEnum,
@@ -83,7 +83,7 @@ export class OrderServicePricesComponent implements OnInit {
       const groupService = allOrderGroupServices.find(x => x.serviceId == serviceId);
       
       const tempService: {
-        id: number, serviceId: number, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean,
+        id: string, serviceId: string, name: string, price: number, objectState: ObjectStateEnum, isNew: boolean,
         isDeleted: boolean
       } = {
         id: orderService.id,
@@ -119,10 +119,10 @@ export class OrderServicePricesComponent implements OnInit {
       }
 
       const tempService: {
-        id: number, serviceId: number, name: string, price: number,
+        id: string, serviceId: string, name: string, price: number,
         objectState: ObjectStateEnum, isNew: boolean, isDeleted: boolean
       } = {
-        id: 0,
+        id: this._orderSharedService.generateEmptyId(),
         serviceId: service.id,
         name: service.name,
         price: service.price,

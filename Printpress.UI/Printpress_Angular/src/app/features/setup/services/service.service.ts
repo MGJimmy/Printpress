@@ -28,13 +28,13 @@ export class ServiceService {
             );
     }
 
-    public getServices(serviceIds: number[]): Observable<ServiceGetDto[]> {
+    public getServices(serviceIds: string[]): Observable<ServiceGetDto[]> {
         return this.getAll().pipe(
             map(services => services.filter(service => serviceIds.includes(service.id)))
         )
     }
 
-    public async getServiceById(serviceId: number): Promise<ServiceGetDto> {
+    public async getServiceById(serviceId: string): Promise<ServiceGetDto> {
         const service = await firstValueFrom(this.getAll().pipe(
             map(services => services.find(service => serviceId === service.id))
         ));
@@ -53,14 +53,14 @@ export class ServiceService {
             );
     }
 
-    public update(service: ServiceUpsertDto, id: number): Observable<ApiResponseDto<ServiceUpsertDto>> {
+    public update(service: ServiceUpsertDto, id: string): Observable<ApiResponseDto<ServiceUpsertDto>> {
         return this.httpService.put<ApiResponseDto<ServiceUpsertDto>>(ApiUrlResource.ServiceAPI.update(id), service)
             .pipe(
                 tap(() => this.cacheService.remove(CacheKeyEnum.services))
             );
     }
 
-    public delete(id: number): Observable<any> {
+    public delete(id: string): Observable<any> {
         return this.httpService.delete(ApiUrlResource.ServiceAPI.delete(id))
             .pipe(
                 tap(() => this.cacheService.remove(CacheKeyEnum.services))

@@ -38,7 +38,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public displayedColumns = ['name', 'deliveryDate', 'deliveredTo', 'action'];
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public clients: ClientGetDto[] = [];
-  public orderClientId!: number
+  public orderClientId!: string
   public orderName!: string;
   public orderGetDto: OrderGetDto;
   private destroy$ = new Subject<void>();
@@ -79,10 +79,10 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
     if (this.componentMode.isViewMode || this.componentMode.isEditMode) {
      
-      let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));
+      let orderId = this.activedRoute.snapshot.paramMap.get('id');
 
       if (this.orderGetDto.id != orderId) {
-        let response = await firstValueFrom(this.orderService.getOrderById(orderId));
+        let response = await firstValueFrom(this.orderService.getOrderById(orderId!));
         this.orderGetDto = response.data
         this.OrderSharedService.setOrderObject(this.orderGetDto);
       }
@@ -126,7 +126,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe();
   }
 
-  protected onDeleteGroup(groupId: number) {
+  protected onDeleteGroup(groupId: string) {
     const dialogData: ConfirmDialogModel = {
       title: 'تأكيد الحذف',
       message: 'هل أنت متأكد أنك تريد حذف هذه المجموعة؟',
@@ -150,7 +150,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     this.router.navigate([this.orderRoutingService.getGroupAddRoute()]);
   }
 
-  protected onEditGroup(groupId: number) {
+  protected onEditGroup(groupId: string) {
     this.router.navigate([this.orderRoutingService.getGroupRoute(groupId)]);
   }
 
@@ -221,7 +221,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       width: '600px'
     });
 
-    clientDialog.afterClosed().subscribe((clientId: number) => {
+    clientDialog.afterClosed().subscribe((clientId: string) => {
       this.loadAllClients();
       this.orderClientId = clientId;
       this.onClientSelectChange();
@@ -257,7 +257,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
   }
 
-  public onDeleverGroup(groupId: number) {
+  public onDeleverGroup(groupId: string) {
     const dialogRef = this.dialog.open(GroupDeleveryPopupComponent, {
       width: '500px',
       disableClose: true,
@@ -273,7 +273,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
         this.orderService.deliverOrderGroup(result).subscribe((response) => { 
 
-          let orderId = Number(this.activedRoute.snapshot.paramMap.get('id'));
+          let orderId = this.activedRoute.snapshot.paramMap.get('id');
 
           if (orderId) {
               this.orderService.getOrderById(orderId).subscribe(res=>{
@@ -287,7 +287,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  public onDeliveryDetails(groupId: number){
+  public onDeliveryDetails(groupId: string){
     const group = this.OrderSharedService.getOrderGroups_Copy().find(g => g.id === groupId);
     if (!group) return;
 
@@ -309,7 +309,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 }
 
 interface OrderGroupGridViewModel {
-  id: number;
+  id: string;
   name: string;
   deliveryDate?: Date;
   deliveredTo?: string;

@@ -11,13 +11,13 @@ import { OrderUpsertDto } from '../models/order/order-upsert.Dto';
 export class OrderService {
   constructor(private httpService: HttpService) {}
 
-  public getOrderById(id: number): Observable<any> {
+  public getOrderById(id: string): Observable<any> {
     return this.httpService.get<any>(
       ApiUrlResource.OrderAPI.getOrderById + `/${id}`
     );
   }
 
-  public getOrderMainData(id: number): Observable<any> {
+  public getOrderMainData(id: string): Observable<any> {
     return this.httpService.get<any>(
       ApiUrlResource.OrderAPI.getOrderMainData + `/${id}`
     );
@@ -48,7 +48,7 @@ export class OrderService {
     );
   }
   
-  public deleteOrder(id: number): Observable<any> {
+  public deleteOrder(id: string): Observable<any> {
     return this.httpService.delete<any>(ApiUrlResource.OrderAPI.delete(id));
   }
 

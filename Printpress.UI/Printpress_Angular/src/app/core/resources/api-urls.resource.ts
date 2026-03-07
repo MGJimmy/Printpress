@@ -11,8 +11,8 @@ export class ApiUrlResource {
     getByPage: ApiUrlResource.Cliet_URL + '/getByPage',
     getAll:ApiUrlResource.Cliet_URL + '/getAll',
     add: ApiUrlResource.Cliet_URL + '/add',
-    update: (id:number) => `${ApiUrlResource.Cliet_URL}/update/${id}`,
-    delete:(id:number) => `${ApiUrlResource.Cliet_URL}/delete/${id}`,
+    update: (id:string) => `${ApiUrlResource.Cliet_URL}/update/${id}`,
+    delete:(id:string) => `${ApiUrlResource.Cliet_URL}/delete/${id}`,
   };
 
   private static Order_URL = '/api/order';
@@ -23,7 +23,7 @@ export class ApiUrlResource {
     insertOrder: ApiUrlResource.Order_URL + '/insert',
     updateOrder: ApiUrlResource.Order_URL + '/update',
     deliverOrderGroup: ApiUrlResource.Order_URL + '/deliverOrderGroup',
-    delete: (id:number) => `${ApiUrlResource.Order_URL}/delete/${id}`,
+    delete: (id:string) => `${ApiUrlResource.Order_URL}/delete/${id}`,
   };
 
   private static Report_URL = '/api/report';
@@ -41,16 +41,16 @@ export class ApiUrlResource {
   public static readonly ServiceAPI = {
     getAll: ApiUrlResource.Service_URL + '/getAll',
     add: ApiUrlResource.Service_URL + '/add',
-    update: (id:number) => `${ApiUrlResource.Service_URL}/update/${id}`,
-    delete:(id:number) => `${ApiUrlResource.Service_URL}/delete/${id}`,
+    update: (id:string) => `${ApiUrlResource.Service_URL}/update/${id}`,
+    delete:(id:string) => `${ApiUrlResource.Service_URL}/delete/${id}`,
   };
 
   private static Inventory_URL = '/api/Inventory';
   public static readonly InventoryAPI = {
     getAll: ApiUrlResource.Inventory_URL + '/getAll',
     add: ApiUrlResource.Inventory_URL + '/add',
-    update: (id: number) => `${ApiUrlResource.Inventory_URL}/update/${id}`,
-    delete: (id: number) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
+    update: (id: string) => `${ApiUrlResource.Inventory_URL}/update/${id}`,
+    delete: (id: string) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
   };
 
 }

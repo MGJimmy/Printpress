@@ -35,7 +35,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
     address: FormControl<string>; 
   }>;
   public isEditMode = false;
-  public clientId = 0;
+  public clientId: string = '';
   private readonly destroy$ = new Subject<void>();
   public originalFormValue!:ClientGetDto
 
@@ -72,14 +72,14 @@ export class AddClientComponent implements OnInit, OnDestroy {
   }
 
   private checkForEditMode(): void {
-    this.clientId = this.data || 0;
+    this.clientId = this.data || '';
     this.isEditMode = !!this.clientId;
     if (this.isEditMode) {
       this.loadClientData(this.clientId);
     }
   }
 
-  private loadClientData(id: number): void {
+  private loadClientData(id: string): void {
     this.clientService.getById(id).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         if (response) {
@@ -139,7 +139,7 @@ export class AddClientComponent implements OnInit, OnDestroy {
 
   resetForm(): void {
     this.clientForm.reset({ name: '', number: '', address: '' });
-    this.clientId = 0;
+    this.clientId = '';
     this.isEditMode = false;
   }
 

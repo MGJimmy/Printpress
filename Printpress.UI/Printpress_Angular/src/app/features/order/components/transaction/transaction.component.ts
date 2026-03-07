@@ -54,12 +54,12 @@ export class TransactionComponent implements OnInit {
   pageSize: number = 5;
   currentPage: number = 1;
 
-  orderId: number;
+  orderId: string;
   totalItemsCount!: number;
   protected clientName: string;
   protected orderName: string;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public inputData: { orderId: number },
+  constructor(@Inject(MAT_DIALOG_DATA) public inputData: { orderId: string },
     private orderTransactionService: OrderTransactionService,
     private alertService: AlertService,
     private orderSharedDataService: OrderSharedDataService,

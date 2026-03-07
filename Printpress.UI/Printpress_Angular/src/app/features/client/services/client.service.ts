@@ -24,7 +24,7 @@ export class ClientService {
     return this.httpService.get<ApiPagingResponseDto<ClientGetDto>>(ApiUrlResource.ClientAPI.getByPage, {pageNumber:pageNumber, pageSize:pageSize});
   }
 
-  getById(id: number): Observable<ApiResponseDto< ClientGetDto>> {
+  getById(id: string): Observable<ApiResponseDto< ClientGetDto>> {
     return this.httpService.get<ApiResponseDto<ClientGetDto>>(ApiUrlResource.ClientAPI.getById, {id:id})
   }
 
@@ -37,12 +37,12 @@ export class ClientService {
     .pipe(map((response) => response.data));
   }
 
-  update(client: ClientUpsertDto, id: number): Observable<ClientGetDto> {
+  update(client: ClientUpsertDto, id: string): Observable<ClientGetDto> {
     return this.httpService.post<ApiResponseDto<ClientGetDto>>(ApiUrlResource.ClientAPI.update(id), client)
     .pipe(map((response) => response.data));;
   }
 
-  delete(id: number): Observable<string> {
+  delete(id: string): Observable<string> {
     return this.httpService.delete(ApiUrlResource.ClientAPI.delete(id))
    }
 }

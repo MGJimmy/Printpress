@@ -16,7 +16,7 @@ export class InventoryService {
     );
   }
 
-  delete(id: number): Observable<any> {
+  delete(id: string): Observable<any> {
     return this.httpService.delete<any>(ApiUrlResource.InventoryAPI.delete(id));
   }
 }

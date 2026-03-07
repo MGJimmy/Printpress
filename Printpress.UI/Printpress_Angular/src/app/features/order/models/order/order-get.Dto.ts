@@ -3,11 +3,11 @@ import { OrderServicesGetDTO } from "../order-service/order-service-getDto";
 import { OrderGroupGetDto } from "../orderGroup/order-group-get.Dto";
 
 export interface OrderGetDto extends IObjectState {
-    id:number;
+    id:string;
     totalPrice:number;
     totalPaid:number;
     name:string;
-    clientId:number;
+    clientId:string;
     clientName:string,
     status :string,
     orderGroups: OrderGroupGetDto[];

@@ -3,7 +3,7 @@ import { ItemDetailsGetDto } from "../item-details/item-details-get.dto";
 
 
 export interface ItemUpsertDto extends IObjectState {
-    id: number;
+    id: string;
     name: string;
     quantity: number;
     price: number;

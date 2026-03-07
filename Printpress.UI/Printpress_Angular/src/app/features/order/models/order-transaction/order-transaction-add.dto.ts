@@ -1,5 +1,5 @@
 export interface OrderTransactionAddDto {
-    orderId: number;
+    orderId: string;
     transactionType: string;
     amount: number;
     note?: string;

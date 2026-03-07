@@ -59,11 +59,11 @@ export class InventoryItemListComponent implements OnInit {
     // TODO: navigate to add form when implemented
   }
 
-  onEdit(id: number) {
+  onEdit(id: string) {
     // TODO: navigate to edit form when implemented
   }
 
-  onDelete(id: number) {
+  onDelete(id: string) {
     if (confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
       this.inventoryService.delete(id).subscribe({
         next: () => {

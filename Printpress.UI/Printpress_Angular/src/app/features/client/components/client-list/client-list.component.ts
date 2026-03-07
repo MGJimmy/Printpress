@@ -99,14 +99,14 @@ export class ClientListComponent implements OnInit, OnDestroy {
     });
   }
 
-  public onEditClient(id: number): void {
+  public onEditClient(id: string): void {
     this.dialog.open(AddClientComponent, {
       width: '600px',
       data: id,
     });
   }
 
-  public onDeleteClient(id: number): void {
+  public onDeleteClient(id: string): void {
     const dialogData = {
       title: 'تأكيد الحذف',
       message: 'هل أنت متأكد أنك تريد حذف هذا العميل؟',

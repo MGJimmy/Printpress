@@ -63,7 +63,7 @@ export class ServiceListComponent implements OnInit {
       });
   }
 
-  openServiceDialog(id?: number) {
+  openServiceDialog(id?: string) {
     const service = id ? this.services.find(s => s.id === id) : undefined;
     const dialogRef = this.dialog.open(ServiceUpsertComponent, {
       width: '500px',
@@ -77,11 +77,11 @@ export class ServiceListComponent implements OnInit {
     });
   }
 
-  onEdit(id: number) {
+  onEdit(id: string) {
     this.openServiceDialog(id);
   }
 
-  onDelete(id: number) {
+  onDelete(id: string) {
     if (confirm('هل أنت متأكد من حذف هذه الخدمة؟')) {
       this.isLoading = true;
       this.serviceService.delete(id)

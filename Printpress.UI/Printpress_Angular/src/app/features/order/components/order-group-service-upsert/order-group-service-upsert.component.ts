@@ -21,7 +21,7 @@ import { OrderSharedDataService } from '../../services/order-shared-data.service
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
 
 export interface ServiceCat_interface {
-  id: number;
+  id: string;
   name: string;
 }
 @Component({
@@ -58,15 +58,15 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   allServices: ServiceGetDto[] = [];
 
   selectedCategory: string | null = null;
-  selectedServiceId: number | null = null;
+  selectedServiceId: string | null = null;
   isSellingSelected: boolean | null = null;
   subscriptions: Subscription = new Subscription();
 
 
   filteredServices: ServiceGetDto[] = [];
-  selectedServiceCategoryId: number | null = null;
+  selectedServiceCategoryId: string | null = null;
 
-  groupId: number = 1;
+  groupId: string = '';
 
   constructor(
     private alertService: AlertService,
@@ -173,7 +173,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.alertService.showSuccess('تم إضافة الخدمة بنجاح');
   }
 
-  protected onDeleteServiceCat(serviceId: number): void {
+  protected onDeleteServiceCat(serviceId: string): void {
     if (!this.validateBeforeDelete()) {
       this.alertService.showError('لا يمكن حذف خدمة. المجموعة تحتوي علي عناصر مضافة');
       return;

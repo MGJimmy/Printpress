@@ -5,9 +5,9 @@ import { OrderGroupUpsertDto } from "../orderGroup/order-group-upsert.Dto";
 export class OrderUpsertDto extends IObjectState {
 
     constructor(
-        public id: number,
+        public id: string,
         public name: string,
-        public clientId: number,
+        public clientId: string,
         public orderGroups: OrderGroupUpsertDto[],
         public orderServices: OrderServicesUpsertDTO[]) {
 

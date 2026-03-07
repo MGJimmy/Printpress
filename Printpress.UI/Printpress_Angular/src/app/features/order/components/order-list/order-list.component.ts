@@ -60,7 +60,7 @@ export class OrderListComponent implements OnInit {
     this.totalCount = response.data.totalCount;
   }
 
-  public async onDeleteOrder(id: number) {
+  public async onDeleteOrder(id: string) {
     const dialogData = {
       title: 'تأكيد الحذف',
       message: 'هل أنت متأكد أنك تريد حذف هذه الطلبيه؟',
@@ -81,11 +81,11 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-  protected onViewOrder(id: number) {
+  protected onViewOrder(id: string) {
     this.router.navigate([this.orderRoutingService.getOrderViewRoute(id)]);
   }
 
-  protected onEditOrder(id: number) {
+  protected onEditOrder(id: string) {
     this.router.navigate([this.orderRoutingService.getOrderEditRoute(id)]);
   }
 
@@ -93,7 +93,7 @@ export class OrderListComponent implements OnInit {
     this.router.navigate([this.orderRoutingService.getOrderAddRoute()]);
   }
 
-  protected generateInvoice_Click(orderId: number) {
+  protected generateInvoice_Click(orderId: string) {
     window.open(`report-viewer?reportName=invoice&id=${orderId}`, "_blank");
   }
 

@@ -34,7 +34,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  private groupId!: number;
+  private groupId!: string;
 
   protected isEdit: boolean = false;
   protected groupName: string = '';
@@ -77,7 +77,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private setGroupId(): void {
     const param_GroupId = this.route.snapshot.paramMap.get('id');
     if (param_GroupId) {
-      this.groupId = Number(param_GroupId);
+      this.groupId = param_GroupId;
     } else {
       this.groupId = this.orderSharedService.intializeNewGroup();
     }
@@ -148,7 +148,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     });
   }
 
-  protected getDetailValueByKeyName(itemId: number, key: string) {
+  protected getDetailValueByKeyName(itemId: string, key: string) {
     const item: ItemGetDto = this.orderSharedService.getItem_copy(this.groupId, itemId);
     item.details.find(x => x.key == key)?.value;
   }
