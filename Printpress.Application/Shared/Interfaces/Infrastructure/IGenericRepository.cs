@@ -26,6 +26,7 @@ namespace Printpress.Application
         void RemoveAll(Expression<Func<T, bool>> query);
         void Remove(T entity);
         Task<T> AddAsync(T entity);
+        Task<IEnumerable<T>> AddRange(IEnumerable<T> entityList);
         T Update(T entity);
         void AddOrUpdate(T entity);
 

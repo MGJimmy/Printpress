@@ -40,7 +40,7 @@ namespace Printpress.Infrastructure
                 .HasMaxLength(500);
 
             entity.HasOne(x => x.InventoryItem)
-                .WithMany()
+                .WithMany(i => i.InventoryTransactions)
                 .HasForeignKey(x => x.InventoryItemId);
         }
 

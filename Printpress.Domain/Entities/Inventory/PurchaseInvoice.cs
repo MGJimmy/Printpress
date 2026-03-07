@@ -38,7 +38,7 @@ namespace Printpress.Domain
 
         }
 
-        public void AddLine(int inventoryItemId, decimal quantity, decimal unitPrice)
+        public void AddLine(int inventoryItemId, int quantity, decimal unitPrice)
         {
             var lineTotal = quantity * unitPrice;
             var line = new PurchaseInvoiceLine

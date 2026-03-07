@@ -218,6 +218,13 @@ namespace Printpress.Infrastructure
 
             Context.ChangeTrackedEntityStates(entity);
         }
+
+        public async Task<IEnumerable<T>> AddRange(IEnumerable<T> entityList)
+        {
+            await Context.AddRangeAsync(entityList);
+            return entityList;
+        }
+
         public async Task<T> AddAsync(T entity)
         {
             await Context.AddAsync(entity);

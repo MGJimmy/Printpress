@@ -7,7 +7,8 @@ namespace Printpress.Application;
 internal sealed class PurchaseInvoiceService(
     IUnitOfWork _unitOfWork,
     IMapper _mapper,
-    IValidator<PurchaseInvoiceCreateDto> _createValidator) : IPurchaseInvoiceService
+    IValidator<PurchaseInvoiceCreateDto> _createValidator,
+    IInventoryTransactionService _inventoryTransactionService) : IPurchaseInvoiceService
 {
     public async Task<PurchaseInvoiceDto> CreateAsync(PurchaseInvoiceCreateDto payload, string userId)
     {
@@ -24,7 +25,11 @@ internal sealed class PurchaseInvoiceService(
 
         var saved = await _unitOfWork.PurchaseInvoiceRepository.AddAsync(entity);
 
+        await _unitOfWork.SaveChangesAsync(userId);
 
+         List<InventoryTransaction> inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(entity.PurchaseInvoiceLines.ToList());
+
+        await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
 
         await _unitOfWork.SaveChangesAsync(userId);
 

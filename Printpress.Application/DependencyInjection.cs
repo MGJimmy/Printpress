@@ -49,6 +49,8 @@ public static class DependencyInjection
         #endregion
 
 
+        services.RegisterDomainServices(configuration);
+        
         return services;
 
     }

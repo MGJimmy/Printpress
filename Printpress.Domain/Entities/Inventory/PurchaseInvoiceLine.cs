@@ -10,7 +10,7 @@ namespace Printpress.Domain
     {
         public int PurchaseInvoiceId { get; set; }
         public int InventoryItemId { get; set; }
-        public decimal Quantity { get; set; }
+        public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal LineTotal { get; set; }
 
