@@ -53,4 +53,14 @@ export class ApiUrlResource {
     delete: (id: string) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
   };
 
+  private static FileUpload_URL = '/api/FileUpload';
+  public static readonly FileUploadAPI = {
+    upload: ApiUrlResource.FileUpload_URL + '/upload'
+  };
+
+  private static PurchaseInvoice_URL = '/api/PurchaseInvoice';
+  public static readonly PurchaseInvoiceAPI = {
+    add: ApiUrlResource.PurchaseInvoice_URL + '/add'
+  };
+
 }

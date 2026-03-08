@@ -95,6 +95,14 @@ export const routes: Routes = [
                 './features/inventory/components/inventory-item-list/inventory-item-list.component'
               ).then((m) => m.InventoryItemListComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'stock-in',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/stock-in/stock-in.component'
+              ).then((m) => m.StockInComponent),
+            canActivate: [authGuard],
           }
         ]
       },
