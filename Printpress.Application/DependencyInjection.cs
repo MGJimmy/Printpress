@@ -46,6 +46,9 @@ public static class DependencyInjection
         services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
         services.AddScoped<IValidator<PurchaseInvoiceCreateDto>, PurchaseInvoiceCreateDtoValidator>();
         services.AddAutoMapper(typeof(PurchaseInvoiceProfile));
+
+        services.AddScoped<IInventoryTransactionService, InventoryTransactionService>();
+        services.AddAutoMapper(typeof(InventoryTransactionProfile));
         #endregion
 
 

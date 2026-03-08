@@ -10,7 +10,7 @@ import { TableColDefinitionModel } from '../../models/table-col-definition.model
 import { PageChangedModel } from '../../models/page-changed.model';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -32,6 +32,7 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 })
 export class TableTemplateComponent implements OnInit {
 
+  @Output() viewClicked: EventEmitter<string> = new EventEmitter<string>();
   @Output() editClicked: EventEmitter<string> = new EventEmitter<string>();
   @Output() deleteClicked: EventEmitter<string> = new EventEmitter<string>();
   @Output() pageChanged: EventEmitter<PageChangedModel> = new EventEmitter<PageChangedModel>();
@@ -43,6 +44,7 @@ export class TableTemplateComponent implements OnInit {
   @Input() isShowDeleteButton: boolean = false;
   @Input() isShowHeader: boolean = true;
   @Input() reportTable: boolean = false;
+  @Input() showViewButton: boolean = false;
 
   displayedColumns: string[] = [];
   pageSize: number = 5;
@@ -51,6 +53,7 @@ export class TableTemplateComponent implements OnInit {
 
   faTrash = faTrash;
   faEdit = faEdit;
+  faView = faEye;
 
   get conditionalPagination(): boolean {
     return this.totalItemsCount > this.pageSize;
@@ -101,5 +104,11 @@ export class TableTemplateComponent implements OnInit {
   }
   onDelete(element: any): void {
     this.deleteClicked.emit(element.id);
+  }
+
+  onView(element: any): void {
+    if(this.showViewButton){
+      this.viewClicked.emit(element.id);
+    }
   }
 }

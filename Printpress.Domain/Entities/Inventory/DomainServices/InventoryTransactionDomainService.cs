@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain
 {
-    public class InventoryTransactionService : IInventoryTransactionService
+    public class InventoryTransactionDomainService : IInventoryTransactionDomainService
     {
         private readonly IGuidGenerator _guidGenerator;
 
-        public InventoryTransactionService(IGuidGenerator guidGenerator)
+        public InventoryTransactionDomainService(IGuidGenerator guidGenerator)
         {
             _guidGenerator = guidGenerator;
         }

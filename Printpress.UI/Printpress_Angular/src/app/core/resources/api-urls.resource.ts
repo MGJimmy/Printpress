@@ -48,9 +48,15 @@ export class ApiUrlResource {
   private static Inventory_URL = '/api/Inventory';
   public static readonly InventoryAPI = {
     getAll: ApiUrlResource.Inventory_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.Inventory_URL}/getById/${id}`,
     add: ApiUrlResource.Inventory_URL + '/add',
     update: (id: string) => `${ApiUrlResource.Inventory_URL}/update/${id}`,
     delete: (id: string) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
+  };
+
+  private static InventoryTransaction_URL = '/api/InventoryTransaction';
+  public static readonly InventoryTransactionAPI = {
+    getByItemId: (itemId: string) => `${ApiUrlResource.InventoryTransaction_URL}/getByItemId/${itemId}`
   };
 
   private static FileUpload_URL = '/api/FileUpload';

@@ -8,7 +8,7 @@ internal sealed class PurchaseInvoiceService(
     IUnitOfWork _unitOfWork,
     IMapper _mapper,
     IValidator<PurchaseInvoiceCreateDto> _createValidator,
-    IInventoryTransactionService _inventoryTransactionService,
+    IInventoryTransactionDomainService _inventoryTransactionService,
     IGuidGenerator _guidGenerator) : IPurchaseInvoiceService
 {
     public async Task<PurchaseInvoiceDto> CreateAsync(PurchaseInvoiceCreateDto payload, string userId)

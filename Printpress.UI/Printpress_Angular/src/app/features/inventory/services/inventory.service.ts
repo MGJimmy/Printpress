@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { InventoryItemDto } from '../models/inventory-item.dto';
-import { ApiPagingResponseDto } from '../../../core/models/api-response.dto';
+import { ApiPagingResponseDto, ApiResponseDto } from '../../../core/models/api-response.dto';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
@@ -14,6 +14,10 @@ export class InventoryService {
       ApiUrlResource.InventoryAPI.getAll,
       { pageSize, pageNumber }
     );
+  }
+
+  getById(id: string): Observable<ApiResponseDto<InventoryItemDto>> {
+    return this.httpService.get<ApiResponseDto<InventoryItemDto>>(ApiUrlResource.InventoryAPI.getById(id));
   }
 
   delete(id: string): Observable<any> {

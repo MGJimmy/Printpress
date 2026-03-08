@@ -103,6 +103,14 @@ export const routes: Routes = [
                 './features/inventory/components/stock-in/stock-in.component'
               ).then((m) => m.StockInComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'items/view/:id',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/inventory-item-view/inventory-item-view.component'
+              ).then((m) => m.InventoryItemViewComponent),
+            canActivate: [authGuard],
           }
         ]
       },

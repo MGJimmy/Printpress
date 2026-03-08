@@ -45,6 +45,8 @@
 
 
 <ng-template #actionTemplate let-element = "element">
+   <button *ngIf="showViewButton"
+    class="mx-3" mat-raised-button color="primary" (click)="onView(element)"><fa-icon [icon]="faView"></fa-icon> عرض</button>
   <button *ngIf="isShowEditButton"
     class="mx-3" mat-raised-button color="primary" (click)="onEdit(element)"><fa-icon [icon]="faEdit"></fa-icon> تعديل</button>
   <button *ngIf="isShowDeleteButton"

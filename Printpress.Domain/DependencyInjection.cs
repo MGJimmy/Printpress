@@ -7,7 +7,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection RegisterDomainServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IInventoryTransactionService, InventoryTransactionService>();
+        services.AddScoped<IInventoryTransactionDomainService, InventoryTransactionDomainService>();
 
         return services;
     }

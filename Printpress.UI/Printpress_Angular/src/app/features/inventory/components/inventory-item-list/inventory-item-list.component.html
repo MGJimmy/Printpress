@@ -16,8 +16,10 @@
               [totalItemsCount]="totalCount"
               [isShowEditButton]="true"
               [isShowDeleteButton]="true"
+              [showViewButton]="true"
               (editClicked)="onEdit($event)"
               (deleteClicked)="onDelete($event)"
+              (viewClicked)="onView($event)"
               (pageChanged)="onPageChange($event)">
             </app-table-template>
           </div>

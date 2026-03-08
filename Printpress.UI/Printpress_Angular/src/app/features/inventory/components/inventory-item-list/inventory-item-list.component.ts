@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
@@ -32,6 +33,7 @@ export class InventoryItemListComponent implements OnInit {
   constructor(
     private inventoryService: InventoryService,
     private alertService: AlertService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -60,7 +62,11 @@ export class InventoryItemListComponent implements OnInit {
   }
 
   onEdit(id: string) {
-    // TODO: navigate to edit form when implemented
+    this.router.navigate(['/inventory/items/edit', id]);
+  }
+
+  onView(id: string) {
+    this.router.navigate(['/inventory/items/view', id]);
   }
 
   onDelete(id: string) {

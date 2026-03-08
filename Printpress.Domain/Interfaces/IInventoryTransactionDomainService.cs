@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain
 {
-    public interface IInventoryTransactionService
+    public interface IInventoryTransactionDomainService
     {
         List<InventoryTransaction> CreateInventoryTransaction(List<PurchaseInvoiceLine> purchaseInvoiceLines);
     }
