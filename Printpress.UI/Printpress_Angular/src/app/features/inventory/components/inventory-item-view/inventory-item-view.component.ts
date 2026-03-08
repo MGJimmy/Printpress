@@ -42,6 +42,7 @@ export class InventoryItemViewComponent implements OnInit {
     unitsPerPack: FormControl<string>;
     expectedPurchaseLossPercent: FormControl<string>;
     expectedProductionWastePercent: FormControl<string>;
+    stockQuantity: FormControl<number>;
   }>;
 
   transactions: InventoryTransactionDto[] = [];
@@ -73,7 +74,8 @@ export class InventoryItemViewComponent implements OnInit {
       packsPerCarton: this.fb.control({ value: '', disabled: true }),
       unitsPerPack: this.fb.control({ value: '', disabled: true }),
       expectedPurchaseLossPercent: this.fb.control({ value: '', disabled: true }),
-      expectedProductionWastePercent: this.fb.control({ value: '', disabled: true })
+      expectedProductionWastePercent: this.fb.control({ value: '', disabled: true }),
+      stockQuantity: this.fb.control({ value: 0, disabled: true })
     });
   }
 
@@ -93,7 +95,8 @@ export class InventoryItemViewComponent implements OnInit {
           packsPerCarton: this.item.packsPerCarton?.toString() ?? '-',
           unitsPerPack: this.item.unitsPerPack?.toString() ?? '-',
           expectedPurchaseLossPercent: this.item.expectedPurchaseLossPercent + '%',
-          expectedProductionWastePercent: this.item.expectedProductionWastePercent + '%'
+          expectedProductionWastePercent: this.item.expectedProductionWastePercent + '%',
+          stockQuantity: this.item.stockQuantity
         });
       },
       error: () => {

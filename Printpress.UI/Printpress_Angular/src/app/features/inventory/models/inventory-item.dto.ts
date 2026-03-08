@@ -6,4 +6,5 @@ export interface InventoryItemDto {
   unitsPerPack: number | null;
   expectedPurchaseLossPercent: number;
   expectedProductionWastePercent: number;
+  stockQuantity: number;
 }

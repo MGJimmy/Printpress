@@ -15,4 +15,5 @@ public record InventoryItemDto
     public int? UnitsPerPack { get; init; }
     public int ExpectedPurchaseLossPercent { get; init; }
     public int ExpectedProductionWastePercent { get; init; }
+    public int StockQuantity { get; init; }
 }

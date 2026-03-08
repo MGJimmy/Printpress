@@ -28,6 +28,7 @@ export class InventoryItemListComponent implements OnInit {
     { headerName: 'وحدات/عبوة', column: 'unitsPerPack' },
     { headerName: 'نسبة الفاقد الشراء %', column: 'expectedPurchaseLossPercent' },
     { headerName: 'نسبة الهالك الإنتاج %', column: 'expectedProductionWastePercent' },
+    { headerName: 'الكمية في المخزون', column: 'stockQuantity' }
   ];
 
   constructor(

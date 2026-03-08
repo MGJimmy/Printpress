@@ -6,7 +6,7 @@ namespace Printpress.Application;
 public class PurchaseInvoiceCreateDtoValidator : AbstractValidator<PurchaseInvoiceCreateDto>
 {
 
-    public PurchaseInvoiceCreateDtoValidator(IGenericRepository<InventoryItem> inventoryItemRepository)
+    public PurchaseInvoiceCreateDtoValidator(IInventoryItemRepository inventoryItemRepository)
     {
         RuleFor(x => x.InvoiceNumber)
             .NotEmpty()

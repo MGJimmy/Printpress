@@ -165,7 +165,7 @@ export class StockInComponent implements OnInit {
       const formValue = this.form.getRawValue();
       const dto: PurchaseInvoiceCreateDto = {
         invoiceNumber: formValue.invoiceNumber,
-        invoiceDate: formValue.invoiceDate?.toString() || '',
+        invoiceDate: formValue.invoiceDate?.toISOString() || '',
         supplierName: formValue.supplierName,
         attachmentFilePath,
         lines: this.lines.map(l => ({
