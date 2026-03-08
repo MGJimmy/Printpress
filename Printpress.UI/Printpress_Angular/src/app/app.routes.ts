@@ -111,6 +111,22 @@ export const routes: Routes = [
                 './features/inventory/components/inventory-item-view/inventory-item-view.component'
               ).then((m) => m.InventoryItemViewComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'items/add',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/inventory-item-upsert/inventory-item-upsert.component'
+              ).then((m) => m.InventoryItemUpsertComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'items/edit/:id',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/inventory-item-upsert/inventory-item-upsert.component'
+              ).then((m) => m.InventoryItemUpsertComponent),
+            canActivate: [authGuard],
           }
         ]
       },

@@ -41,7 +41,7 @@ internal sealed class InventoryItemService(
 
     public async Task<InventoryItemDto> GetByIdAsync(Guid id)
     {
-        var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);
+        var item = await _unitOfWork.InventoryItemRepository.FindByIdWithStockQuantity(id);
 
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));

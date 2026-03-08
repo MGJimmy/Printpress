@@ -10,11 +10,12 @@ import { InventoryService } from '../../services/inventory.service';
 import { InventoryItemDto } from '../../models/inventory-item.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-inventory-item-list',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, TableTemplateComponent],
+  imports: [CommonModule, MatCardModule, MatButtonModule, TableTemplateComponent, MatIcon],
   templateUrl: './inventory-item-list.component.html',
 })
 export class InventoryItemListComponent implements OnInit {
@@ -59,7 +60,7 @@ export class InventoryItemListComponent implements OnInit {
   }
 
   onAdd() {
-    // TODO: navigate to add form when implemented
+    this.router.navigate(['/inventory/items/add']);
   }
 
   onEdit(id: string) {
@@ -82,5 +83,9 @@ export class InventoryItemListComponent implements OnInit {
         }
       });
     }
+  }
+
+  onStockInClick() {
+    this.router.navigate(['/inventory/stock-in']);
   }
 }

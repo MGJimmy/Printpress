@@ -1,0 +1,35 @@
+.full-width {
+  width: 100%;
+}
+
+.limited-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 14px;
+}
+
+.warning-icon {
+  color: #ffc107;
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.limited-field {
+  opacity: 0.6;
+}
+
+.limited-badge {
+  font-size: 10px;
+  background-color: #ffc107;
+  color: #212529;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+}

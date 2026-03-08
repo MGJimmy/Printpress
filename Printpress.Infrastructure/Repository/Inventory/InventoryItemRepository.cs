@@ -14,7 +14,7 @@ namespace Printpress.Infrastructure
     {
         public InventoryItemRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-            
+
         }
 
         public async Task<PagedList<InventoryItemDto>> GetAllWithStockQuantity(Paging paging)
@@ -29,11 +29,12 @@ namespace Printpress.Infrastructure
                     UnitsPerPack = i.UnitsPerPack,
                     ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
                     ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
+                    HasTransactions = i.InventoryTransactions.Any(),
                     StockQuantity = Context.InventoryTransaction
                         .Where(t => t.InventoryItemId == i.Id)
-                        .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In 
-                            ? t.Quantity 
-                            :- t.Quantity)
+                        .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
+                            ? t.Quantity
+                            : -t.Quantity)
                 })
                 .SelectPage(paging);
 
@@ -44,6 +45,29 @@ namespace Printpress.Infrastructure
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
             };
+        }
+
+        public async Task<InventoryItemDto?> FindByIdWithStockQuantity(Guid id)
+        {
+            return await Context.InventoryItem
+                .Where(i => i.Id == id)
+                .Select(i => new InventoryItemDto
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    InventoryItemCategory = i.InventoryItemCategory,
+                    PacksPerCarton = i.PacksPerCarton,
+                    UnitsPerPack = i.UnitsPerPack,
+                    ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
+                    ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
+                    HasTransactions = i.InventoryTransactions.Any(),
+                    StockQuantity = Context.InventoryTransaction
+                        .Where(t => t.InventoryItemId == i.Id)
+                        .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
+                            ? t.Quantity
+                            : -t.Quantity)
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

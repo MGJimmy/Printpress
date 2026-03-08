@@ -16,4 +16,5 @@ public record InventoryItemDto
     public int ExpectedPurchaseLossPercent { get; init; }
     public int ExpectedProductionWastePercent { get; init; }
     public int StockQuantity { get; init; }
+    public bool HasTransactions { get; init; }
 }

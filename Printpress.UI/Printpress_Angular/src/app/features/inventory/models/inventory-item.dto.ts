@@ -7,4 +7,5 @@ export interface InventoryItemDto {
   expectedPurchaseLossPercent: number;
   expectedProductionWastePercent: number;
   stockQuantity: number;
+  hasTransactions: boolean;
 }

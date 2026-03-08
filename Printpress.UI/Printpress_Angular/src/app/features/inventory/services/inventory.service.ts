@@ -5,6 +5,15 @@ import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { InventoryItemDto } from '../models/inventory-item.dto';
 import { ApiPagingResponseDto, ApiResponseDto } from '../../../core/models/api-response.dto';
 
+export interface InventoryItemUpsertDto {
+  name: string;
+  inventoryItemCategory: string;
+  packsPerCarton: number | null;
+  unitsPerPack: number | null;
+  expectedPurchaseLossPercent: number;
+  expectedProductionWastePercent: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
   constructor(private httpService: HttpService) {}
@@ -18,6 +27,14 @@ export class InventoryService {
 
   getById(id: string): Observable<ApiResponseDto<InventoryItemDto>> {
     return this.httpService.get<ApiResponseDto<InventoryItemDto>>(ApiUrlResource.InventoryAPI.getById(id));
+  }
+
+  add(payload: InventoryItemUpsertDto): Observable<ApiResponseDto<InventoryItemDto>> {
+    return this.httpService.post<ApiResponseDto<InventoryItemDto>>(ApiUrlResource.InventoryAPI.add, payload);
+  }
+
+  update(id: string, payload: InventoryItemUpsertDto): Observable<ApiResponseDto<InventoryItemDto>> {
+    return this.httpService.put<ApiResponseDto<InventoryItemDto>>(ApiUrlResource.InventoryAPI.update(id), payload);
   }
 
   delete(id: string): Observable<any> {
