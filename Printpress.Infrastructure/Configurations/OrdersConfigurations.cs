@@ -22,6 +22,7 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<OrderItemDetails>().Configure();
             modelBuilder.Entity<ItemDetailsKey_LKP>().Configure();
             modelBuilder.Entity<ServiceCategory_LKP>().Configure();
+            modelBuilder.Entity<OrderSellingItem>().Configure();
 
 
             modelBuilder.ApplyGlobalQueryFilters();
@@ -172,6 +173,25 @@ namespace Printpress.Infrastructure
                 .Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(100);
+        }
+
+        private static void Configure(this EntityTypeBuilder<OrderSellingItem> entity)
+        {
+            entity.SetSchemaTable(Schema);
+
+            entity
+                .Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.HasOne(x => x.Order)
+                .WithMany(o => o.SellingItems)
+                .HasForeignKey(x => x.OrderId);
+
+            entity.HasOne(x => x.InventoryItem)
+                .WithMany()
+                .HasForeignKey(x => x.InventoryItemId);
+
         }
     }
 }

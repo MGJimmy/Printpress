@@ -16,5 +16,7 @@ namespace Printpress.Domain
         public virtual List<OrderTransaction> Transactions { get; set; }
         public virtual List<OrderGroup> OrderGroups { get; set; }
         public virtual List<OrderService> Services { get; set; }
+
+        public virtual List<OrderSellingItem> SellingItems { get; set; }
     }
 }
