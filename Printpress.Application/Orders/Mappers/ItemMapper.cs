@@ -2,13 +2,14 @@
 
 namespace Printpress.Application
 {
-    internal class ItemMapper (ItemDetailsMapper itemDetailsMapper) : BaseMapper<OrderItem, ItemUpsertDTO>
+    internal class ItemMapper (ItemDetailsMapper itemDetailsMapper,
+        IGuidGenerator guidGenerator) : BaseMapper<OrderItem, ItemUpsertDTO>(guidGenerator)
     {
         public override OrderItem MapFromDestinationToSource(ItemUpsertDTO destinationEntity)
         {
             return new OrderItem
             {
-                Id = destinationEntity.ObjectState == TrackingState.Added ? Guid.Empty : destinationEntity.Id,
+                Id = destinationEntity.ObjectState == TrackingState.Added ? _guidGenerator.NewGuid() : destinationEntity.Id,
                 Name = destinationEntity.Name,
                 Price = destinationEntity.Price,
                 Quantity = destinationEntity.Quantity,

@@ -4,6 +4,10 @@ namespace Printpress.Application
 {
     internal class OrderTransactionMapper : BaseMapper<OrderTransaction, OrderTransactionDto>
     {
+        public OrderTransactionMapper(IGuidGenerator guidGenerator) : base(guidGenerator)
+        {
+            
+        }
         public override OrderTransaction MapFromDestinationToSource(OrderTransactionDto destinationEntity)
         {
             return new OrderTransaction

@@ -4,6 +4,10 @@ namespace Printpress.Application
 {
     internal class ServiceMapper : BaseMapper<Service, ServiceDto>
     {
+        public ServiceMapper(IGuidGenerator guidGenerator) : base(guidGenerator)
+        {
+            
+        }
         public override Service MapFromDestinationToSource(ServiceDto destinationEntity)
         {
             throw new NotImplementedException();

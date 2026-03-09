@@ -2,13 +2,16 @@
 
 namespace Printpress.Application;
 
-internal class OrderMapper(OrderGroupMapper _orderGroupMapper, OrderServiceMapper _orderServiceMapper) : BaseMapper<Order, OrderUpsertDto>
+internal class OrderMapper(
+    OrderGroupMapper _orderGroupMapper, 
+    OrderServiceMapper _orderServiceMapper, 
+    IGuidGenerator guidGenerator) : BaseMapper<Order, OrderUpsertDto>(guidGenerator)
 {
     public override Order MapFromDestinationToSource(OrderUpsertDto destinationEntity)
     {
         var order = new Order
         {
-            Id = destinationEntity.ObjectState == TrackingState.Added ? Guid.Empty : destinationEntity.Id,
+            Id = destinationEntity.ObjectState == TrackingState.Added ? _guidGenerator.NewGuid() : destinationEntity.Id,
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
             ObjectState = destinationEntity.ObjectState

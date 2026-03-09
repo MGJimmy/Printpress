@@ -1,7 +1,14 @@
-﻿namespace Printpress.Application;
+﻿using Printpress.Domain;
+
+namespace Printpress.Application;
 
 internal abstract class BaseMapper<TSource, TDestination> where TDestination : class where TSource : class
 {
+    protected readonly IGuidGenerator _guidGenerator;
+    protected BaseMapper(IGuidGenerator guidGenerator)
+    {
+        _guidGenerator = guidGenerator;
+    }
     public PagedList<TDestination> MapFromSourceToDestination(PagedList<TSource> destinationEntities)
     {
         if (destinationEntities is null)

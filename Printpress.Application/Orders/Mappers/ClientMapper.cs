@@ -4,6 +4,10 @@ namespace Printpress.Application
 {
     internal class ClientMapper : BaseMapper<Client, ClientDto>
     {
+        public ClientMapper(IGuidGenerator guidGenerator): base(guidGenerator) 
+        {
+            
+        }
         public override Client MapFromDestinationToSource(ClientDto destinationEntity)
         {
             throw new NotImplementedException();
