@@ -12,4 +12,11 @@ public class InventoryTransactionController(IInventoryTransactionService _servic
         var result = await _service.GetByItemIdAsync(itemId, new Paging(pageNumber, pageSize));
         return Ok(result);
     }
+
+    [HttpPost("stock-out")]
+    public async Task<IActionResult> StockOut([FromBody] StockOutCreateDto payload)
+    {
+        await _service.StockOutAsync(payload, UserId);
+        return Ok();
+    }
 }

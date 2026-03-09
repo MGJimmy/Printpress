@@ -88,4 +88,8 @@ export class InventoryItemListComponent implements OnInit {
   onStockInClick() {
     this.router.navigate(['/inventory/stock-in']);
   }
+
+  onStockOutClick() {
+    this.router.navigate(['/inventory/stock-out']);
+  }
 }

@@ -127,6 +127,14 @@ export const routes: Routes = [
                 './features/inventory/components/inventory-item-upsert/inventory-item-upsert.component'
               ).then((m) => m.InventoryItemUpsertComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'stock-out',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/stock-out/stock-out.component'
+              ).then((m) => m.StockOutComponent),
+            canActivate: [authGuard],
           }
         ]
       },

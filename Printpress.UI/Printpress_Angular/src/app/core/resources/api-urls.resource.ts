@@ -56,7 +56,8 @@ export class ApiUrlResource {
 
   private static InventoryTransaction_URL = '/api/InventoryTransaction';
   public static readonly InventoryTransactionAPI = {
-    getByItemId: (itemId: string) => `${ApiUrlResource.InventoryTransaction_URL}/getByItemId/${itemId}`
+    getByItemId: (itemId: string) => `${ApiUrlResource.InventoryTransaction_URL}/getByItemId/${itemId}`,
+    stockOut: ApiUrlResource.InventoryTransaction_URL + '/stock-out'
   };
 
   private static FileUpload_URL = '/api/FileUpload';

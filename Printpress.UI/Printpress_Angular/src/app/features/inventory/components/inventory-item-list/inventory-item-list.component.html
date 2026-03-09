@@ -13,6 +13,10 @@
             <mat-icon>add</mat-icon>
             إدخال للمخزن
           </button>
+          <button mat-raised-button color="warn" class="ms-2" (click)="onStockOutClick()">
+            <mat-icon>remove</mat-icon>
+            صرف من المخزن
+          </button>
           <div class="mt-4">
             <app-table-template
               [columnDefs]="columnDefs"
