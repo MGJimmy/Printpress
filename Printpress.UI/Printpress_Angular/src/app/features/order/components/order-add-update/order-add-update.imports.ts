@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { OrderSellingItemsComponent } from '../order-selling-items/order-selling-items.component';
 
 export const imports = [
   CommonModule,
@@ -27,5 +28,6 @@ export const imports = [
   MatSelectModule,
   MatDialogModule,
   MatMenuModule,
-  MatExpansionModule
+  MatExpansionModule,
+  OrderSellingItemsComponent
 ];

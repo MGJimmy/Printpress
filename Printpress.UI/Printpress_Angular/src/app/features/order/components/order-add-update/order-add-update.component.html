@@ -245,7 +245,21 @@
         </div>
         </div>
     </mat-expansion-panel>
-  
+
+
+    <!-- Selling Items Section -->
+    <mat-expansion-panel class="mt-4" [expanded]="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <span>عناصر البيع</span>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="mt-4">
+            <app-order-selling-items [isViewMode]="componentMode.isViewMode"></app-order-selling-items>
+        </div>
+    </mat-expansion-panel>
+
 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-start mt-4 mb-3">
