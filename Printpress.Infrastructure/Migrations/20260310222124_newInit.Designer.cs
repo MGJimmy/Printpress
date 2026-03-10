@@ -12,8 +12,8 @@ using Printpress.Infrastructure;
 namespace Printpress.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260307043339_newDbAfterConvertIdToGuid")]
-    partial class newDbAfterConvertIdToGuid
+    [Migration("20260310222124_newInit")]
+    partial class newInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -399,6 +399,53 @@ namespace Printpress.Infrastructure.Migrations
                     b.ToTable("OrderItemDetailss", "Orders");
                 });
 
+            modelBuilder.Entity("Printpress.Domain.OrderSellingItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("InventoryItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsInventoryItem")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderSellingItems", "Orders");
+                });
+
             modelBuilder.Entity("Printpress.Domain.OrderService", b =>
                 {
                     b.Property<Guid>("Id")
@@ -580,8 +627,8 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("ServiceCategoryId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ServiceCategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -596,22 +643,39 @@ namespace Printpress.Infrastructure.Migrations
                     b.ToTable("Services", "Orders");
                 });
 
-            modelBuilder.Entity("Printpress.Domain.ServiceCategory_LKP", b =>
+            modelBuilder.Entity("Printpress.Domain.ServiceCategory", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<bool>("RequireInventoryItem")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceCategory_LKPs", "Orders");
+                    b.ToTable("ServiceCategorys", "Orders");
                 });
 
             modelBuilder.Entity("Printpress.Domain.InventoryItem", b =>
@@ -707,6 +771,23 @@ namespace Printpress.Infrastructure.Migrations
                     b.Navigation("ItemDetailsKey_LKP");
                 });
 
+            modelBuilder.Entity("Printpress.Domain.OrderSellingItem", b =>
+                {
+                    b.HasOne("Printpress.Domain.InventoryItem", "InventoryItem")
+                        .WithMany()
+                        .HasForeignKey("InventoryItemId");
+
+                    b.HasOne("Printpress.Domain.Order", "Order")
+                        .WithMany("SellingItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InventoryItem");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Printpress.Domain.OrderService", b =>
                 {
                     b.HasOne("Printpress.Domain.Order", "Order")
@@ -758,13 +839,13 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.Service", b =>
                 {
-                    b.HasOne("Printpress.Domain.ServiceCategory_LKP", "ServiceCategory_LKP")
+                    b.HasOne("Printpress.Domain.ServiceCategory", "ServiceCategory")
                         .WithMany()
                         .HasForeignKey("ServiceCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ServiceCategory_LKP");
+                    b.Navigation("ServiceCategory");
                 });
 
             modelBuilder.Entity("Printpress.Domain.Client", b =>
@@ -780,6 +861,8 @@ namespace Printpress.Infrastructure.Migrations
             modelBuilder.Entity("Printpress.Domain.Order", b =>
                 {
                     b.Navigation("OrderGroups");
+
+                    b.Navigation("SellingItems");
 
                     b.Navigation("Services");
 

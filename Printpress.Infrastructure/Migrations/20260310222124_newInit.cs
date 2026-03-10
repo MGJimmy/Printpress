@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Printpress.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class newDbAfterConvertIdToGuid : Migration
+    public partial class newInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -87,17 +87,22 @@ namespace Printpress.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ServiceCategory_LKPs",
+                name: "ServiceCategorys",
                 schema: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    RequireInventoryItem = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServiceCategory_LKPs", x => x.Id);
+                    table.PrimaryKey("PK_ServiceCategorys", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -166,7 +171,7 @@ namespace Printpress.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     Price = table.Column<decimal>(type: "numeric", nullable: true),
-                    ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
+                    ServiceCategoryId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -176,10 +181,10 @@ namespace Printpress.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Services", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Services_ServiceCategory_LKPs_ServiceCategoryId",
+                        name: "FK_Services_ServiceCategorys_ServiceCategoryId",
                         column: x => x.ServiceCategoryId,
                         principalSchema: "Orders",
-                        principalTable: "ServiceCategory_LKPs",
+                        principalTable: "ServiceCategorys",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -268,6 +273,41 @@ namespace Printpress.Infrastructure.Migrations
                         column: x => x.InventoryItemId,
                         principalSchema: "Inventory",
                         principalTable: "InventoryItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderSellingItems",
+                schema: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    InventoryItemId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsInventoryItem = table.Column<bool>(type: "boolean", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderSellingItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderSellingItems_InventoryItems_InventoryItemId",
+                        column: x => x.InventoryItemId,
+                        principalSchema: "Inventory",
+                        principalTable: "InventoryItems",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OrderSellingItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalSchema: "Orders",
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -491,6 +531,18 @@ namespace Printpress.Infrastructure.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderSellingItems_InventoryItemId",
+                schema: "Orders",
+                table: "OrderSellingItems",
+                column: "InventoryItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderSellingItems_OrderId",
+                schema: "Orders",
+                table: "OrderSellingItems",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderService_OrderId",
                 schema: "Orders",
                 table: "OrderService",
@@ -543,6 +595,10 @@ namespace Printpress.Infrastructure.Migrations
                 schema: "Orders");
 
             migrationBuilder.DropTable(
+                name: "OrderSellingItems",
+                schema: "Orders");
+
+            migrationBuilder.DropTable(
                 name: "OrderService",
                 schema: "Orders");
 
@@ -579,7 +635,7 @@ namespace Printpress.Infrastructure.Migrations
                 schema: "Orders");
 
             migrationBuilder.DropTable(
-                name: "ServiceCategory_LKPs",
+                name: "ServiceCategorys",
                 schema: "Orders");
 
             migrationBuilder.DropTable(
