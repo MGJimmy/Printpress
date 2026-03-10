@@ -13,6 +13,7 @@ import { itemDetailsKeyEnum } from '../models/enums/item-details-key.enum';
 import { OrderMainDataDto } from '../models/order/order-main-data.Dto';
 import { Subject } from 'rxjs';
 import { IObjectState } from '../../../core/models/i-object-state';
+import { OrderSellingItemGetDto } from '../models/orderSellingItem/order-selling-item-get.dto';
 
 /*
   Notes:
@@ -84,7 +85,8 @@ export class OrderSharedDataService {
       status:'',
       objectState: ObjectStateEnum.temp,
       orderGroups: [],
-      orderServices: []
+      orderServices: [],
+      sellingItems: []
     };
   }
 
@@ -487,6 +489,77 @@ export class OrderSharedDataService {
 
   //=======================
   //#endregion Order Services
+  //=======================
+
+
+
+
+  //=======================
+  //#region Selling Items
+  //=======================
+
+  public getOrderSellingItems_copy(): OrderSellingItemGetDto[] {
+    let items = this.deepCopy(this.orderObject.sellingItems);
+    return this.filterDeletedObjectArray(items);
+  }
+
+  public addUpdateSellingItem(isUpdate: boolean, itemId: string, name: string, inventoryItemId: string | undefined, isInventoryItem: boolean, quantity: number, price: number): void {
+    const newObjectState: ObjectStateEnum = isUpdate ? ObjectStateEnum.modified : ObjectStateEnum.added;
+
+    let item = this.orderObject.sellingItems.find(x => x.id === itemId);
+
+    if (!item) {
+      item = {
+        id: itemId,
+        name: '',
+        orderId: this.orderObject.id,
+        isInventoryItem: false,
+        quantity: 0,
+        price: 0,
+        objectState: ObjectStateEnum.temp
+      };
+      this.orderObject.sellingItems.push(item);
+    }
+
+    item.name = name;
+    item.inventoryItemId = inventoryItemId;
+    item.isInventoryItem = isInventoryItem;
+    item.quantity = quantity;
+    item.price = price;
+    item.objectState = this.getObjectState(item.objectState, newObjectState);
+  }
+
+  public initializeTempSellingItem(): string {
+    const tempId = this.generateTempId();
+
+    const item: OrderSellingItemGetDto = {
+      id: tempId,
+      name: '',
+      orderId: this.orderObject.id,
+      isInventoryItem: false,
+      quantity: 0,
+      price: 0,
+      objectState: ObjectStateEnum.temp
+    };
+
+    this.orderObject.sellingItems.push(item);
+    return tempId;
+  }
+
+  public deleteSellingItem(itemId: string): void {
+    const item = this.orderObject.sellingItems.find(x => x.id === itemId);
+    if (!item) return;
+
+    if (item.objectState === ObjectStateEnum.temp || item.objectState === ObjectStateEnum.added) {
+      const index = this.orderObject.sellingItems.findIndex(x => x.id === itemId);
+      if (index !== -1) this.orderObject.sellingItems.splice(index, 1);
+    } else {
+      item.objectState = ObjectStateEnum.deleted;
+    }
+  }
+
+  //=======================
+  //#endregion Selling Items
   //=======================
 
 

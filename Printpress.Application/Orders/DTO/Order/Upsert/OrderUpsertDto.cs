@@ -14,4 +14,5 @@ public class OrderUpsertDto : TrackedDTO
 
     public List<OrderGroupUpsertDTO> OrderGroups { get; set; }
     public List<OrderServiceUpsertDTO> OrderServices { get; set; }
+    public List<OrderSellingItemUpsertDTO> SellingItems { get; set; }
 }

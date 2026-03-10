@@ -11,14 +11,17 @@ import { OrderGroupGetDto } from "./orderGroup/order-group-get.Dto";
 import { OrderGroupUpsertDto } from "./orderGroup/order-group-upsert.Dto";
 import { OrderGroupServiceGetDto } from "./orderGroupService/order-group-service-get.Dto";
 import { OrderGroupServiceUpsertDto } from "./orderGroupService/order-group-service-upsert.Dto";
+import { OrderSellingItemGetDto } from "./orderSellingItem/order-selling-item-get.dto";
+import { OrderSellingItemUpsertDto } from "./orderSellingItem/order-selling-item-upsert.dto";
 
 export function mapOrderGetToUpsert(orderGet: OrderGetDto): OrderUpsertDto {
     let orderUpsert = new OrderUpsertDto(
         orderGet.id,
         orderGet.name,
-        orderGet.clientId,    
+        orderGet.clientId,
         orderGet.orderGroups.map(mapOrderGroupGetToUpsert),
-        orderGet.orderServices.map(mapOrderServiceGetToUpsert)
+        orderGet.orderServices.map(mapOrderServiceGetToUpsert),
+        orderGet.sellingItems.map(mapOrderSellingItemGetToUpsert)
     );
     orderUpsert.objectState = orderGet.objectState;
     return orderUpsert;
@@ -69,5 +72,17 @@ function mapItemDetailGetToUpsert(itemDetailGet: ItemDetailsGetDto): ItemDetails
         key: itemDetailGet.key,
         value: itemDetailGet.value,
         objectState: itemDetailGet.objectState
+    };
+}
+
+function mapOrderSellingItemGetToUpsert(item: OrderSellingItemGetDto): OrderSellingItemUpsertDto {
+    return {
+        id: item.id,
+        name: item.name,
+        inventoryItemId: item.inventoryItemId,
+        isInventoryItem: item.isInventoryItem,
+        quantity: item.quantity,
+        price: item.price,
+        objectState: item.objectState
     };
 }

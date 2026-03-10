@@ -26,6 +26,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}",
             $"{nameof(Order.Services)}",
+            $"{nameof(Order.SellingItems)}",
+            $"{nameof(Order.SellingItems)}.{nameof(OrderSellingItem.InventoryItem)}",
             $"{nameof(Order.Client)}"];
 
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, includes);
@@ -70,6 +72,12 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         }
         foreach (var os in order.Services ?? [])
             os.Id = _guidGenerator.NewGuid();
+
+        foreach (var si in order.SellingItems ?? [])
+        {
+            si.Id = _guidGenerator.NewGuid();
+            si.OrderId = order.Id;
+        }
 
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 

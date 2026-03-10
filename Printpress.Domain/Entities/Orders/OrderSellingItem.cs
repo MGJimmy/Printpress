@@ -8,13 +8,13 @@ namespace Printpress.Domain
 {
     public class OrderSellingItem : Entity
     {
-        public string Name { get; private set; }
-        public Guid OrderId { get; private set; }
+        public string Name { get; set; }
+        public Guid OrderId { get; set; }
 
-        public Guid? InventoryItemId { get; private set; }
-        public bool IsInventoryItem { get; private set; }
-        public int Quantity { get; private set; }
-        public decimal Price { get; private set; }
+        public Guid? InventoryItemId { get; set; }
+        public bool IsInventoryItem { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
 
         public virtual Order Order { get; set; }
         public virtual InventoryItem InventoryItem { get; set; }

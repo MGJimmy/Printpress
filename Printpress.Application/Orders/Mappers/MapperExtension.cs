@@ -21,6 +21,7 @@ namespace Printpress.Application
                 Status= order.Status,
                 OrderServices = order.Services.MapAsList(MapToOrderServiceDTO),
                 OrderGroups = order.OrderGroups.MapAsList(MapToOrderGroupDTO),
+                SellingItems = order.SellingItems.MapAsList(MapToOrderSellingItemGetDTO),
                 ObjectState = TrackingState.Unchanged
             };
 
@@ -100,6 +101,22 @@ namespace Printpress.Application
 
             return itemDTO;
         }
+        public static OrderSellingItemGetDTO MapToOrderSellingItemGetDTO(this OrderSellingItem item)
+        {
+            return new OrderSellingItemGetDTO
+            {
+                Id = item.Id,
+                Name = item.Name,
+                OrderId = item.OrderId,
+                InventoryItemId = item.InventoryItemId,
+                IsInventoryItem = item.IsInventoryItem,
+                Quantity = item.Quantity,
+                Price = item.Price,
+                InventoryItemName = item.InventoryItem?.Name,
+                ObjectState = TrackingState.Unchanged
+            };
+        }
+
         public static OrderMainDataDto MapToOrderMainDataDto(this Order order)
         {
             var orderMainDataDto = new OrderMainDataDto

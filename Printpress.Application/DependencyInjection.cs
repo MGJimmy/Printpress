@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<OrderGroupMapper>();
         services.AddScoped<GroupServiceMapper>();
         services.AddScoped<OrderServiceMapper>();
+        services.AddScoped<OrderSellingItemMapper>();
         services.AddScoped<ItemMapper>();
         services.AddScoped<ServiceMapper>();
         services.AddScoped<ItemDetailsMapper>();

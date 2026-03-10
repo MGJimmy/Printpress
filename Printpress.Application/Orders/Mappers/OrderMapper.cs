@@ -3,8 +3,9 @@
 namespace Printpress.Application;
 
 internal class OrderMapper(
-    OrderGroupMapper _orderGroupMapper, 
-    OrderServiceMapper _orderServiceMapper, 
+    OrderGroupMapper _orderGroupMapper,
+    OrderServiceMapper _orderServiceMapper,
+    OrderSellingItemMapper _orderSellingItemMapper,
     IGuidGenerator guidGenerator) : BaseMapper<Order, OrderUpsertDto>(guidGenerator)
 {
     public override Order MapFromDestinationToSource(OrderUpsertDto destinationEntity)
@@ -20,6 +21,7 @@ internal class OrderMapper(
 
         order.OrderGroups = _orderGroupMapper.MapFromDestinationToSource(destinationEntity.OrderGroups);
         order.Services = _orderServiceMapper.MapFromDestinationToSource(destinationEntity.OrderServices).ToList();
+        order.SellingItems = _orderSellingItemMapper.MapFromDestinationToSource(destinationEntity.SellingItems).ToList();
 
         return order;
     }
