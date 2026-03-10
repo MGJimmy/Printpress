@@ -139,7 +139,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   onCategorySelect(serviceCategoryEnumValue: string): void {
-    this.filteredServices = this.allServices.filter(s => s.serviceCategory === (serviceCategoryEnumValue as ServiceCategoryEnum));
+    this.filteredServices = this.allServices.filter(s => s.serviceCategoryCode === serviceCategoryEnumValue);
   }
 
   clearSelections(): void {
@@ -162,7 +162,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.tableData?.some((row) => row.serviceCategory === selectedService.serviceCategory)) { // validate on category
+    if (this.tableData?.some((row) => row.serviceCategoryCode === selectedService.serviceCategoryCode)) { // validate on category
       this.alertService.showError('لا يمكنك إضافة خدمات من نفس النوع أكثر من مرة');
       return;
     }

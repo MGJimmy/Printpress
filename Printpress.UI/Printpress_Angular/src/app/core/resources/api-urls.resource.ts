@@ -37,6 +37,11 @@ export class ApiUrlResource {
     add: ApiUrlResource.OrderTransaction_URL + '/add'
   };
 
+  private static ServiceCategory_URL = '/api/ServiceCategory';
+  public static readonly ServiceCategoryAPI = {
+    getAll: ApiUrlResource.ServiceCategory_URL + '/getAll'
+  };
+
   private static Service_URL = '/api/service';
   public static readonly ServiceAPI = {
     getAll: ApiUrlResource.Service_URL + '/getAll',

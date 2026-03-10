@@ -4,13 +4,13 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { ServiceGetDto } from '../../models/service-get.dto';
 import { ServiceService } from '../../services/service.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { ServiceCategoryEnum } from '../../models/service-category.enum';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
-import { ServiceCategoryArabicPipe } from '../../Pipes/service-category-arabic.pipe';
+import { ServiceCategoryService } from '../../services/service-category.service';
+import { ServiceCategoryDto } from '../../models/service-category.dto';
 
 @Component({
   selector: 'app-service-upsert',
@@ -22,7 +22,6 @@ import { ServiceCategoryArabicPipe } from '../../Pipes/service-category-arabic.p
     MatInputModule,
     MatSelectModule,
     CommonModule,
-    ServiceCategoryArabicPipe,
     MatDialogModule
   ],
   templateUrl: './service-upsert.component.html',
@@ -31,11 +30,12 @@ import { ServiceCategoryArabicPipe } from '../../Pipes/service-category-arabic.p
 export class ServiceUpsertComponent implements OnInit {
   serviceForm: FormGroup;
   isEditMode: boolean = false;
-  serviceCategories = Object.values(ServiceCategoryEnum);
+  serviceCategories: ServiceCategoryDto[] = [];
 
   constructor(
     private fb: FormBuilder,
     private serviceService: ServiceService,
+    private serviceCategoryService: ServiceCategoryService,
     private alertService: AlertService,
     public dialogRef: MatDialogRef<ServiceUpsertComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ServiceGetDto | null
@@ -43,17 +43,21 @@ export class ServiceUpsertComponent implements OnInit {
     this.serviceForm = this.fb.group({
       name: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
-      serviceCategory: ['', Validators.required]
+      serviceCategoryId: ['', Validators.required]
     });
   }
 
   ngOnInit() {
+    this.serviceCategoryService.getAll().subscribe(categories => {
+      this.serviceCategories = categories;
+    });
+
     if (this.data) {
       this.isEditMode = true;
       this.serviceForm.patchValue({
         name: this.data.name,
         price: this.data.price,
-        serviceCategory: this.data.serviceCategory
+        serviceCategoryId: this.data.serviceCategoryId
       });
     }
   }

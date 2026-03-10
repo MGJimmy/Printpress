@@ -1,15 +1,11 @@
-﻿using Printpress.Domain;
-using System.Text.Json.Serialization;
-
-namespace Printpress.Application;
+﻿namespace Printpress.Application;
 
 public record ServiceDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
     public decimal? Price { get; set; }
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ServiceCategoryEnum ServiceCategory { get; set; }
-
+    public Guid ServiceCategoryId { get; set; }
+    public string ServiceCategoryCode { get; set; }
+    public string ServiceCategoryName { get; set; }
 }

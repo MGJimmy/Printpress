@@ -219,12 +219,12 @@ internal sealed class SeedingDbContext
     {
         List<Service> services =
         [
-           new Service { Id = G(1), Name = "طباعة ورق 70 جم الوان", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Printing },
-           new Service { Id = G(2), Name = "طباعة ورق 80 جم الوان", Price = 0.7m, ServiceCategory = ServiceCategoryEnum.Printing },
-           new Service { Id = G(3), Name = "قص", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Cutting },
-           new Service { Id = G(4), Name = "لصق", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Clueing },
-           new Service { Id = G(5), Name = "تدبيس", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Stapling },
-           new Service { Id = G(6), Name = "بيع", Price = 0.5m, ServiceCategory = ServiceCategoryEnum.Selling },
+           new Service { Id = G(1), Name = "طباعة ورق 70 جم الوان", Price = 0.5m, ServiceCategoryId = G(101) },
+           new Service { Id = G(2), Name = "طباعة ورق 80 جم الوان", Price = 0.7m, ServiceCategoryId = G(101) },
+           new Service { Id = G(3), Name = "قص", Price = 0.5m, ServiceCategoryId = G(104) },
+           new Service { Id = G(4), Name = "لصق", Price = 0.5m, ServiceCategoryId = G(103) },
+           new Service { Id = G(5), Name = "تدبيس", Price = 0.5m, ServiceCategoryId = G(102) },
+           new Service { Id = G(6), Name = "بيع", Price = 0.5m, ServiceCategoryId = G(105) },
         ];
 
 
@@ -245,7 +245,7 @@ internal sealed class SeedingDbContext
     public void SeedingLockupData()
     {
         SeedingItemDetailsKeyLKP();
-        SeedingServiceCategoryLKP();
+        SeedingServiceCategories();
         SeedingInventoryItemCategoryLKP();
     }
 
@@ -261,13 +261,22 @@ internal sealed class SeedingDbContext
         }
     }
 
-    private void SeedingServiceCategoryLKP()
+    private void SeedingServiceCategories()
     {
-        foreach (var serviceCategory in Enum.GetValues(typeof(ServiceCategoryEnum)))
+        var categories = new[]
         {
-            if (!_dbContext.ServiceCategory_LKP.Any(i => i.Id == (int)serviceCategory))
+            new ServiceCategory { Id = G(101), Code = "Printing",  Name = "طباعة",  RequireInventoryItem = false },
+            new ServiceCategory { Id = G(102), Code = "Stapling",  Name = "تدبيس",  RequireInventoryItem = false },
+            new ServiceCategory { Id = G(103), Code = "Clueing",   Name = "بشر",    RequireInventoryItem = false },
+            new ServiceCategory { Id = G(104), Code = "Cutting",   Name = "قص",     RequireInventoryItem = false },
+            new ServiceCategory { Id = G(105), Code = "Selling",   Name = "بيع",    RequireInventoryItem = false },
+        };
+
+        foreach (var category in categories)
+        {
+            if (!_dbContext.ServiceCategory.Any(c => c.Id == category.Id))
             {
-                _dbContext.ServiceCategory_LKP.Add(new ServiceCategory_LKP { Id = (int)serviceCategory, Name = serviceCategory.ToString() });
+                _dbContext.ServiceCategory.Add(category);
             }
         }
     }

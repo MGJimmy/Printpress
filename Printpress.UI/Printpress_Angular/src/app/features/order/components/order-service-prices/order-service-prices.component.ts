@@ -77,7 +77,7 @@ export class OrderServicePricesComponent implements OnInit {
       const service = await this.servicesService.getServiceById(serviceId);
       
       // Selling  services should not be edited in this page
-      if (service.serviceCategory == ServiceCategoryEnum.Selling) {
+      if (service.serviceCategoryCode === ServiceCategoryEnum.Selling) {
         continue;
       }
       const groupService = allOrderGroupServices.find(x => x.serviceId == serviceId);
@@ -114,7 +114,7 @@ export class OrderServicePricesComponent implements OnInit {
       const service = await this.servicesService.getServiceById(serviceId);
 
       // Selling  services should not be edited in this page
-      if (service.serviceCategory == ServiceCategoryEnum.Selling) {
+      if (service.serviceCategoryCode === ServiceCategoryEnum.Selling) {
         continue;
       }
 

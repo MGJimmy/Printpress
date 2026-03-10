@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
-import { finalize, map } from 'rxjs';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-service-list',
@@ -46,10 +46,6 @@ export class ServiceListComponent implements OnInit {
     this.isLoading = true;
     this.serviceService.getAll()
       .pipe(
-        map(services => services.map(service => ({
-          ...service,
-          serviceCategoryName: service.serviceCategory
-        }))),
         finalize(() => this.isLoading = false)
       )
       .subscribe({

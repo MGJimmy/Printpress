@@ -104,20 +104,20 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
     private async Task SetGroupItemPrices(OrderGroup group, List<OrderService> orderService)
     {
-        var allServices = await _IUnitOfWork.ServiceRepository.AllAsync();
+        var allServices = await _IUnitOfWork.ServiceRepository.AllAsync(nameof(Service.ServiceCategory));
 
         var groupServicesIds = new HashSet<Guid>(group.OrderGroupServices.NotDeleted().Select(d => d.ServiceId));
         var currentGroupServices = allServices.Where(s => groupServicesIds.Contains(s.Id)).ToList();
 
-        if (currentGroupServices.Exists(x => x.ServiceCategory == ServiceCategoryEnum.Selling))
+        if (currentGroupServices.Exists(x => x.ServiceCategory?.Code == "Selling"))
         {
             return;
         }
 
-        var printingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Printing);
-        var staplingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Stapling);
-        var cluingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Clueing);
-        var cuttingService = currentGroupServices.Find(x => x.ServiceCategory == ServiceCategoryEnum.Cutting);
+        var printingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Printing");
+        var staplingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Stapling");
+        var cluingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Clueing");
+        var cuttingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Cutting");
 
         // Validate incoming data to be .... ???/???/???
 

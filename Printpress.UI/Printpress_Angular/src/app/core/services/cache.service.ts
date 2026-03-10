@@ -38,4 +38,5 @@ export class CacheService {
 
 export enum CacheKeyEnum {
     services = 'services',
+    serviceCategories = 'serviceCategories',
 }

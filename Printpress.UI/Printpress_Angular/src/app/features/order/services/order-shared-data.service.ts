@@ -226,9 +226,9 @@ export class OrderSharedDataService {
 
     this.serviceService.getServices(groupServices).subscribe(services => {
 
-      group.isHasPrintingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Printing);
-      group.isHasSellingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Selling);
-      group.isHasStaplingService = services.some(s => s.serviceCategory === ServiceCategoryEnum.Stapling);
+      group.isHasPrintingService = services.some(s => s.serviceCategoryCode === ServiceCategoryEnum.Printing);
+      group.isHasSellingService = services.some(s => s.serviceCategoryCode === ServiceCategoryEnum.Selling);
+      group.isHasStaplingService = services.some(s => s.serviceCategoryCode === ServiceCategoryEnum.Stapling);
     });
   }
   //=======================

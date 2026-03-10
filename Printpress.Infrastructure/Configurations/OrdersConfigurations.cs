@@ -15,13 +15,13 @@ namespace Printpress.Infrastructure
 
             modelBuilder.Entity<OrderTransaction>().Configure();
             modelBuilder.Entity<Service>().Configure();
+            modelBuilder.Entity<ServiceCategory>().Configure();
             modelBuilder.Entity<Client>().Configure();
             modelBuilder.Entity<Order>().Configure();
             modelBuilder.Entity<OrderGroup>().Configure();
             modelBuilder.Entity<OrderItem>().Configure();
             modelBuilder.Entity<OrderItemDetails>().Configure();
             modelBuilder.Entity<ItemDetailsKey_LKP>().Configure();
-            modelBuilder.Entity<ServiceCategory_LKP>().Configure();
             modelBuilder.Entity<OrderSellingItem>().Configure();
 
 
@@ -69,11 +69,25 @@ namespace Printpress.Infrastructure
                 .Property(x => x.Name)
                 .HasMaxLength(200);
 
-            entity.HasOne(x => x.ServiceCategory_LKP)
+            entity.HasOne(x => x.ServiceCategory)
                  .WithMany()
                  .HasForeignKey(x => x.ServiceCategoryId);
+        }
 
-            entity.Ignore(x => x.ServiceCategory);
+        private static void Configure(this EntityTypeBuilder<ServiceCategory> entity)
+        {
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.SetSchemaTable(Schema);
+
+            entity
+                .Property(x => x.Code)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity
+                .Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
         }
 
         private static void Configure(this EntityTypeBuilder<Client> entity)
@@ -156,16 +170,6 @@ namespace Printpress.Infrastructure
         }
 
         private static void Configure(this EntityTypeBuilder<ItemDetailsKey_LKP> entity)
-        {
-            entity.SetSchemaTable(Schema);
-
-            entity
-                .Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-        }
-
-        private static void Configure(this EntityTypeBuilder<ServiceCategory_LKP> entity)
         {
             entity.SetSchemaTable(Schema);
 

@@ -5,6 +5,7 @@ namespace Printpress.Application;
 public interface IUnitOfWork
 {
     IGenericRepository<Service> ServiceRepository { get; }
+    IGenericRepository<ServiceCategory> ServiceCategoryRepository { get; }
     IGenericRepository<Client> ClientRepository { get; }
     IGenericRepository<Order> OrderRepository { get; }
     IGenericRepository<OrderTransaction> OrderTransactionRepository { get; }

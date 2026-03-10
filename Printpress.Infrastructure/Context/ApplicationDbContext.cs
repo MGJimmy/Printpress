@@ -20,7 +20,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<OrderService> OrderService { get; set; }
     public DbSet<OrderTransaction> OrderTransaction { get; set; }
     public DbSet<ItemDetailsKey_LKP> ItemDetailsKey_LKP { get; set; }
-    public DbSet<ServiceCategory_LKP> ServiceCategory_LKP { get; set; }
+    public DbSet<ServiceCategory> ServiceCategory { get; set; }
     #endregion
 
 

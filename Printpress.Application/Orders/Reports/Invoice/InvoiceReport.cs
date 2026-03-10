@@ -447,7 +447,7 @@ public class InvoiceReport : IDocument
     private static bool IsPrintingService(OrderGroup orderGroup)
     {
         return orderGroup.OrderGroupServices.Any(grbService =>
-            grbService.Service.ServiceCategory == ServiceCategoryEnum.Printing);
+            grbService.Service.ServiceCategory?.Code == "Printing");
     }
 }
 
