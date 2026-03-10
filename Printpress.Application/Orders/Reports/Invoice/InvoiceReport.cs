@@ -168,6 +168,9 @@ public class InvoiceReport : IDocument
 
                      AddServicesPrices(column, _model.Services);
 
+                     if (_model.SellingItems?.Count > 0)
+                         AddSellingItems(column, _model.SellingItems);
+
                      // group section
                      foreach (var group in _model.OrderGroups)
                      {
@@ -214,6 +217,57 @@ public class InvoiceReport : IDocument
           });
       });
 
+    }
+
+    private void AddSellingItems(ColumnDescriptor column, IEnumerable<OrderSellingItem> sellingItems)
+    {
+        column.Item()
+              .PaddingHorizontal(30)
+              .PaddingVertical(10)
+              .Element(x =>
+              {
+                  x.Table(table =>
+                  {
+                      table.ColumnsDefinition(columns =>
+                      {
+                          columns.RelativeColumn(); // #
+                          columns.RelativeColumn(2); // اسم العنصر
+                          columns.RelativeColumn(); // النوع
+                          columns.RelativeColumn(); // الكمية
+                          columns.RelativeColumn(); // السعر
+                          columns.RelativeColumn(); // الإجمالي
+                      });
+
+                      table.Header(header =>
+                      {
+                          header.Cell().ColumnSpan(6).Element(CellStyle).AlignCenter().Text("عناصر البيع").SemiBold();
+                          header.Cell().Element(CellStyle).AlignCenter().Text("#").SemiBold();
+                          header.Cell().Element(CellStyle).AlignCenter().Text("اسم العنصر").SemiBold();
+                          header.Cell().Element(CellStyle).AlignCenter().Text("النوع").SemiBold();
+                          header.Cell().Element(CellStyle).AlignCenter().Text("الكمية").SemiBold();
+                          header.Cell().Element(CellStyle).AlignCenter().Text("السعر").SemiBold();
+                          header.Cell().Element(CellStyle).AlignCenter().Text("الإجمالي").SemiBold();
+                      });
+
+                      int index = 1;
+                      foreach (var item in sellingItems)
+                      {
+                          var itemName = item.IsInventoryItem ? item.InventoryItem?.Name ?? item.Name : item.Name;
+                          var itemType = item.IsInventoryItem ? "من المخزن" : "خارجي";
+
+                          table.Cell().Element(CellStyle).AlignCenter().Text(index.ToString()).FontSize(12);
+                          table.Cell().Element(CellStyle).AlignCenter().Text(itemName).FontSize(12);
+                          table.Cell().Element(CellStyle).AlignCenter().Text(itemType).FontSize(12);
+                          table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString()).FontSize(12);
+                          table.Cell().Element(CellStyle).AlignCenter().Text(item.Price.ToString()).FontSize(12);
+                          table.Cell().Element(CellStyle).AlignCenter().Text((item.Price * item.Quantity).ToString()).FontSize(12);
+                          index++;
+                      }
+
+                      table.Cell().ColumnSpan(5).Element(FooterCellStyle).AlignCenter().Text("إجمالي عناصر البيع");
+                      table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{sellingItems.Sum(i => i.Price * i.Quantity)}");
+                  });
+              });
     }
 
     private void AddTotles(ColumnDescriptor column)
