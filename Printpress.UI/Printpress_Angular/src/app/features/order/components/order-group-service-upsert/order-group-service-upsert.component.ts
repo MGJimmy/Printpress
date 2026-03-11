@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
@@ -18,11 +18,12 @@ import { ServiceService } from '../../../setup/services/service.service';
 import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
-import { ServiceCategoryService } from '../../../setup/services/service-category.service';
-import { ServiceCategoryDto } from '../../../setup/models/service-category.dto';
-import { InventoryService } from '../../../inventory/services/inventory.service';
-import { InventoryItemDto } from '../../../inventory/models/inventory-item.dto';
+import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
 
+export interface ServiceCat_interface {
+  id: string;
+  name: string;
+}
 @Component({
   selector: 'app-order-group-service-add-update',
   standalone: true,
@@ -36,6 +37,7 @@ import { InventoryItemDto } from '../../../inventory/models/inventory-item.dto';
     FormsModule,
     CommonModule,
     MatDialogModule,
+    ServiceCategoryArabicPipe
   ],
   templateUrl: './order-group-service-upsert.component.html',
   styleUrl: './order-group-service-upsert.component.css'
@@ -50,18 +52,19 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   tableData: ServiceGetDto[] | null = null;
 
-  allServiceCategories: ServiceCategoryDto[] = [];
-  serviceCategories: ServiceCategoryDto[] = [];
+  sellingCategories: ServiceCat_interface[] = [];
+  otherCategories: ServiceCat_interface[] = [];
+  serviceCategories!: ServiceCategoryEnum[] 
   allServices: ServiceGetDto[] = [];
 
-  selectedCategoryId: string | null = null;
+  selectedCategory: string | null = null;
   selectedServiceId: string | null = null;
-  selectedInventoryItemId: string | null = null;
+  isSellingSelected: boolean | null = null;
   subscriptions: Subscription = new Subscription();
 
+
   filteredServices: ServiceGetDto[] = [];
-  filteredInventoryItems: InventoryItemDto[] = [];
-  requiresInventoryItem: boolean = false;
+  selectedServiceCategoryId: string | null = null;
 
   groupId: string = '';
 
@@ -71,109 +74,84 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     private errorHandlingService: ErrorHandlingService,
     private currentComponentDialogRef: MatDialogRef<OrderGroupServiceUpsertComponent>,
     private serviceService: ServiceService,
-    private serviceCategoryService: ServiceCategoryService,
-    private inventoryService: InventoryService,
-    private orderSharedDataService: OrderSharedDataService,
+    private orderSharedDataService:OrderSharedDataService,
     @Inject(MAT_DIALOG_DATA) public inputData: any
   ) {}
 
   ngOnInit(): void {
     this.groupId = this.inputData.groupId;
 
-    this.serviceCategoryService.getAll().subscribe({
-      next: (categories) => {
-        this.allServiceCategories = categories;
-        this.fillPageData();
-      },
-      error: (err) => this.errorHandlingService.handleError(err)
-    });
+    this.fetchServices();
+    this.fillPageData()
 
-    this.serviceService.getAll().subscribe({
-      next: (data) => { this.allServices = data; },
-      error: (err) => this.errorHandlingService.handleError(err)
-    });
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
-  private fillPageData(): void {
+  fetchServices(): void {
+    this.serviceService.getAll().subscribe({
+      next: (data) => {
+        this.allServices = data;
+      },
+      error: (err) => {
+        this.errorHandlingService.handleError(err);
+      },
+    });
+  }
+
+
+  private fillPageData(){
     this.fillServiceCategoriesList();
     this.fillTableData();
     this.clearSelections();
   }
 
-  private fillServiceCategoriesList(): void {
-    const group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
+  fillServiceCategoriesList(){
+    let group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
 
-    if (!group.orderGroupServices || group.orderGroupServices.length === 0) {
-      this.serviceCategories = [...this.allServiceCategories].sort((a, b) => a.name.localeCompare(b.name));
+    if(!group.orderGroupServices || group.orderGroupServices.length == 0){
+      this.serviceCategories =  Object.keys(ServiceCategoryEnum).sort() as ServiceCategoryEnum[];
       return;
     }
 
-    if (group.isHasSellingService) {
-      this.serviceCategories = this.allServiceCategories.filter(c => c.code === ServiceCategoryEnum.Selling);
+    if(group.isHasSellingService){
+      this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
       return;
     }
-
-    this.serviceCategories = this.allServiceCategories
-      .filter(c => c.code !== ServiceCategoryEnum.Selling)
-      .sort((a, b) => a.name.localeCompare(b.name));
+    
+    this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
   }
 
-  private fillTableData(): void {
-    const groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
 
-    if (!groupServices || groupServices.length === 0) {
+  private fillTableData(){
+    let groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
+    
+    if(!groupServices || groupServices.length == 0){
       this.tableData = [];
       return;
     }
 
-    this.serviceService.getServices(groupServices.map(x => x.serviceId)).subscribe(services => {
+    this.serviceService.getServices(groupServices.map(x => x.serviceId)).subscribe(services =>{
       this.tableData = services;
     });
   }
 
-  onCategorySelect(categoryId: string): void {
-    const category = this.allServiceCategories.find(c => c.id === categoryId);
-
-    this.selectedServiceId = null;
-    this.selectedInventoryItemId = null;
-    this.filteredInventoryItems = [];
-    this.requiresInventoryItem = false;
-
-    if (!category) return;
-
-    this.filteredServices = this.allServices.filter(s => s.serviceCategoryCode === category.code);
-
-    if (category.requireInventoryItem && category.inventoryItemCategoryId != null) {
-      this.requiresInventoryItem = true;
-      this.inventoryService.getByCategory(category.inventoryItemCategoryId).subscribe({
-        next: (res) => { this.filteredInventoryItems = res.data; },
-        error: (err) => this.errorHandlingService.handleError(err)
-      });
-    }
+  onCategorySelect(serviceCategoryEnumValue: string): void {
+    this.filteredServices = this.allServices.filter(s => s.serviceCategoryCode === serviceCategoryEnumValue);
   }
 
   clearSelections(): void {
-    this.selectedCategoryId = null;
+    this.isSellingSelected = null;
+    this.selectedCategory = null;
     this.selectedServiceId = null;
-    this.selectedInventoryItemId = null;
-    this.filteredServices = [];
-    this.filteredInventoryItems = [];
-    this.requiresInventoryItem = false;
   }
 
   addGroupService(): void {
-    if (!this.selectedCategoryId || !this.selectedServiceId) {
+    if (!this.selectedCategory || !this.selectedServiceId) {
       this.alertService.showError('من فضلك اختر نوع الخدمة أولا');
       this.clearSelections();
-      return;
-    }
-
-    if (this.requiresInventoryItem && !this.selectedInventoryItemId) {
-      this.alertService.showError('من فضلك اختر عنصر المخزون');
       return;
     }
 
@@ -184,7 +162,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.tableData?.some((row) => row.serviceCategoryCode === selectedService.serviceCategoryCode)) {
+    if (this.tableData?.some((row) => row.serviceCategoryCode === selectedService.serviceCategoryCode)) { // validate on category
       this.alertService.showError('لا يمكنك إضافة خدمات من نفس النوع أكثر من مرة');
       return;
     }
