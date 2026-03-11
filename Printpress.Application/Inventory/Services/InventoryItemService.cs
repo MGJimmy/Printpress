@@ -54,6 +54,11 @@ internal sealed class InventoryItemService(
         return await _unitOfWork.InventoryItemRepository.GetAllWithStockQuantity(paging);
     }
 
+    public async Task<List<InventoryItemDto>> GetByCategoryAsync(int categoryId)
+    {
+        return await _unitOfWork.InventoryItemRepository.GetByCategoryIdAsync(categoryId);
+    }
+
     public async Task DeleteAsync(Guid id, string userId)
     {
         var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);

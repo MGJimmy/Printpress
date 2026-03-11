@@ -11,5 +11,6 @@ namespace Printpress.Application
     {
         Task<PagedList<InventoryItemDto>> GetAllWithStockQuantity(Paging paging);
         Task<InventoryItemDto?> FindByIdWithStockQuantity(Guid id);
+        Task<List<InventoryItemDto>> GetByCategoryIdAsync(int categoryId);
     }
 }

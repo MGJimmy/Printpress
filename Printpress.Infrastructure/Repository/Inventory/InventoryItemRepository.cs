@@ -69,5 +69,28 @@ namespace Printpress.Infrastructure
                 })
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<InventoryItemDto>> GetByCategoryIdAsync(int categoryId)
+        {
+            return await Context.InventoryItem
+                .Where(i => i.InventoryItemCategoryId == categoryId)
+                .Select(i => new InventoryItemDto
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    InventoryItemCategory = i.InventoryItemCategory,
+                    PacksPerCarton = i.PacksPerCarton,
+                    UnitsPerPack = i.UnitsPerPack,
+                    ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
+                    ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
+                    HasTransactions = i.InventoryTransactions.Any(),
+                    StockQuantity = Context.InventoryTransaction
+                        .Where(t => t.InventoryItemId == i.Id)
+                        .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
+                            ? t.Quantity
+                            : -t.Quantity)
+                })
+                .ToListAsync();
+        }
     }
 }

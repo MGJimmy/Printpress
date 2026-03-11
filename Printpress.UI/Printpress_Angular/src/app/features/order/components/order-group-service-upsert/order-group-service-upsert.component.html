@@ -6,8 +6,8 @@
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>الفئة</mat-label>
-          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategorySelect($event.value)">
-            <mat-option *ngFor="let cat of serviceCategories" [value]="cat">{{ cat |serviceCategoryArabic }}</mat-option>
+          <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="onCategorySelect($event.value)">
+            <mat-option *ngFor="let cat of serviceCategories" [value]="cat.id">{{ cat.name }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -16,9 +16,21 @@
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>الخدمة</mat-label>
-          <mat-select [(ngModel)]="selectedServiceId" [disabled]="!filteredServices ||filteredServices.length === 0">
+          <mat-select [(ngModel)]="selectedServiceId" [disabled]="!filteredServices || filteredServices.length === 0">
             <mat-option *ngFor="let service of filteredServices" [value]="service.id">
               {{ service.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Inventory Items Dropdown (shown only when category requires inventory) -->
+      <div class="col-md-6" *ngIf="requiresInventoryItem">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>عنصر المخزون</mat-label>
+          <mat-select [(ngModel)]="selectedInventoryItemId" [disabled]="!filteredInventoryItems || filteredInventoryItems.length === 0">
+            <mat-option *ngFor="let item of filteredInventoryItems" [value]="item.id">
+              {{ item.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>

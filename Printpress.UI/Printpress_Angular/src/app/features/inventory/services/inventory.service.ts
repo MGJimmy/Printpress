@@ -25,6 +25,10 @@ export class InventoryService {
     );
   }
 
+  getByCategory(categoryId: number): Observable<ApiResponseDto<InventoryItemDto[]>> {
+    return this.httpService.get<ApiResponseDto<InventoryItemDto[]>>(ApiUrlResource.InventoryAPI.getByCategory(categoryId));
+  }
+
   getById(id: string): Observable<ApiResponseDto<InventoryItemDto>> {
     return this.httpService.get<ApiResponseDto<InventoryItemDto>>(ApiUrlResource.InventoryAPI.getById(id));
   }

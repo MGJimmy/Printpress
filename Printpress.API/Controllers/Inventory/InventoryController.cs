@@ -13,6 +13,13 @@ public class InventoryController(IInventoryItemService _inventoryItemService) : 
         return Ok(result);
     }
 
+    [HttpGet("getByCategory/{categoryId}")]
+    public async Task<IActionResult> GetByCategory(int categoryId)
+    {
+        var result = await _inventoryItemService.GetByCategoryAsync(categoryId);
+        return Ok(result);
+    }
+
     [HttpGet("getById/{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
