@@ -32,12 +32,22 @@ public class ApplicationDbContext : DbContext
     public DbSet<PurchaseInvoiceLine> PurchaseInvoiceLine { get; set; }
     #endregion
 
+    #region SpareParts
+    public DbSet<SparePartInventoryItem> SparePartInventoryItem { get; set; }
+    public DbSet<SparePartInventoryTransaction> SparePartInventoryTransaction { get; set; }
+    public DbSet<SparePartPurchaseInvoice> SparePartPurchaseInvoice { get; set; }
+    public DbSet<SparePartPurchaseInvoiceLine> SparePartPurchaseInvoiceLine { get; set; }
+    public DbSet<SparePartSellingInvoice> SparePartSellingInvoice { get; set; }
+    public DbSet<SparePartSellingInvoiceLine> SparePartSellingInvoiceLine { get; set; }
+    #endregion
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ConfigureOrders();
         modelBuilder.ConfigureInventory();
+        modelBuilder.ConfigureSpareParts();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
