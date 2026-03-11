@@ -95,4 +95,11 @@ export class ApiUrlResource {
     add: ApiUrlResource.SparePartSellingInvoice_URL + '/add'
   };
 
+  private static Reports_URL = '/api/Reports';
+  public static readonly ReportsAPI = {
+    orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',
+    filterCategories: ApiUrlResource.Reports_URL + '/filter/inventory-categories',
+    filterItems: ApiUrlResource.Reports_URL + '/filter/inventory-items'
+  };
+
 }

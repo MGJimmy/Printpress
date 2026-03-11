@@ -68,6 +68,11 @@ public static class DependencyInjection
         #endregion
 
 
+        #region Reports
+        services.AddScoped<IOrderInventoryItemsReportService, OrderInventoryItemsReportService>();
+        #endregion
+
+
         services.RegisterDomainServices(configuration);
         
         return services;

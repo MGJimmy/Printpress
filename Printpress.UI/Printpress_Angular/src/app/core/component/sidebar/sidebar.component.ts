@@ -17,7 +17,9 @@ import {
   faSignOutAlt,
   faSignInAlt,
   faCartArrowDown,
-  faCog
+  faCog,
+  faChartBar,
+  faWrench
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -43,6 +45,10 @@ export class SidebarComponent implements OnDestroy {
   faSignInAlt = faSignInAlt;
   faCartArrowDown = faCartArrowDown;
   faCog = faCog;
+  faChartBar = faChartBar;
+  faWrench = faWrench;
+
+  isReportsExpanded = false;
 
   private subscriptions: Subscription = new Subscription();
 
@@ -55,6 +61,10 @@ export class SidebarComponent implements OnDestroy {
   toggleSidebar(): void {
     this.toggled = !this.toggled;
     //this.toggle.emit(this.toggled);
+  }
+
+  toggleReports(): void {
+    this.isReportsExpanded = !this.isReportsExpanded;
   }
 
 

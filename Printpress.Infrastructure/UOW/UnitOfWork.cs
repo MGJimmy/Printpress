@@ -28,6 +28,7 @@ namespace Printpress.Infrastructure
         private IGenericRepository<SparePartInventoryTransaction> _sparePartTransactionRepository;
         private IGenericRepository<SparePartPurchaseInvoice> _sparePartPurchaseInvoiceRepository;
         private IGenericRepository<SparePartSellingInvoice> _sparePartSellingInvoiceRepository;
+        private IReportRepository _reportRepository;
 
 
 
@@ -197,6 +198,16 @@ namespace Printpress.Infrastructure
                 if (_sparePartSellingInvoiceRepository == null)
                     _sparePartSellingInvoiceRepository = new GenericRepository<SparePartSellingInvoice>(_context);
                 return _sparePartSellingInvoiceRepository;
+            }
+        }
+
+        public IReportRepository ReportRepository
+        {
+            get
+            {
+                if (_reportRepository == null)
+                    _reportRepository = new ReportRepository(_context);
+                return _reportRepository;
             }
         }
 
