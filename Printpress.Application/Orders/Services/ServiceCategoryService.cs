@@ -6,14 +6,16 @@ internal sealed class ServiceCategoryService(IUnitOfWork _unitOfWork) : IService
 {
     public async Task<List<ServiceCategoryDto>> GetAllAsync()
     {
-        var categories = await _unitOfWork.ServiceCategoryRepository.AllAsync();
+        var categories = await _unitOfWork.ServiceCategoryRepository.AllAsync(nameof(ServiceCategory.InventoryItemCategory_LKP));
 
         return categories.Select(c => new ServiceCategoryDto
         {
             Id = c.Id,
             Code = c.Code,
             Name = c.Name,
-            RequireInventoryItem = c.RequireInventoryItem
+            RequireInventoryItem = c.RequireInventoryItem,
+            InventoryItemCategoryId = c.InventoryItemCategoryId,
+            InventoryItemCategoryName = c.InventoryItemCategory_LKP?.Name
         }).ToList();
     }
 }

@@ -3,4 +3,6 @@ export interface ServiceCategoryDto {
     code: string;
     name: string;
     requireInventoryItem: boolean;
+    inventoryItemCategoryId?: number;
+    inventoryItemCategoryName?: string;
 }

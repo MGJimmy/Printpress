@@ -88,6 +88,10 @@ namespace Printpress.Infrastructure
                 .Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(100);
+
+            entity.HasOne(x => x.InventoryItemCategory_LKP)
+                .WithMany()
+                .HasForeignKey(x => x.InventoryItemCategoryId);
         }
 
         private static void Configure(this EntityTypeBuilder<Client> entity)

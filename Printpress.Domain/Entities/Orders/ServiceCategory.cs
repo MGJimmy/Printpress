@@ -11,5 +11,7 @@ namespace Printpress.Domain
         public string Code { get; set; }
         public string Name { get; set; }
         public bool RequireInventoryItem { get; set; }
+        public int? InventoryItemCategoryId { get; set; }
+        public virtual InventoryItemCategory_LKP InventoryItemCategory_LKP { get; set; }
     }
 }
