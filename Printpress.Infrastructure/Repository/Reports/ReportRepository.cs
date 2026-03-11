@@ -28,7 +28,7 @@ internal class ReportRepository : IReportRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<int> GetInventoryUnitsInAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
+    public async Task<int> GetInventoryCartonsInAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
     {
         return await _context.InventoryTransaction
             .Where(t => t.InventoryItemId == inventoryItemId
@@ -38,7 +38,7 @@ internal class ReportRepository : IReportRepository
             .SumAsync(t => (int?)t.Quantity) ?? 0;
     }
 
-    public async Task<int> GetInventoryUnitsOutAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
+    public async Task<int> GetInventorycartonsOutAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
     {
         return await _context.InventoryTransaction
             .Where(t => t.InventoryItemId == inventoryItemId
@@ -49,6 +49,47 @@ internal class ReportRepository : IReportRepository
     }
 
     public async Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
+    {
+        // Get service IDs linked to this inventory item
+        var serviceIds = await _context.Service
+            .Where(s => s.InventoryItemId == inventoryItemId)
+            .Select(s => s.Id)
+            .ToListAsync();
+
+        if (!serviceIds.Any())
+            return [];
+
+        // load all orders has any service of these
+        var orders = await _context.Order
+        .Include(o => o.Services)
+            .ThenInclude(os => os.Service) // ÅÐÇ ÊÍÊÇÌ ÈíÇäÇÊ ÇáÎÏãÉ
+        .Include(o => o.OrderGroups)
+            .ThenInclude(og => og.OrderGroupServices)
+                .ThenInclude(ogs => ogs.Service) // ÅÐÇ ÊÍÊÇÌ ÈíÇäÇÊ ÇáÎÏãÉ ÇáãÑÊÈØÉ ÈÇáÜ group service
+        .Include(o => o.OrderGroups)
+            .ThenInclude(og => og.Items)
+                .ThenInclude(i => i.Details)
+        .Where(o => o.Services.Any(os => serviceIds.Contains(os.ServiceId)))
+        .ToListAsync();
+
+
+        List<OrderItem> orderItems = orders.SelectMany(o => o.OrderGroups)
+            .Where(og => og.OrderGroupServices.Any(os => serviceIds.Contains(os.ServiceId)))
+            .SelectMany(og => og.Items)
+            .ToList();
+
+        return orderItems.Select(oi => new OrderItemUsageProjection
+        {
+            Quantity = oi.Quantity,
+            NumberOfPages = int.Parse(oi.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value),
+            NumberOfPrintingFaces = int.Parse(oi.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value)
+        }).ToList();
+
+      
+    }
+
+
+    public async Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync_old(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
     {
         // Get service IDs linked to this inventory item
         var serviceIds = await _context.Service

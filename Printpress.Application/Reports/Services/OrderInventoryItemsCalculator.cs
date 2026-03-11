@@ -9,10 +9,10 @@ internal static class OrderInventoryItemsCalculator
         return packsPerCarton.Value * unitsPerPack.Value;
     }
 
-    public static decimal CalculateCartonsFromUnits(int units, int unitsPerCarton)
+    public static int CalculateUnitsFromCartons(int cartonsCount, int unitsPerCarton)
     {
-        if (unitsPerCarton <= 0) return units;
-        return Math.Round((decimal)units / unitsPerCarton, 2);
+        if (unitsPerCarton <= 0) return cartonsCount;
+        return cartonsCount * unitsPerCarton;
     }
 
     public static decimal CalculatePaperUsed(List<OrderItemUsageProjection> items)
