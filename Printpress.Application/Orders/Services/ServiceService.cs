@@ -31,14 +31,14 @@ namespace Printpress.Application
 
         public async Task<List<ServiceDto>> GetAll()
         {
-            List<Service> services = await _unitOfWork.ServiceRepository.AllAsync(nameof(Service.ServiceCategory));
+            List<Service> services = await _unitOfWork.ServiceRepository.AllAsync(nameof(Service.ServiceCategory), nameof(Service.InventoryItem));
 
             return serviceMapper.MapFromSourceToDestination(services);
         }
 
         public async Task<ServiceDto> GetById(Guid id)
         {
-            Service service = await _unitOfWork.ServiceRepository.FirstOrDefaultAsync(x => x.Id == id, false, nameof(Service.ServiceCategory));
+            Service service = await _unitOfWork.ServiceRepository.FirstOrDefaultAsync(x => x.Id == id, false, nameof(Service.ServiceCategory), nameof(Service.InventoryItem));
 
             if (service is null) throw new ValidationExeption("Service not found");
 

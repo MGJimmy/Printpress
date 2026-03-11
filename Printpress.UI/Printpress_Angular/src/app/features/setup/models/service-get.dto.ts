@@ -5,4 +5,6 @@ export interface ServiceGetDto {
     serviceCategoryId: string;
     serviceCategoryCode: string;
     serviceCategoryName: string;
+    inventoryItemId?: string;
+    inventoryItemName?: string;
 }

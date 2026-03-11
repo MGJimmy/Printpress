@@ -25,5 +25,7 @@ namespace Printpress.Domain
         public virtual InventoryItemCategory_LKP InventoryItemCategory_LKP { get; set; }
 
         public virtual ICollection<InventoryTransaction> InventoryTransactions { get; set; }
+
+        public virtual ICollection<Service> OrderServices { get; set; }
     }
 }

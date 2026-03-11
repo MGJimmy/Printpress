@@ -8,4 +8,6 @@ public record ServiceDto
     public Guid ServiceCategoryId { get; set; }
     public string ServiceCategoryCode { get; set; }
     public string ServiceCategoryName { get; set; }
+    public Guid? InventoryItemId { get; set; }
+    public string InventoryItemName { get; set; }
 }

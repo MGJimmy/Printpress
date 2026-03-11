@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ServiceGetDto } from '../../models/service-get.dto';
 import { ServiceService } from '../../services/service.service';
@@ -11,12 +11,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { ServiceCategoryService } from '../../services/service-category.service';
 import { ServiceCategoryDto } from '../../models/service-category.dto';
+import { InventoryService } from '../../../inventory/services/inventory.service';
+import { InventoryItemDto } from '../../../inventory/models/inventory-item.dto';
 
 @Component({
   selector: 'app-service-upsert',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
@@ -31,11 +34,15 @@ export class ServiceUpsertComponent implements OnInit {
   serviceForm: FormGroup;
   isEditMode: boolean = false;
   serviceCategories: ServiceCategoryDto[] = [];
+  requiresInventoryItem = false;
+  filteredInventoryItems: InventoryItemDto[] = [];
+  selectedInventoryItemId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private serviceService: ServiceService,
     private serviceCategoryService: ServiceCategoryService,
+    private inventoryService: InventoryService,
     private alertService: AlertService,
     public dialogRef: MatDialogRef<ServiceUpsertComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ServiceGetDto | null
@@ -50,23 +57,45 @@ export class ServiceUpsertComponent implements OnInit {
   ngOnInit() {
     this.serviceCategoryService.getAll().subscribe(categories => {
       this.serviceCategories = categories;
-    });
 
-    if (this.data) {
-      this.isEditMode = true;
-      this.serviceForm.patchValue({
-        name: this.data.name,
-        price: this.data.price,
-        serviceCategoryId: this.data.serviceCategoryId
+      if (this.data) {
+        this.isEditMode = true;
+        this.serviceForm.patchValue({
+          name: this.data.name,
+          price: this.data.price,
+          serviceCategoryId: this.data.serviceCategoryId
+        });
+        this.onCategorySelect(this.data.serviceCategoryId);
+      }
+    });
+  }
+
+  onCategorySelect(categoryId: string): void {
+    const category = this.serviceCategories.find(c => c.id === categoryId);
+    this.requiresInventoryItem = false;
+    this.filteredInventoryItems = [];
+    this.selectedInventoryItemId = null;
+    if (category?.requireInventoryItem && category.inventoryItemCategoryId != null) {
+      this.requiresInventoryItem = true;
+      this.inventoryService.getByCategory(category.inventoryItemCategoryId).subscribe({
+        next: (res) => {
+          this.filteredInventoryItems = res.data;
+          if (this.isEditMode && this.data?.inventoryItemId) {
+            this.selectedInventoryItemId = this.data.inventoryItemId;
+          }
+        }
       });
     }
   }
 
   onSubmit() {
     if (this.serviceForm.valid) {
-      const serviceData = this.serviceForm.value;
-      
-      const request = this.isEditMode 
+      const serviceData = {
+        ...this.serviceForm.value,
+        inventoryItemId: this.requiresInventoryItem ? this.selectedInventoryItemId : null
+      };
+
+      const request = this.isEditMode
         ? this.serviceService.update(serviceData, this.data!.id)
         : this.serviceService.add(serviceData);
 

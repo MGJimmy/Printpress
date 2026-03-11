@@ -22,7 +22,9 @@ namespace Printpress.Application
                 Price = sourceEntity.Price,
                 ServiceCategoryId = sourceEntity.ServiceCategoryId,
                 ServiceCategoryCode = sourceEntity.ServiceCategory?.Code,
-                ServiceCategoryName = sourceEntity.ServiceCategory?.Name
+                ServiceCategoryName = sourceEntity.ServiceCategory?.Name,
+                InventoryItemId = sourceEntity.InventoryItemId,
+                InventoryItemName = sourceEntity.InventoryItem?.Name
             };
         }
 
@@ -32,7 +34,8 @@ namespace Printpress.Application
             {
                 Name = destinationEntity.Name,
                 Price = destinationEntity.Price,
-                ServiceCategoryId = destinationEntity.ServiceCategoryId
+                ServiceCategoryId = destinationEntity.ServiceCategoryId,
+                InventoryItemId = destinationEntity.InventoryItemId
             };
         }
 

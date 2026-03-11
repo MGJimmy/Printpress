@@ -24,7 +24,7 @@
 
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>نوع الخدمة</mat-label>
-        <mat-select formControlName="serviceCategoryId" required>
+        <mat-select formControlName="serviceCategoryId" required (selectionChange)="onCategorySelect($event.value)">
           <mat-option *ngFor="let category of serviceCategories" [value]="category.id">
             {{category.name}}
           </mat-option>
@@ -33,6 +33,18 @@
           نوع الخدمة مطلوب
         </mat-error>
       </mat-form-field>
+
+      <!-- Inventory Items Dropdown (shown only when category requires inventory) -->
+      <div *ngIf="requiresInventoryItem">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>عنصر المخزون</mat-label>
+          <mat-select [(ngModel)]="selectedInventoryItemId" [ngModelOptions]="{standalone: true}" [disabled]="!filteredInventoryItems || filteredInventoryItems.length === 0">
+            <mat-option *ngFor="let item of filteredInventoryItems" [value]="item.id">
+              {{ item.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
 
     <div mat-dialog-actions class="justify-content-end">
