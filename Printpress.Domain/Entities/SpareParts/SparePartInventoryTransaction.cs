@@ -27,5 +27,17 @@ namespace Printpress.Domain
             Notes = notes;
         }
 
+        public SparePartInventoryTransaction(
+        Guid inventoryItemId,
+        SparePartInventoryTransactionType type,
+        int quantity,
+        string notes)
+        {
+            InventoryItemId = inventoryItemId;
+            InventoryTransactionType = type;
+            Quantity = quantity;
+            Notes = notes;
+        }
+
     }
 }

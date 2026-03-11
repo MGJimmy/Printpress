@@ -76,4 +76,23 @@ export class ApiUrlResource {
     add: ApiUrlResource.PurchaseInvoice_URL + '/add'
   };
 
+  private static SparePart_URL = '/api/SparePart';
+  public static readonly SparePartAPI = {
+    getAll: ApiUrlResource.SparePart_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.SparePart_URL}/getById/${id}`,
+    add: ApiUrlResource.SparePart_URL + '/add',
+    update: (id: string) => `${ApiUrlResource.SparePart_URL}/update/${id}`,
+    delete: (id: string) => `${ApiUrlResource.SparePart_URL}/delete/${id}`,
+  };
+
+  private static SparePartPurchaseInvoice_URL = '/api/SparePartPurchaseInvoice';
+  public static readonly SparePartPurchaseInvoiceAPI = {
+    add: ApiUrlResource.SparePartPurchaseInvoice_URL + '/add'
+  };
+
+  private static SparePartSellingInvoice_URL = '/api/SparePartSellingInvoice';
+  public static readonly SparePartSellingInvoiceAPI = {
+    add: ApiUrlResource.SparePartSellingInvoice_URL + '/add'
+  };
+
 }

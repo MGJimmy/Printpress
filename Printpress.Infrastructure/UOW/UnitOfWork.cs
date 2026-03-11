@@ -24,6 +24,10 @@ namespace Printpress.Infrastructure
         private IGenericRepository<InventoryTransaction> _inventoryTransactionRepository;
         private IGenericRepository<PurchaseInvoice> _purchaseInvoiceRepository;
         private IGenericRepository<PurchaseInvoiceLine> _purchaseInvoiceLineRepository;
+        private ISparePartItemRepository _sparePartItemRepository;
+        private IGenericRepository<SparePartInventoryTransaction> _sparePartTransactionRepository;
+        private IGenericRepository<SparePartPurchaseInvoice> _sparePartPurchaseInvoiceRepository;
+        private IGenericRepository<SparePartSellingInvoice> _sparePartSellingInvoiceRepository;
 
 
 
@@ -153,6 +157,46 @@ namespace Printpress.Infrastructure
                 if (_purchaseInvoiceLineRepository == null)
                     _purchaseInvoiceLineRepository = new GenericRepository<PurchaseInvoiceLine>(_context);
                 return _purchaseInvoiceLineRepository;
+            }
+        }
+
+        public ISparePartItemRepository SparePartItemRepository
+        {
+            get
+            {
+                if (_sparePartItemRepository == null)
+                    _sparePartItemRepository = new SparePartItemRepository(_context);
+                return _sparePartItemRepository;
+            }
+        }
+
+        public IGenericRepository<SparePartInventoryTransaction> SparePartTransactionRepository
+        {
+            get
+            {
+                if (_sparePartTransactionRepository == null)
+                    _sparePartTransactionRepository = new GenericRepository<SparePartInventoryTransaction>(_context);
+                return _sparePartTransactionRepository;
+            }
+        }
+
+        public IGenericRepository<SparePartPurchaseInvoice> SparePartPurchaseInvoiceRepository
+        {
+            get
+            {
+                if (_sparePartPurchaseInvoiceRepository == null)
+                    _sparePartPurchaseInvoiceRepository = new GenericRepository<SparePartPurchaseInvoice>(_context);
+                return _sparePartPurchaseInvoiceRepository;
+            }
+        }
+
+        public IGenericRepository<SparePartSellingInvoice> SparePartSellingInvoiceRepository
+        {
+            get
+            {
+                if (_sparePartSellingInvoiceRepository == null)
+                    _sparePartSellingInvoiceRepository = new GenericRepository<SparePartSellingInvoice>(_context);
+                return _sparePartSellingInvoiceRepository;
             }
         }
 

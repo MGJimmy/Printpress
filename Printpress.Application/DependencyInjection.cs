@@ -55,6 +55,19 @@ public static class DependencyInjection
         #endregion
 
 
+        #region SpareParts
+        services.AddScoped<ISparePartItemService, SparePartItemService>();
+        services.AddScoped<IValidator<SparePartItemAddDto>, SparePartItemAddDtoValidator>();
+        services.AddScoped<IValidator<SparePartItemUpdateDto>, SparePartItemUpdateDtoValidator>();
+        services.AddAutoMapper(typeof(SparePartItemProfile));
+
+        services.AddScoped<ISparePartPurchaseInvoiceService, SparePartPurchaseInvoiceService>();
+
+        services.AddScoped<ISparePartSellingInvoiceService, SparePartSellingInvoiceService>();
+        services.AddScoped<IValidator<SparePartSellingInvoiceCreateDto>, SparePartSellingInvoiceCreateDtoValidator>();
+        #endregion
+
+
         services.RegisterDomainServices(configuration);
         
         return services;

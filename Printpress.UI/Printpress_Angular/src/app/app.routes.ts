@@ -139,6 +139,46 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'spare-parts',
+        children: [
+          {
+            path: 'items',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-part-item-list/spare-part-item-list.component')
+                .then(m => m.SparePartItemListComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'items/add',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-part-item-upsert/spare-part-item-upsert.component')
+                .then(m => m.SparePartItemUpsertComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'items/edit/:id',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-part-item-upsert/spare-part-item-upsert.component')
+                .then(m => m.SparePartItemUpsertComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'stock-in',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-parts-stock-in/spare-parts-stock-in.component')
+                .then(m => m.SparePartsStockInComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'stock-out',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-parts-stock-out/spare-parts-stock-out.component')
+                .then(m => m.SparePartsStockOutComponent),
+            canActivate: [authGuard],
+          }
+        ]
+      },
+      {
         path: 'unauthorized',
         loadComponent: () =>
           import(

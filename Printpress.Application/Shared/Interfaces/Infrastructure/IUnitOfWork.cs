@@ -17,5 +17,10 @@ public interface IUnitOfWork
     IGenericRepository<PurchaseInvoice> PurchaseInvoiceRepository { get; }
     IGenericRepository<PurchaseInvoiceLine> PurchaseInvoiceLineRepository { get; }
 
+    ISparePartItemRepository SparePartItemRepository { get; }
+    IGenericRepository<SparePartInventoryTransaction> SparePartTransactionRepository { get; }
+    IGenericRepository<SparePartPurchaseInvoice> SparePartPurchaseInvoiceRepository { get; }
+    IGenericRepository<SparePartSellingInvoice> SparePartSellingInvoiceRepository { get; }
+
     Task SaveChangesAsync(string userId);
 }
