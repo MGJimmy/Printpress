@@ -62,10 +62,10 @@ internal class ReportRepository : IReportRepository
         // load all orders has any service of these
         var orders = await _context.Order
         .Include(o => o.Services)
-            .ThenInclude(os => os.Service) // ÅÐÇ ÊÍÊÇÌ ÈíÇäÇÊ ÇáÎÏãÉ
+            .ThenInclude(os => os.Service) // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         .Include(o => o.OrderGroups)
             .ThenInclude(og => og.OrderGroupServices)
-                .ThenInclude(ogs => ogs.Service) // ÅÐÇ ÊÍÊÇÌ ÈíÇäÇÊ ÇáÎÏãÉ ÇáãÑÊÈØÉ ÈÇáÜ group service
+                .ThenInclude(ogs => ogs.Service) // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ group service
         .Include(o => o.OrderGroups)
             .ThenInclude(og => og.Items)
                 .ThenInclude(i => i.Details)
@@ -142,6 +142,17 @@ internal class ReportRepository : IReportRepository
             .ToList();
     }
 
+    public async Task<List<InventoryCategoryFilterDto>> GetInventoryCategoriesAllAsync()
+    {
+        return await _context.InventoryItemCategory_LKP
+            .Select(g => new InventoryCategoryFilterDto
+            {
+                Id = g.Id,
+                Name = g.Name
+            })
+            .ToListAsync();
+    }
+
     public async Task<List<InventoryCategoryFilterDto>> GetInventoryCategoriesForReportAsync()
     {
         return await _context.ServiceCategory
@@ -167,5 +178,114 @@ internal class ReportRepository : IReportRepository
             .Where(i => i.InventoryItemCategoryId == categoryId && linkedItemIds.Contains(i.Id))
             .Select(i => new InventoryItemFilterDto { Id = i.Id, Name = i.Name })
             .ToListAsync();
+    }
+
+    // â”€â”€ Report 2: Inventory & Services Usage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public async Task<List<InventoryItemStockProjection>> GetInventoryItemsStockByCategoryAsync(
+        int categoryId, DateTime? dateFrom, DateTime? dateTo)
+    {
+        return await _context.InventoryItem
+            .Where(i => i.InventoryItemCategoryId == categoryId)
+            .Select(i => new InventoryItemStockProjection
+            {
+                Id = i.Id,
+                Name = i.Name,
+                CategoryName = i.InventoryItemCategory_LKP.Name,
+                PacksPerCarton = i.PacksPerCarton,
+                UnitsPerPack = i.UnitsPerPack,
+                ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
+                CartonsIn = i.InventoryTransactions
+                    .Where(t => t.InventoryTransactionType == InventoryTransactionType.In
+                        && (dateFrom == null || t.CreatedAt >= dateFrom)
+                        && (dateTo == null || t.CreatedAt <= dateTo))
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                CartonsOut = i.InventoryTransactions
+                    .Where(t => t.InventoryTransactionType == InventoryTransactionType.Out
+                        && (dateFrom == null || t.CreatedAt >= dateFrom)
+                        && (dateTo == null || t.CreatedAt <= dateTo))
+                    .Sum(t => (int?)t.Quantity) ?? 0
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<ServiceCategoryFilterDto>> GetAllServiceCategoriesAsync()
+    {
+        return await _context.ServiceCategory
+            .Select(sc => new ServiceCategoryFilterDto { Id = sc.Id, Name = sc.Name })
+            .ToListAsync();
+    }
+
+    public async Task<List<ServiceBasicInfo>> GetServicesByCategoryIdAsync(Guid serviceCategoryId)
+    {
+        return await _context.Service
+            .Where(s => s.ServiceCategoryId == serviceCategoryId)
+            .Select(s => new ServiceBasicInfo { Id = s.Id, Name = s.Name })
+            .ToListAsync();
+    }
+
+    public async Task<Dictionary<Guid, int>> GetOrderCountsByServiceAsync(
+        List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateTo)
+    {
+        return await _context.OrderService
+            .Where(os => serviceIds.Contains(os.ServiceId)
+                && !os.IsDeleted
+                && !os.Order.IsDeleted
+                && (dateFrom == null || os.Order.CreatedAt >= dateFrom)
+                && (dateTo == null || os.Order.CreatedAt <= dateTo))
+            .GroupBy(os => os.ServiceId)
+            .Select(g => new
+            {
+                ServiceId = g.Key,
+                OrderCount = g.Select(os => os.OrderId).Distinct().Count()
+            })
+            .ToDictionaryAsync(x => x.ServiceId, x => x.OrderCount);
+    }
+
+    public async Task<List<ServiceItemRaw>> GetServiceItemRawDataAsync(
+        List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateTo)
+    {
+        var serviceGroupPairs = await _context.OrderGroupService
+            .Where(ogs => serviceIds.Contains(ogs.ServiceId)
+                && !ogs.IsDeleted
+                && !ogs.OrderGroup.IsDeleted
+                && !ogs.OrderGroup.Order.IsDeleted
+                && (dateFrom == null || ogs.OrderGroup.Order.CreatedAt >= dateFrom)
+                && (dateTo == null || ogs.OrderGroup.Order.CreatedAt <= dateTo))
+            .Select(ogs => new { ogs.ServiceId, ogs.OrderGroupId })
+            .Distinct()
+            .ToListAsync();
+
+        if (!serviceGroupPairs.Any()) return [];
+
+        var groupIds = serviceGroupPairs.Select(p => p.OrderGroupId).Distinct().ToList();
+
+        var rawItems = await _context.Item
+            .Where(i => groupIds.Contains(i.OrderGroupId) && !i.IsDeleted)
+            .Select(i => new
+            {
+                i.OrderGroupId,
+                i.Quantity,
+                PagesValue = i.Details
+                    .Where(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages && !d.IsDeleted)
+                    .Select(d => d.Value).FirstOrDefault(),
+                FacesValue = i.Details
+                    .Where(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces && !d.IsDeleted)
+                    .Select(d => d.Value).FirstOrDefault()
+            })
+            .ToListAsync();
+
+        return rawItems
+            .Join(serviceGroupPairs,
+                item => item.OrderGroupId,
+                pair => pair.OrderGroupId,
+                (item, pair) => new ServiceItemRaw
+                {
+                    ServiceId = pair.ServiceId,
+                    Quantity = item.Quantity,
+                    PagesValue = item.PagesValue,
+                    FacesValue = item.FacesValue
+                })
+            .ToList();
     }
 }

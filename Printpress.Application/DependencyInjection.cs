@@ -70,6 +70,7 @@ public static class DependencyInjection
 
         #region Reports
         services.AddScoped<IOrderInventoryItemsReportService, OrderInventoryItemsReportService>();
+        services.AddScoped<IInventoryServicesUsageReportService, InventoryServicesUsageReportService>();
         #endregion
 
 

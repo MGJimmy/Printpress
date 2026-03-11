@@ -15,7 +15,8 @@
       "Bash(__NEW_LINE_cf4088bd7d1c5a14__ echo \"=== Remaining wrong namespaces in Migrations ===\")",
       "Bash(__NEW_LINE_a782065f9a92fd3a__ echo \"=== Remaining wrong API namespaces ===\")",
       "Bash(__NEW_LINE_32a476af29b485f5__ echo \"=== Remaining UserService sub-namespace usings in API ===\")",
-      "Bash(dotnet build Printpress.sln)"
+      "Bash(dotnet build Printpress.sln)",
+      "Bash(dotnet build:*)"
     ]
   }
 }

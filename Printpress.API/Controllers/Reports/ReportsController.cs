@@ -5,7 +5,9 @@ namespace Printpress.API;
 
 [Route("api/[controller]")]
 [AllowAnonymous]
-public class ReportsController(IOrderInventoryItemsReportService _reportService) : AppBaseController
+public class ReportsController(
+    IOrderInventoryItemsReportService _reportService,
+    IInventoryServicesUsageReportService _inventoryServicesService) : AppBaseController
 {
     [HttpGet("order-inventory-items")]
     public async Task<IActionResult> GetOrderInventoryItemsReport(
@@ -20,7 +22,14 @@ public class ReportsController(IOrderInventoryItemsReportService _reportService)
     [HttpGet("filter/inventory-categories")]
     public async Task<IActionResult> GetInventoryCategories()
     {
-        var result = await _reportService.GetCategoriesAsync();
+        var result = await _reportService.GetCategoriesLinkToServiceAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("filter/inventory-categories-All")]
+    public async Task<IActionResult> GetInventoryCategoriesAll()
+    {
+        var result = await _reportService.GetCategoriesAllAsync();
         return Ok(result);
     }
 
@@ -28,6 +37,27 @@ public class ReportsController(IOrderInventoryItemsReportService _reportService)
     public async Task<IActionResult> GetInventoryItemsByCategory([FromQuery] int categoryId)
     {
         var result = await _reportService.GetItemsByCategoryAsync(categoryId);
+        return Ok(result);
+    }
+
+    // ── Report 2: Inventory & Services Usage ────────────────────────────────
+
+    [HttpGet("inventory-services-usage")]
+    public async Task<IActionResult> GetInventoryServicesUsage(
+        [FromQuery] int inventoryItemCategoryId,
+        [FromQuery] Guid serviceCategoryId,
+        [FromQuery] DateTime? dateFrom,
+        [FromQuery] DateTime? dateTo)
+    {
+        var result = await _inventoryServicesService.GetReportAsync(
+            inventoryItemCategoryId, serviceCategoryId, dateFrom, dateTo);
+        return Ok(result);
+    }
+
+    [HttpGet("filter/service-categories")]
+    public async Task<IActionResult> GetServiceCategories()
+    {
+        var result = await _inventoryServicesService.GetServiceCategoriesAsync();
         return Ok(result);
     }
 }

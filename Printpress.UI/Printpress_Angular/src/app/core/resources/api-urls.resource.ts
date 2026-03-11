@@ -98,8 +98,11 @@ export class ApiUrlResource {
   private static Reports_URL = '/api/Reports';
   public static readonly ReportsAPI = {
     orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',
+    inventoryServicesUsage: ApiUrlResource.Reports_URL + '/inventory-services-usage',
     filterCategories: ApiUrlResource.Reports_URL + '/filter/inventory-categories',
-    filterItems: ApiUrlResource.Reports_URL + '/filter/inventory-items'
+    InventoryCategoryAll: ApiUrlResource.Reports_URL + '/filter/inventory-categories-All',
+    filterItems: ApiUrlResource.Reports_URL + '/filter/inventory-items',
+    filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories'
   };
 
 }
