@@ -95,6 +95,14 @@ export class ApiUrlResource {
     add: ApiUrlResource.SparePartSellingInvoice_URL + '/add'
   };
 
+  private static PayrollPeriod_URL = '/api/PayrollPeriod';
+  public static readonly PayrollPeriodAPI = {
+    getAll: ApiUrlResource.PayrollPeriod_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.PayrollPeriod_URL}/getById/${id}`,
+    add: ApiUrlResource.PayrollPeriod_URL + '/add',
+    close: (id: string) => `${ApiUrlResource.PayrollPeriod_URL}/close/${id}`
+  };
+
   private static Reports_URL = '/api/Reports';
   public static readonly ReportsAPI = {
     orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',

@@ -19,7 +19,8 @@ import {
   faCartArrowDown,
   faCog,
   faChartBar,
-  faWrench
+  faWrench,
+  faUserTie
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -47,8 +48,10 @@ export class SidebarComponent implements OnDestroy {
   faCog = faCog;
   faChartBar = faChartBar;
   faWrench = faWrench;
+  faUserTie = faUserTie;
 
   isReportsExpanded = false;
+  isHRExpanded = false;
 
   private subscriptions: Subscription = new Subscription();
 
@@ -65,6 +68,10 @@ export class SidebarComponent implements OnDestroy {
 
   toggleReports(): void {
     this.isReportsExpanded = !this.isReportsExpanded;
+  }
+
+  toggleHR(): void {
+    this.isHRExpanded = !this.isHRExpanded;
   }
 
 

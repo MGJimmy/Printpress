@@ -179,6 +179,32 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'hr',
+        children: [
+          {
+            path: 'payroll-periods',
+            loadComponent: () =>
+              import('./features/hr/components/payroll-period-list/payroll-period-list.component')
+                .then(m => m.PayrollPeriodListComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'payroll-periods/add',
+            loadComponent: () =>
+              import('./features/hr/components/payroll-period-add/payroll-period-add.component')
+                .then(m => m.PayrollPeriodAddComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'payroll-periods/:id',
+            loadComponent: () =>
+              import('./features/hr/components/payroll-period-details/payroll-period-details.component')
+                .then(m => m.PayrollPeriodDetailsComponent),
+            canActivate: [authGuard],
+          }
+        ]
+      },
+      {
         path: 'reports',
         children: [
           {

@@ -55,6 +55,22 @@
       <span>قطع الغيار</span>
     </a>
 
+    <!-- HR -->
+    <div class="list-group-item reports-parent" (click)="toggleHR()" style="cursor:pointer;">
+      <fa-icon [icon]="faUserTie" class="fa-icon mx-2"></fa-icon>
+      <span>الموارد البشرية</span>
+    </div>
+    <div *ngIf="isHRExpanded" class="reports-children">
+      <a
+        routerLink="/hr/payroll-periods"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="list-group-item list-group-item-action ps-5"
+      >
+        <span>دورات الرواتب</span>
+      </a>
+    </div>
+
     <!-- Reports -->
     <div class="list-group-item reports-parent" (click)="toggleReports()" style="cursor:pointer;">
       <fa-icon [icon]="faChartBar" class="fa-icon mx-2"></fa-icon>
