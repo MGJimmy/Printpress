@@ -29,8 +29,10 @@ namespace Printpress.Infrastructure
         private IGenericRepository<SparePartPurchaseInvoice> _sparePartPurchaseInvoiceRepository;
         private IGenericRepository<SparePartSellingInvoice> _sparePartSellingInvoiceRepository;
         private IReportRepository _reportRepository;
-
-
+        private IGenericRepository<Worker> _workerRepository;
+        private IGenericRepository<WorkerProduction> _workerProductionRepository;
+        private IGenericRepository<WorkerSalaryTransaction> _workerSalaryTransactionRepository;
+        private IGenericRepository<PayrollPeriod> _payrollPeriodRepository;
 
 
 
@@ -208,6 +210,46 @@ namespace Printpress.Infrastructure
                 if (_reportRepository == null)
                     _reportRepository = new ReportRepository(_context);
                 return _reportRepository;
+            }
+        }
+
+        public IGenericRepository<Worker> WorkerRepository
+        {
+            get
+            {
+                if (_workerRepository == null)
+                    _workerRepository = new GenericRepository<Worker>(_context);
+                return _workerRepository;
+            }
+        }
+
+        public IGenericRepository<WorkerProduction> WorkerProductionRepository
+        {
+            get
+            {
+                if (_workerProductionRepository == null)
+                    _workerProductionRepository = new GenericRepository<WorkerProduction>(_context);
+                return _workerProductionRepository;
+            }
+        }
+
+        public IGenericRepository<WorkerSalaryTransaction> WorkerSalaryTransactionRepository
+        {
+            get
+            {
+                if (_workerSalaryTransactionRepository == null)
+                    _workerSalaryTransactionRepository = new GenericRepository<WorkerSalaryTransaction>(_context);
+                return _workerSalaryTransactionRepository;
+            }
+        }
+
+        public IGenericRepository<PayrollPeriod> PayrollPeriodRepository
+        {
+            get
+            {
+                if (_payrollPeriodRepository == null)
+                    _payrollPeriodRepository = new GenericRepository<PayrollPeriod>(_context);
+                return _payrollPeriodRepository;
             }
         }
 

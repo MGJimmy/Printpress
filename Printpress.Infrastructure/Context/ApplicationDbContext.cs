@@ -41,6 +41,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<SparePartSellingInvoiceLine> SparePartSellingInvoiceLine { get; set; }
     #endregion
 
+    #region HR
+    public DbSet<Worker> Worker { get; set; }
+    public DbSet<WorkerProduction> WorkerProduction { get; set; }
+    public DbSet<WorkerSalaryTransaction> WorkerSalaryTransaction { get; set; }
+    public DbSet<PayrollPeriod> PayrollPeriod { get; set; }
+    #endregion
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -48,6 +55,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ConfigureOrders();
         modelBuilder.ConfigureInventory();
         modelBuilder.ConfigureSpareParts();
+        modelBuilder.ConfigureHR();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

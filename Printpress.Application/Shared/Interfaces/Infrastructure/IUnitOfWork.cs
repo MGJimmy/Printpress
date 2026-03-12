@@ -24,5 +24,10 @@ public interface IUnitOfWork
 
     IReportRepository ReportRepository { get; }
 
+    IGenericRepository<Worker> WorkerRepository { get; }
+    IGenericRepository<WorkerProduction> WorkerProductionRepository { get; }
+    IGenericRepository<WorkerSalaryTransaction> WorkerSalaryTransactionRepository { get; }
+    IGenericRepository<PayrollPeriod> PayrollPeriodRepository { get; }
+
     Task SaveChangesAsync(string userId);
 }
