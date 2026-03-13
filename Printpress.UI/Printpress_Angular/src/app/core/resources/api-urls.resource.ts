@@ -3,6 +3,7 @@ export class ApiUrlResource {
   private static Account_URL = '/api/Account';
   public static readonly AccountAPI = {
     login: ApiUrlResource.Account_URL + '/login',
+    refreshToken: ApiUrlResource.Account_URL + '/refreshToken',
     getAllUsers: ApiUrlResource.Account_URL + '/get-all-users',
     getAllRoles: ApiUrlResource.Account_URL + '/get-all-roles',
     createUser: ApiUrlResource.Account_URL + '/create-user',

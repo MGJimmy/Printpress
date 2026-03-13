@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpService } from "./http.service";
 import { ApiUrlResource } from "../resources/api-urls.resource";
 import { loginResponseDto } from "../models/auth/login-response.dto";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { jwtDecode } from 'jwt-decode';
 import { UserRoleEnum } from "../models/user-role.enum";
 import { Router } from "@angular/router";
@@ -13,18 +13,19 @@ import { Router } from "@angular/router";
 export class AuthService {
 
   private readonly skipTokenUrls: string[] = [
-    '/api/Account/login'
-    // add more here or load from config
+    '/api/Account/login',
+    '/api/Account/refreshToken',
   ];
 
+  isRefreshing = false;
+  refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+
   constructor(private httpService: HttpService,
-    private router: Router) { 
+    private router: Router) {
   }
 
   public saveToken(token: string): void {
     localStorage.setItem('token', token);
-    console.log('Token saved to localStorage');
-    console.log(this.getToken())
   }
 
   public getToken(): string | null {
@@ -48,11 +49,17 @@ export class AuthService {
 
   public logout(): void {
     this.clearToken();
+    this.isRefreshing = false;
+    this.refreshTokenSubject.next(null);
     this.router.navigate(['login']);
   }
 
-  public login(username:string , password:string): Observable<loginResponseDto> {
+  public login(username: string, password: string): Observable<loginResponseDto> {
     return this.httpService.post<loginResponseDto>(ApiUrlResource.AccountAPI.login, { username, password });
+  }
+
+  public refreshToken(): Observable<loginResponseDto> {
+    return this.httpService.post<loginResponseDto>(ApiUrlResource.AccountAPI.refreshToken, {});
   }
 
   getRoles(): string[] | null {
@@ -67,10 +74,10 @@ export class AuthService {
   hasAnyMatchingRole(routeRoles: UserRoleEnum[]): boolean {
     const userRoles = this.getRoles();
     if (!routeRoles || routeRoles.length === 0) {
-      return true; // No roles required for the route
+      return true;
     }
     if (userRoles) {
-      return userRoles.some(userRole => 
+      return userRoles.some(userRole =>
         routeRoles.some(routeRole => userRole.toLocaleLowerCase() == routeRole.toLocaleLowerCase())
       );
     }

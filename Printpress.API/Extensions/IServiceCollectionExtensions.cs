@@ -14,7 +14,7 @@ public static class IServiceCollectionExtensions
         services.RegisterApplicationService(configuration);
         services.RegisterInfrastructureServices(configuration);
         services.AddExceptionHandler<GlobalExceptionMiddleWare>();
-        services.AddCros();
+        services.AddCros(configuration);
         services.AddAuthorization(configuration);
         services.AddUserServices(configuration);
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
@@ -72,15 +72,17 @@ public static class IServiceCollectionExtensions
 
         return services;
     }
-    private static IServiceCollection AddCros(this IServiceCollection services)
+    private static IServiceCollection AddCros(this IServiceCollection services, IConfiguration configuration)
     {
+        var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
         services.AddCors(options =>
         {
             options.AddPolicy("AllowAll", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder.WithOrigins(allowedOrigins)
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             });
         });
 
