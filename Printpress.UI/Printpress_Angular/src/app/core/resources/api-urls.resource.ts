@@ -19,6 +19,7 @@ export class ApiUrlResource {
   public static readonly ItemServiceExecutionAPI = {
     groupItems: (groupId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/group-items/${groupId}`,
     itemSummary: (itemId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/item-summary/${itemId}`,
+    itemHistory: (itemId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/item-history/${itemId}`,
     execute: ApiUrlResource.ItemServiceExecution_URL + '/execute'
   };
 

@@ -92,6 +92,12 @@ export const routes: Routes = [
               import('./features/order/components/execute-item-service/execute-item-service.component')
                 .then(m => m.ExecuteItemServiceComponent)
           },
+          {
+            path: ORDER_ROUTES.ORDER.EXECUTION.ITEM_HISTORY,
+            loadComponent: () =>
+              import('./features/order/components/item-execution-history/item-execution-history.component')
+                .then(m => m.ItemExecutionHistoryComponent)
+          },
         ],
         canDeactivate:[CanDeactivateGuard],
         canActivate: [authGuard, roleGuard],

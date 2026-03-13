@@ -6,6 +6,7 @@ import { ApiResponseDto } from '../../../core/models/api-response.dto';
 import {
   OrderGroupItemsResponseDto,
   ItemExecutionSummaryDto,
+  ItemExecutionHistoryDto,
   ExecuteServiceRequestDto
 } from '../models/execution/execution.dto';
 
@@ -22,6 +23,12 @@ export class ItemServiceExecutionService {
   getItemSummary(itemId: string): Observable<ApiResponseDto<ItemExecutionSummaryDto>> {
     return this.httpService.get<ApiResponseDto<ItemExecutionSummaryDto>>(
       ApiUrlResource.ItemServiceExecutionAPI.itemSummary(itemId)
+    );
+  }
+
+  getItemHistory(itemId: string): Observable<ApiResponseDto<ItemExecutionHistoryDto>> {
+    return this.httpService.get<ApiResponseDto<ItemExecutionHistoryDto>>(
+      ApiUrlResource.ItemServiceExecutionAPI.itemHistory(itemId)
     );
   }
 

@@ -101,6 +101,59 @@ internal sealed class ItemServiceExecutionService(
         };
     }
 
+    public async Task<ItemExecutionHistoryDto> GetItemExecutionHistoryAsync(Guid itemId)
+    {
+        var item = _unitOfWork.OrderItemRepository
+            .FirstOrDefault(i => i.Id == itemId, nameof(OrderItem.OrderGroup));
+
+        if (item is null)
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(itemId));
+
+        var groupServices = _unitOfWork.OrderGroupServiceRepository
+            .Filter(gs => gs.OrderGroupId == item.OrderGroupId,
+                nameof(OrderGroupService.Service),
+                $"{nameof(OrderGroupService.Service)}.{nameof(Service.ServiceCategory)}")
+            .ToList();
+
+        var distinctServiceCategories = groupServices
+            .Select(gs => gs.Service.ServiceCategory)
+            .DistinctBy(sc => sc.Id)
+            .ToList();
+
+        var executions = _unitOfWork.WorkerProductionRepository
+            .Filter(e => e.OrderItemId == itemId,
+                nameof(ItemServiceExecution.Worker),
+                nameof(ItemServiceExecution.ServiceCategory))
+            .OrderBy(e => e.ExecutionDate)
+            .ToList();
+
+        var serviceProgresses = distinctServiceCategories.Select(sc => BuildServiceProgress(
+            sc, item.Quantity, executions.Where(e => e.ServiceCategoryId == sc.Id).Sum(e => e.Quantity)
+        )).ToList();
+
+        var records = executions.Select(e => new ItemExecutionRecordDto
+        {
+            Id = e.Id,
+            WorkerName = e.Worker?.Name ?? string.Empty,
+            ServiceCategoryName = e.ServiceCategory?.Name ?? string.Empty,
+            Quantity = e.Quantity,
+            ExecutionDate = e.ExecutionDate,
+            Notes = e.Notes
+        }).ToList();
+
+        return new ItemExecutionHistoryDto
+        {
+            ItemId = item.Id,
+            ItemName = item.Name,
+            Quantity = item.Quantity,
+            Status = item.OrderItemStatus.ToString(),
+            GroupId = item.OrderGroupId,
+            GroupName = item.OrderGroup?.Name ?? string.Empty,
+            ServiceProgresses = serviceProgresses,
+            ExecutionRecords = records
+        };
+    }
+
     public async Task ExecuteAsync(ExecuteServiceRequestDto payload, string userId)
     {
         if (payload.Workers == null || !payload.Workers.Any())

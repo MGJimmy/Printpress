@@ -16,7 +16,8 @@ export const ORDER_ROUTES = {
         },
         EXECUTION: {
             GROUP_ITEMS: 'groups/:groupId/items',
-            EXECUTE: 'groups/:groupId/items/:itemId/execute'
+            EXECUTE: 'groups/:groupId/items/:itemId/execute',
+            ITEM_HISTORY: 'groups/:groupId/items/:itemId/history'
         }
     }
 } as const;

@@ -96,6 +96,10 @@ export class OrderGroupItemsComponent implements OnInit {
     this.router.navigate([`/order/groups/${this.groupId}/items/${itemId}/execute`]);
   }
 
+  onViewItem(itemId: string): void {
+    this.router.navigate([`/order/groups/${this.groupId}/items/${itemId}/history`]);
+  }
+
   onBack(): void {
     this.router.navigate(['/orderlist']);
   }

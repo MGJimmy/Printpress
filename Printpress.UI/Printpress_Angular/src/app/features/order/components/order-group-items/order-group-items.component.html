@@ -83,6 +83,12 @@
             <th mat-header-cell *matHeaderCellDef>إجراء</th>
             <td mat-cell *matCellDef="let item">
               <button mat-icon-button
+                      color="accent"
+                      (click)="onViewItem(item.id)"
+                      title="عرض سجل التنفيذ">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button
                       color="primary"
                       [disabled]="item.status === 'Completed'"
                       (click)="onExecuteItem(item.id)"

@@ -31,6 +31,26 @@ export interface ItemExecutionSummaryDto {
   serviceProgresses: ServiceProgressDto[];
 }
 
+export interface ItemExecutionRecordDto {
+  id: string;
+  workerName: string;
+  serviceCategoryName: string;
+  quantity: number;
+  executionDate: string;
+  notes: string;
+}
+
+export interface ItemExecutionHistoryDto {
+  itemId: string;
+  itemName: string;
+  quantity: number;
+  status: string;
+  groupId: string;
+  groupName: string;
+  serviceProgresses: ServiceProgressDto[];
+  executionRecords: ItemExecutionRecordDto[];
+}
+
 export interface WorkerExecutionRowDto {
   workerId: string;
   quantity: number;

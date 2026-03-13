@@ -21,6 +21,13 @@ public class ItemServiceExecutionController(IItemServiceExecutionService _servic
         return Ok(result);
     }
 
+    [HttpGet("item-history/{itemId}")]
+    public async Task<IActionResult> GetItemHistory(Guid itemId)
+    {
+        var result = await _service.GetItemExecutionHistoryAsync(itemId);
+        return Ok(result);
+    }
+
     [HttpPost("execute")]
     public async Task<IActionResult> Execute([FromBody] ExecuteServiceRequestDto payload)
     {
