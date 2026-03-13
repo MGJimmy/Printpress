@@ -71,6 +71,13 @@ public static class DependencyInjection
         #region HR
         services.AddScoped<IPayrollPeriodService, PayrollPeriodService>();
         services.AddScoped<IValidator<PayrollPeriodCreateDto>, PayrollPeriodCreateDtoValidator>();
+
+        services.AddScoped<IWorkerService, WorkerService>();
+        services.AddScoped<IValidator<WorkerCreateDto>, WorkerCreateDtoValidator>();
+        services.AddScoped<IValidator<WorkerUpdateDto>, WorkerUpdateDtoValidator>();
+
+        services.AddScoped<IWorkerSalaryTransactionService, WorkerSalaryTransactionService>();
+        services.AddScoped<IValidator<AddSalaryTransactionDto>, AddSalaryTransactionDtoValidator>();
         #endregion
 
         #region Reports

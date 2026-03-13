@@ -201,6 +201,34 @@ export const routes: Routes = [
               import('./features/hr/components/payroll-period-details/payroll-period-details.component')
                 .then(m => m.PayrollPeriodDetailsComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'workers',
+            loadComponent: () =>
+              import('./features/hr/components/worker-list/worker-list.component')
+                .then(m => m.WorkerListComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'workers/add',
+            loadComponent: () =>
+              import('./features/hr/components/worker-upsert/worker-upsert.component')
+                .then(m => m.WorkerUpsertComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'workers/edit/:id',
+            loadComponent: () =>
+              import('./features/hr/components/worker-upsert/worker-upsert.component')
+                .then(m => m.WorkerUpsertComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'workers/:id',
+            loadComponent: () =>
+              import('./features/hr/components/worker-details/worker-details.component')
+                .then(m => m.WorkerDetailsComponent),
+            canActivate: [authGuard],
           }
         ]
       },

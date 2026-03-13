@@ -103,6 +103,21 @@ export class ApiUrlResource {
     close: (id: string) => `${ApiUrlResource.PayrollPeriod_URL}/close/${id}`
   };
 
+  private static Worker_URL = '/api/Worker';
+  public static readonly WorkerAPI = {
+    getAll: ApiUrlResource.Worker_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.Worker_URL}/getById/${id}`,
+    add: ApiUrlResource.Worker_URL + '/add',
+    update: ApiUrlResource.Worker_URL + '/update',
+    deactivate: (id: string) => `${ApiUrlResource.Worker_URL}/deactivate/${id}`
+  };
+
+  private static WorkerSalaryTransaction_URL = '/api/WorkerSalaryTransaction';
+  public static readonly WorkerSalaryTransactionAPI = {
+    add: ApiUrlResource.WorkerSalaryTransaction_URL + '/add',
+    delete: (id: string) => `${ApiUrlResource.WorkerSalaryTransaction_URL}/delete/${id}`
+  };
+
   private static Reports_URL = '/api/Reports';
   public static readonly ReportsAPI = {
     orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',

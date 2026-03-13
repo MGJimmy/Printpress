@@ -2,13 +2,12 @@ using Printpress.Domain;
 
 namespace Printpress.Application;
 
-public class WorkerSalaryTransactionDto
+public class AddSalaryTransactionDto
 {
-    public Guid Id { get; set; }
-    public string WorkerName { get; set; }
+    public Guid WorkerId { get; set; }
+    public Guid PayrollPeriodId { get; set; }
     public SalaryTransactionType TransactionType { get; set; }
     public decimal Amount { get; set; }
     public DateTime TransactionDate { get; set; }
     public string Note { get; set; }
-    public string PayrollPeriodName { get; set; }
 }

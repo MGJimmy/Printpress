@@ -1,0 +1,47 @@
+using Microsoft.AspNetCore.Authorization;
+using Printpress.Application;
+
+namespace Printpress.API;
+
+[Route("api/[controller]")]
+[AllowAnonymous]
+public class WorkerController(IWorkerService _service) : AppBaseController
+{
+    [HttpGet("getAll")]
+    public async Task<IActionResult> GetAll()
+    {
+        var result = await _service.GetAllAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("getById/{id}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        [FromQuery] DateTime? productionDateFrom,
+        [FromQuery] DateTime? productionDateTo)
+    {
+        var result = await _service.GetDetailsAsync(id, productionDateFrom, productionDateTo);
+        return Ok(result);
+    }
+
+    [HttpPost("add")]
+    public async Task<IActionResult> Add(WorkerCreateDto payload)
+    {
+        var result = await _service.CreateAsync(payload, UserId);
+        return Ok(result);
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> Update(WorkerUpdateDto payload)
+    {
+        var result = await _service.UpdateAsync(payload, UserId);
+        return Ok(result);
+    }
+
+    [HttpPut("deactivate/{id}")]
+    public async Task<IActionResult> Deactivate(Guid id)
+    {
+        await _service.DeactivateAsync(id, UserId);
+        return Ok();
+    }
+}
