@@ -9,6 +9,8 @@ namespace Printpress.Domain
         public decimal Price { get; set; }
         public bool IsDeleted { get; set; }
 
+        public OrderItemStatus OrderItemStatus { get; set; }
+
         public virtual OrderGroup OrderGroup { get; set; }
         public virtual List<OrderItemDetails> Details { get; set; }
     }

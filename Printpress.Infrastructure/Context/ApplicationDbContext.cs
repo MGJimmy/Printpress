@@ -43,7 +43,7 @@ public class ApplicationDbContext : DbContext
 
     #region HR
     public DbSet<Worker> Worker { get; set; }
-    public DbSet<WorkerProduction> WorkerProduction { get; set; }
+    public DbSet<ItemServiceExecution> WorkerProduction { get; set; }
     public DbSet<WorkerSalaryTransaction> WorkerSalaryTransaction { get; set; }
     public DbSet<PayrollPeriod> PayrollPeriod { get; set; }
     #endregion

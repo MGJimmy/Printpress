@@ -19,7 +19,7 @@ namespace Printpress.Domain
 
 
         public virtual ICollection<WorkerSalaryTransaction> SalaryTransactions { get; set; }
-        public virtual ICollection<WorkerProduction> WorkerProductions { get; set; }
+        public virtual ICollection<ItemServiceExecution> WorkerProductions { get; set; }
 
     }
 }

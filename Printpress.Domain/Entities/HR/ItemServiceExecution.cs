@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain
 {
-    public class WorkerProduction : Entity
+    public class ItemServiceExecution : Entity
     {
         public Guid WorkerId { get; set; }
         public Guid OrderItemId { get; set; }
         public Guid ServiceCategoryId { get; set; }
-        public DateTime ProductionDate { get; set; }
+        public DateTime ExecutionDate { get; set; }
         public int Quantity { get; set; }
         public string Notes { get; set; }
         public virtual Worker Worker { get; set; }

@@ -11,7 +11,7 @@ namespace Printpress.Infrastructure
         public static void ConfigureHR(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Worker>().Configure();
-            modelBuilder.Entity<WorkerProduction>().Configure();
+            modelBuilder.Entity<ItemServiceExecution>().Configure();
             modelBuilder.Entity<WorkerSalaryTransaction>().Configure();
             modelBuilder.Entity<PayrollPeriod>().Configure();
         }
@@ -46,7 +46,7 @@ namespace Printpress.Infrastructure
                 .HasForeignKey(x => x.WorkerId);
         }
 
-        private static void Configure(this EntityTypeBuilder<WorkerProduction> entity)
+        private static void Configure(this EntityTypeBuilder<ItemServiceExecution> entity)
         {
             entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);

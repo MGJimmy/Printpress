@@ -2,9 +2,9 @@
 {
     public enum OrderStatusEnum
     {
-        New,
-        InProgress,
-        Completed,
-        Delivered
+        New = 1,
+        InProgress = 2,
+        Completed = 3,
+        Delivered = 4
     }
 }

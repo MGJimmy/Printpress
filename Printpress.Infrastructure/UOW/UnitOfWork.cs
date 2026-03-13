@@ -30,7 +30,7 @@ namespace Printpress.Infrastructure
         private IGenericRepository<SparePartSellingInvoice> _sparePartSellingInvoiceRepository;
         private IReportRepository _reportRepository;
         private IGenericRepository<Worker> _workerRepository;
-        private IGenericRepository<WorkerProduction> _workerProductionRepository;
+        private IGenericRepository<ItemServiceExecution> _workerProductionRepository;
         private IGenericRepository<WorkerSalaryTransaction> _workerSalaryTransactionRepository;
         private IGenericRepository<PayrollPeriod> _payrollPeriodRepository;
 
@@ -223,12 +223,12 @@ namespace Printpress.Infrastructure
             }
         }
 
-        public IGenericRepository<WorkerProduction> WorkerProductionRepository
+        public IGenericRepository<ItemServiceExecution> WorkerProductionRepository
         {
             get
             {
                 if (_workerProductionRepository == null)
-                    _workerProductionRepository = new GenericRepository<WorkerProduction>(_context);
+                    _workerProductionRepository = new GenericRepository<ItemServiceExecution>(_context);
                 return _workerProductionRepository;
             }
         }

@@ -29,16 +29,16 @@ internal sealed class WorkerService(
 
         var productionQuery = _unitOfWork.WorkerProductionRepository
             .Filter(p => p.WorkerId == id,
-                nameof(WorkerProduction.ServiceCategory),
-                $"{nameof(WorkerProduction.OrderItem)}.{nameof(OrderItem.OrderGroup)}");
+                nameof(ItemServiceExecution.ServiceCategory),
+                $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}");
 
         if (productionDateFrom.HasValue)
-            productionQuery = productionQuery.Where(p => p.ProductionDate >= productionDateFrom.Value);
+            productionQuery = productionQuery.Where(p => p.ExecutionDate >= productionDateFrom.Value);
         if (productionDateTo.HasValue)
-            productionQuery = productionQuery.Where(p => p.ProductionDate <= productionDateTo.Value);
+            productionQuery = productionQuery.Where(p => p.ExecutionDate <= productionDateTo.Value);
 
         var productions = productionQuery
-            .OrderByDescending(p => p.ProductionDate)
+            .OrderByDescending(p => p.ExecutionDate)
             .Select(MapProductionToDto)
             .ToList();
 
@@ -151,10 +151,10 @@ internal sealed class WorkerService(
         PayrollPeriodName = t.PayrollPeriod?.Name ?? string.Empty
     };
 
-    private static WorkerProductionDto MapProductionToDto(WorkerProduction p) => new()
+    private static WorkerProductionDto MapProductionToDto(ItemServiceExecution p) => new()
     {
         Id = p.Id,
-        ProductionDate = p.ProductionDate,
+        ProductionDate = p.ExecutionDate,
         ServiceCategoryName = p.ServiceCategory?.Name ?? string.Empty,
         OrderName = p.OrderItem?.OrderGroup?.Name ?? string.Empty,
         Quantity = p.Quantity,
