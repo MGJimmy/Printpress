@@ -19,6 +19,7 @@ import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 export interface ServiceCat_interface {
   id: string;
@@ -75,7 +76,8 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     private currentComponentDialogRef: MatDialogRef<OrderGroupServiceUpsertComponent>,
     private serviceService: ServiceService,
     private orderSharedDataService:OrderSharedDataService,
-    @Inject(MAT_DIALOG_DATA) public inputData: any
+    @Inject(MAT_DIALOG_DATA) public inputData: any,
+    private _t: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -150,7 +152,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   addGroupService(): void {
     if (!this.selectedCategory || !this.selectedServiceId) {
-      this.alertService.showError('من فضلك اختر نوع الخدمة أولا');
+      this.alertService.showError(this._t.t('orders.select_service_type_first'));
       this.clearSelections();
       return;
     }
@@ -158,39 +160,39 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     const selectedService = this.allServices.find((svc) => svc.id === this.selectedServiceId);
 
     if (!selectedService) {
-      this.alertService.showError('حدث خطأ في اختيار نوع الخدمة');
+      this.alertService.showError(this._t.t('orders.error_service_type'));
       return;
     }
 
     if (this.tableData?.some((row) => row.serviceCategoryCode === selectedService.serviceCategoryCode)) { // validate on category
-      this.alertService.showError('لا يمكنك إضافة خدمات من نفس النوع أكثر من مرة');
+      this.alertService.showError(this._t.t('orders.service_type_duplicate'));
       return;
     }
 
     this.orderSharedDataService.addOrderGroupService(this.groupId, selectedService);
     this.fillPageData();
 
-    this.alertService.showSuccess('تم إضافة الخدمة بنجاح');
+    this.alertService.showSuccess(this._t.t('orders.service_added'));
   }
 
   protected onDeleteServiceCat(serviceId: string): void {
     if (!this.validateBeforeDelete()) {
-      this.alertService.showError('لا يمكن حذف خدمة. المجموعة تحتوي علي عناصر مضافة');
+      this.alertService.showError(this._t.t('orders.service_delete_has_items'));
       return;
     }
     
     const dialogData: ConfirmDialogModel = {
-      title: 'تأكيد الحذف',
-      message: 'هل أنت متأكد أنك تريد حذف هذه الخدمة ؟',
-      confirmText: 'نعم',
-      cancelText: 'إلغاء',
+      title: this._t.t('orders.confirm_delete'),
+      message: this._t.t('orders.delete_service_msg'),
+      confirmText: this._t.t('shared.yes'),
+      cancelText: this._t.t('shared.cancel'),
     };
 
     const dialogSub = this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
       if (confirmed) {
         this.orderSharedDataService.deleteGroupService(this.groupId, serviceId);
         this.fillPageData();
-        this.alertService.showSuccess('تم حذف الخدمة بنجاح!');
+        this.alertService.showSuccess(this._t.t('orders.service_deleted'));
       }
     });
 
@@ -207,7 +209,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   protected onClickSave() {
     if (!this.tableData || this.tableData.length == 0) {
-      this.alertService.showError("لا يمكن حفظ خدمات المجموعة فارغة");
+      this.alertService.showError(this._t.t('orders.services_empty'));
       return;
     }
 

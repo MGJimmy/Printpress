@@ -115,8 +115,14 @@
     </div>
   </div>
 
-  <div class="logout-section list-group-item list-group-item-action"
-  >
+  <div class="lang-section">
+    <button (click)="toggleLanguage()" class="lang-btn" [title]="translationService.currentLang === 'ar' ? 'Switch to English' : 'التبديل للعربية'">
+      <fa-icon [icon]="faGlobe" class="mx-2"></fa-icon>
+      <span>{{ translationService.currentLang === 'ar' ? 'English' : 'العربية' }}</span>
+    </button>
+  </div>
+
+  <div class="logout-section list-group-item list-group-item-action">
     <button (click)="confirmLogout()" class="logout-btn">
       <fa-icon class="mx-2" [icon]="faSignOutAlt"></fa-icon>
       <span>تسجيل الخروج</span>

@@ -20,6 +20,7 @@ import {
   ExecuteServiceRequestDto
 } from '../../models/execution/execution.dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-execute-item-service',
@@ -64,7 +65,8 @@ export class ExecuteItemServiceComponent implements OnInit {
     private fb: NonNullableFormBuilder,
     private executionService: ItemServiceExecutionService,
     private workerService: WorkerService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private _t: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -78,14 +80,14 @@ export class ExecuteItemServiceComponent implements OnInit {
       next: (res) => {
         this.itemSummary = res.data;
       },
-      error: () => this.alertService.showError('حدث خطأ أثناء تحميل بيانات العنصر')
+      error: () => this.alertService.showError(this._t.t('orders.error_loading_item'))
     });
 
     this.workerService.getAll().subscribe({
       next: (res) => {
         this.workers = res.data.filter(w => w.isActive);
       },
-      error: () => this.alertService.showError('حدث خطأ أثناء تحميل بيانات العمال')
+      error: () => this.alertService.showError(this._t.t('orders.error_loading_workers'))
     });
   }
 
@@ -127,7 +129,7 @@ export class ExecuteItemServiceComponent implements OnInit {
       return;
     }
     if (this.workerRows.length === 0) {
-      this.alertService.showError('يجب إضافة عامل واحد على الأقل');
+      this.alertService.showError(this._t.t('orders.worker_required'));
       return;
     }
 
@@ -143,12 +145,12 @@ export class ExecuteItemServiceComponent implements OnInit {
     this.isSaving = true;
     this.executionService.execute(payload).subscribe({
       next: () => {
-        this.alertService.showSuccess('تم حفظ التنفيذ بنجاح');
+        this.alertService.showSuccess(this._t.t('orders.execution_saved'));
         this.router.navigate([`/order/groups/${this.groupId}/items`]);
       },
       error: (err) => {
         this.isSaving = false;
-        const msg = err?.error?.message || 'حدث خطأ أثناء حفظ التنفيذ';
+        const msg = err?.error?.message || this._t.t('orders.error_executing');
         this.alertService.showError(msg);
       }
     });

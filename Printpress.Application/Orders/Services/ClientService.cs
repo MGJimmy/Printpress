@@ -2,7 +2,7 @@
 
 namespace Printpress.Application;
 
-internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper, IGuidGenerator _guidGenerator) : IClientService
+internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clientMapper, IGuidGenerator _guidGenerator, ILocalizationService _loc) : IClientService
 {
     public async Task<ClientDto> AddAsync(ClientUpsertDto payload, string userId)
     {
@@ -40,7 +40,7 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
 
         var client = await _unitOfWork.ClientRepository.FindAsync(id);
 
-        if (client is null) throw new ValidationExeption("Client not found");
+        if (client is null) throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ClientNotFound));
 
         return _clientMapper.MapFromSourceToDestination(client);
     }

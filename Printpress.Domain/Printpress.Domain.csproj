@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.15" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Shared\Localization\**\*.json" />
+  </ItemGroup>
+
 </Project>

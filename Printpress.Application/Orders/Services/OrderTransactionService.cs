@@ -2,7 +2,7 @@
 
 namespace Printpress.Application;
 
-internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper) : IOrderTransactionService
+internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper, ILocalizationService _loc) : IOrderTransactionService
 {
     public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload, string userId)
     {
@@ -32,11 +32,11 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
     {
         if (!EnumHelper.IsValidEnumValue(typeof(OrderTransactionType), payload.TransactionType))
         {
-            throw new ValidationExeption("Transaction type cannot be identified!");
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.InvalidTransactionType));
         }
         if (payload.Amount <= 0)
         {
-            throw new ValidationExeption("Transaction Amount must be a positive value!");
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.AmountMustBePositive));
         }
     }
 
@@ -45,12 +45,12 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
         if (EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Payment &&
             payload.Amount > (order.TotalPrice - order.TotalPaid))
         {
-            throw new ValidationExeption("Payment Amount cannot exceed remaining!");
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.PaymentExceedsRemaining));
         }
         if (EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Refund &&
             payload.Amount > order.TotalPaid)
         {
-            throw new ValidationExeption("Refund Amount cannot exceed order total paid!");
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.RefundExceedsPaid));
         }
     }
 

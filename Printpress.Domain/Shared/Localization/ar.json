@@ -1,0 +1,11 @@
+{
+  "shared.success": "تمت العملية بنجاح",
+  "shared.no_data_found": "لا توجد بيانات",
+  "shared.invalid_payload": "طلب غير صالح",
+  "shared.internal_server_error": "خطأ داخلي في الخادم، يرجى المحاولة مرة أخرى أو التواصل مع المسؤول",
+  "shared.validation_failure": "حدث خطأ في التحقق من صحة البيانات",
+  "shared.not_found_by_id": "لا توجد بيانات للمعرّف المطلوب",
+  "shared.required": "{0} مطلوب",
+  "shared.max_length": "{0} يجب أن لا يتجاوز {1} حرفاً",
+  "shared.must_be_positive": "{0} يجب أن يكون أكبر من صفر"
+}

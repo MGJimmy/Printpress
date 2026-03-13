@@ -21,8 +21,10 @@ import {
   faChartBar,
   faWrench,
   faUserTie,
-  faUsers
+  faUsers,
+  faGlobe
 } from '@fortawesome/free-solid-svg-icons';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -51,6 +53,7 @@ export class SidebarComponent implements OnDestroy {
   faWrench = faWrench;
   faUserTie = faUserTie;
   faUsers = faUsers;
+  faGlobe = faGlobe;
 
   isReportsExpanded = false;
   isHRExpanded = false;
@@ -60,7 +63,8 @@ export class SidebarComponent implements OnDestroy {
   constructor(
     private router: Router,
     private dialogService: DialogService,
-    private authService: AuthService
+    private authService: AuthService,
+    public translationService: TranslationService
   ) {}
 
   toggleSidebar(): void {
@@ -76,6 +80,11 @@ export class SidebarComponent implements OnDestroy {
     this.isHRExpanded = !this.isHRExpanded;
   }
 
+
+  toggleLanguage(): void {
+    const next = this.translationService.currentLang === 'ar' ? 'en' : 'ar';
+    this.translationService.setLanguage(next as 'ar' | 'en');
+  }
 
   confirmLogout(): void {
     const dialogData: ConfirmDialogModel = {

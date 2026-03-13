@@ -24,6 +24,7 @@ import { GroupDeleveryPopupComponent } from '../popup/group-delevery-popup/group
 import { OrderServicesGetDTO } from '../../models/order-service/order-service-getDto';
 import { mapOrderGetToUpsert } from '../../models/order-mapper';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-order-add-update',
@@ -39,12 +40,14 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public groupStatusFilter: string = 'all';
   private allGroupRows: OrderGroupGridViewModel[] = [];
-  public readonly groupStatusLabels: Record<string, string> = {
-    New: 'جديد',
-    InProgress: 'قيد التنفيذ',
-    Completed: 'مكتمل',
-    Delivered: 'تم التسليم'
-  };
+  public get groupStatusLabels(): Record<string, string> {
+    return {
+      New: this._t.t('orders.status_new'),
+      InProgress: this._t.t('orders.status_in_progress'),
+      Completed: this._t.t('orders.status_completed'),
+      Delivered: this._t.t('orders.status_delivered')
+    };
+  }
   public clients: ClientGetDto[] = [];
   public orderClientId!: string
   public orderName!: string;
@@ -61,7 +64,8 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private orderComm: OrderCommunicationService,
     private dialogService: DialogService,
-    private orderRoutingService: OrderRoutingService
+    private orderRoutingService: OrderRoutingService,
+    private _t: TranslationService
   ) {
     this.componentMode = new ComponentMode(this.router);
     this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
@@ -144,10 +148,10 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   protected onDeleteGroup(groupId: string) {
     const dialogData: ConfirmDialogModel = {
-      title: 'تأكيد الحذف',
-      message: 'هل أنت متأكد أنك تريد حذف هذه المجموعة؟',
-      confirmText: 'نعم',
-      cancelText: 'إلغاء',
+      title: this._t.t('orders.confirm_delete'),
+      message: this._t.t('orders.delete_group_msg'),
+      confirmText: this._t.t('shared.yes'),
+      cancelText: this._t.t('shared.cancel'),
     };
 
     this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
@@ -157,7 +161,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
         this.bindGroups();
 
-        this.alertService.showSuccess('تم حذف المجموعة بنجاح!');
+        this.alertService.showSuccess(this._t.t('orders.group_deleted'));
       }
     });
   }
@@ -199,11 +203,11 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
           upsertObservable.subscribe({
             next: (response) => {
               this.OrderSharedService.onOrderSaved();
-              this.alertService.showSuccess('تم حفظ الطلبية بنجاح');
+              this.alertService.showSuccess(this._t.t('orders.order_saved'));
               this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
             },
             error: (error) => {
-              this.alertService.showError('حدث خطأ أثناء حفظ الطلبية');
+              this.alertService.showError(this._t.t('orders.error_saving_order'));
             }
           });
           
@@ -221,15 +225,15 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     const order= this.OrderSharedService.getOrderObject_copy()
     const emptyGroupsList = order.orderGroups.length == 0;
     if (emptyGroupsList) {
-      this.alertService.showError('يجب إضافة مجموعات للطلبية');
+      this.alertService.showError(this._t.t('orders.groups_required'));
       return false;
     }
     if(!order.name){
-      this.alertService.showError("يجب إدخال اسم الطلبية")
+      this.alertService.showError(this._t.t('orders.order_name_required'))
       return false;
     }
     if(!order.clientId){
-      this.alertService.showError("يجب اختيار العميل")
+      this.alertService.showError(this._t.t('orders.client_required'))
       return false;
     }
 
@@ -301,7 +305,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
               this.orderGetDto = res.data
               this.OrderSharedService.setOrderObject(this.orderGetDto);      
               this.bindGroups()
-              this.alertService.showSuccess('تم تسليم المجموعة بنجاح');
+              this.alertService.showSuccess(this._t.t('orders.group_delivered'));
             })}
         })   
       }

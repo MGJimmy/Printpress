@@ -153,8 +153,39 @@
 
 
 
-.logout-section {
+.lang-section {
   margin-top: auto;
+  margin-bottom: 8px;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #17a2b8;
+  color: white;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lang-btn:hover {
+  background-color: #117a8b;
+}
+
+#sidebar-wrapper.toggled .lang-btn span {
+  width: 0;
+  opacity: 0;
+}
+
+.logout-section {
+  margin-top: 0;
 }
 
 .logout-btn {

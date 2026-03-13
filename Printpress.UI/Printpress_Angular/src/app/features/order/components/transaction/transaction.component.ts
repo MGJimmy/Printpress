@@ -20,6 +20,7 @@ import { DialogService } from '../../../../shared/services/dialog.service';
 import { firstValueFrom } from 'rxjs';
 import { OrderCommunicationService } from '../../services/order-communication.service';
 import { OrderEventType } from '../../models/enums/order-events.enum';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-transaction',
@@ -40,12 +41,14 @@ import { OrderEventType } from '../../models/enums/order-events.enum';
 })
 export class TransactionComponent implements OnInit {
 
-  columnDefs: TableColDefinitionModel[] = [
-    { headerName: 'المبلغ المدفوع', column: 'amount' },
-    { headerName: 'نوع المعاملة', column: 'transactionType' },
-    { headerName: 'ملحوظة', column: 'note' },
-    { headerName: 'تاريخ المعاملة', column: 'createdOn' },
-  ];
+  get columnDefs(): TableColDefinitionModel[] {
+    return [
+      { headerName: this._t.t('orders.col_amount_paid'), column: 'amount' },
+      { headerName: this._t.t('orders.col_transaction_type'), column: 'transactionType' },
+      { headerName: this._t.t('orders.col_note'), column: 'note' },
+      { headerName: this._t.t('orders.col_transaction_date'), column: 'createdOn' },
+    ];
+  }
 
   transactions!: OrderTransactionGetDto[];
   amount: number | null = null;
@@ -64,7 +67,8 @@ export class TransactionComponent implements OnInit {
     private alertService: AlertService,
     private orderSharedDataService: OrderSharedDataService,
     private dialogService: DialogService,
-    private orderComm: OrderCommunicationService
+    private orderComm: OrderCommunicationService,
+    private _t: TranslationService
   ) {
     this.orderId = inputData.orderId;
     this.orderName = orderSharedDataService.getOrderObject_copy().name;
@@ -78,10 +82,10 @@ export class TransactionComponent implements OnInit {
   async onPay(): Promise<void> {
     if (this.amount) {
       const dialogData = {
-        title: 'تأكيد الدفع',
-        message: `هل أنت متأكد من دفع مبلغ ${this.amount} جنيه؟`,
-        confirmText: 'نعم',
-        cancelText: 'إلغاء',
+        title: this._t.t('orders.confirm_payment'),
+        message: this._t.t('orders.payment_msg', { amount: this.amount }),
+        confirmText: this._t.t('shared.yes'),
+        cancelText: this._t.t('shared.cancel'),
       };
 
       const confirmed = await firstValueFrom(this.dialogService.confirmDialog(dialogData));
@@ -94,10 +98,10 @@ export class TransactionComponent implements OnInit {
   async onRefund(): Promise<void> {
     if (this.amount) {
       const dialogData = {
-        title: 'تأكيد الاسترداد',
-        message: `هل أنت متأكد من استرداد مبلغ ${this.amount} جنيه؟`,
-        confirmText: 'نعم',
-        cancelText: 'إلغاء',
+        title: this._t.t('orders.confirm_refund'),
+        message: this._t.t('orders.refund_msg', { amount: this.amount }),
+        confirmText: this._t.t('shared.yes'),
+        cancelText: this._t.t('shared.cancel'),
       };
 
       const confirmed = await firstValueFrom(this.dialogService.confirmDialog(dialogData));
@@ -117,14 +121,14 @@ export class TransactionComponent implements OnInit {
 
     this.orderTransactionService.addTransaction(OrderTransactionAddDto).subscribe({
       next: (response) => {
-        this.alertService.showSuccess('تمت العملية بنجاح');
+        this.alertService.showSuccess(this._t.t('orders.transaction_success'));
         this.resetForm();
         this.fetchTransactions();
         this.orderComm.emit(OrderEventType.ORDER_MAINDATA_UPDATED);
       },
       error: (error) => {
         console.error(error);
-        this.alertService.showError('حدث خطأ أثناء تنفيذ العملية');
+        this.alertService.showError(this._t.t('orders.error_executing'));
       }
     });
   }

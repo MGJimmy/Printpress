@@ -1,0 +1,11 @@
+{
+  "shared.success": "Request proceeded successfully",
+  "shared.no_data_found": "No data found",
+  "shared.invalid_payload": "Invalid payload",
+  "shared.internal_server_error": "Internal server error, please try again or contact administration",
+  "shared.validation_failure": "One or more validation errors occurred",
+  "shared.not_found_by_id": "No data exist for the requested ID",
+  "shared.required": "{0} is required",
+  "shared.max_length": "{0} must not exceed {1} characters",
+  "shared.must_be_positive": "{0} must be greater than 0"
+}

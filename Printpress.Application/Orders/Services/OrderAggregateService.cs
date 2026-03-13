@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Printpress.Domain;
 namespace Printpress.Application;
 
-internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper, IGuidGenerator _guidGenerator) : IOrderAggregateService
+internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper, IGuidGenerator _guidGenerator, ILocalizationService _loc) : IOrderAggregateService
 {
     public async Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize)
     {
@@ -32,7 +32,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, includes);
 
-        if (order is null) ValidationExeption.FireValidationException("order with {id} not found", orderId);
+        if (order is null) ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
 
         var orderDTO = order.MapToOrderDTO();
 
@@ -43,7 +43,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync((order => order.Id == orderId), false, nameof(Order.Client));
 
-        if (order is null) ValidationExeption.FireValidationException("order with {id} not found", orderId);
+        if (order is null) ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
 
         return order.MapToOrderMainDataDto();
     }
@@ -183,9 +183,9 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     public async Task DeleteOrder(Guid id, string userId)
     {
         var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync(o => o.Id == id);
-        
-        if (order is null) 
-            ValidationExeption.FireValidationException("Order with ID {0} not found", id);
+
+        if (order is null)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
 
         _IUnitOfWork.OrderRepository.Remove(order);
         await _IUnitOfWork.SaveChangesAsync(userId);

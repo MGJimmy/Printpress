@@ -12,6 +12,7 @@ import { OrderRoutingService } from '../../services/order-routing.service';
 import { Router } from '@angular/router';
 import { OrderStatus } from '../../models/enums/order-status.enum';
 import { UserRoleEnum } from '../../../../core/models/user-role.enum';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-order-view',
@@ -33,7 +34,8 @@ export class OrderListComponent implements OnInit {
     private alertService: AlertService,
     private dialogService: DialogService,
     private router: Router,
-    private orderRoutingService: OrderRoutingService
+    private orderRoutingService: OrderRoutingService,
+    private _t: TranslationService
   )  {
     this.dataSource = new MatTableDataSource<OrderSummaryDto>();
     this.totalCount = 0;
@@ -62,21 +64,21 @@ export class OrderListComponent implements OnInit {
 
   public async onDeleteOrder(id: string) {
     const dialogData = {
-      title: 'تأكيد الحذف',
-      message: 'هل أنت متأكد أنك تريد حذف هذه الطلبيه؟',
-      confirmText: 'نعم',
-      cancelText: 'إلغاء',
+      title: this._t.t('orders.confirm_delete'),
+      message: this._t.t('orders.delete_order_msg'),
+      confirmText: this._t.t('shared.yes'),
+      cancelText: this._t.t('shared.cancel'),
     };
 
     const confirmed = await firstValueFrom(this.dialogService.confirmDialog(dialogData));
-    
+
     if (confirmed) {
       try {
         await firstValueFrom(this.orderService.deleteOrder(id));
-        this.alertService.showSuccess('تم حذف الطلبيه بنجاح');
+        this.alertService.showSuccess(this._t.t('orders.order_deleted'));
         await this.loadOrders();
       } catch (error) {
-        this.alertService.showError('حدث خطأ اثناء حذف الطلبيه');
+        this.alertService.showError(this._t.t('orders.error_deleting_order'));
       }
     }
   }
@@ -114,16 +116,11 @@ export class OrderListComponent implements OnInit {
 
   getStatusText(status: OrderStatus): string {
     switch (status) {
-      case OrderStatus.New:
-        return 'جديد';
-      case OrderStatus.InProgress:
-        return 'قيد التنفيذ';
-      case OrderStatus.Completed:
-        return 'مكتمل';
-      case OrderStatus.Delivered:
-        return 'تم التسليم';
-      default:
-        return 'غير معروف';
+      case OrderStatus.New:        return this._t.t('orders.status_new');
+      case OrderStatus.InProgress: return this._t.t('orders.status_in_progress');
+      case OrderStatus.Completed:  return this._t.t('orders.status_completed');
+      case OrderStatus.Delivered:  return this._t.t('orders.status_delivered');
+      default:                     return this._t.t('orders.status_unknown');
     }
   }
 }

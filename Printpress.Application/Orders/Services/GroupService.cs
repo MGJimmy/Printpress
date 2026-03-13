@@ -2,7 +2,7 @@
 
 namespace Printpress.Application;
 
-internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
+internal sealed class GroupService(IUnitOfWork unitOfWork, ILocalizationService _loc) : IOrderGroupService
 {
     public async Task<bool> DeliverGroup(DeliverGroupDto groupDeliveryDto, string userId)
     {
@@ -11,12 +11,12 @@ internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
 
         if (orderGroup is null)
         {
-            ValidationExeption.FireValidationException($"Order group with id {groupDeliveryDto.Id} not found.");
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupNotFound));
         }
 
         if (orderGroup.DeliveryDate.HasValue)
         {
-            ValidationExeption.FireValidationException($"Order group with ID {groupDeliveryDto.Id} is already delivered on {orderGroup.DeliveryDate:yyyy-MM-dd}.");
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupAlreadyDelivered, orderGroup.DeliveryDate?.ToString("yyyy-MM-dd")));
         }
 
         orderGroup.DeliveryDate = groupDeliveryDto.DeliveryDate;
@@ -49,7 +49,7 @@ internal sealed class GroupService(IUnitOfWork unitOfWork ) : IOrderGroupService
 
         if (order is null)
         {
-            ValidationExeption.FireValidationException($"Order with ID {orderId} not found.");
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
         }
 
         order.Status = OrderStatusEnum.Delivered;

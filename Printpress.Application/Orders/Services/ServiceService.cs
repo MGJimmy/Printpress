@@ -2,7 +2,7 @@
 
 namespace Printpress.Application
 {
-    internal sealed class ServiceService(IUnitOfWork _unitOfWork, ServiceMapper serviceMapper, IGuidGenerator _guidGenerator) : IServiceService
+    internal sealed class ServiceService(IUnitOfWork _unitOfWork, ServiceMapper serviceMapper, IGuidGenerator _guidGenerator, ILocalizationService _loc) : IServiceService
     {
 
         public async Task<ServiceDto> AddAsync(ServiceUpsertDto payload, string userId)
@@ -23,7 +23,7 @@ namespace Printpress.Application
         {
             Service service = await _unitOfWork.ServiceRepository.FindAsync(id);
 
-            if (service is null) throw new ValidationExeption("Service not found");
+            if (service is null) throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ServiceNotFound));
 
             _unitOfWork.ServiceRepository.Remove(service);
             await _unitOfWork.SaveChangesAsync(userId);
@@ -40,7 +40,7 @@ namespace Printpress.Application
         {
             Service service = await _unitOfWork.ServiceRepository.FirstOrDefaultAsync(x => x.Id == id, false, nameof(Service.ServiceCategory), nameof(Service.InventoryItem));
 
-            if (service is null) throw new ValidationExeption("Service not found");
+            if (service is null) throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ServiceNotFound));
 
             return serviceMapper.MapFromSourceToDestination(service);
         }

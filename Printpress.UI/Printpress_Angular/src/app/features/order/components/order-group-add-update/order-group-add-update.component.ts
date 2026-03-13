@@ -21,6 +21,7 @@ import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import * as XLSX from 'xlsx';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -58,7 +59,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     private orderSharedService: OrderSharedDataService,
     private injector: Injector,
     private dialogService: DialogService,
-    private orderRoutingService: OrderRoutingService
+    private orderRoutingService: OrderRoutingService,
+    private _t: TranslationService
   ) {
   }
 
@@ -163,10 +165,10 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   protected deleteItem_Click(item: ItemGetDto) {
     const dialogData: ConfirmDialogModel = {
-      title: 'تأكيد الحذف',
-      message: 'هل أنت متأكد أنك تريد حذف هذا العنصر ؟',
-      confirmText: 'نعم',
-      cancelText: 'إلغاء',
+      title: this._t.t('orders.confirm_delete'),
+      message: this._t.t('orders.delete_item_msg'),
+      confirmText: this._t.t('shared.yes'),
+      cancelText: this._t.t('shared.cancel'),
     };
 
     this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
@@ -175,7 +177,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
         this.setCurrentGroupData();
 
-        this.alertService.showSuccess('تم حذف العنصر بنجاح!');
+        this.alertService.showSuccess(this._t.t('orders.item_deleted'));
       }
     });
   }
@@ -204,12 +206,12 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   private validateGroup(): boolean {
     if (!this.groupName) {
-      this.alertService.showError('أدخل اسم المجموعة');
+      this.alertService.showError(this._t.t('orders.group_name_required'));
       return false;
     }
 
     if (!this.groupItems || this.groupItems.length == 0) {
-      this.alertService.showError('لابد من إدخال عناصر للمجموعة');
+      this.alertService.showError(this._t.t('orders.group_items_required'));
       return false;
     }
 
@@ -306,7 +308,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
       } catch (error) {
         console.error('Error processing Excel file:', error);
-        this.alertService.showError('خطأ في قراءة ملف Excel');
+        this.alertService.showError(this._t.t('orders.error_excel'));
       }
     };
 
@@ -316,7 +318,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   private importItemsFromRows(rows: any[][]): void {
     const group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
     if (!group) {
-      this.alertService.showError('خطأ: لم يتم العثور على المجموعة');
+      this.alertService.showError(this._t.t('orders.group_not_found_error'));
       return;
     }
 

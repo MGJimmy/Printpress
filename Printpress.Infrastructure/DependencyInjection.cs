@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,8 @@ public static class DependencyInjection
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidGenerator, GuidGenerator>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ILocalizationService, LocalizationService>();
 
         services.AddScoped(
             sp => sp.GetRequiredService<IUnitOfWork>().InventoryItemRepository);
