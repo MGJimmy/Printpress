@@ -2,7 +2,13 @@ export class ApiUrlResource {
 
   private static Account_URL = '/api/Account';
   public static readonly AccountAPI = {
-    login: ApiUrlResource.Account_URL + '/login'
+    login: ApiUrlResource.Account_URL + '/login',
+    getAllUsers: ApiUrlResource.Account_URL + '/get-all-users',
+    getAllRoles: ApiUrlResource.Account_URL + '/get-all-roles',
+    createUser: ApiUrlResource.Account_URL + '/create-user',
+    updateUser: ApiUrlResource.Account_URL + '/update-user',
+    deleteUser: (id: string) => `${ApiUrlResource.Account_URL}/delete-user/${id}`,
+    changePassword: ApiUrlResource.Account_URL + '/change-password',
   };
 
   private static Cliet_URL = '/api/client';

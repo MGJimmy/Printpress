@@ -10,6 +10,7 @@ public interface IIdmProvider<TUser> where TUser : IApplicationUser
     Task<(bool Success, string ErrorMessage)> CreateUserAsync(TUser user, string password);
     Task<(bool Success, string ErrorMessage)> AssignRolesToUser(TUser user, IEnumerable<string> roles);
     Task<TUser> FindByIdAsync(string userId);
+    Task<(bool Success, string ErrorMessage)> ReplaceRolesAsync(TUser user, IEnumerable<string> newRoles);
 }
 
 

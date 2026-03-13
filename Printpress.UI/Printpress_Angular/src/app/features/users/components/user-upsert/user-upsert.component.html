@@ -1,0 +1,86 @@
+<div class="container mt-4 mb-5 rtl">
+
+  <div class="page-header mb-4">
+    <h2 class="text-center text-primary border-bottom pb-3">
+      {{ isEdit ? 'تعديل المستخدم' : 'إضافة مستخدم جديد' }}
+    </h2>
+  </div>
+
+  <mat-card class="shadow-sm">
+    <mat-card-content>
+      <form [formGroup]="form">
+
+        <div class="row g-3 mb-3">
+
+          <div class="col-md-6" *ngIf="!isEdit">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>اسم المستخدم</mat-label>
+              <input matInput formControlName="userName" />
+              <mat-error>اسم المستخدم مطلوب</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>البريد الإلكتروني</mat-label>
+              <input matInput formControlName="email" type="email" />
+              <mat-error>البريد الإلكتروني غير صحيح</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>الاسم الأول</mat-label>
+              <input matInput formControlName="firstName" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>الاسم الأخير</mat-label>
+              <input matInput formControlName="lastName" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>رقم الهاتف</mat-label>
+              <input matInput formControlName="phoneNumber" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>الصلاحيات</mat-label>
+              <mat-select formControlName="roles" multiple>
+                <mat-option *ngFor="let role of availableRoles" [value]="role">{{ role }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6" *ngIf="!isEdit">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>كلمة المرور</mat-label>
+              <input matInput formControlName="password" type="password" />
+              <mat-error>كلمة المرور مطلوبة</mat-error>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button mat-raised-button color="primary" type="button" (click)="onSave()" [disabled]="isSaving">
+            <mat-icon>save</mat-icon>
+            {{ isSaving ? 'جاري الحفظ...' : 'حفظ' }}
+          </button>
+          <button mat-raised-button color="warn" type="button" (click)="onBack()">
+            <mat-icon>cancel</mat-icon>
+            إلغاء
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+</div>

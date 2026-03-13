@@ -116,6 +116,38 @@ public class AccountController : AppBaseController
         return Ok(await _mediator.Send(query));
     }
 
+    [HttpPut("update-user")]
+    [Role(RoleName.Admin)]
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto dto)
+    {
+        var result = await _mediator.Send(new UpdateUserCommand { Dto = dto });
+        return Ok(result);
+    }
+
+    [HttpDelete("delete-user/{userId}")]
+    [Role(RoleName.Admin)]
+    public async Task<IActionResult> DeleteUser(string userId)
+    {
+        var result = await _mediator.Send(new DeleteUserCommand { UserId = userId });
+        return Ok(result);
+    }
+
+    [HttpPost("change-password")]
+    [Role(RoleName.Admin)]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand request)
+    {
+        var result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpGet("get-all-roles")]
+    [Role(RoleName.Admin)]
+    public IActionResult GetAllRoles()
+    {
+        var roles = new List<string> { RoleName.Admin, RoleName.User };
+        return Ok(roles);
+    }
+
 
     #region Private Methods
 

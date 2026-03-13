@@ -82,5 +82,22 @@ namespace Identity.Service
             }
             return (false, string.Join(", ", result.Errors.Select(e => e.Description)));
         }
+        public async Task<(bool Success, string ErrorMessage)> ReplaceRolesAsync(TUser user, IEnumerable<string> newRoles)
+        {
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+                return (false, string.Join(", ", removeResult.Errors.Select(e => e.Description)));
+
+            var newRolesList = newRoles.ToList();
+            if (newRolesList.Count == 0)
+                return (true, null);
+
+            var addResult = await _userManager.AddToRolesAsync(user, newRolesList);
+            if (addResult.Succeeded)
+                return (true, null);
+
+            return (false, string.Join(", ", addResult.Errors.Select(e => e.Description)));
+        }
     }
 }

@@ -1,20 +1,38 @@
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Identity.Service
+namespace Identity.Service;
+
+public class GetAlluserQueryHandler : IRequestHandler<GetAlluserQuery, List<UserDto>>
 {
-    public class GetAlluserQueryHandler : IRequestHandler<GetAlluserQuery, List<User>>
+    private readonly IdentityDbContext _context;
+    private readonly UserManager<User> _userManager;
+
+    public GetAlluserQueryHandler(IdentityDbContext context, UserManager<User> userManager)
     {
-        private readonly IdentityDbContext _context;
+        _context = context;
+        _userManager = userManager;
+    }
 
-        public GetAlluserQueryHandler(IdentityDbContext context)
+    public async Task<List<UserDto>> Handle(GetAlluserQuery request, CancellationToken cancellationToken)
+    {
+        var users = await _context.Users.ToListAsync(cancellationToken);
+        var result = new List<UserDto>();
+        foreach (var user in users)
         {
-            _context = context;
+            var roles = await _userManager.GetRolesAsync(user);
+            result.Add(new UserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Roles = roles.ToList()
+            });
         }
-
-        public async Task<List<User>> Handle(GetAlluserQuery request, CancellationToken cancellationToken)
-        {
-            return await _context.Users.ToListAsync(cancellationToken);
-        }
+        return result;
     }
 }

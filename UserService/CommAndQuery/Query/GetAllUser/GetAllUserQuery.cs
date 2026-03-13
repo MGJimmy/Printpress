@@ -1,8 +1,7 @@
-﻿using MediatR;
+using MediatR;
 
-namespace Identity.Service
+namespace Identity.Service;
+
+public class GetAlluserQuery : IRequest<List<UserDto>>
 {
-    public class GetAlluserQuery : IRequest<List<User>>
-    {
-    }
 }

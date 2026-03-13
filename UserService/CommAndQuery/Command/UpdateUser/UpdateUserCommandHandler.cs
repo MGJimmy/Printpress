@@ -13,11 +13,21 @@ public class UpdateUserCommanddHandler : IRequestHandler<UpdateUserCommand, Upda
 
     public async Task<UpdateUserResponse> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var (success, errorMessage) = await _idmProvider.UpdateUserAsync(request.User);
-        return new UpdateUserResponse
-        {
-            Success = success,
-            ErrorMessage = errorMessage
-        };
+        var dto = request.Dto;
+        var user = await _idmProvider.FindByIdAsync(dto.Id);
+        if (user is null)
+            return new UpdateUserResponse { Success = false, ErrorMessage = "المستخدم غير موجود" };
+
+        user.Email = dto.Email;
+        user.FirstName = dto.FirstName;
+        user.LastName = dto.LastName;
+        user.PhoneNumber = dto.PhoneNumber;
+
+        var (success, errorMessage) = await _idmProvider.UpdateUserAsync(user);
+        if (!success)
+            return new UpdateUserResponse { Success = false, ErrorMessage = errorMessage };
+
+        var (rolesSuccess, rolesError) = await _idmProvider.ReplaceRolesAsync(user, dto.Roles);
+        return new UpdateUserResponse { Success = rolesSuccess, ErrorMessage = rolesError };
     }
 }

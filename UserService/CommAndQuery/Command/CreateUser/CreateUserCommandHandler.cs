@@ -25,15 +25,14 @@ namespace Identity.Service
             }
 
             // Register the user
-            var user = new User { UserName = request.Username, FirstName = request.LastName, PhoneNumber = request.PhoneNumber, Email = request.Email };
+            var user = new User { UserName = request.Username, FirstName = request.FirstName, LastName = request.LastName, PhoneNumber = request.PhoneNumber, Email = request.Email };
             var registrationResult = await _idmProvider.CreateUserAsync(user, request.Password);
             if (!registrationResult.Success)
             {
                 return new CreateUserResponse
                 {
                     Success = false,
-                    Message = registrationResult.ErrorMessage,
-                    UserId = user.Id
+                    Message = registrationResult.ErrorMessage
                 };
             }
 
@@ -41,6 +40,7 @@ namespace Identity.Service
             {
                 Success = true,
                 Message = "User registered successfully",
+                UserId = user.Id
             };
         }
     }

@@ -270,6 +270,39 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'users',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/users/components/user-list/user-list.component')
+                .then(m => m.UserListComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'add',
+            loadComponent: () =>
+              import('./features/users/components/user-upsert/user-upsert.component')
+                .then(m => m.UserUpsertComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () =>
+              import('./features/users/components/user-upsert/user-upsert.component')
+                .then(m => m.UserUpsertComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'change-password/:id',
+            loadComponent: () =>
+              import('./features/users/components/change-password/change-password.component')
+                .then(m => m.ChangePasswordComponent),
+            canActivate: [authGuard],
+          }
+        ]
+      },
+      {
         path: 'unauthorized',
         loadComponent: () =>
           import(

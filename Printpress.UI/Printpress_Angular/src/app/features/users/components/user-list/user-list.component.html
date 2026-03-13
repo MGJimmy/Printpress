@@ -1,0 +1,89 @@
+<div class="container mt-4 mb-5 rtl">
+
+  <div class="page-header mb-4">
+    <h2 class="text-center text-primary border-bottom pb-3">إدارة المستخدمين</h2>
+  </div>
+
+  <mat-card class="shadow-sm">
+    <mat-card-content>
+
+      <div class="d-flex justify-content-end mb-3">
+        <button mat-raised-button color="primary" (click)="onAdd()">
+          <mat-icon>person_add</mat-icon>
+          إضافة مستخدم
+        </button>
+      </div>
+
+      <div *ngIf="rows.length > 0; else noData">
+        <div class="table-responsive gradient-table custom-table">
+          <table mat-table [dataSource]="rows" class="w-100">
+
+            <!-- Sequence -->
+            <ng-container matColumnDef="seq">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">م</th>
+              <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="userName">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">اسم المستخدم</th>
+              <td mat-cell *matCellDef="let row">{{ row.userName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">البريد الإلكتروني</th>
+              <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="fullName">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">الاسم</th>
+              <td mat-cell *matCellDef="let row">{{ row.fullName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="phoneNumber">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">رقم الهاتف</th>
+              <td mat-cell *matCellDef="let row">{{ row.phoneNumber }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="roles">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">الصلاحيات</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="badge bg-primary me-1">{{ row.roles }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">إجراء</th>
+              <td mat-cell *matCellDef="let row">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="onEdit(row.id)">
+                    <mat-icon style="color:#1976d2">edit</mat-icon>
+                    <span>تعديل</span>
+                  </button>
+                  <button mat-menu-item (click)="onChangePassword(row.id)">
+                    <mat-icon style="color:#f57c00">lock_reset</mat-icon>
+                    <span>تغيير كلمة المرور</span>
+                  </button>
+                  <button mat-menu-item (click)="onDelete(row.id)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span>حذف</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['seq','userName','email','fullName','phoneNumber','roles','actions']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['seq','userName','email','fullName','phoneNumber','roles','actions'];"></tr>
+          </table>
+        </div>
+      </div>
+
+      <ng-template #noData>
+        <div class="text-center text-muted py-4">لا يوجد مستخدمون</div>
+      </ng-template>
+
+    </mat-card-content>
+  </mat-card>
+</div>
