@@ -66,6 +66,9 @@ internal sealed class InventoryItemService(
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
 
+        if (_unitOfWork.InventoryTransactionRepository.Any(x => x.InventoryItemId == id))
+            throw new ValidationExeption("لا يمكن حذف عنصر المخزون لأن لديه حركات مرتبطة به");
+
         _unitOfWork.InventoryItemRepository.Remove(item);
         await _unitOfWork.SaveChangesAsync(userId);
     }

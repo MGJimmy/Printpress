@@ -18,7 +18,8 @@
       "Bash(dotnet build Printpress.sln)",
       "Bash(dotnet build:*)",
       "Bash(xargs cat:*)",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(find d:/Freelance/PrintpressSystem/Printpress/Printpress.UI/Printpress_Angular/src/app/features/order -name *.routes.ts -o -name order-routes*.ts)"
     ]
   }
 }

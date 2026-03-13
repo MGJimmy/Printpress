@@ -130,7 +130,7 @@
           </div>
 
           <div class="table-responsive gradient-table custom-table" *ngIf="workerRows.length > 0">
-            <table mat-table [dataSource]="workerRows.controls" class="w-100">
+            <table mat-table [dataSource]="workerDataSource" class="w-100">
 
               <ng-container matColumnDef="worker">
                 <th mat-header-cell *matHeaderCellDef class="fw-bold">العامل</th>

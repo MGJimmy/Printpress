@@ -50,9 +50,10 @@ internal sealed class ClientService(IUnitOfWork _unitOfWork, ClientMapper _clien
         var entity = await _unitOfWork.ClientRepository.FindAsync(id);
 
         if (entity is null)
-        {
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
-        }
+
+        if (_unitOfWork.OrderRepository.Any(x => x.ClientId == id))
+            throw new ValidationExeption("لا يمكن حذف العميل لأن لديه طلبات مرتبطة به");
 
         _unitOfWork.ClientRepository.Remove(entity);
 

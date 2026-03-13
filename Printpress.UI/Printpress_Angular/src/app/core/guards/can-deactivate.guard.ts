@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CanDeactivate } from '@angular/router';
+import { CanDeactivate, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { CanComponentDeactivate } from '../interfaces/can-component-deactivate.interface'; 
+import { CanComponentDeactivate } from '../interfaces/can-component-deactivate.interface';
 import { ConfirmDialogComponent } from '../component/confirm-dialog/confirm-dialog.component';
-import { Title } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,17 @@ import { Title } from '@angular/platform-browser';
 export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
   constructor(private dialog: MatDialog) {}
 
-  canDeactivate(component: CanComponentDeactivate): Observable<boolean> | boolean {
+  canDeactivate(
+    component: CanComponentDeactivate,
+    _currentRoute: ActivatedRouteSnapshot,
+    _currentState: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    // Allow free navigation between order sub-routes without prompting
+    if (nextState?.url.startsWith('/order/') || nextState?.url === '/order') {
+      return true;
+    }
+
     if (component.canDeactivate()) {
       return true;
     }
@@ -24,7 +33,7 @@ export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate>
       },
     });
 
-    return dialogRef.afterClosed(); // returns true or false
+    return dialogRef.afterClosed();
   }
-  
+
 }
