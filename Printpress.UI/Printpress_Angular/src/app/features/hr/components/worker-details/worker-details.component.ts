@@ -4,8 +4,9 @@ import { ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators, N
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
+import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
+import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,8 +17,6 @@ import { WorkerSalaryTransactionService } from '../../services/worker-salary-tra
 import { PayrollPeriodService } from '../../services/payroll-period.service';
 import {
   WorkerDetailsDto,
-  WorkerSalaryTransactionDto,
-  WorkerProductionDto,
   AddSalaryTransactionDto,
   SalaryTypeLabels,
   SalaryTransactionTypeLabels
@@ -40,19 +39,35 @@ import { AlertService } from '../../../../core/services/alert.service';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    FormsModule
+    FormsModule,
+    TableTemplateComponent
   ],
   templateUrl: './worker-details.component.html'
 })
 export class WorkerDetailsComponent implements OnInit {
   worker: WorkerDetailsDto | null = null;
   openPeriods: PayrollPeriodDto[] = [];
+  flatTransactions: any[] = [];
+  flatProductions: any[] = [];
 
   salaryTypeLabels = SalaryTypeLabels;
   transactionTypeLabels = SalaryTransactionTypeLabels;
 
-  transactionColumns = ['payrollPeriodName', 'transactionType', 'amount', 'transactionDate', 'note', 'actions'];
-  productionColumns = ['productionDate', 'serviceCategoryName', 'orderName', 'quantity', 'notes'];
+  transactionColDefs: TableColDefinitionModel[] = [
+    { column: 'payrollPeriodName', headerName: 'دورة الراتب' },
+    { column: 'transactionType', headerName: 'نوع الحركة' },
+    { column: 'amount', headerName: 'المبلغ' },
+    { column: 'transactionDate', headerName: 'التاريخ' },
+    { column: 'note', headerName: 'ملاحظة' }
+  ];
+
+  productionColDefs: TableColDefinitionModel[] = [
+    { column: 'productionDate', headerName: 'التاريخ' },
+    { column: 'serviceCategoryName', headerName: 'فئة الخدمة' },
+    { column: 'orderName', headerName: 'المجموعة / الطلبية' },
+    { column: 'quantity', headerName: 'الكمية' },
+    { column: 'notes', headerName: 'ملاحظات' }
+  ];
 
   productionDateFrom: Date | null = null;
   productionDateTo: Date | null = null;
@@ -103,7 +118,24 @@ export class WorkerDetailsComponent implements OnInit {
     const toStr = productionDateTo ? productionDateTo.toISOString() : undefined;
 
     this.workerService.getById(id, fromStr, toStr).subscribe({
-      next: (res) => { this.worker = res.data; },
+      next: (res) => {
+        this.worker = res.data;
+        this.flatTransactions = res.data.transactions.map(t => ({
+          id: t.id,
+          payrollPeriodName: t.payrollPeriodName,
+          transactionType: this.transactionTypeLabels[t.transactionType] ?? t.transactionType,
+          amount: t.amount,
+          transactionDate: t.transactionDate ? new Date(t.transactionDate).toLocaleDateString('ar-EG') : '—',
+          note: t.note || '—'
+        }));
+        this.flatProductions = res.data.productions.map(p => ({
+          productionDate: p.productionDate ? new Date(p.productionDate).toLocaleDateString('ar-EG') : '—',
+          serviceCategoryName: p.serviceCategoryName,
+          orderName: p.orderName,
+          quantity: p.quantity,
+          notes: p.notes || '—'
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل بيانات العامل'); }
     });
   }

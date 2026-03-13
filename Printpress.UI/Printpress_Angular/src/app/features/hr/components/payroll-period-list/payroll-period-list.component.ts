@@ -3,22 +3,27 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
+import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
+import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { PayrollPeriodService } from '../../services/payroll-period.service';
-import { PayrollPeriodDto } from '../../models/payroll-period.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 
 @Component({
   selector: 'app-payroll-period-list',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatTableModule, MatIconModule, MatChipsModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, TableTemplateComponent],
   templateUrl: './payroll-period-list.component.html'
 })
 export class PayrollPeriodListComponent implements OnInit {
-  periods: PayrollPeriodDto[] = [];
-  columns = ['name', 'startDate', 'endDate', 'status', 'actions'];
+  rows: any[] = [];
+
+  colDefs: TableColDefinitionModel[] = [
+    { column: 'name', headerName: 'اسم الدورة' },
+    { column: 'startDate', headerName: 'تاريخ البداية' },
+    { column: 'endDate', headerName: 'تاريخ النهاية' },
+    { column: 'status', headerName: 'الحالة' }
+  ];
 
   constructor(
     private service: PayrollPeriodService,
@@ -32,7 +37,15 @@ export class PayrollPeriodListComponent implements OnInit {
 
   private load(): void {
     this.service.getAll().subscribe({
-      next: (res) => { this.periods = res.data; },
+      next: (res) => {
+        this.rows = res.data.map(p => ({
+          id: p.id,
+          name: p.name,
+          startDate: p.startDate ? new Date(p.startDate).toLocaleDateString('ar-EG') : '—',
+          endDate: p.endDate ? new Date(p.endDate).toLocaleDateString('ar-EG') : '—',
+          status: p.isClosed ? 'مغلقة' : 'مفتوحة'
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل دورات الرواتب'); }
     });
   }

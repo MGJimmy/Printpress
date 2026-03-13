@@ -1,109 +1,68 @@
-<div class="container mt-4" dir="rtl" *ngIf="history; else loadingTemplate">
+<div class="container mt-4 mb-5 rtl" *ngIf="history; else loadingTemplate">
 
-  <!-- Header -->
-  <mat-card class="mb-3">
-    <mat-card-header>
-      <div class="w-100 d-flex justify-content-between align-items-center">
-        <div>
-          <mat-card-title>{{ history.itemName }}</mat-card-title>
-          <mat-card-subtitle>
-            مجموعة: {{ history.groupName }}
-          </mat-card-subtitle>
+  <!-- Page Header -->
+  <div class="page-header mb-4">
+    <h2 class="text-center text-primary border-bottom pb-3">{{ history.itemName }}</h2>
+  </div>
+
+  <mat-card class="shadow-sm mb-3">
+    <mat-card-content>
+
+      <!-- Toolbar -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <div>
+            <span class="text-muted">المجموعة: </span>
+            <strong>{{ history.groupName }}</strong>
+          </div>
+          <div>
+            <span class="text-muted">الكمية: </span>
+            <strong>{{ history.quantity }}</strong>
+          </div>
+          <div>
+            <span class="text-muted">الحالة: </span>
+            <span class="badge" [ngClass]="getStatusBadgeClass(history.status)">
+              {{ itemStatusLabels[history.status] || history.status }}
+            </span>
+          </div>
         </div>
         <button mat-raised-button color="primary" (click)="onBack()">
           <mat-icon>arrow_back</mat-icon>
           رجوع
         </button>
       </div>
-    </mat-card-header>
-    <mat-card-content class="mt-3">
-      <div class="row g-2">
-        <div class="col-auto">
-          <span class="text-muted">الكمية الإجمالية: </span>
-          <strong>{{ history.quantity }}</strong>
-        </div>
-        <div class="col-auto">
-          <span class="text-muted">الحالة: </span>
-          <span class="badge" [ngClass]="getStatusBadgeClass(history.status)">
-            {{ itemStatusLabels[history.status] || history.status }}
-          </span>
-        </div>
-      </div>
+
+      <!-- Service Progress Table -->
+      <h6 class="text-muted mb-2">تقدم الخدمات</h6>
+      <app-table-template
+        [originalSource]="flatProgress"
+        [columnDefs]="progressColDefs"
+        [totalItemsCount]="flatProgress.length"
+        [isShowEditButton]="false"
+        [isShowDeleteButton]="false"
+        [showViewButton]="false">
+      </app-table-template>
+
     </mat-card-content>
   </mat-card>
 
-  <!-- Service Progress -->
-  <mat-card class="mb-3">
-    <mat-card-header>
-      <mat-card-title>تقدم الخدمات</mat-card-title>
-    </mat-card-header>
+  <!-- Execution Records Table -->
+  <mat-card class="shadow-sm">
     <mat-card-content>
-      <table mat-table [dataSource]="history.serviceProgresses" class="w-100">
-        <ng-container matColumnDef="serviceCategoryName">
-          <th mat-header-cell *matHeaderCellDef>الخدمة</th>
-          <td mat-cell *matCellDef="let svc">{{ svc.serviceCategoryName }}</td>
-        </ng-container>
-        <ng-container matColumnDef="executed">
-          <th mat-header-cell *matHeaderCellDef>المنجز / الإجمالي</th>
-          <td mat-cell *matCellDef="let svc">
-            <span [ngClass]="getProgressClass(svc)">
-              {{ svc.executed }} / {{ svc.total }}
-              <mat-icon *ngIf="svc.isCompleted" style="font-size:16px;vertical-align:middle">check_circle</mat-icon>
-            </span>
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="remaining">
-          <th mat-header-cell *matHeaderCellDef>المتبقي</th>
-          <td mat-cell *matCellDef="let svc">
-            <span [class.text-danger]="!svc.isCompleted">{{ svc.total - svc.executed }}</span>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="progressColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: progressColumns;"></tr>
-      </table>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Execution Records -->
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
+      <h6 class="text-muted mb-2">
         سجل التنفيذ
-        <span class="text-muted fs-6 ms-2">({{ history.executionRecords.length }} سجل)</span>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div *ngIf="history.executionRecords.length > 0; else noRecords">
-        <table mat-table [dataSource]="history.executionRecords" class="w-100">
+        <span class="badge bg-secondary ms-2">{{ history.executionRecords.length }}</span>
+      </h6>
 
-          <ng-container matColumnDef="workerName">
-            <th mat-header-cell *matHeaderCellDef>العامل</th>
-            <td mat-cell *matCellDef="let rec">{{ rec.workerName }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="serviceCategoryName">
-            <th mat-header-cell *matHeaderCellDef>الخدمة</th>
-            <td mat-cell *matCellDef="let rec">{{ rec.serviceCategoryName }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>الكمية</th>
-            <td mat-cell *matCellDef="let rec">{{ rec.quantity }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="executionDate">
-            <th mat-header-cell *matHeaderCellDef>تاريخ التنفيذ</th>
-            <td mat-cell *matCellDef="let rec">{{ rec.executionDate | date:'yyyy-MM-dd' }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="notes">
-            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
-            <td mat-cell *matCellDef="let rec">{{ rec.notes || '—' }}</td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="recordColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: recordColumns;"></tr>
-        </table>
+      <div *ngIf="flatRecords.length > 0; else noRecords">
+        <app-table-template
+          [originalSource]="flatRecords"
+          [columnDefs]="recordColDefs"
+          [totalItemsCount]="flatRecords.length"
+          [isShowEditButton]="false"
+          [isShowDeleteButton]="false"
+          [showViewButton]="false">
+        </app-table-template>
       </div>
 
       <ng-template #noRecords>
@@ -115,5 +74,5 @@
 </div>
 
 <ng-template #loadingTemplate>
-  <div class="container mt-4 text-center text-muted" dir="rtl">جاري التحميل...</div>
+  <div class="container mt-4 text-center text-muted rtl">جاري التحميل...</div>
 </ng-template>

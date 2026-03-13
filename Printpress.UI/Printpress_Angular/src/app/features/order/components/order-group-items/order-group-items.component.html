@@ -1,115 +1,136 @@
-<div class="container mt-4" dir="rtl">
+<div class="container mt-4 mb-5 rtl">
 
-  <!-- Header -->
-  <mat-card class="mb-3">
-    <mat-card-header>
-      <div class="w-100 d-flex justify-content-between align-items-center">
-        <div>
-          <mat-card-title>{{ groupData?.groupName }}</mat-card-title>
-          <mat-card-subtitle *ngIf="groupData">
-            <span class="badge" [ngClass]="getGroupStatusBadgeClass()">
-              {{ groupStatusLabels[groupData.groupStatus] || groupData.groupStatus }}
-            </span>
-          </mat-card-subtitle>
-        </div>
-        <button mat-raised-button color="primary" (click)="onBack()">
-          <mat-icon>arrow_back</mat-icon>
-          رجوع
-        </button>
-      </div>
-    </mat-card-header>
-  </mat-card>
-
-  <!-- Filter -->
-  <div class="mb-3 d-flex align-items-center gap-3">
-    <mat-form-field appearance="outline" style="min-width: 200px">
-      <mat-label>تصفية بالحالة</mat-label>
-      <mat-select [(ngModel)]="statusFilter" (selectionChange)="applyFilter()">
-        <mat-option value="all">الكل</mat-option>
-        <mat-option value="completed">مكتمل</mat-option>
-        <mat-option value="notCompleted">غير مكتمل</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <span class="text-muted" *ngIf="groupData">
-      {{ filteredItems.length }} / {{ groupData.items.length }} عناصر
-    </span>
+  <!-- Page Header -->
+  <div class="page-header mb-4">
+    <h2 class="text-center text-primary border-bottom pb-3">
+      {{ groupData?.groupName || 'عناصر المجموعة' }}
+    </h2>
   </div>
 
-  <!-- Items Table -->
-  <mat-card>
+  <mat-card class="shadow-sm">
     <mat-card-content>
-      <div class="table-responsive" *ngIf="groupData; else loadingTemplate">
-        <table mat-table [dataSource]="filteredItems" class="w-100" *ngIf="filteredItems.length > 0; else noDataTemplate">
 
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>اسم العنصر</th>
-            <td mat-cell *matCellDef="let item">{{ item.name }}</td>
-          </ng-container>
+      <!-- Toolbar -->
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 
-          <!-- Quantity Column -->
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>الكمية</th>
-            <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
-          </ng-container>
+        <!-- Group status badge -->
+        <div *ngIf="groupData" class="d-flex align-items-center gap-2">
+          <span class="text-muted">حالة المجموعة:</span>
+          <span class="badge"
+                [ngClass]="{
+                  'bg-success': groupData.groupStatus === 'Completed' || groupData.groupStatus === 'Delivered',
+                  'bg-warning text-dark': groupData.groupStatus === 'InProgress',
+                  'bg-secondary': groupData.groupStatus === 'New'
+                }">
+            {{ groupStatusLabels[groupData.groupStatus] || groupData.groupStatus }}
+          </span>
+        </div>
 
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>الحالة</th>
-            <td mat-cell *matCellDef="let item">
-              <span class="badge" [ngClass]="getStatusBadgeClass(item.status)">
-                {{ itemStatusLabels[item.status] || item.status }}
-              </span>
-            </td>
-          </ng-container>
+        <div class="d-flex align-items-center gap-3">
+          <!-- Status filter DDL -->
+          <mat-form-field appearance="fill" style="min-width:170px; margin-top:4px">
+            <mat-label>تصفية بالحالة</mat-label>
+            <mat-select [(ngModel)]="statusFilter" (selectionChange)="applyFilter()">
+              <mat-option value="all">الكل</mat-option>
+              <mat-option value="completed">مكتمل</mat-option>
+              <mat-option value="notCompleted">غير مكتمل</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-          <!-- Dynamic Service Columns -->
-          <ng-container *ngFor="let svc of groupData.groupServices" [matColumnDef]="'svc_' + svc.serviceCategoryId">
-            <th mat-header-cell *matHeaderCellDef>{{ svc.serviceCategoryName }}</th>
-            <td mat-cell *matCellDef="let item">
-              <ng-container *ngIf="getServiceProgress(item, svc.serviceCategoryId) as progress; else noProgress">
-                <span [ngClass]="progress.isCompleted ? 'text-success fw-bold' : 'text-warning'">
-                  {{ progress.executed }} / {{ progress.total }}
-                </span>
-              </ng-container>
-              <ng-template #noProgress>
-                <span class="text-muted">0 / {{ item.quantity }}</span>
-              </ng-template>
-            </td>
-          </ng-container>
-
-          <!-- Actions Column -->
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef>إجراء</th>
-            <td mat-cell *matCellDef="let item">
-              <button mat-icon-button
-                      color="accent"
-                      (click)="onViewItem(item.id)"
-                      title="عرض سجل التنفيذ">
-                <mat-icon>visibility</mat-icon>
-              </button>
-              <button mat-icon-button
-                      color="primary"
-                      [disabled]="item.status === 'Completed'"
-                      (click)="onExecuteItem(item.id)"
-                      [title]="item.status === 'Completed' ? 'العنصر مكتمل' : 'تنفيذ'">
-                <mat-icon>play_circle</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-
-        <ng-template #noDataTemplate>
-          <div class="text-center my-4 text-muted">لا توجد عناصر تطابق الفلتر المحدد</div>
-        </ng-template>
+          <button mat-raised-button color="primary" (click)="onBack()">
+            <mat-icon>arrow_back</mat-icon>
+            رجوع
+          </button>
+        </div>
       </div>
 
-      <ng-template #loadingTemplate>
-        <div class="text-center my-4 text-muted">جاري التحميل...</div>
+      <!-- Items count -->
+      <p class="text-muted small mb-2" *ngIf="groupData">
+        يعرض {{ filteredItems.length }} من {{ groupData.items.length }} عنصر
+      </p>
+
+      <!-- Table -->
+      <div class="table-responsive gradient-table custom-table">
+        <ng-container *ngIf="filteredItems.length > 0; else noDataTemplate">
+          <table mat-table [dataSource]="filteredItems" class="w-100">
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">اسم العنصر</th>
+              <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+            </ng-container>
+
+            <!-- Quantity Column -->
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">الكمية</th>
+              <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">الحالة</th>
+              <td mat-cell *matCellDef="let item">
+                <span class="badge"
+                      [ngClass]="{
+                        'bg-success': item.status === 'Completed',
+                        'bg-warning text-dark': item.status === 'InProgress',
+                        'bg-secondary': item.status === 'New'
+                      }">
+                  {{ itemStatusLabels[item.status] || item.status }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Dynamic Service Columns -->
+            <ng-container *ngFor="let svc of groupData?.groupServices"
+                          [matColumnDef]="'svc_' + svc.serviceCategoryId">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">{{ svc.serviceCategoryName }}</th>
+              <td mat-cell *matCellDef="let item">
+                <ng-container *ngIf="getServiceProgress(item, svc.serviceCategoryId) as p">
+                  <span [ngClass]="p.isCompleted ? 'text-success fw-bold' : 'text-warning fw-semibold'">
+                    {{ p.executed }} / {{ p.total }}
+                  </span>
+                </ng-container>
+                <span *ngIf="!getServiceProgress(item, svc.serviceCategoryId)" class="text-muted">
+                  0 / {{ item.quantity }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="fw-bold">إجراء</th>
+              <td mat-cell *matCellDef="let item">
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="onViewItem(item.id)">
+                    <mat-icon style="color:#7b1fa2">visibility</mat-icon>
+                    <span>عرض سجل التنفيذ</span>
+                  </button>
+                  <button mat-menu-item
+                          (click)="onExecuteItem(item.id)"
+                          [disabled]="item.status === 'Completed'">
+                    <mat-icon [style.color]="item.status !== 'Completed' ? '#1976d2' : ''">play_circle</mat-icon>
+                    <span>{{ item.status === 'Completed' ? 'مكتمل' : 'تنفيذ' }}</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-light"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </ng-container>
+      </div>
+
+      <ng-template #noDataTemplate>
+        <div class="text-center my-4 text-muted">
+          {{ groupData ? 'لا توجد عناصر تطابق الفلتر المحدد' : 'جاري التحميل...' }}
+        </div>
       </ng-template>
+
     </mat-card-content>
   </mat-card>
 </div>

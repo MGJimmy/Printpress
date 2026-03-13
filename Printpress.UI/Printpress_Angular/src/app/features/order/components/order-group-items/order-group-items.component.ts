@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatMenuModule } from '@angular/material/menu';
 import { ItemServiceExecutionService } from '../../services/item-service-execution.service';
 import {
   OrderGroupItemsResponseDto,
@@ -31,7 +32,8 @@ import { AlertService } from '../../../../core/services/alert.service';
     MatIconModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatMenuModule
   ],
   templateUrl: './order-group-items.component.html'
 })

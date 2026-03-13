@@ -1,18 +1,53 @@
 .custom-paginator-container {
-background-color: rgb(221 221 221) !important;
+  background-color: rgb(221 221 221) !important;
+  border-radius: 0 0 8px 8px;
 }
 
-.paginator-background{
+.paginator-background {
   background-color: inherit !important;
 }
-
 
 :host ::ng-deep .mat-mdc-paginator-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   padding: 0 8px;
   flex-wrap: wrap;
   width: 100%;
   min-height: var(--mat-paginator-container-size);
+  direction: rtl;
+}
+
+/* Items-per-page select: no border box */
+:host ::ng-deep .mat-mdc-paginator-page-size .mat-mdc-form-field {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator-page-size .mdc-notched-outline__leading,
+:host ::ng-deep .mat-mdc-paginator-page-size .mdc-notched-outline__notch,
+:host ::ng-deep .mat-mdc-paginator-page-size .mdc-notched-outline__trailing {
+  border: none !important;
+}
+
+/* Items per page label + select spacing */
+:host ::ng-deep .mat-mdc-paginator-page-size-label {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+:host ::ng-deep .mat-mdc-paginator-page-size-select {
+  margin-right: 4px;
+  margin-left: 0;
+}
+
+/* Right margin for the range label */
+:host ::ng-deep .mat-mdc-paginator-range-label {
+  margin-right: 16px;
+  margin-left: 8px;
+}
+
+/* Nav buttons spacing in RTL */
+:host ::ng-deep .mat-mdc-paginator-range-actions {
+  direction: rtl;
 }

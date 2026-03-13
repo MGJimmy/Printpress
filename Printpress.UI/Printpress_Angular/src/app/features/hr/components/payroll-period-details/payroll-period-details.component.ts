@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
+import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
+import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { PayrollPeriodService } from '../../services/payroll-period.service';
 import { PayrollPeriodDetailsDto, SalaryTransactionTypeLabels } from '../../models/payroll-period.dto';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -12,13 +13,21 @@ import { AlertService } from '../../../../core/services/alert.service';
 @Component({
   selector: 'app-payroll-period-details',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatTableModule, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, TableTemplateComponent],
   templateUrl: './payroll-period-details.component.html'
 })
 export class PayrollPeriodDetailsComponent implements OnInit {
   period: PayrollPeriodDetailsDto | null = null;
-  transactionColumns = ['workerName', 'transactionType', 'amount', 'transactionDate', 'note'];
+  flatTransactions: any[] = [];
   typeLabels = SalaryTransactionTypeLabels;
+
+  transactionColDefs: TableColDefinitionModel[] = [
+    { column: 'workerName', headerName: 'اسم العامل' },
+    { column: 'transactionType', headerName: 'نوع الحركة' },
+    { column: 'amount', headerName: 'المبلغ' },
+    { column: 'transactionDate', headerName: 'التاريخ' },
+    { column: 'note', headerName: 'ملاحظة' }
+  ];
 
   constructor(
     private service: PayrollPeriodService,
@@ -34,7 +43,16 @@ export class PayrollPeriodDetailsComponent implements OnInit {
 
   private load(id: string): void {
     this.service.getById(id).subscribe({
-      next: (res) => { this.period = res.data; },
+      next: (res) => {
+        this.period = res.data;
+        this.flatTransactions = res.data.transactions.map(t => ({
+          workerName: t.workerName,
+          transactionType: this.typeLabels[t.transactionType] ?? t.transactionType,
+          amount: t.amount,
+          transactionDate: t.transactionDate ? new Date(t.transactionDate).toLocaleDateString('ar-EG') : '—',
+          note: t.note || '—'
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل بيانات الدورة'); }
     });
   }
