@@ -56,7 +56,6 @@ export class AuthService {
   }
 
   hasAnyMatchingRole(routeRoles: UserRoleEnum[]): boolean {
-    /*
     const userRoles = this.getRoles();
     if (!routeRoles || routeRoles.length === 0) {
       return true; // No roles required for the route
@@ -67,8 +66,6 @@ export class AuthService {
       );
     }
     return false;
-    */
-    return true;
   }
 
   shouldSkipAuth(url: string): boolean {
