@@ -20,7 +20,8 @@ import {
   faCog,
   faChartBar,
   faWrench,
-  faUserTie
+  faUserTie,
+  faUsers
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -49,6 +50,7 @@ export class SidebarComponent implements OnDestroy {
   faChartBar = faChartBar;
   faWrench = faWrench;
   faUserTie = faUserTie;
+  faUsers = faUsers;
 
   isReportsExpanded = false;
   isHRExpanded = false;
