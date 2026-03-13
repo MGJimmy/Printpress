@@ -181,6 +181,13 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'items/view/:id',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-part-item-view/spare-part-item-view.component')
+                .then(m => m.SparePartItemViewComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'stock-in',
             loadComponent: () =>
               import('./features/spare-parts/components/spare-parts-stock-in/spare-parts-stock-in.component')

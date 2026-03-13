@@ -59,6 +59,10 @@ export class SparePartItemListComponent implements OnInit {
     this.router.navigate(['/spare-parts/items/add']);
   }
 
+  onView(id: string) {
+    this.router.navigate(['/spare-parts/items/view', id]);
+  }
+
   onEdit(id: string) {
     this.router.navigate(['/spare-parts/items/edit', id]);
   }

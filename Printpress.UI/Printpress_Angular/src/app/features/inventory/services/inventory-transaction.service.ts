@@ -15,10 +15,14 @@ export interface StockOutDto {
 export class InventoryTransactionService {
   constructor(private httpService: HttpService) {}
 
-  getByItemId(itemId: string, pageNumber: number, pageSize: number): Observable<ApiPagingResponseDto<InventoryTransactionDto>> {
+  getByItemId(itemId: string, pageNumber: number, pageSize: number, dateFrom?: string, dateTo?: string, transactionType?: string): Observable<ApiPagingResponseDto<InventoryTransactionDto>> {
+    const params: any = { pageNumber, pageSize };
+    if (dateFrom) params.dateFrom = dateFrom;
+    if (dateTo) params.dateTo = dateTo;
+    if (transactionType) params.transactionType = transactionType;
     return this.httpService.get<ApiPagingResponseDto<InventoryTransactionDto>>(
       ApiUrlResource.InventoryTransactionAPI.getByItemId(itemId),
-      { pageNumber, pageSize }
+      params
     );
   }
 

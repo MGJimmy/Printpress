@@ -19,7 +19,8 @@
       "Bash(dotnet build:*)",
       "Bash(xargs cat:*)",
       "Bash(xargs ls:*)",
-      "Bash(find d:/Freelance/PrintpressSystem/Printpress/Printpress.UI/Printpress_Angular/src/app/features/order -name *.routes.ts -o -name order-routes*.ts)"
+      "Bash(find d:/Freelance/PrintpressSystem/Printpress/Printpress.UI/Printpress_Angular/src/app/features/order -name *.routes.ts -o -name order-routes*.ts)",
+      "Bash(find d:/Freelance/PrintpressSystem/Printpress/Printpress.Domain/Entities -name *SparePartInventoryTransaction* -o -name *SparePartTransaction*)"
     ]
   }
 }

@@ -65,6 +65,8 @@ public static class DependencyInjection
 
         services.AddScoped<ISparePartSellingInvoiceService, SparePartSellingInvoiceService>();
         services.AddScoped<IValidator<SparePartSellingInvoiceCreateDto>, SparePartSellingInvoiceCreateDtoValidator>();
+
+        services.AddScoped<ISparePartTransactionService, SparePartTransactionService>();
         #endregion
 
 

@@ -10,10 +10,13 @@ internal sealed class InventoryTransactionService(
     IValidator<StockOutCreateDto> _stockOutValidator,
     IGuidGenerator _guidGenerator) : IInventoryTransactionService
 {
-    public async Task<PagedList<InventoryTransactionDto>> GetByItemIdAsync(Guid itemId, Paging paging)
+    public async Task<PagedList<InventoryTransactionDto>> GetByItemIdAsync(Guid itemId, Paging paging, DateTime? dateFrom, DateTime? dateTo, string transactionType)
     {
         var result = await _unitOfWork.InventoryTransactionRepository
-            .FilterAsync(paging, x => x.InventoryItemId == itemId);
+            .FilterAsync(paging, x => x.InventoryItemId == itemId
+                && (!dateFrom.HasValue || x.CreatedAt >= dateFrom.Value)
+                && (!dateTo.HasValue || x.CreatedAt <= dateTo.Value.AddDays(1))
+                && (string.IsNullOrEmpty(transactionType) || x.InventoryTransactionType.ToString() == transactionType));
 
         return new PagedList<InventoryTransactionDto>
         {

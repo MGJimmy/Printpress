@@ -9,5 +9,6 @@ public class SparePartItemProfile : Profile
     {
         CreateMap<SparePartItemAddDto, SparePartInventoryItem>();
         CreateMap<SparePartItemUpdateDto, SparePartInventoryItem>();
+        CreateMap<SparePartInventoryTransaction, SparePartTransactionDto>();
     }
 }

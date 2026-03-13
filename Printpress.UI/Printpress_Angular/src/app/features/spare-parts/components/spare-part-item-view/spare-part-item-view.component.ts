@@ -14,13 +14,13 @@ import { TableTemplateComponent } from '../../../../shared/components/table-temp
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
 import { AlertService } from '../../../../core/services/alert.service';
-import { InventoryService } from '../../services/inventory.service';
-import { InventoryTransactionService } from '../../services/inventory-transaction.service';
-import { InventoryItemDto } from '../../models/inventory-item.dto';
-import { InventoryTransactionDto } from '../../models/inventory-transaction.dto';
+import { SparePartService } from '../../services/spare-part.service';
+import { SparePartTransactionService } from '../../services/spare-part-transaction.service';
+import { SparePartItemDto } from '../../models/spare-part-item.dto';
+import { SparePartTransactionDto } from '../../models/spare-part-transaction.dto';
 
 @Component({
-  selector: 'app-inventory-item-view',
+  selector: 'app-spare-part-item-view',
   standalone: true,
   imports: [
     CommonModule,
@@ -36,23 +36,20 @@ import { InventoryTransactionDto } from '../../models/inventory-transaction.dto'
     MatSelectModule,
     TableTemplateComponent
   ],
-  templateUrl: './inventory-item-view.component.html'
+  templateUrl: './spare-part-item-view.component.html'
 })
-export class InventoryItemViewComponent implements OnInit {
+export class SparePartItemViewComponent implements OnInit {
 
-  item: InventoryItemDto | null = null;
+  item: SparePartItemDto | null = null;
 
   form: FormGroup<{
     name: FormControl<string>;
-    inventoryItemCategory: FormControl<string>;
     packsPerCarton: FormControl<string>;
     unitsPerPack: FormControl<string>;
-    expectedPurchaseLossPercent: FormControl<string>;
-    expectedProductionWastePercent: FormControl<string>;
     stockQuantity: FormControl<number>;
   }>;
 
-  transactions: InventoryTransactionDto[] = [];
+  transactions: SparePartTransactionDto[] = [];
   totalTransactionsCount = 0;
   currentPage = 1;
   pageSize = 10;
@@ -64,7 +61,6 @@ export class InventoryItemViewComponent implements OnInit {
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'نوع الحركة', column: 'inventoryTransactionType' },
     { headerName: 'الكمية', column: 'quantity' },
-    { headerName: 'نوع المرجع', column: 'referenceType' },
     { headerName: 'ملاحظات', column: 'notes' },
     { headerName: 'التاريخ', column: 'createdAt' }
   ];
@@ -76,16 +72,13 @@ export class InventoryItemViewComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private alertService: AlertService,
-    private inventoryService: InventoryService,
-    private inventoryTransactionService: InventoryTransactionService
+    private sparePartService: SparePartService,
+    private sparePartTransactionService: SparePartTransactionService
   ) {
     this.form = this.fb.group({
       name: this.fb.control({ value: '', disabled: true }),
-      inventoryItemCategory: this.fb.control({ value: '', disabled: true }),
       packsPerCarton: this.fb.control({ value: '', disabled: true }),
       unitsPerPack: this.fb.control({ value: '', disabled: true }),
-      expectedPurchaseLossPercent: this.fb.control({ value: '', disabled: true }),
-      expectedProductionWastePercent: this.fb.control({ value: '', disabled: true }),
       stockQuantity: this.fb.control({ value: 0, disabled: true })
     });
   }
@@ -97,21 +90,18 @@ export class InventoryItemViewComponent implements OnInit {
   }
 
   private loadItem(): void {
-    this.inventoryService.getById(this.itemId).subscribe({
+    this.sparePartService.getById(this.itemId).subscribe({
       next: (response) => {
         this.item = response.data;
         this.form.patchValue({
           name: this.item.name,
-          inventoryItemCategory: this.item.inventoryItemCategory,
           packsPerCarton: this.item.packsPerCarton?.toString() ?? '-',
           unitsPerPack: this.item.unitsPerPack?.toString() ?? '-',
-          expectedPurchaseLossPercent: this.item.expectedPurchaseLossPercent + '%',
-          expectedProductionWastePercent: this.item.expectedProductionWastePercent + '%',
           stockQuantity: this.item.stockQuantity
         });
       },
       error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل بيانات الصنف');
+        this.alertService.showError('حدث خطأ أثناء تحميل بيانات قطعة الغيار');
       }
     });
   }
@@ -120,13 +110,13 @@ export class InventoryItemViewComponent implements OnInit {
     const dateFrom = this.filterDateFrom ? this.filterDateFrom.toISOString().split('T')[0] : undefined;
     const dateTo = this.filterDateTo ? this.filterDateTo.toISOString().split('T')[0] : undefined;
     const type = this.filterTransactionType || undefined;
-    this.inventoryTransactionService.getByItemId(this.itemId, this.currentPage, this.pageSize, dateFrom, dateTo, type).subscribe({
+    this.sparePartTransactionService.getByItemId(this.itemId, this.currentPage, this.pageSize, dateFrom, dateTo, type).subscribe({
       next: (response) => {
-        this.transactions = response.data.items as InventoryTransactionDto[];
+        this.transactions = response.data.items as SparePartTransactionDto[];
         this.totalTransactionsCount = response.data.totalCount;
       },
       error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل حركات المخزون');
+        this.alertService.showError('حدث خطأ أثناء تحميل حركات قطع الغيار');
       }
     });
   }
@@ -151,6 +141,6 @@ export class InventoryItemViewComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/inventory/items']);
+    this.router.navigate(['/spare-parts/items']);
   }
 }

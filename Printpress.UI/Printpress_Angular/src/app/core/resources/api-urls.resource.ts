@@ -100,6 +100,11 @@ export class ApiUrlResource {
     delete: (id: string) => `${ApiUrlResource.SparePart_URL}/delete/${id}`,
   };
 
+  private static SparePartTransaction_URL = '/api/SparePartTransaction';
+  public static readonly SparePartTransactionAPI = {
+    getByItemId: (itemId: string) => `${ApiUrlResource.SparePartTransaction_URL}/getByItemId/${itemId}`,
+  };
+
   private static SparePartPurchaseInvoice_URL = '/api/SparePartPurchaseInvoice';
   public static readonly SparePartPurchaseInvoiceAPI = {
     add: ApiUrlResource.SparePartPurchaseInvoice_URL + '/add'
