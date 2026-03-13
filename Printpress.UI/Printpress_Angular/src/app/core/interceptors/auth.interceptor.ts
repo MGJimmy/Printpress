@@ -4,9 +4,13 @@ import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
-    const token = authService.getToken();
 
     if (authService.shouldSkipAuth(req.url)) {
+        return next(req);
+    }
+
+    const token = authService.getToken();
+    if (!token) {
         return next(req);
     }
 

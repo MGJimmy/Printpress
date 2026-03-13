@@ -23,6 +23,8 @@ export class AuthService {
 
   public saveToken(token: string): void {
     localStorage.setItem('token', token);
+    console.log('Token saved to localStorage');
+    console.log(this.getToken())
   }
 
   public getToken(): string | null {
@@ -34,7 +36,14 @@ export class AuthService {
   }
 
   public isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+    try {
+      const decoded = jwtDecode<TokenPayload>(token);
+      return decoded.exp > Date.now() / 1000;
+    } catch {
+      return false;
+    }
   }
 
   public logout(): void {

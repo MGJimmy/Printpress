@@ -53,19 +53,17 @@ export class LoginComponent {
       .subscribe({
         next: (response) => {
           if (response.success) {
+            console.log('Login successful, token:', response.token);
             this.authService.saveToken(response.token.token);
             this.alertService.showSuccess('تم تسجيل الدخول بنجاح');
-            this.router.navigate([returnUrl]);
+            this.router.navigate([returnUrl || '/']);
           } else {
-            this.alertService.showError('Login failed:', response.message);
-
-            console.error('Login failed:', response.message);
+            this.alertService.showError('بيانات الدخول غير صحيحة', 'خطأ في تسجيل الدخول');
           }
         },
         error: (error) => {
           console.error('Login error:', error);
-            this.alertService.showError('Login error:', error);
-
+          this.alertService.showError('حدث خطأ أثناء تسجيل الدخول، يرجى المحاولة مرة أخرى', 'خطأ');
         }
       });
   }
