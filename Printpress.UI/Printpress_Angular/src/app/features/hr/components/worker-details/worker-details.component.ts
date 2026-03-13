@@ -23,6 +23,7 @@ import {
 } from '../../models/worker.dto';
 import { PayrollPeriodDto } from '../../models/payroll-period.dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-worker-details',
