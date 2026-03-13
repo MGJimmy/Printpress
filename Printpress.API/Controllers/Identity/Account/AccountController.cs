@@ -7,7 +7,7 @@ namespace Printpress.API;
 
 [Route("api/[controller]")]
 [SkipResponseWrapperFilter]
-[AllowAnonymous]
+[Authorize]
 public class AccountController : AppBaseController
 {
     private readonly IMediator _mediator;

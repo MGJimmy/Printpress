@@ -5,7 +5,7 @@ namespace Printpress.API;
 
 
 [Route("api/[controller]")]
-[AllowAnonymous]
+[Authorize]
 public class ServiceController(IServiceService _serviceService) : AppBaseController
 {
     [HttpGet]

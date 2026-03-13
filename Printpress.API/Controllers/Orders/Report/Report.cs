@@ -5,7 +5,7 @@ using QuestPDF.Fluent;
 namespace Printpress.API;
 
 [Route("api/[controller]")]
-[AllowAnonymous]
+[Authorize]
 public class Report(IEnumerable<IReportFactory> reportFactories) : AppBaseController
 {
 
