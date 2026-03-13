@@ -80,6 +80,18 @@ export const routes: Routes = [
           { path: ORDER_ROUTES.ORDER.GROUP.SERVICES, component: OrderGroupServiceUpsertComponent },
           { path: ORDER_ROUTES.ORDER.ITEM.ADD, component: ItemAddUpdateComponent },
           { path: ORDER_ROUTES.ORDER.ITEM.EDIT, component: ItemAddUpdateComponent },
+          {
+            path: ORDER_ROUTES.ORDER.EXECUTION.GROUP_ITEMS,
+            loadComponent: () =>
+              import('./features/order/components/order-group-items/order-group-items.component')
+                .then(m => m.OrderGroupItemsComponent)
+          },
+          {
+            path: ORDER_ROUTES.ORDER.EXECUTION.EXECUTE,
+            loadComponent: () =>
+              import('./features/order/components/execute-item-service/execute-item-service.component')
+                .then(m => m.ExecuteItemServiceComponent)
+          },
         ],
         canDeactivate:[CanDeactivateGuard],
         canActivate: [authGuard, roleGuard],

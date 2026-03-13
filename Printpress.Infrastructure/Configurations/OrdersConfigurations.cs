@@ -158,6 +158,10 @@ namespace Printpress.Infrastructure
                 .Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(200);
+
+            entity.Property(x => x.OrderItemStatus)
+                .HasConversion<int>()
+                .HasDefaultValue(OrderItemStatus.New);
         }
 
         private static void Configure(this EntityTypeBuilder<OrderItemDetails> entity)

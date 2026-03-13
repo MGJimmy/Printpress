@@ -68,6 +68,11 @@ public static class DependencyInjection
         #endregion
 
 
+        #region Execution
+        services.AddScoped<IItemServiceExecutionService, ItemServiceExecutionService>();
+        #endregion
+
+
         #region HR
         services.AddScoped<IPayrollPeriodService, PayrollPeriodService>();
         services.AddScoped<IValidator<PayrollPeriodCreateDto>, PayrollPeriodCreateDtoValidator>();

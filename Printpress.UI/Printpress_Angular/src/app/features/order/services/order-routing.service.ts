@@ -39,4 +39,9 @@ export class OrderRoutingService {
             .replace(':groupId', groupId.toString())
             .replace(':id', itemId.toString())}`;
     }
+
+    public getGroupItemsRoute(groupId: string): string {
+        return `/${ORDER_ROUTES.ORDER.BASE}/${ORDER_ROUTES.ORDER.EXECUTION.GROUP_ITEMS
+            .replace(':groupId', groupId.toString())}`;
+    }
 }

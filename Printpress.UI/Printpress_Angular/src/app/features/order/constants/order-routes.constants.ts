@@ -13,6 +13,10 @@ export const ORDER_ROUTES = {
         ITEM: {
             ADD: 'item/add/:groupId',
             EDIT: 'item/edit/:groupId/:id'
+        },
+        EXECUTION: {
+            GROUP_ITEMS: 'groups/:groupId/items',
+            EXECUTE: 'groups/:groupId/items/:itemId/execute'
         }
     }
 } as const;

@@ -12,6 +12,8 @@ public interface IUnitOfWork
     IGenericRepository<OrderItemDetails> ItemDetailsRepository { get; }
 
     IGenericRepository<OrderGroup> OrderGroupRepository { get; }
+    IGenericRepository<OrderItem> OrderItemRepository { get; }
+    IGenericRepository<OrderGroupService> OrderGroupServiceRepository { get; }
     IInventoryItemRepository InventoryItemRepository { get; }
     IGenericRepository<InventoryTransaction> InventoryTransactionRepository { get; }
     IGenericRepository<PurchaseInvoice> PurchaseInvoiceRepository { get; }

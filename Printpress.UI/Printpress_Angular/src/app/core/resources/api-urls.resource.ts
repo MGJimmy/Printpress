@@ -15,6 +15,13 @@ export class ApiUrlResource {
     delete:(id:string) => `${ApiUrlResource.Cliet_URL}/delete/${id}`,
   };
 
+  private static ItemServiceExecution_URL = '/api/ItemServiceExecution';
+  public static readonly ItemServiceExecutionAPI = {
+    groupItems: (groupId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/group-items/${groupId}`,
+    itemSummary: (itemId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/item-summary/${itemId}`,
+    execute: ApiUrlResource.ItemServiceExecution_URL + '/execute'
+  };
+
   private static Order_URL = '/api/order';
   public static readonly OrderAPI = {
     getOrderById: ApiUrlResource.Order_URL + '/GetById',

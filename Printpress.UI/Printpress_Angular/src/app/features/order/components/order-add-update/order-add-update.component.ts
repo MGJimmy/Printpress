@@ -35,8 +35,16 @@ import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   public componentMode: ComponentMode;
-  public displayedColumns = ['name', 'deliveryDate', 'deliveredTo', 'action'];
+  public displayedColumns = ['name', 'status', 'deliveryDate', 'deliveredTo', 'action'];
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
+  public groupStatusFilter: string = 'all';
+  private allGroupRows: OrderGroupGridViewModel[] = [];
+  public readonly groupStatusLabels: Record<string, string> = {
+    New: 'جديد',
+    InProgress: 'قيد التنفيذ',
+    Completed: 'مكتمل',
+    Delivered: 'تم التسليم'
+  };
   public clients: ClientGetDto[] = [];
   public orderClientId!: string
   public orderName!: string;
@@ -103,7 +111,15 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   private bindGroups(){
-    this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(this.MapToOrderGroupGridViewModel(this.OrderSharedService.getOrderGroups_Copy()));
+    this.allGroupRows = this.MapToOrderGroupGridViewModel(this.OrderSharedService.getOrderGroups_Copy());
+    this.applyGroupFilter();
+  }
+
+  public applyGroupFilter(): void {
+    const filtered = this.groupStatusFilter === 'all'
+      ? this.allGroupRows
+      : this.allGroupRows.filter(g => g.status === this.groupStatusFilter);
+    this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(filtered);
   }
 
   async loadAllClients() {
@@ -152,6 +168,10 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   protected onEditGroup(groupId: string) {
     this.router.navigate([this.orderRoutingService.getGroupRoute(groupId)]);
+  }
+
+  protected onViewGroupItems(groupId: string) {
+    this.router.navigate([this.orderRoutingService.getGroupItemsRoute(groupId)]);
   }
 
   public saveOrder_Click() {
@@ -238,6 +258,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       return {
         id: orderGroup.id,
         name: orderGroup.name,
+        status: orderGroup.status,
         deliveryDate: orderGroup.deliveryDate,
         deliveredTo: orderGroup.deliveredTo,
         deliveryNotes: orderGroup.deliveryNotes
@@ -311,6 +332,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 interface OrderGroupGridViewModel {
   id: string;
   name: string;
+  status?: string;
   deliveryDate?: Date;
   deliveredTo?: string;
   deliveryNotes?: string;

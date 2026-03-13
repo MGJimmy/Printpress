@@ -1,0 +1,184 @@
+<div class="container mt-4" dir="rtl" *ngIf="itemSummary">
+
+  <!-- Header -->
+  <mat-card class="mb-3">
+    <mat-card-header>
+      <div class="w-100 d-flex justify-content-between align-items-center">
+        <mat-card-title>تنفيذ خدمة: {{ itemSummary.itemName }}</mat-card-title>
+        <button mat-raised-button color="primary" (click)="onBack()">
+          <mat-icon>arrow_back</mat-icon>
+          رجوع
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content class="mt-3">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <span class="text-muted">الكمية الإجمالية: </span>
+          <strong>{{ itemSummary.quantity }}</strong>
+        </div>
+        <div class="col-md-3">
+          <span class="text-muted">الحالة: </span>
+          <strong>{{ itemSummary.status }}</strong>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Service Progress Summary -->
+  <mat-card class="mb-3">
+    <mat-card-header>
+      <mat-card-title>تقدم الخدمات</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="itemSummary.serviceProgresses" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>الخدمة</th>
+          <td mat-cell *matCellDef="let svc">{{ svc.serviceCategoryName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="progress">
+          <th mat-header-cell *matHeaderCellDef>المنجز / الإجمالي</th>
+          <td mat-cell *matCellDef="let svc">
+            <span [ngClass]="getServiceStatusClass(svc)">
+              {{ svc.executed }} / {{ svc.total }}
+              <mat-icon *ngIf="svc.isCompleted" style="font-size:16px;vertical-align:middle;">check_circle</mat-icon>
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="remaining">
+          <th mat-header-cell *matHeaderCellDef>المتبقي</th>
+          <td mat-cell *matCellDef="let svc">
+            <span [class.text-danger]="!svc.isCompleted && (svc.total - svc.executed) === 0">
+              {{ svc.total - svc.executed }}
+            </span>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name','progress','remaining']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name','progress','remaining'];"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Execution Form -->
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>بيانات التنفيذ</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" class="mt-3">
+
+        <!-- Service + Date + Notes row -->
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>الخدمة</mat-label>
+              <mat-select formControlName="serviceCategoryId"
+                          (selectionChange)="onServiceSelect($event.value)">
+                <mat-option *ngFor="let svc of itemSummary.serviceProgresses"
+                            [value]="svc.serviceCategoryId"
+                            [disabled]="svc.isCompleted">
+                  {{ svc.serviceCategoryName }}
+                  <span *ngIf="svc.isCompleted"> (مكتمل)</span>
+                  <span *ngIf="!svc.isCompleted"> — متبقي: {{ svc.total - svc.executed }}</span>
+                </mat-option>
+              </mat-select>
+              <mat-error>الخدمة مطلوبة</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-3" *ngIf="selectedService">
+            <div class="p-2 border rounded">
+              <small class="text-muted d-block">المتبقي للتنفيذ</small>
+              <strong [class.text-success]="remaining > 0" [class.text-danger]="remaining <= 0">
+                {{ remaining }} وحدة
+              </strong>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>تاريخ التنفيذ</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="executionDate">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error>التاريخ مطلوب</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>ملاحظات</mat-label>
+              <textarea matInput formControlName="notes" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Worker Rows -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">العمال</h6>
+            <button mat-raised-button color="accent" type="button" (click)="addWorkerRow()">
+              <mat-icon>add</mat-icon>
+              إضافة عامل
+            </button>
+          </div>
+
+          <div formArrayName="workerRows">
+            <div *ngFor="let row of workerRows.controls; let i = index"
+                 [formGroupName]="i"
+                 class="row g-2 align-items-center mb-2">
+              <div class="col-md-5">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>العامل</mat-label>
+                  <mat-select formControlName="workerId">
+                    <mat-option *ngFor="let w of workers" [value]="w.id">
+                      {{ w.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error>العامل مطلوب</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>الكمية</mat-label>
+                  <input matInput type="number" formControlName="quantity" min="1">
+                  <mat-error>الكمية يجب أن تكون أكبر من صفر</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-md-2">
+                <button mat-icon-button color="warn" type="button" (click)="removeWorkerRow(i)"
+                        [disabled]="workerRows.length === 1">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="workerRows.length === 0" class="text-muted text-center py-3">
+            أضف عاملاً واحداً على الأقل
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="d-flex gap-2 mt-3">
+          <button mat-raised-button color="primary" type="button"
+                  (click)="onSave()" [disabled]="isSaving">
+            <mat-icon>save</mat-icon>
+            {{ isSaving ? 'جاري الحفظ...' : 'حفظ' }}
+          </button>
+          <button mat-raised-button color="basic" type="button" (click)="onBack()">
+            إلغاء
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+</div>
+
+<div class="container mt-4 text-center text-muted" dir="rtl" *ngIf="!itemSummary">
+  جاري التحميل...
+</div>
