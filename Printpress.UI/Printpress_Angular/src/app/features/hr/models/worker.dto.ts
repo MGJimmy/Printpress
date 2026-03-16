@@ -62,6 +62,16 @@ export interface WorkerDetailsDto extends WorkerDto {
   stats: WorkerSummaryStatsDto;
 }
 
+export interface WorkerInventoryTransactionDto {
+  id: string;
+  inventoryItemName: string;
+  inventoryItemCategoryName?: string;
+  inventoryTransactionType: string;
+  quantity: number;
+  notes?: string;
+  createdAt: string;
+}
+
 export interface AddSalaryTransactionDto {
   workerId: string;
   payrollPeriodId: string;

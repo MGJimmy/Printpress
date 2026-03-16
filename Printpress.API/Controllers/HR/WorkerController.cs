@@ -14,6 +14,13 @@ public class WorkerController(IWorkerService _service) : AppBaseController
         return Ok(result);
     }
 
+    [HttpGet("getActive")]
+    public async Task<IActionResult> GetActive()
+    {
+        var result = await _service.GetActiveAsync();
+        return Ok(result);
+    }
+
     [HttpGet("getById/{id}")]
     public async Task<IActionResult> GetById(
         Guid id,

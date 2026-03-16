@@ -18,4 +18,7 @@ public record InventoryTransactionDto
     public Guid ReferenceId { get; init; }
     public string Notes { get; init; }
     public DateTime CreatedAt { get; init; }
+    public string InventoryItemName { get; init; }
+    public Guid? WorkerId { get; init; }
+    public string? WorkerName { get; init; }
 }

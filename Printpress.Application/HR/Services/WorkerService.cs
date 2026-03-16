@@ -15,6 +15,12 @@ internal sealed class WorkerService(
         return workers.Select(MapToDto).ToList();
     }
 
+    public async Task<List<WorkerDto>> GetActiveAsync()
+    {
+        var workers = await _unitOfWork.WorkerRepository.AllAsync();
+        return workers.Where(x => x.IsActive).Select(MapToDto).ToList();
+    }
+
     public async Task<WorkerDetailsDto> GetDetailsAsync(Guid id, DateTime? productionDateFrom, DateTime? productionDateTo)
     {
         var worker = await _unitOfWork.WorkerRepository.FindAsync(id);

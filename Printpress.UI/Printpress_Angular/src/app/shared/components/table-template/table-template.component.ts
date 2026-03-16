@@ -47,6 +47,8 @@ export class TableTemplateComponent implements OnInit {
   @Input() showViewButton: boolean = false;
   @Input() showDeactivateButton: boolean = false;
   @Output() deactivateClicked: EventEmitter<string> = new EventEmitter<string>();
+  @Input() linkColumnName: string = '';
+  @Output() linkColumnClicked: EventEmitter<any> = new EventEmitter<any>();
 
   displayedColumns: string[] = [];
   pageSize: number = 5;
@@ -117,5 +119,9 @@ export class TableTemplateComponent implements OnInit {
 
   onDeactivate(element: any): void {
     this.deactivateClicked.emit(element.id);
+  }
+
+  onLinkColumnClick(element: any): void {
+    this.linkColumnClicked.emit(element);
   }
 }

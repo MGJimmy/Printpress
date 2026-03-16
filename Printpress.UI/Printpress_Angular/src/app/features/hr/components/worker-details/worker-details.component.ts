@@ -15,6 +15,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { WorkerService } from '../../services/worker.service';
 import { WorkerSalaryTransactionService } from '../../services/worker-salary-transaction.service';
 import { PayrollPeriodService } from '../../services/payroll-period.service';
+import { InventoryTransactionService } from '../../../inventory/services/inventory-transaction.service';
+import { InventoryService } from '../../../inventory/services/inventory.service';
+import { InventoryServicesUsageReportService } from '../../../reports/services/inventory-services-usage-report.service';
+import { InventoryCategoryFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
+import { InventoryItemDto } from '../../../inventory/models/inventory-item.dto';
 import {
   WorkerDetailsDto,
   AddSalaryTransactionDto,
@@ -24,6 +29,8 @@ import {
 import { PayrollPeriodDto } from '../../models/payroll-period.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { MatTableModule } from '@angular/material/table';
+import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-worker-details',
@@ -41,7 +48,9 @@ import { MatTableModule } from '@angular/material/table';
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
-    TableTemplateComponent
+    TableTemplateComponent,
+    SharedPaginationComponent,
+    DatePipe
   ],
   templateUrl: './worker-details.component.html'
 })
@@ -50,6 +59,19 @@ export class WorkerDetailsComponent implements OnInit {
   openPeriods: PayrollPeriodDto[] = [];
   flatTransactions: any[] = [];
   flatProductions: any[] = [];
+
+  workerId: string = '';
+
+  inventoryTransactions: any[] = [];
+  invTotalCount = 0;
+  invPageSize = 10;
+  invPageNumber = 1;
+  invCategoryId: number | null = null;
+  invItemId: string | null = null;
+  invDateFrom: Date | null = null;
+  invDateTo: Date | null = null;
+  invCategories: InventoryCategoryFilterDto[] = [];
+  invItems: InventoryItemDto[] = [];
 
   salaryTypeLabels = SalaryTypeLabels;
   transactionTypeLabels = SalaryTransactionTypeLabels;
@@ -97,7 +119,10 @@ export class WorkerDetailsComponent implements OnInit {
     private workerService: WorkerService,
     private transactionService: WorkerSalaryTransactionService,
     private payrollPeriodService: PayrollPeriodService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private invTransactionService: InventoryTransactionService,
+    private inventoryService: InventoryService,
+    private reportService: InventoryServicesUsageReportService
   ) {
     this.transactionForm = this.fb.group({
       payrollPeriodId: this.fb.control('', Validators.required),
@@ -110,8 +135,11 @@ export class WorkerDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
+    this.workerId = id;
     this.loadWorker(id);
     this.loadOpenPeriods();
+    this.loadInvCategories();
+    this.loadInventoryTransactions();
   }
 
   private loadWorker(id: string, productionDateFrom?: Date | null, productionDateTo?: Date | null): void {
@@ -209,6 +237,62 @@ export class WorkerDetailsComponent implements OnInit {
         this.alertService.showError(msg);
       }
     });
+  }
+
+  loadInvCategories(): void {
+    this.reportService.getInventoryCategories().subscribe({
+      next: (res) => { this.invCategories = res.data; }
+    });
+  }
+
+  onInvCategoryChange(): void {
+    this.invItemId = null;
+    this.invItems = [];
+    if (this.invCategoryId) {
+      this.inventoryService.getByCategory(this.invCategoryId).subscribe({
+        next: (res) => { this.invItems = res.data; }
+      });
+    }
+  }
+
+  loadInventoryTransactions(): void {
+    const dateFrom = this.invDateFrom ? this.invDateFrom.toISOString().split('T')[0] : undefined;
+    const dateTo = this.invDateTo ? this.invDateTo.toISOString().split('T')[0] : undefined;
+    this.invTransactionService.getByWorkerId(
+      this.workerId,
+      this.invPageNumber,
+      this.invPageSize,
+      this.invCategoryId ?? undefined,
+      this.invItemId ?? undefined,
+      dateFrom,
+      dateTo
+    ).subscribe({
+      next: (res: any) => {
+        this.inventoryTransactions = res.data?.items ?? res.data ?? [];
+        this.invTotalCount = res.data?.totalCount ?? 0;
+      }
+    });
+  }
+
+  onInvPageChange(event: any): void {
+    this.invPageNumber = event.pageIndex + 1;
+    this.invPageSize = event.pageSize;
+    this.loadInventoryTransactions();
+  }
+
+  applyInvFilter(): void {
+    this.invPageNumber = 1;
+    this.loadInventoryTransactions();
+  }
+
+  resetInvFilter(): void {
+    this.invCategoryId = null;
+    this.invItemId = null;
+    this.invItems = [];
+    this.invDateFrom = null;
+    this.invDateTo = null;
+    this.invPageNumber = 1;
+    this.loadInventoryTransactions();
   }
 
   onBack(): void {

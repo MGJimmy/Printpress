@@ -21,6 +21,18 @@
           </div>
         </div>
 
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>العامل (اختياري)</mat-label>
+              <mat-select formControlName="workerId">
+                <mat-option [value]="null">-- بدون عامل --</mat-option>
+                <mat-option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
         <div class="row align-items-center">
           <div class="col-md-4">
             <mat-form-field appearance="outline" class="full-width"

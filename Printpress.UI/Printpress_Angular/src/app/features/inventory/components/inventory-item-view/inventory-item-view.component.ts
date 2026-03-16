@@ -65,6 +65,7 @@ export class InventoryItemViewComponent implements OnInit {
     { headerName: 'نوع الحركة', column: 'inventoryTransactionType' },
     { headerName: 'الكمية', column: 'quantity' },
     { headerName: 'نوع المرجع', column: 'referenceType' },
+    { headerName: 'العامل', column: 'workerName' },
     { headerName: 'ملاحظات', column: 'notes' },
     { headerName: 'التاريخ', column: 'createdAt' }
   ];
@@ -152,5 +153,11 @@ export class InventoryItemViewComponent implements OnInit {
 
   onBack(): void {
     this.router.navigate(['/inventory/items']);
+  }
+
+  onWorkerLinkClicked(element: any): void {
+    if (element.workerId) {
+      this.router.navigate(['/hr/workers', element.workerId]);
+    }
   }
 }

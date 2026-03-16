@@ -80,7 +80,8 @@ export class ApiUrlResource {
   private static InventoryTransaction_URL = '/api/InventoryTransaction';
   public static readonly InventoryTransactionAPI = {
     getByItemId: (itemId: string) => `${ApiUrlResource.InventoryTransaction_URL}/getByItemId/${itemId}`,
-    stockOut: ApiUrlResource.InventoryTransaction_URL + '/stock-out'
+    stockOut: ApiUrlResource.InventoryTransaction_URL + '/stock-out',
+    getByWorkerId: ApiUrlResource.InventoryTransaction_URL + '/getByWorkerId'
   };
 
   private static FileUpload_URL = '/api/FileUpload';
@@ -128,6 +129,7 @@ export class ApiUrlResource {
   private static Worker_URL = '/api/Worker';
   public static readonly WorkerAPI = {
     getAll: ApiUrlResource.Worker_URL + '/getAll',
+    getActive: ApiUrlResource.Worker_URL + '/getActive',
     getById: (id: string) => `${ApiUrlResource.Worker_URL}/getById/${id}`,
     add: ApiUrlResource.Worker_URL + '/add',
     update: ApiUrlResource.Worker_URL + '/update',

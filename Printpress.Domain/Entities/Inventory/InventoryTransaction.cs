@@ -16,6 +16,9 @@ namespace Printpress.Domain
 
         public virtual InventoryItem InventoryItem { get; private set; }
 
+        public Guid? WorkerId { get; set; }
+        public virtual Worker? Worker { get; set; }
+
         private InventoryTransaction()
         {
             

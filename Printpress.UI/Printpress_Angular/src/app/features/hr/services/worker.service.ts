@@ -13,6 +13,10 @@ export class WorkerService {
     return this.httpService.get<ApiResponseDto<WorkerDto[]>>(ApiUrlResource.WorkerAPI.getAll);
   }
 
+  getActive(): Observable<ApiResponseDto<WorkerDto[]>> {
+    return this.httpService.get<ApiResponseDto<WorkerDto[]>>(ApiUrlResource.WorkerAPI.getActive);
+  }
+
   getById(id: string, productionDateFrom?: string, productionDateTo?: string): Observable<ApiResponseDto<WorkerDetailsDto>> {
     let url = ApiUrlResource.WorkerAPI.getById(id);
     const params: string[] = [];

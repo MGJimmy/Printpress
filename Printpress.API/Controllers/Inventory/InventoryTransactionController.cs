@@ -20,4 +20,19 @@ public class InventoryTransactionController(IInventoryTransactionService _servic
         await _service.StockOutAsync(payload, UserId);
         return Ok();
     }
+
+    [HttpGet("getByWorkerId/{workerId}")]
+    public async Task<IActionResult> GetByWorkerId(
+        Guid workerId,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] int? inventoryItemCategoryId = null,
+        [FromQuery] Guid? inventoryItemId = null,
+        [FromQuery] DateTime? dateFrom = null,
+        [FromQuery] DateTime? dateTo = null)
+    {
+        var paging = new Paging(pageNumber, pageSize);
+        var result = await _service.GetByWorkerIdAsync(workerId, paging, inventoryItemCategoryId, inventoryItemId, dateFrom, dateTo);
+        return Ok(result);
+    }
 }

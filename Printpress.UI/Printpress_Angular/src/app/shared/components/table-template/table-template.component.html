@@ -60,7 +60,13 @@
   <ng-container *ngIf="column === 'amount'">
     {{element[column] | number:'1.2-2'}} جنيه
   </ng-container>
-  <ng-container *ngIf="column !== 'amount'">
+  <ng-container *ngIf="column !== 'amount' && column !== linkColumnName">
     {{element[column]}}
+  </ng-container>
+  <ng-container *ngIf="column === linkColumnName && element[column]">
+    <a style="cursor:pointer; color: var(--primary-color, #1976d2); text-decoration: underline;" (click)="onLinkColumnClick(element)">{{element[column]}}</a>
+  </ng-container>
+  <ng-container *ngIf="column === linkColumnName && !element[column]">
+    —
   </ng-container>
 </ng-template>

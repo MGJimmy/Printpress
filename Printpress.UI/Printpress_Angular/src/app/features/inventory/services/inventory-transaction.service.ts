@@ -9,6 +9,7 @@ export interface StockOutDto {
   inventoryItemId: string;
   quantity: number;
   notes: string;
+  workerId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,5 +29,22 @@ export class InventoryTransactionService {
 
   stockOut(dto: StockOutDto): Observable<any> {
     return this.httpService.post<any>(ApiUrlResource.InventoryTransactionAPI.stockOut, dto);
+  }
+
+  getByWorkerId(
+    workerId: string,
+    pageNumber: number,
+    pageSize: number,
+    inventoryItemCategoryId?: number,
+    inventoryItemId?: string,
+    dateFrom?: string,
+    dateTo?: string
+  ): Observable<any> {
+    const params: any = { pageNumber, pageSize };
+    if (inventoryItemCategoryId !== undefined && inventoryItemCategoryId !== null) params['inventoryItemCategoryId'] = inventoryItemCategoryId;
+    if (inventoryItemId) params['inventoryItemId'] = inventoryItemId;
+    if (dateFrom) params['dateFrom'] = dateFrom;
+    if (dateTo) params['dateTo'] = dateTo;
+    return this.httpService.get(`${ApiUrlResource.InventoryTransactionAPI.getByWorkerId}/${workerId}`, params);
   }
 }

@@ -47,6 +47,11 @@ namespace Printpress.Infrastructure
             entity.HasOne(x => x.InventoryItem)
                 .WithMany(i => i.InventoryTransactions)
                 .HasForeignKey(x => x.InventoryItemId);
+
+            entity.HasOne(x => x.Worker)
+                .WithMany(w => w.InventoryTransactions)
+                .HasForeignKey(x => x.WorkerId)
+                .IsRequired(false);
         }
 
         private static void Configure(this EntityTypeBuilder<InventoryItemCategory_LKP> entity)

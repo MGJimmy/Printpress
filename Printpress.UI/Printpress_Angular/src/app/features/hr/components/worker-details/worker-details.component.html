@@ -193,4 +193,92 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- Inventory Transactions Section -->
+  <mat-card class="shadow-sm mt-4">
+    <mat-card-header>
+      <mat-card-title>حركات المخزون</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Filters -->
+      <div class="row g-2 mb-3 align-items-end">
+        <div class="col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>الفئة</mat-label>
+            <mat-select [(ngModel)]="invCategoryId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onInvCategoryChange()">
+              <mat-option [value]="null">الكل</mat-option>
+              <mat-option *ngFor="let c of invCategories" [value]="c.id">{{ c.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>الصنف</mat-label>
+            <mat-select [(ngModel)]="invItemId" [ngModelOptions]="{standalone: true}" [disabled]="!invCategoryId">
+              <mat-option [value]="null">الكل</mat-option>
+              <mat-option *ngFor="let item of invItems" [value]="item.id">{{ item.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>من تاريخ</mat-label>
+            <input matInput [matDatepicker]="invPickerFrom" [(ngModel)]="invDateFrom" [ngModelOptions]="{standalone: true}">
+            <mat-datepicker-toggle matSuffix [for]="invPickerFrom"></mat-datepicker-toggle>
+            <mat-datepicker #invPickerFrom></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>إلى تاريخ</mat-label>
+            <input matInput [matDatepicker]="invPickerTo" [(ngModel)]="invDateTo" [ngModelOptions]="{standalone: true}">
+            <mat-datepicker-toggle matSuffix [for]="invPickerTo"></mat-datepicker-toggle>
+            <mat-datepicker #invPickerTo></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2 d-flex gap-2 pb-3">
+          <button mat-raised-button color="primary" (click)="applyInvFilter()">بحث</button>
+          <button mat-stroked-button (click)="resetInvFilter()">إعادة</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table mat-table [dataSource]="inventoryTransactions" class="w-100 gradient-table custom-table">
+          <ng-container matColumnDef="inventoryItemName">
+            <th mat-header-cell *matHeaderCellDef>الصنف</th>
+            <td mat-cell *matCellDef="let t">{{ t.inventoryItemName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="inventoryTransactionType">
+            <th mat-header-cell *matHeaderCellDef>نوع الحركة</th>
+            <td mat-cell *matCellDef="let t">{{ t.inventoryTransactionType }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>الكمية</th>
+            <td mat-cell *matCellDef="let t">{{ t.quantity }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let t">{{ t.notes }}</td>
+          </ng-container>
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let t">{{ t.createdAt | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['inventoryItemName','inventoryTransactionType','quantity','notes','createdAt']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['inventoryItemName','inventoryTransactionType','quantity','notes','createdAt'];"></tr>
+        </table>
+      </div>
+
+      <div *ngIf="inventoryTransactions.length === 0" class="text-center text-muted py-3">
+        لا توجد حركات مخزون
+      </div>
+
+      <app-shared-pagination
+        *ngIf="invTotalCount > invPageSize"
+        [totalItems]="invTotalCount"
+        (onPageChange)="onInvPageChange($event)">
+      </app-shared-pagination>
+    </mat-card-content>
+  </mat-card>
+
 </div>

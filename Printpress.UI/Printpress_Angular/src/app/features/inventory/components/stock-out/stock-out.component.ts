@@ -11,6 +11,8 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryTransactionService } from '../../services/inventory-transaction.service';
 import { InventoryItemDto } from '../../models/inventory-item.dto';
+import { WorkerService } from '../../../hr/services/worker.service';
+import { WorkerDto } from '../../../hr/models/worker.dto';
 
 function maxStockValidator(getMax: () => number) {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -37,11 +39,13 @@ function maxStockValidator(getMax: () => number) {
 export class StockOutComponent implements OnInit {
   inventoryItems: InventoryItemDto[] = [];
   selectedItem: InventoryItemDto | null = null;
+  workers: WorkerDto[] = [];
 
   form: FormGroup<{
     inventoryItemId: FormControl<string>;
     quantity: FormControl<number | null>;
     notes: FormControl<string>;
+    workerId: FormControl<string | null>;
   }>;
 
   get remaining(): number {
@@ -55,7 +59,8 @@ export class StockOutComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private inventoryService: InventoryService,
-    private inventoryTransactionService: InventoryTransactionService
+    private inventoryTransactionService: InventoryTransactionService,
+    private workerService: WorkerService
   ) {
     this.form = this.fb.group({
       inventoryItemId: this.fb.control('', Validators.required),
@@ -66,7 +71,8 @@ export class StockOutComponent implements OnInit {
           maxStockValidator(() => this.selectedItem?.stockQuantity ?? 0)
         ]
       }),
-      notes: this.fb.control('')
+      notes: this.fb.control(''),
+      workerId: new FormControl<string | null>(null)
     });
   }
 
@@ -78,6 +84,10 @@ export class StockOutComponent implements OnInit {
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');
       }
+    });
+
+    this.workerService.getActive().subscribe({
+      next: res => this.workers = res.data
     });
 
     this.form.controls.inventoryItemId.valueChanges.subscribe(id => {
@@ -96,7 +106,8 @@ export class StockOutComponent implements OnInit {
     this.inventoryTransactionService.stockOut({
       inventoryItemId: raw.inventoryItemId,
       quantity: raw.quantity!,
-      notes: raw.notes
+      notes: raw.notes,
+      workerId: raw.workerId ?? undefined
     }).subscribe({
       next: () => {
         this.alertService.showSuccess('تم صرف الكمية من المخزن بنجاح');

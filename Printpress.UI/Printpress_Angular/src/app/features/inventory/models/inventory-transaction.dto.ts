@@ -6,4 +6,6 @@ export interface InventoryTransactionDto {
   referenceId: string;
   notes: string;
   createdAt: string;
+  workerId?: string;
+  workerName?: string;
 }
