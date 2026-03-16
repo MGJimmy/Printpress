@@ -267,10 +267,10 @@ internal class ReportRepository : IReportRepository
                 i.OrderGroupId,
                 i.Quantity,
                 PagesValue = i.Details
-                    .Where(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages && !d.IsDeleted)
+                    .Where(d => d.ItemDetailsKeyId == (int)ItemDetailsKeyEnum.NumberOfPages && !d.IsDeleted)
                     .Select(d => d.Value).FirstOrDefault(),
                 FacesValue = i.Details
-                    .Where(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces && !d.IsDeleted)
+                    .Where(d => d.ItemDetailsKeyId == (int)ItemDetailsKeyEnum.NumberOfPrintingFaces && !d.IsDeleted)
                     .Select(d => d.Value).FirstOrDefault()
             })
             .ToListAsync();
