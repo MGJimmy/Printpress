@@ -96,6 +96,7 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
   private loadInventoryItems(): void {
     this.inventoryService.getAll(1000, 1).subscribe(res => {
       this.inventoryItems = res.data?.items ?? [];
+      this.inventoryItems = this.inventoryItems.filter(item => item.isActive !== false);
     });
   }
 

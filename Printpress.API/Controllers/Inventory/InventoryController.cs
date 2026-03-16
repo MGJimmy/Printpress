@@ -48,4 +48,11 @@ public class InventoryController(IInventoryItemService _inventoryItemService) : 
         await _inventoryItemService.DeleteAsync(id, UserId);
         return Ok();
     }
+
+    [HttpPut("deactivate/{id}")]
+    public async Task<IActionResult> Deactivate(Guid id)
+    {
+        await _inventoryItemService.DeactivateAsync(id, UserId);
+        return Ok();
+    }
 }

@@ -10,4 +10,5 @@ public record ServiceDto
     public string ServiceCategoryName { get; set; }
     public Guid? InventoryItemId { get; set; }
     public string InventoryItemName { get; set; }
+    public bool IsActive { get; set; }
 }

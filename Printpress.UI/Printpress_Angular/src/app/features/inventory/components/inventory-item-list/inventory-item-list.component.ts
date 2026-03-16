@@ -29,7 +29,8 @@ export class InventoryItemListComponent implements OnInit {
     { headerName: 'وحدات/عبوة', column: 'unitsPerPack' },
     { headerName: 'نسبة الفاقد الشراء %', column: 'expectedPurchaseLossPercent' },
     { headerName: 'نسبة الهالك الإنتاج %', column: 'expectedProductionWastePercent' },
-    { headerName: 'الكمية في المخزون', column: 'stockQuantity' }
+    { headerName: 'الكمية في المخزون', column: 'stockQuantity' },
+    { headerName: 'نشط', column: 'isActive' }
   ];
 
   constructor(
@@ -78,8 +79,23 @@ export class InventoryItemListComponent implements OnInit {
           this.alertService.showSuccess('تم حذف العنصر بنجاح');
           this.loadItems(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUMBER);
         },
+        error: (err: any) => {
+          const msg = err?.error?.errors?.[0] || 'حدث خطأ أثناء حذف العنصر';
+          this.alertService.showError(msg);
+        }
+      });
+    }
+  }
+
+  onDeactivate(id: string) {
+    if (confirm('هل أنت متأكد من تعطيل هذا العنصر؟ سيتم تعطيل جميع الخدمات المرتبطة به.')) {
+      this.inventoryService.deactivate(id).subscribe({
+        next: () => {
+          this.alertService.showSuccess('تم تعطيل العنصر بنجاح');
+          this.loadItems(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUMBER);
+        },
         error: () => {
-          this.alertService.showError('حدث خطأ أثناء حذف العنصر');
+          this.alertService.showError('حدث خطأ أثناء تعطيل العنصر');
         }
       });
     }

@@ -30,6 +30,7 @@ namespace Printpress.Infrastructure
                     ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
                     ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
                     HasTransactions = i.InventoryTransactions.Any(),
+                    IsActive = i.IsActive,
                     StockQuantity = Context.InventoryTransaction
                         .Where(t => t.InventoryItemId == i.Id)
                         .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
@@ -61,6 +62,7 @@ namespace Printpress.Infrastructure
                     ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
                     ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
                     HasTransactions = i.InventoryTransactions.Any(),
+                    IsActive = i.IsActive,
                     StockQuantity = Context.InventoryTransaction
                         .Where(t => t.InventoryItemId == i.Id)
                         .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
@@ -73,7 +75,7 @@ namespace Printpress.Infrastructure
         public async Task<List<InventoryItemDto>> GetByCategoryIdAsync(int categoryId)
         {
             return await Context.InventoryItem
-                .Where(i => i.InventoryItemCategoryId == categoryId)
+                .Where(i => i.InventoryItemCategoryId == categoryId && i.IsActive)
                 .Select(i => new InventoryItemDto
                 {
                     Id = i.Id,
@@ -84,6 +86,7 @@ namespace Printpress.Infrastructure
                     ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
                     ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
                     HasTransactions = i.InventoryTransactions.Any(),
+                    IsActive = i.IsActive,
                     StockQuantity = Context.InventoryTransaction
                         .Where(t => t.InventoryItemId == i.Id)
                         .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In

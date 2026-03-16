@@ -19,6 +19,18 @@ namespace Printpress.Application
             return await GetById(service.Id);
         }
 
+        public async Task DeactivateAsync(Guid id, string userId)
+        {
+            var service = await _unitOfWork.ServiceRepository.FindAsync(id);
+            if (service is null)
+                throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ServiceNotFound));
+
+            service.IsActive = false;
+            _unitOfWork.ServiceRepository.Update(service);
+
+            await _unitOfWork.SaveChangesAsync(userId);
+        }
+
         public async Task DeleteAsync(Guid id, string userId)
         {
             Service service = await _unitOfWork.ServiceRepository.FindAsync(id);

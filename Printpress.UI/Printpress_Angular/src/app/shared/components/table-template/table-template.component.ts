@@ -10,7 +10,7 @@ import { TableColDefinitionModel } from '../../models/table-col-definition.model
 import { PageChangedModel } from '../../models/page-changed.model';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTrash, faBan } from '@fortawesome/free-solid-svg-icons';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -45,6 +45,8 @@ export class TableTemplateComponent implements OnInit {
   @Input() isShowHeader: boolean = true;
   @Input() reportTable: boolean = false;
   @Input() showViewButton: boolean = false;
+  @Input() showDeactivateButton: boolean = false;
+  @Output() deactivateClicked: EventEmitter<string> = new EventEmitter<string>();
 
   displayedColumns: string[] = [];
   pageSize: number = 5;
@@ -54,6 +56,7 @@ export class TableTemplateComponent implements OnInit {
   faTrash = faTrash;
   faEdit = faEdit;
   faView = faEye;
+  faBan = faBan;
 
   get conditionalPagination(): boolean {
     return this.totalItemsCount > this.pageSize;
@@ -110,5 +113,9 @@ export class TableTemplateComponent implements OnInit {
     if(this.showViewButton){
       this.viewClicked.emit(element.id);
     }
+  }
+
+  onDeactivate(element: any): void {
+    this.deactivateClicked.emit(element.id);
   }
 }

@@ -24,7 +24,8 @@ namespace Printpress.Application
                 ServiceCategoryCode = sourceEntity.ServiceCategory?.Code,
                 ServiceCategoryName = sourceEntity.ServiceCategory?.Name,
                 InventoryItemId = sourceEntity.InventoryItemId,
-                InventoryItemName = sourceEntity.InventoryItem?.Name
+                InventoryItemName = sourceEntity.InventoryItem?.Name,
+                IsActive = sourceEntity.IsActive
             };
         }
 

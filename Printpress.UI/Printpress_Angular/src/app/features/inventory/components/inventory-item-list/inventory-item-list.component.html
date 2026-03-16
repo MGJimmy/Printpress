@@ -25,9 +25,11 @@
               [isShowEditButton]="true"
               [isShowDeleteButton]="true"
               [showViewButton]="true"
+              [showDeactivateButton]="true"
               (editClicked)="onEdit($event)"
               (deleteClicked)="onDelete($event)"
               (viewClicked)="onView($event)"
+              (deactivateClicked)="onDeactivate($event)"
               (pageChanged)="onPageChange($event)">
             </app-table-template>
           </div>

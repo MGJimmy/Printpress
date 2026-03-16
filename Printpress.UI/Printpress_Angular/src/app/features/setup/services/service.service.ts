@@ -66,4 +66,9 @@ export class ServiceService {
                 tap(() => this.cacheService.remove(CacheKeyEnum.services))
             );
     }
+
+    public deactivate(id: string): Observable<any> {
+        return this.httpService.put<any>(ApiUrlResource.ServiceAPI.deactivate(id), {})
+            .pipe(tap(() => this.cacheService.remove(CacheKeyEnum.services)));
+    }
 }

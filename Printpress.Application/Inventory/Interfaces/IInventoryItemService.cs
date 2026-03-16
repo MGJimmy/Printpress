@@ -8,4 +8,5 @@ public interface IInventoryItemService
     Task<PagedList<InventoryItemDto>> GetAllAsync(Paging paging);
     Task<List<InventoryItemDto>> GetByCategoryAsync(int categoryId);
     Task DeleteAsync(Guid id, string userId);
+    Task DeactivateAsync(Guid id, string userId);
 }

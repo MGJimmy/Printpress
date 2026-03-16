@@ -8,4 +8,5 @@ export interface InventoryItemDto {
   expectedProductionWastePercent: number;
   stockQuantity: number;
   hasTransactions: boolean;
+  isActive: boolean;
 }

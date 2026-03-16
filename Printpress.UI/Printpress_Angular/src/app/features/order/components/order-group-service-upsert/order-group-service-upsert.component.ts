@@ -96,6 +96,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.serviceService.getAll().subscribe({
       next: (data) => {
         this.allServices = data;
+        this.allServices = this.allServices.filter(s => s.isActive !== false);
       },
       error: (err) => {
         this.errorHandlingService.handleError(err);

@@ -17,4 +17,5 @@ public record InventoryItemDto
     public int ExpectedProductionWastePercent { get; init; }
     public int StockQuantity { get; init; }
     public bool HasTransactions { get; init; }
+    public bool IsActive { get; init; }
 }

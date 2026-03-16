@@ -7,4 +7,5 @@ export interface ServiceGetDto {
     serviceCategoryName: string;
     inventoryItemId?: string;
     inventoryItemName?: string;
+    isActive?: boolean;
 }

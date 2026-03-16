@@ -10,13 +10,15 @@
                 </mat-card-header>
                 <mat-card-content>
                     <div class="mt-4">
-                        <app-table-template 
+                        <app-table-template
                             [columnDefs]="columnDefs"
                             [originalSource]="services"
                             [isShowEditButton]="true"
                             [isShowDeleteButton]="true"
+                            [showDeactivateButton]="true"
                             (editClicked)="onEdit($event)"
-                            (deleteClicked)="onDelete($event)">
+                            (deleteClicked)="onDelete($event)"
+                            (deactivateClicked)="onDeactivate($event)">
                         </app-table-template>
                     </div>
                 </mat-card-content>

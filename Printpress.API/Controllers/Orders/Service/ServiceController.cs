@@ -47,4 +47,12 @@ public class ServiceController(IServiceService _serviceService) : AppBaseControl
         await _serviceService.DeleteAsync(id, UserId);
         return Ok();
     }
+
+    [HttpPut]
+    [Route("deactivate/{id}")]
+    public async Task<IActionResult> Deactivate(Guid id)
+    {
+        await _serviceService.DeactivateAsync(id, UserId);
+        return Ok();
+    }
 }

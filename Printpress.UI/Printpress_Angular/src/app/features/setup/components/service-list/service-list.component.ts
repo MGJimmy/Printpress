@@ -29,7 +29,8 @@ export class ServiceListComponent implements OnInit {
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'الاسم', column: 'name' },
     { headerName: 'السعر', column: 'price' },
-    { headerName: 'نوع الخدمة', column: 'serviceCategoryName' }
+    { headerName: 'نوع الخدمة', column: 'serviceCategoryName' },
+    { headerName: 'نشط', column: 'isActive' }
   ];
 
   constructor(
@@ -87,8 +88,25 @@ export class ServiceListComponent implements OnInit {
             this.alertService.showSuccess('تم حذف الخدمة بنجاح');
             this.loadServices();
           },
-          error: (error) => {
+          error: () => {
             this.alertService.showError('حدث خطأ أثناء حذف الخدمة');
+          }
+        });
+    }
+  }
+
+  onDeactivate(id: string) {
+    if (confirm('هل أنت متأكد من تعطيل هذه الخدمة؟')) {
+      this.isLoading = true;
+      this.serviceService.deactivate(id)
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe({
+          next: () => {
+            this.alertService.showSuccess('تم تعطيل الخدمة بنجاح');
+            this.loadServices();
+          },
+          error: () => {
+            this.alertService.showError('حدث خطأ أثناء تعطيل الخدمة');
           }
         });
     }

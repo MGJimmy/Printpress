@@ -32,6 +32,8 @@ namespace Printpress.Infrastructure
                 .HasForeignKey(x => x.InventoryItemCategoryId);
 
             entity.Ignore(x => x.InventoryItemCategory);
+
+            entity.Property(x => x.IsActive).HasDefaultValue(true);
         }
 
         private static void Configure(this EntityTypeBuilder<InventoryTransaction> entity)

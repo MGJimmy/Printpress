@@ -44,4 +44,8 @@ export class InventoryService {
   delete(id: string): Observable<any> {
     return this.httpService.delete<any>(ApiUrlResource.InventoryAPI.delete(id));
   }
+
+  deactivate(id: string): Observable<any> {
+    return this.httpService.put<any>(ApiUrlResource.InventoryAPI.deactivate(id), {});
+  }
 }

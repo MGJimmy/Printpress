@@ -7,5 +7,6 @@ public interface IServiceService
     Task<ServiceDto> GetById(Guid id);
     Task DeleteAsync(Guid id, string userId);
     Task<List<ServiceDto>> GetAll();
+    Task DeactivateAsync(Guid id, string userId);
 
 }

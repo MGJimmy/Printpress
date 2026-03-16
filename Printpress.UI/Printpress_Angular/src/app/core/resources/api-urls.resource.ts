@@ -63,6 +63,7 @@ export class ApiUrlResource {
     add: ApiUrlResource.Service_URL + '/add',
     update: (id:string) => `${ApiUrlResource.Service_URL}/update/${id}`,
     delete:(id:string) => `${ApiUrlResource.Service_URL}/delete/${id}`,
+    deactivate: (id: string) => `${ApiUrlResource.Service_URL}/deactivate/${id}`,
   };
 
   private static Inventory_URL = '/api/Inventory';
@@ -73,6 +74,7 @@ export class ApiUrlResource {
     add: ApiUrlResource.Inventory_URL + '/add',
     update: (id: string) => `${ApiUrlResource.Inventory_URL}/update/${id}`,
     delete: (id: string) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
+    deactivate: (id: string) => `${ApiUrlResource.Inventory_URL}/deactivate/${id}`,
   };
 
   private static InventoryTransaction_URL = '/api/InventoryTransaction';

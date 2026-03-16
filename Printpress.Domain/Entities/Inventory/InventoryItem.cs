@@ -21,6 +21,7 @@ namespace Printpress.Domain
         public int? UnitsPerPack { get; set; }
         public int ExpectedPurchaseLossPercent { get; set; }
         public int ExpectedProductionWastePercent { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public virtual InventoryItemCategory_LKP InventoryItemCategory_LKP { get; set; }
 

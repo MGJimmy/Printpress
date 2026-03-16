@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, NonNullableFormBuilder, FormArray, Validators, AbstractControl } from '@angular/forms';
+import { ReactiveFormsModule, NonNullableFormBuilder, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -47,7 +47,6 @@ export class ExecuteItemServiceComponent implements OnInit {
   workers: WorkerDto[] = [];
   selectedService: ServiceProgressDto | null = null;
   isSaving = false;
-  workerDataSource: AbstractControl[] = [];
 
   form = this.fb.group({
     serviceCategoryId: this.fb.control<string>('', Validators.required),
@@ -112,12 +111,10 @@ export class ExecuteItemServiceComponent implements OnInit {
 
   addWorkerRow(): void {
     this.workerRows.push(this.createWorkerRow());
-    this.workerDataSource = [...this.workerRows.controls];
   }
 
   removeWorkerRow(index: number): void {
     this.workerRows.removeAt(index);
-    this.workerDataSource = [...this.workerRows.controls];
   }
 
   getServiceStatusClass(svc: ServiceProgressDto): string {

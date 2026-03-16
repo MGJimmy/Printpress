@@ -124,10 +124,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
               this.fetchClients();
             },
             error: (err) => {
-              this.alertService.showError(
-                'حدث خطأ أثناء حذف العميل. يرجى المحاولة مرة أخرى.'
-              );
-              this.errorHandlingService.handleError(err);
+              const msg = err?.error?.errors?.[0] || 'حدث خطأ أثناء حذف العميل. يرجى المحاولة مرة أخرى.';
+              this.alertService.showError(msg);
             },
           });
           this.subscriptions.add(deleteSub);

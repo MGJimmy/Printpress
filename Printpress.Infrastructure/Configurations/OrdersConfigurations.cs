@@ -76,6 +76,8 @@ namespace Printpress.Infrastructure
             entity.HasOne(x => x.InventoryItem)
                     .WithMany(i => i.OrderServices)
                     .HasForeignKey(x => x.InventoryItemId);
+
+            entity.Property(x => x.IsActive).HasDefaultValue(true);
         }
 
         private static void Configure(this EntityTypeBuilder<ServiceCategory> entity)

@@ -59,6 +59,25 @@ internal sealed class InventoryItemService(
         return await _unitOfWork.InventoryItemRepository.GetByCategoryIdAsync(categoryId);
     }
 
+    public async Task DeactivateAsync(Guid id, string userId)
+    {
+        var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);
+        if (item is null)
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
+
+        item.IsActive = false;
+        _unitOfWork.InventoryItemRepository.Update(item);
+
+        var allServices = await _unitOfWork.ServiceRepository.AllAsync();
+        foreach (var service in allServices.Where(s => s.InventoryItemId == id))
+        {
+            service.IsActive = false;
+            _unitOfWork.ServiceRepository.Update(service);
+        }
+
+        await _unitOfWork.SaveChangesAsync(userId);
+    }
+
     public async Task DeleteAsync(Guid id, string userId)
     {
         var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);
