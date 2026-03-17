@@ -109,11 +109,22 @@
                     <mat-icon style="color:#7b1fa2">visibility</mat-icon>
                     <span>عرض سجل التنفيذ</span>
                   </button>
+                  <!-- Execute (Internal only) -->
                   <button mat-menu-item
+                          *ngIf="groupData?.executionType === 'Internal'"
                           (click)="onExecuteItem(item.id)"
                           [disabled]="item.status === 'Completed'">
                     <mat-icon [style.color]="item.status !== 'Completed' ? '#1976d2' : ''">play_circle</mat-icon>
                     <span>{{ item.status === 'Completed' ? 'مكتمل' : 'تنفيذ' }}</span>
+                  </button>
+
+                  <!-- Complete (External types) -->
+                  <button mat-menu-item
+                          *ngIf="groupData?.executionType !== 'Internal'"
+                          (click)="onCompleteItem(item.id)"
+                          [disabled]="item.status === 'Completed'">
+                    <mat-icon [style.color]="item.status !== 'Completed' ? '#388e3c' : ''">check_circle</mat-icon>
+                    <span>{{ item.status === 'Completed' ? 'مكتمل' : 'اكتمل' }}</span>
                   </button>
                 </mat-menu>
               </td>

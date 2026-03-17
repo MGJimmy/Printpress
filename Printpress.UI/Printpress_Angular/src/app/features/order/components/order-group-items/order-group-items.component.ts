@@ -94,6 +94,16 @@ export class OrderGroupItemsComponent implements OnInit {
     return item.serviceProgresses.find(s => s.serviceCategoryId === serviceCategoryId) ?? null;
   }
 
+  onCompleteItem(itemId: string): void {
+    this.executionService.completeItem(itemId).subscribe({
+      next: () => {
+        this.alertService.showSuccess('تم اكتمال العنصر');
+        this.loadGroupItems();
+      },
+      error: () => this.alertService.showError('حدث خطأ أثناء اكتمال العنصر')
+    });
+  }
+
   onExecuteItem(itemId: string): void {
     this.router.navigate([`/order/groups/${this.groupId}/items/${itemId}/execute`]);
   }

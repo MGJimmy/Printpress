@@ -15,6 +15,8 @@ namespace Printpress.Application
       
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public GroupStatusEnum Status { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public GroupExecutionType ExecutionType { get; set; }
         public List<OrderGroupServiceDTO> OrderGroupServices { get; set; }
         public List<ItemDTO> Items { get; set; }
     }

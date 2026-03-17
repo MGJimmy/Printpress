@@ -5,6 +5,7 @@ import { OrderGroupServiceUpsertDto } from "../orderGroupService/order-group-ser
 export interface OrderGroupUpsertDto extends IObjectState {
     id: string;
     name: string;
+    executionType: string;
     orderGroupServices: OrderGroupServiceUpsertDto[];
     items: ItemUpsertDto[];
 }

@@ -261,7 +261,7 @@ internal class ReportRepository : IReportRepository
         var groupIds = serviceGroupPairs.Select(p => p.OrderGroupId).Distinct().ToList();
 
         var rawItems = await _context.Item
-            .Where(i => groupIds.Contains(i.OrderGroupId) && !i.IsDeleted)
+            .Where(i => groupIds.Contains(i.OrderGroupId) && !i.IsDeleted && i.OrderGroup.ExecutionType != GroupExecutionType.External_Full)
             .Select(i => new
             {
                 i.OrderGroupId,

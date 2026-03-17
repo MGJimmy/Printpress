@@ -20,6 +20,10 @@ import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { MatRadioModule } from '@angular/material/radio';
+import { Router } from '@angular/router';
+import { OrderRoutingService } from '../../services/order-routing.service';
+import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 
 export interface ServiceCat_interface {
   id: string;
@@ -38,7 +42,8 @@ export interface ServiceCat_interface {
     FormsModule,
     CommonModule,
     MatDialogModule,
-    ServiceCategoryArabicPipe
+    ServiceCategoryArabicPipe,
+    MatRadioModule
   ],
   templateUrl: './order-group-service-upsert.component.html',
   styleUrl: './order-group-service-upsert.component.css'
@@ -69,6 +74,14 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   groupId: string = '';
 
+  executionType: string = 'Internal';
+  executionTypes = ['Internal', 'External_WithOurMaterials', 'External_Full'];
+  executionTypeLabels: Record<string, string> = {
+    Internal: 'داخلي',
+    External_WithOurMaterials: 'خارجي (بموادنا)',
+    External_Full: 'خارجي (كامل)'
+  };
+
   constructor(
     private alertService: AlertService,
     private dialogService: DialogService,
@@ -77,11 +90,16 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     private serviceService: ServiceService,
     private orderSharedDataService:OrderSharedDataService,
     @Inject(MAT_DIALOG_DATA) public inputData: any,
-    private _t: TranslationService
+    private _t: TranslationService,
+    private router: Router,
+    private orderRoutingService: OrderRoutingService
   ) {}
 
   ngOnInit(): void {
     this.groupId = this.inputData.groupId;
+
+    const group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
+    this.executionType = group.executionType ?? 'Internal';
 
     this.fetchServices();
     this.fillPageData()
@@ -206,6 +224,21 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     }
 
     return true;
+  }
+
+  onExecutionTypeChange(type: string): void {
+    this.executionType = type;
+    this.orderSharedDataService.updateGroupExecutionType(this.groupId, type);
+  }
+
+  onCancel(): void {
+    this.currentComponentDialogRef.close(false);
+    const order = this.orderSharedDataService.getOrderObject_copy();
+    if (order.objectState === ObjectStateEnum.temp) {
+      this.router.navigate([this.orderRoutingService.getOrderAddRoute()]);
+    } else {
+      this.router.navigate([this.orderRoutingService.getOrderEditRoute(order.id)]);
+    }
   }
 
   protected onClickSave() {

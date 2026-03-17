@@ -18,6 +18,7 @@ export interface OrderGroupItemsResponseDto {
   groupId: string;
   groupName: string;
   groupStatus: string;
+  executionType: string;
   groupServices: ServiceProgressDto[];
   items: ItemWithServiceProgressDto[];
 }

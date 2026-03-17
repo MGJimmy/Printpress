@@ -52,6 +52,7 @@ internal sealed class ItemServiceExecutionService(
             GroupId = group.Id,
             GroupName = group.Name,
             GroupStatus = group.Status.ToString(),
+            ExecutionType = group.ExecutionType.ToString(),
             GroupServices = distinctServiceCategories.Select(sc => new ServiceProgressDto
             {
                 ServiceCategoryId = sc.Id,
@@ -214,6 +215,20 @@ internal sealed class ItemServiceExecutionService(
         await UpdateCompletionStatusAsync(item, userId);
     }
 
+    public async Task CompleteItemAsync(Guid itemId, string userId)
+    {
+        var item = await _unitOfWork.OrderItemRepository.FindAsync(itemId);
+        if (item is null)
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(itemId));
+
+        if (item.OrderItemStatus == OrderItemStatus.Completed)
+            return;
+
+        item.OrderItemStatus = OrderItemStatus.Completed;
+        await _unitOfWork.SaveChangesAsync(userId);
+        await CheckAndUpdateGroupStatusAsync(item.OrderGroupId, userId);
+    }
+
     // ── Private Methods ──────────────────────────────────────────────────────
 
     private async Task SetGroupAndOrderInProgressAsync(Guid groupId, string userId)
@@ -371,6 +386,7 @@ internal sealed class ItemServiceExecutionService(
         GroupId = group.Id,
         GroupName = group.Name,
         GroupStatus = group.Status.ToString(),
+        ExecutionType = group.ExecutionType.ToString(),
         GroupServices = serviceCategories.Select(sc => new ServiceProgressDto
         {
             ServiceCategoryId = sc.Id,

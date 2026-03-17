@@ -147,6 +147,7 @@ export class OrderSharedDataService {
       id: tempId,
       orderId: this.orderObject.id,
       name: '',
+      executionType: 'Internal',
       isHasPrintingService: false,
       isHasSellingService: false,
       isHasStaplingService: false,
@@ -187,6 +188,11 @@ export class OrderSharedDataService {
   public updateOrderGroupName(id: string, name: string) {
     let orderGroup = this.getOrderGroup(id);
     orderGroup.name = name;
+  }
+
+  public updateGroupExecutionType(groupId: string, executionType: string): void {
+    let orderGroup = this.getOrderGroup(groupId);
+    orderGroup.executionType = executionType;
   }
 
   public updateOrderGroup(id: string) {

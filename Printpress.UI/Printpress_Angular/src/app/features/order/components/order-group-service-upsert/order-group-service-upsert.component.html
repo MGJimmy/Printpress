@@ -1,6 +1,16 @@
 <mat-card class="p-4">
   <mat-card-title class="text-center">خدمات المجموعة</mat-card-title>
   <mat-card-content>
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="form-label fw-bold">نوع التنفيذ:</label>
+        <mat-radio-group [(ngModel)]="executionType" (change)="onExecutionTypeChange($event.value)" class="d-flex gap-4 mt-1">
+          <mat-radio-button *ngFor="let t of executionTypes" [value]="t">
+            {{ executionTypeLabels[t] }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
     <div class="row my-3">
       <!-- Categories Dropdown -->
       <div class="col-md-6">
@@ -38,7 +48,8 @@
   </app-table-template>
 
   <hr>
-  <div class="d-flex justify-content-center">
-    <button mat-raised-button color="accent" class="px-5 mx-3 mb-3" (click)="onClickSave()">حفظ</button>
+  <div class="d-flex justify-content-center gap-3">
+    <button mat-raised-button color="accent" class="px-5 mb-3" (click)="onClickSave()">حفظ</button>
+    <button mat-stroked-button class="px-5 mb-3" (click)="onCancel()">إلغاء</button>
   </div>
 </mat-card>

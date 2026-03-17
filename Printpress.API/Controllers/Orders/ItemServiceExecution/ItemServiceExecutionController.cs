@@ -34,4 +34,11 @@ public class ItemServiceExecutionController(IItemServiceExecutionService _servic
         await _service.ExecuteAsync(payload, UserId);
         return Ok();
     }
+
+    [HttpPost("complete/{itemId}")]
+    public async Task<IActionResult> CompleteItem(Guid itemId)
+    {
+        await _service.CompleteItemAsync(itemId, UserId);
+        return Ok();
+    }
 }

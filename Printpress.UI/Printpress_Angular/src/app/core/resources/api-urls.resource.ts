@@ -27,7 +27,8 @@ export class ApiUrlResource {
     groupItems: (groupId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/group-items/${groupId}`,
     itemSummary: (itemId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/item-summary/${itemId}`,
     itemHistory: (itemId: string) => `${ApiUrlResource.ItemServiceExecution_URL}/item-history/${itemId}`,
-    execute: ApiUrlResource.ItemServiceExecution_URL + '/execute'
+    execute: ApiUrlResource.ItemServiceExecution_URL + '/execute',
+    completeItem: ApiUrlResource.ItemServiceExecution_URL + '/complete'
   };
 
   private static Order_URL = '/api/order';
