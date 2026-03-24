@@ -17,6 +17,14 @@
             <label>الخدمات الحالية:</label>
             <div class="px-2 d-inline text-dark">{{groupServicesNamesCommaseperated}}</div>
         </div>
+        <div class="px-5 pb-2">
+            <label>نوع التنفيذ:</label>
+            <span class="px-2 fw-bold" [ngClass]="{
+              'text-primary': groupExecutionType === 'Internal',
+              'text-warning': groupExecutionType === 'External_WithOurMaterials',
+              'text-danger': groupExecutionType === 'External_Full'
+            }">{{ executionTypeLabel }}</span>
+        </div>
     </div>
     <div class="my-5">
         <button mat-raised-button color="accent" (click)="addItem_Click()">إضافة عنصر</button>

@@ -36,7 +36,12 @@ import { TranslationService } from '../../../../core/services/translation.servic
 export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   public componentMode: ComponentMode;
-  public displayedColumns = ['name', 'status', 'deliveryDate', 'deliveredTo', 'action'];
+  public displayedColumns = ['name', 'executionType', 'status', 'deliveryDate', 'deliveredTo', 'action'];
+  public executionTypeLabels: Record<string, string> = {
+    Internal: 'داخلي',
+    External_WithOurMaterials: 'خارجي (بموادنا)',
+    External_Full: 'خارجي (كامل)'
+  };
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public groupStatusFilter: string = 'all';
   private allGroupRows: OrderGroupGridViewModel[] = [];
@@ -262,6 +267,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       return {
         id: orderGroup.id,
         name: orderGroup.name,
+        executionType: orderGroup.executionType,
         status: orderGroup.status,
         deliveryDate: orderGroup.deliveryDate,
         deliveredTo: orderGroup.deliveredTo,
@@ -336,6 +342,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 interface OrderGroupGridViewModel {
   id: string;
   name: string;
+  executionType?: string;
   status?: string;
   deliveryDate?: Date;
   deliveredTo?: string;

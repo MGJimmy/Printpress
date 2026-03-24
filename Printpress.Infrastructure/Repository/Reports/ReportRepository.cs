@@ -74,7 +74,8 @@ internal class ReportRepository : IReportRepository
 
 
         List<OrderItem> orderItems = orders.SelectMany(o => o.OrderGroups)
-            .Where(og => og.OrderGroupServices.Any(os => serviceIds.Contains(os.ServiceId)))
+            .Where(og => og.OrderGroupServices.Any(os => serviceIds.Contains(os.ServiceId))
+                && og.ExecutionType != GroupExecutionType.External_Full)
             .SelectMany(og => og.Items)
             .ToList();
 

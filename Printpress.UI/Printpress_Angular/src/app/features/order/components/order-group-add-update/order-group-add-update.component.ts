@@ -44,6 +44,15 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   protected itemsGridSource!: ItemGridVM[];
 
   protected groupServicesNamesCommaseperated!: string;
+  protected groupExecutionType: string = 'Internal';
+  protected get executionTypeLabel(): string {
+    const labels: Record<string, string> = {
+      Internal: 'داخلي',
+      External_WithOurMaterials: 'خارجي (بموادنا)',
+      External_Full: 'خارجي (كامل)'
+    };
+    return labels[this.groupExecutionType] ?? this.groupExecutionType;
+  }
 
   private updateDisplayedServicesNames(groupServices: OrderGroupServiceGetDto[]) {
     this.groupServicesNamesCommaseperated = groupServices.map(x => { return x.serviceName }).join(' - ');
@@ -100,6 +109,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     const currentGroup = this.orderSharedService.getOrderGroup_Copy(this.groupId);
 
     this.groupName = currentGroup.name;
+    this.groupExecutionType = currentGroup.executionType ?? 'Internal';
     this.updateDisplayedServicesNames(currentGroup.orderGroupServices);
 
     this.groupItems = currentGroup.items;
