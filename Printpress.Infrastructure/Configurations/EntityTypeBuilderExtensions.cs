@@ -7,7 +7,7 @@ namespace Printpress.Infrastructure
     {
         public static void SetSchemaTable<TEntity>(
             this EntityTypeBuilder<TEntity> entity,
-            string schema) where TEntity : class
+            string? schema) where TEntity : class
         {
             entity.ToTable(typeof(TEntity).Name + "s", schema);
         }

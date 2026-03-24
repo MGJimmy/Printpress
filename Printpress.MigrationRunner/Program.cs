@@ -36,7 +36,7 @@ public class Program
                 //seedingDbContext.SeedingMockData();
 
                 //use this to add lockup data
-                seedingDbContext.SeedingLockupData();
+                seedingDbContext.SeedingData();
 
                 //call save changes only here to save the data dont call it in the seeding methods
                 dbContext.SaveChanges();

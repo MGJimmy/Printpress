@@ -48,6 +48,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<PayrollPeriod> PayrollPeriod { get; set; }
     #endregion
 
+    #region General
+    public DbSet<CashAccount> CashAccount { get; set; }
+    public DbSet<CashTransaction> CashTransaction { get; set; }
+    #endregion
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -56,6 +61,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ConfigureInventory();
         modelBuilder.ConfigureSpareParts();
         modelBuilder.ConfigureHR();
+        modelBuilder.ConfigureGeneral();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

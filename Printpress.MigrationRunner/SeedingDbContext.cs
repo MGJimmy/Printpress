@@ -242,11 +242,12 @@ internal sealed class SeedingDbContext
     #endregion
 
 
-    public void SeedingLockupData()
+    public void SeedingData()
     {
         SeedingItemDetailsKeyLKP();
         SeedingServiceCategories();
         SeedingInventoryItemCategoryLKP();
+        SeedingCashAccounts();
     }
 
     private void SeedingItemDetailsKeyLKP()
@@ -289,6 +290,24 @@ internal sealed class SeedingDbContext
             {
                 _dbContext.InventoryItemCategory_LKP.Add(new InventoryItemCategory_LKP { Id = (int)inventoryItemCategory, Name = inventoryItemCategory.ToString() });
 
+            }
+        }
+    }
+
+    private void SeedingCashAccounts()
+    {
+        var cashAccounts = new[]
+        {
+            new CashAccount { Id = G(1), Name = "General",    Balance = 0 },
+            new CashAccount { Id = G(2), Name = "SpareParts", Balance = 0 },
+        };
+
+        foreach (var cashAccount in cashAccounts)
+        {
+            if (!_dbContext.CashAccount.Any(c => c.Id == cashAccount.Id))
+            {
+                _dbContext.CashAccount.Add(cashAccount);
+                Console.WriteLine(string.Format("new cash account add with name {0}", cashAccount.Name));
             }
         }
     }
