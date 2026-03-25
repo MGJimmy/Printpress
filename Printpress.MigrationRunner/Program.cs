@@ -39,6 +39,7 @@ public class Program
                 seedingDbContext.SeedingData();
 
                 //call save changes only here to save the data dont call it in the seeding methods
+                dbContext.CurrentUserId = "Seeding";
                 dbContext.SaveChanges();
 
                 Console.WriteLine("Database migrations applied successfully.");

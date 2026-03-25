@@ -298,8 +298,8 @@ internal sealed class SeedingDbContext
     {
         var cashAccounts = new[]
         {
-            new CashAccount { Id = G(1), Name = "General",    Balance = 0 },
-            new CashAccount { Id = G(2), Name = "SpareParts", Balance = 0 },
+            new CashAccount { Id = G(1), Name = "Main",    Balance = 0, Type = CashAccountType.Main, ObjectState = TrackingState.Added },
+            new CashAccount { Id = G(2), Name = "SpareParts", Balance = 0, Type = CashAccountType.SpareParts, ObjectState = TrackingState.Added },
         };
 
         foreach (var cashAccount in cashAccounts)

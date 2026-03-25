@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Printpress.Domain
 {
-    public class CashAccount 
+    public class CashAccount : Entity
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public decimal Balance { get; set; }
+        public CashAccountType Type { get; set; }
     }
 }
