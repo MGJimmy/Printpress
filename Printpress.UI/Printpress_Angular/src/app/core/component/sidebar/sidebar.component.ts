@@ -22,7 +22,8 @@ import {
   faWrench,
   faUserTie,
   faUsers,
-  faGlobe
+  faGlobe,
+  faMoneyBillWave
 } from '@fortawesome/free-solid-svg-icons';
 import { TranslationService } from '../../services/translation.service';
 
@@ -54,6 +55,7 @@ export class SidebarComponent implements OnDestroy {
   faUserTie = faUserTie;
   faUsers = faUsers;
   faGlobe = faGlobe;
+  faMoneyBillWave = faMoneyBillWave;
 
   isReportsExpanded = false;
   isHRExpanded = false;

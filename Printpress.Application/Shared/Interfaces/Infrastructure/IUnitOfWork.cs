@@ -31,5 +31,8 @@ public interface IUnitOfWork
     IGenericRepository<WorkerSalaryTransaction> WorkerSalaryTransactionRepository { get; }
     IGenericRepository<PayrollPeriod> PayrollPeriodRepository { get; }
 
+    IGenericRepository<CashAccount> CashAccountRepository { get; }
+    IGenericRepository<CashTransaction> CashTransactionRepository { get; }
+
     Task SaveChangesAsync(string userId);
 }

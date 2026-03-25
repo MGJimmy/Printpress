@@ -258,6 +258,25 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'general',
+        children: [
+          {
+            path: 'cash-accounts',
+            loadComponent: () =>
+              import('./features/general/components/cash-account-list/cash-account-list.component')
+                .then(m => m.CashAccountListComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'cash-accounts/view/:id',
+            loadComponent: () =>
+              import('./features/general/components/cash-account-view/cash-account-view.component')
+                .then(m => m.CashAccountViewComponent),
+            canActivate: [authGuard],
+          },
+        ]
+      },
+      {
         path: 'reports',
         children: [
           {

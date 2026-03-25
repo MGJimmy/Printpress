@@ -15,6 +15,7 @@ namespace Printpress.Domain
         public Guid? ReferenceId { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; }
+        public DateTime TransactionDate { get; set; }
 
         public virtual CashAccount CashAccount { get; set; }
     }

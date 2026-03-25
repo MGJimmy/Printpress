@@ -143,6 +143,19 @@ export class ApiUrlResource {
     delete: (id: string) => `${ApiUrlResource.WorkerSalaryTransaction_URL}/delete/${id}`
   };
 
+  private static CashAccount_URL = '/api/CashAccount';
+  public static readonly CashAccountAPI = {
+    getAll: ApiUrlResource.CashAccount_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.CashAccount_URL}/getById/${id}`,
+  };
+
+  private static CashTransaction_URL = '/api/CashTransaction';
+  public static readonly CashTransactionAPI = {
+    getByCashAccountId: (cashAccountId: string) => `${ApiUrlResource.CashTransaction_URL}/getByCashAccountId/${cashAccountId}`,
+    add: ApiUrlResource.CashTransaction_URL + '/add',
+    externalGroups: ApiUrlResource.CashTransaction_URL + '/external-groups',
+  };
+
   private static Reports_URL = '/api/Reports';
   public static readonly ReportsAPI = {
     orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',

@@ -39,6 +39,9 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.Amount)
                 .HasPrecision(18, 4);
 
+            entity.Property(x => x.TransactionDate)
+                .IsRequired();
+
             entity.Property(x => x.Type)
                 .HasConversion<int>();
 

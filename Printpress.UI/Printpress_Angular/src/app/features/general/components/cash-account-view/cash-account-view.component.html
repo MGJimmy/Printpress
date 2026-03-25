@@ -1,0 +1,110 @@
+<div class="container mt-4" dir="rtl">
+
+  <!-- Account Details Card -->
+  <mat-card>
+    <mat-card-header>
+      <div class="w-100 d-flex justify-content-between align-items-center">
+        <mat-card-title>تفاصيل الخزينة</mat-card-title>
+        <button mat-button (click)="onBack()">
+          <mat-icon>arrow_back</mat-icon>
+          رجوع
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" class="mt-3">
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>اسم الخزينة</mat-label>
+              <input matInput formControlName="name" />
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>الرصيد الحالي</mat-label>
+              <input matInput formControlName="balance" />
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Filter Card -->
+  <mat-card class="mt-4">
+    <mat-card-header>
+      <mat-card-title>تصفية الحركات</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row mt-3 align-items-end g-3">
+        <div class="col-md-3">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>من تاريخ</mat-label>
+            <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="filterDateFrom">
+            <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFrom></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>إلى تاريخ</mat-label>
+            <input matInput [matDatepicker]="pickerTo" [(ngModel)]="filterDateTo">
+            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+            <mat-datepicker #pickerTo></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>نوع الحركة</mat-label>
+            <mat-select [(ngModel)]="filterType">
+              <mat-option *ngFor="let t of transactionTypeOptions" [value]="t.value">{{ t.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>الفئة</mat-label>
+            <mat-select [(ngModel)]="filterCategory">
+              <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+          <button mat-raised-button color="primary" (click)="applyFilter()">بحث</button>
+          <button mat-stroked-button (click)="resetFilter()">إعادة تعيين</button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Transactions Card -->
+  <mat-card class="mt-4">
+    <mat-card-header>
+      <div class="w-100 d-flex justify-content-between align-items-center">
+        <mat-card-title>الحركات المالية</mat-card-title>
+        <button mat-raised-button color="primary" (click)="onAddTransaction()">
+          <mat-icon>add</mat-icon>
+          إضافة حركة
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="mt-3">
+        <app-table-template
+          [columnDefs]="columnDefs"
+          [originalSource]="transactions"
+          [totalItemsCount]="totalTransactionsCount"
+          [isShowEditButton]="false"
+          [isShowDeleteButton]="false"
+          [showViewButton]="false"
+          (pageChanged)="onPageChanged($event)">
+        </app-table-template>
+        <p *ngIf="transactions.length === 0" class="text-muted text-center mt-2">
+          لا توجد حركات مالية لهذه الخزينة.
+        </p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

@@ -66,6 +66,17 @@
       <span>المستخدمين</span>
     </a>
 
+    <a
+      *appHasRole="userRoleEnum.admin"
+      routerLink="/general/cash-accounts"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: false }"
+      class="list-group-item list-group-item-action"
+    >
+      <fa-icon [icon]="faMoneyBillWave" class="fa-icon mx-2"></fa-icon>
+      <span>الخزينة</span>
+    </a>
+
     <!-- HR -->
     <div class="list-group-item reports-parent" (click)="toggleHR()" style="cursor:pointer;">
       <fa-icon [icon]="faUserTie" class="fa-icon mx-2"></fa-icon>
