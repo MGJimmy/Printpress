@@ -13,6 +13,7 @@ import { InventoryTransactionService } from '../../services/inventory-transactio
 import { InventoryItemDto } from '../../models/inventory-item.dto';
 import { WorkerService } from '../../../hr/services/worker.service';
 import { WorkerDto } from '../../../hr/models/worker.dto';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 function maxStockValidator(getMax: () => number) {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -33,6 +34,7 @@ function maxStockValidator(getMax: () => number) {
     MatInputModule,
     MatSelectModule,
     MatCardModule,
+    SearchSelectComponent,
   ],
   templateUrl: './stock-out.component.html',
 })
@@ -40,6 +42,7 @@ export class StockOutComponent implements OnInit {
   inventoryItems: InventoryItemDto[] = [];
   selectedItem: InventoryItemDto | null = null;
   workers: WorkerDto[] = [];
+  workerItems: SearchSelectItem[] = [];
 
   form: FormGroup<{
     inventoryItemId: FormControl<string>;
@@ -87,7 +90,10 @@ export class StockOutComponent implements OnInit {
     });
 
     this.workerService.getActive().subscribe({
-      next: res => this.workers = res.data
+      next: res => {
+        this.workers = res.data;
+        this.workerItems = this.workers.map(w => ({ id: w.id, name: w.name }));
+      }
     });
 
     this.form.controls.inventoryItemId.valueChanges.subscribe(id => {

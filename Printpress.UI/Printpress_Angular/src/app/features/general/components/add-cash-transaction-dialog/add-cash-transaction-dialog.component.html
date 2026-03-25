@@ -25,15 +25,12 @@
       </div>
 
       <div class="col-md-6" *ngIf="showGroupSelector">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>مجموعة الطلب (خارجي)</mat-label>
-          <mat-select formControlName="groupId">
-            <mat-option *ngFor="let g of externalGroups" [value]="g.groupId">
-              {{ g.orderName }} — {{ g.groupName }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.groupId.hasError('required')">يجب اختيار المجموعة</mat-error>
-        </mat-form-field>
+        <app-search-select
+          formControlName="groupId"
+          [items]="externalGroupItems"
+          label="مجموعة الطلب (خارجي)"
+          [required]="true">
+        </app-search-select>
       </div>
 
       <div class="col-md-6">

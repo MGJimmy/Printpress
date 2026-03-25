@@ -11,6 +11,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { CashTransactionService } from '../../services/cash-transaction.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ExternalGroupDto } from '../../models/cash-transaction.dto';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 export interface AddCashTransactionDialogData {
   cashAccountId: string;
@@ -41,6 +42,7 @@ const OUT_CATEGORIES = [
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
+    SearchSelectComponent,
   ],
   templateUrl: './add-cash-transaction-dialog.component.html',
 })
@@ -61,6 +63,7 @@ export class AddCashTransactionDialogComponent implements OnInit {
 
   filteredCategories: { value: string; label: string }[] = [];
   externalGroups: ExternalGroupDto[] = [];
+  externalGroupItems: SearchSelectItem[] = [];
   showGroupSelector = false;
   isSubmitting = false;
 
@@ -104,6 +107,10 @@ export class AddCashTransactionDialogComponent implements OnInit {
     this.cashTransactionService.getExternalGroups().subscribe({
       next: (response) => {
         this.externalGroups = response.data;
+        this.externalGroupItems = this.externalGroups.map(g => ({
+          id: g.groupId,
+          name: `${g.orderName} — ${g.groupName}`
+        }));
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل المجموعات الخارجية');

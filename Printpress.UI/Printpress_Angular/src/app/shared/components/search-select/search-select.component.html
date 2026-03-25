@@ -1,0 +1,48 @@
+<mat-form-field appearance="outline" class="w-100">
+  <mat-label>{{ label }}</mat-label>
+
+  <input
+    matInput
+    [formControl]="searchCtrl"
+    [matAutocomplete]="auto"
+    [placeholder]="placeholder"
+    (blur)="onTouched()"
+    (keydown.enter)="onEnterKey($event)"
+  />
+
+  <!-- Clear button — shown only when an item is selected and allowClear=true -->
+  <button
+    matSuffix
+    mat-icon-button
+    type="button"
+    *ngIf="selectedItem && allowClear"
+    (mousedown)="$event.preventDefault()"
+    (click)="onClear()"
+    [disabled]="searchCtrl.disabled"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <!-- Search button -->
+  <button
+    matSuffix
+    mat-icon-button
+    type="button"
+    (mousedown)="$event.preventDefault()"
+    (click)="onSearchClick()"
+    [disabled]="searchCtrl.disabled"
+  >
+    <mat-icon>search</mat-icon>
+  </button>
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+    <mat-option *ngFor="let item of filteredItems" [value]="item.id">
+      {{ item.name }}
+    </mat-option>
+    <mat-option *ngIf="filteredItems.length === 0" disabled>
+      لا توجد نتائج
+    </mat-option>
+  </mat-autocomplete>
+
+  <mat-error *ngIf="required && !selectedItem">هذا الحقل مطلوب</mat-error>
+</mat-form-field>
