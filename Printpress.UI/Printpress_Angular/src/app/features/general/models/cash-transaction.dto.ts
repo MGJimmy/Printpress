@@ -11,9 +11,7 @@ export interface CashTransactionDto {
   createdAt: string;
 }
 
-export interface ExternalGroupDto {
-  groupId: string;
-  groupName: string;
+export interface ExternalOrderDto {
   orderId: string;
   orderName: string;
 }

@@ -33,10 +33,10 @@ public class CashTransactionController(ICashTransactionService _cashTransactionS
         return Ok(result);
     }
 
-    [HttpGet("external-groups")]
-    public async Task<IActionResult> GetExternalGroups()
+    [HttpGet("external-orders")]
+    public async Task<IActionResult> GetExternalOrders()
     {
-        var result = await _cashTransactionService.GetExternalGroupsAsync();
+        var result = await _cashTransactionService.GetExternalOrdersAsync();
         return Ok(result);
     }
 }

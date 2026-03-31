@@ -87,7 +87,7 @@ internal sealed class CashTransactionService(
         return _mapper.Map<CashTransactionDto>(transaction);
     }
 
-    public async Task<List<ExternalGroupDto>> GetExternalGroupsAsync()
+    public async Task<List<ExternalOrderDto>> GetExternalOrdersAsync()
     {
         var groups = _unitOfWork.OrderGroupRepository.Filter(
             g => (g.ExecutionType == GroupExecutionType.External_WithOurMaterials
@@ -96,12 +96,12 @@ internal sealed class CashTransactionService(
                  && !g.IsDeleted,
             "Order");
 
-        return groups.Select(g => new ExternalGroupDto
-        {
-            GroupId = g.Id,
-            GroupName = g.Name,
-            OrderId = g.OrderId,
-            OrderName = g.Order.Name
-        }).ToList();
+        return groups
+            .DistinctBy(g => g.OrderId)
+            .Select(g => new ExternalOrderDto
+            {
+                OrderId = g.OrderId,
+                OrderName = g.Order.Name
+            }).ToList();
     }
 }

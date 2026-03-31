@@ -10,7 +10,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CashTransactionService } from '../../services/cash-transaction.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { ExternalGroupDto } from '../../models/cash-transaction.dto';
+import { ExternalOrderDto } from '../../models/cash-transaction.dto';
 import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 export interface AddCashTransactionDialogData {
@@ -62,8 +62,8 @@ export class AddCashTransactionDialogComponent implements OnInit {
   ];
 
   filteredCategories: { value: string; label: string }[] = [];
-  externalGroups: ExternalGroupDto[] = [];
-  externalGroupItems: SearchSelectItem[] = [];
+  externalOrders: ExternalOrderDto[] = [];
+  externalOrderItems: SearchSelectItem[] = [];
   showGroupSelector = false;
   isSubmitting = false;
 
@@ -94,8 +94,8 @@ export class AddCashTransactionDialogComponent implements OnInit {
 
     this.form.controls.category.valueChanges.subscribe((category) => {
       this.showGroupSelector = category === 'ExternalServices';
-      if (this.showGroupSelector && this.externalGroups.length === 0) {
-        this.loadExternalGroups();
+      if (this.showGroupSelector && this.externalOrders.length === 0) {
+        this.loadExternalOrders();
       }
       if (!this.showGroupSelector) {
         this.form.controls.groupId.setValue('');
@@ -103,17 +103,17 @@ export class AddCashTransactionDialogComponent implements OnInit {
     });
   }
 
-  private loadExternalGroups(): void {
-    this.cashTransactionService.getExternalGroups().subscribe({
+  private loadExternalOrders(): void {
+    this.cashTransactionService.getExternalOrders().subscribe({
       next: (response) => {
-        this.externalGroups = response.data;
-        this.externalGroupItems = this.externalGroups.map(g => ({
-          id: g.groupId,
-          name: `${g.orderName} — ${g.groupName}`
+        this.externalOrders = response.data;
+        this.externalOrderItems = this.externalOrders.map(o => ({
+          id: o.orderId,
+          name: o.orderName
         }));
       },
       error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل المجموعات الخارجية');
+        this.alertService.showError('حدث خطأ أثناء تحميل الطلبات الخارجية');
       }
     });
   }

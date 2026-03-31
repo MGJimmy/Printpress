@@ -153,7 +153,7 @@ export class ApiUrlResource {
   public static readonly CashTransactionAPI = {
     getByCashAccountId: (cashAccountId: string) => `${ApiUrlResource.CashTransaction_URL}/getByCashAccountId/${cashAccountId}`,
     add: ApiUrlResource.CashTransaction_URL + '/add',
-    externalGroups: ApiUrlResource.CashTransaction_URL + '/external-groups',
+    externalOrders: ApiUrlResource.CashTransaction_URL + '/external-orders',
   };
 
   private static Reports_URL = '/api/Reports';

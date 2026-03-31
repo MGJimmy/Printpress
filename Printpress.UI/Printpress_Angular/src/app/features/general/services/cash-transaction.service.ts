@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
-import { CashTransactionDto, ExternalGroupDto } from '../models/cash-transaction.dto';
+import { CashTransactionDto, ExternalOrderDto } from '../models/cash-transaction.dto';
 import { AddCashTransactionDto } from '../models/add-cash-transaction.dto';
 import { ApiPagingResponseDto, ApiResponseDto } from '../../../core/models/api-response.dto';
 
@@ -34,7 +34,7 @@ export class CashTransactionService {
     return this.httpService.post<ApiResponseDto<CashTransactionDto>>(ApiUrlResource.CashTransactionAPI.add, payload);
   }
 
-  getExternalGroups(): Observable<ApiResponseDto<ExternalGroupDto[]>> {
-    return this.httpService.get<ApiResponseDto<ExternalGroupDto[]>>(ApiUrlResource.CashTransactionAPI.externalGroups);
+  getExternalOrders(): Observable<ApiResponseDto<ExternalOrderDto[]>> {
+    return this.httpService.get<ApiResponseDto<ExternalOrderDto[]>>(ApiUrlResource.CashTransactionAPI.externalOrders);
   }
 }

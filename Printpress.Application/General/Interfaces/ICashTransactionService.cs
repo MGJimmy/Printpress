@@ -12,5 +12,5 @@ public interface ICashTransactionService
 
     Task<CashTransactionDto> AddAsync(AddCashTransactionDto payload, string userId);
 
-    Task<List<ExternalGroupDto>> GetExternalGroupsAsync();
+    Task<List<ExternalOrderDto>> GetExternalOrdersAsync();
 }
