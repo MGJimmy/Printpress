@@ -87,78 +87,31 @@ public class InvoiceReport : IDocument
             column.Item()
                   .PaddingHorizontal(5)
                   .AlignCenter()
-                  .Text("فاتورة مبيعات")
+                  .Text("فاتورة")
                   .FontSize(20)
                   .SemiBold();
 
             // Client Information
-            column.Item()
-                  .PaddingHorizontal(40)
-                  .Row(row =>
-                  {
-                      // Right Column - Print Date and Address
-                      row.RelativeItem()
-                         .AlignRight()
-                         .Column(col => ComposeClientInfoRightColumn(col));
+            column.Item().PaddingHorizontal(40).PaddingTop(6).Text(text =>
+            {
+                text.Span("اسم الطلبية : ").SemiBold();
+                text.Span(_model.Name);
+            });
 
-                      // Left Column - Client Name and Phone
-                      row.RelativeItem()
-                         .AlignLeft()
-                         .Column(col => ComposeClientInfoLeftColumn(col));
-                  });
+            column.Item().PaddingHorizontal(40).PaddingVertical(4).Text(text =>
+            {
+                text.Span("اسم العميل : ").SemiBold();
+                text.Span(_model.Client.Name);
+            });
+
+            column.Item().PaddingHorizontal(40).PaddingBottom(6).Text(text =>
+            {
+                text.Span("تاريخ الطباعة : ").SemiBold();
+                text.Span($"{DateTime.Now:d}");
+            });
 
 
         });
-    }
-
-    private void ComposeClientInfoRightColumn(ColumnDescriptor col)
-    {
-        col.Item()
-           .PaddingVertical(2)
-           .AlignRight()
-           .Row(row =>
-           {
-               row.AutoItem()
-                  .Text(text => text.Span("تاريخ الطباعه : ").SemiBold());
-               row.AutoItem()
-                  .Text(text => text.Span($"{DateTime.Now:d}"));
-           });
-
-        col.Item()
-           .PaddingVertical(2)
-           .AlignRight()
-           .Row(row =>
-           {
-               row.AutoItem()
-                  .Text(text => text.Span(" عنوان العميل :").SemiBold());
-               row.AutoItem()
-                  .Text(text => text.Span(_model.Client.Address));
-           });
-    }
-
-    private void ComposeClientInfoLeftColumn(ColumnDescriptor col)
-    {
-        col.Item()
-           .PaddingVertical(2)
-           .AlignRight()
-           .Row(row =>
-           {
-               row.AutoItem()
-                  .Text(text => text.Span("أسم العميل : ").SemiBold());
-               row.AutoItem()
-                  .Text(text => text.Span(_model.Client.Name));
-           });
-
-        col.Item()
-           .PaddingVertical(2)
-           .AlignRight()
-           .Row(row =>
-           {
-               row.AutoItem()
-                  .Text(text => text.Span("تيلفون العميل : ").SemiBold());
-               row.AutoItem()
-                  .Text(text => text.Span(_model.Client.Mobile));
-           });
     }
 
     private void ComposeContent(IContainer container)
