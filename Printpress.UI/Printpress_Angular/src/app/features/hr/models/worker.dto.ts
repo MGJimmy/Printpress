@@ -1,10 +1,12 @@
+import { SalaryType } from "./salary-type.enum";
+
 export interface WorkerDto {
   id: string;
   name: string;
   phoneNumber: string;
   address: string;
   notes: string;
-  salaryType: number;
+  salaryType: SalaryType;
   monthlySalary?: number;
   dailySalary?: number;
   isActive: boolean;
@@ -15,7 +17,7 @@ export interface WorkerCreateDto {
   phoneNumber: string;
   address: string;
   notes: string;
-  salaryType: number;
+  salaryType: SalaryType;
   monthlySalary?: number;
   dailySalary?: number;
 }
@@ -26,7 +28,7 @@ export interface WorkerUpdateDto {
   phoneNumber: string;
   address: string;
   notes: string;
-  salaryType: number;
+  salaryType: SalaryType;
   monthlySalary?: number;
   dailySalary?: number;
 }
@@ -51,9 +53,11 @@ export interface WorkerProductionDto {
 }
 
 export interface WorkerSummaryStatsDto {
-  totalAdvancesThisMonth: number;
+  remainingAdvances: number;
   totalPaidThisMonth: number;
   remainingThisMonth?: number;
+  totalBounsThisMonth: number;
+  totalPenaltyThisMonth: number;
 }
 
 export interface WorkerDetailsDto extends WorkerDto {

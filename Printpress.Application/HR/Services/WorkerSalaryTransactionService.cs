@@ -6,7 +6,8 @@ namespace Printpress.Application;
 internal sealed class WorkerSalaryTransactionService(
     IUnitOfWork _unitOfWork,
     IValidator<AddSalaryTransactionDto> _validator,
-    IGuidGenerator _guidGenerator) : IWorkerSalaryTransactionService
+    IGuidGenerator _guidGenerator,
+    IWorkerTransactionCalculator workerTransactionCalculator) : IWorkerSalaryTransactionService
 {
     public async Task<WorkerSalaryTransactionDto> AddAsync(AddSalaryTransactionDto payload, string userId)
     {
@@ -28,18 +29,19 @@ internal sealed class WorkerSalaryTransactionService(
         if (period.IsClosed)
             throw new ValidationExeption("لا يمكن إضافة حركة مالية في دورة رواتب مغلقة");
 
-        var transaction = new WorkerSalaryTransaction
-        {
-            Id = _guidGenerator.NewGuid(),
-            WorkerId = payload.WorkerId,
-            PayrollPeriodId = payload.PayrollPeriodId,
-            TransactionType = payload.TransactionType,
-            Amount = payload.Amount,
-            TransactionDate = payload.TransactionDate,
-            Note = payload.Note
-        };
 
-        await _unitOfWork.WorkerSalaryTransactionRepository.AddAsync(transaction);
+        ValidatePayment(payload, worker);
+
+        var transaction =  worker.AddTransaction(
+            _guidGenerator.NewGuid(),
+            payload.PayrollPeriodId,
+            payload.TransactionType,
+            payload.Amount,
+            payload.TransactionDate,
+            payload.Note);
+
+
+        _unitOfWork.WorkerRepository.Update(worker);
         await _unitOfWork.SaveChangesAsync(userId);
 
         return new WorkerSalaryTransactionDto
@@ -52,6 +54,27 @@ internal sealed class WorkerSalaryTransactionService(
             Note = transaction.Note,
             PayrollPeriodName = period.Name
         };
+    }
+
+    private void ValidatePayment(AddSalaryTransactionDto payload, Worker worker)
+    {
+        var thisMonthTransactions = _unitOfWork.WorkerSalaryTransactionRepository.GetThisMonthSalaryTransactions(payload.WorkerId);
+
+        var transactionSummary = workerTransactionCalculator.Calculate(worker, thisMonthTransactions);
+
+        if (payload.TransactionType == SalaryTransactionType.SalaryAdvancePayment
+            && (worker.UnpaidAdvanceAmount - payload.Amount) < 0)
+        {
+            throw new ValidationExeption("لا يمكن رد قيمة سلفة اكبر من المتبقي من السلفة ");
+
+        }
+
+        if ((payload.TransactionType == SalaryTransactionType.Penalty 
+            || payload.TransactionType == SalaryTransactionType.Salary)
+            && transactionSummary.RemainingThisMonth - payload.Amount < 0)
+        {
+            throw new ValidationExeption("غير متبقى من راتب هذا الشهر مبلغ يمكن خصم القيمة المطلوبة منه");
+        }
     }
 
     public async Task DeleteAsync(Guid transactionId, string userId)

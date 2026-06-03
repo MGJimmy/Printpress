@@ -31,6 +31,8 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { MatTableModule } from '@angular/material/table';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { DatePipe } from '@angular/common';
+import { TransactionType } from '../../models/transaction-type.enum';
+import { SalaryType } from '../../models/salary-type.enum';
 
 @Component({
   selector: 'app-worker-details',
@@ -104,13 +106,14 @@ export class WorkerDetailsComponent implements OnInit {
   }>;
 
   transactionTypeOptions = [
-    { value: 1, label: 'سلفة' },
-    { value: 2, label: 'دفعة يومية' },
-    { value: 3, label: 'راتب شهري' },
-    { value: 4, label: 'مكافأة' },
-    { value: 5, label: 'خصم / غرامة' },
-    { value: 6, label: 'تسوية' }
+    { value: TransactionType.Advance, label: 'سلفة' },
+    { value: TransactionType.Salary, label: 'راتب' },
+    { value: TransactionType.Bonus, label: 'مكافأة' },
+    { value: TransactionType.Penalty, label: 'خصم / غرامة' },
+    { value: TransactionType.Settlement, label: 'تسوية' },
+    { value: TransactionType.SalaryAdvancePayment, label: 'رد سلفة' }
   ];
+
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -177,6 +180,10 @@ export class WorkerDetailsComponent implements OnInit {
       },
       error: () => {}
     });
+  }
+
+  private loadTransactionType(){
+
   }
 
   private preselectTodayPeriod(): void {
@@ -300,6 +307,6 @@ export class WorkerDetailsComponent implements OnInit {
   }
 
   isMonthly(): boolean {
-    return this.worker?.salaryType === 1;
+    return this.worker?.salaryType === SalaryType.Monthly;
   }
 }

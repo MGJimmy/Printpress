@@ -33,7 +33,7 @@ namespace Printpress.Infrastructure
         private IReportRepository _reportRepository;
         private IGenericRepository<Worker> _workerRepository;
         private IGenericRepository<ItemServiceExecution> _workerProductionRepository;
-        private IGenericRepository<WorkerSalaryTransaction> _workerSalaryTransactionRepository;
+        private IWorkerSalaryTransactionRepository _workerSalaryTransactionRepository;
         private IGenericRepository<PayrollPeriod> _payrollPeriodRepository;
         private IGenericRepository<CashAccount> _cashAccountRepository;
         private IGenericRepository<CashTransaction> _cashTransactionRepository;
@@ -257,12 +257,12 @@ namespace Printpress.Infrastructure
             }
         }
 
-        public IGenericRepository<WorkerSalaryTransaction> WorkerSalaryTransactionRepository
+        public IWorkerSalaryTransactionRepository WorkerSalaryTransactionRepository
         {
             get
             {
                 if (_workerSalaryTransactionRepository == null)
-                    _workerSalaryTransactionRepository = new GenericRepository<WorkerSalaryTransaction>(_context);
+                    _workerSalaryTransactionRepository = new WorkerSalaryTransactionRepository(_context);
                 return _workerSalaryTransactionRepository;
             }
         }

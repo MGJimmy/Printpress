@@ -28,7 +28,7 @@ public interface IUnitOfWork
 
     IGenericRepository<Worker> WorkerRepository { get; }
     IGenericRepository<ItemServiceExecution> WorkerProductionRepository { get; }
-    IGenericRepository<WorkerSalaryTransaction> WorkerSalaryTransactionRepository { get; }
+    IWorkerSalaryTransactionRepository WorkerSalaryTransactionRepository { get; }
     IGenericRepository<PayrollPeriod> PayrollPeriodRepository { get; }
 
     IGenericRepository<CashAccount> CashAccountRepository { get; }

@@ -8,6 +8,7 @@ public static class DependencyInjection
     public static IServiceCollection RegisterDomainServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IInventoryTransactionDomainService, InventoryTransactionDomainService>();
+        services.AddScoped<IWorkerTransactionCalculator, WorkerTransactionCalculator>();
 
         return services;
     }

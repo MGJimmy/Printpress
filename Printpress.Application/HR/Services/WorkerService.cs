@@ -7,7 +7,8 @@ internal sealed class WorkerService(
     IUnitOfWork _unitOfWork,
     IValidator<WorkerCreateDto> _createValidator,
     IValidator<WorkerUpdateDto> _updateValidator,
-    IGuidGenerator _guidGenerator) : IWorkerService
+    IGuidGenerator _guidGenerator,
+    IWorkerTransactionCalculator _workerSalaryCalculator) : IWorkerService
 {
     public async Task<List<WorkerDto>> GetAllAsync()
     {
@@ -48,7 +49,10 @@ internal sealed class WorkerService(
             .Select(MapProductionToDto)
             .ToList();
 
-        var stats = CalculateStats(worker, transactions);
+        var thisMonthtransactions = GetThisMonthTransactions(id);
+        
+        
+        var transactionSummary = _workerSalaryCalculator.Calculate(worker, thisMonthtransactions);
 
         return new WorkerDetailsDto
         {
@@ -63,8 +67,19 @@ internal sealed class WorkerService(
             IsActive = worker.IsActive,
             Transactions = transactions,
             Productions = productions,
-            Stats = stats
+            Stats = MapToWorkerTransactionSummaryDTO(transactionSummary)
         };
+    }
+
+   
+
+    private IEnumerable<WorkerSalaryTransaction> GetThisMonthTransactions(Guid workerId)
+    {
+        var now = DateTime.UtcNow;
+        var firstOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+
+       return _unitOfWork.WorkerSalaryTransactionRepository
+            .Filter(t => t.WorkerId == workerId && t.TransactionDate >= firstOfMonth);
     }
 
     public async Task<WorkerDto> CreateAsync(WorkerCreateDto payload, string userId)
@@ -133,6 +148,7 @@ internal sealed class WorkerService(
 
     // ── Private helpers ──────────────────────────────────────────────────────
 
+    #region Mappers
     private static WorkerDto MapToDto(Worker w) => new()
     {
         Id = w.Id,
@@ -167,32 +183,19 @@ internal sealed class WorkerService(
         Notes = p.Notes
     };
 
-    private static WorkerSummaryStatsDto CalculateStats(Worker worker, List<WorkerSalaryTransactionDto> transactions)
+    private WorkerTransactionsSummaryDto MapToWorkerTransactionSummaryDTO(WorkerTransactionSummary transactionSummary)
     {
-        var now = DateTime.UtcNow;
-        var firstOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        var thisMonthTransactions = transactions
-            .Where(t => t.TransactionDate >= firstOfMonth)
-            .ToList();
-
-        var totalAdvances = thisMonthTransactions
-            .Where(t => t.TransactionType == SalaryTransactionType.SalaryAdvance)
-            .Sum(t => t.Amount);
-
-        var totalPaid = thisMonthTransactions
-            .Where(t => t.TransactionType != SalaryTransactionType.SalaryAdvance)
-            .Sum(t => t.Amount);
-
-        decimal? remaining = null;
-        if (worker.SalaryType == SalaryType.Monthly && worker.MonthlySalary.HasValue)
-            remaining = worker.MonthlySalary.Value - totalPaid;
-
-        return new WorkerSummaryStatsDto
+        return new WorkerTransactionsSummaryDto
         {
-            TotalAdvancesThisMonth = totalAdvances,
-            TotalPaidThisMonth = totalPaid,
-            RemainingThisMonth = remaining
+            RemainingAdvances = transactionSummary.RemainingAdvances,
+            TotalPaidThisMonth = transactionSummary.TotalPaidThisMonth,
+            RemainingThisMonth = transactionSummary.RemainingThisMonth,
+            TotalBounsThisMonth = transactionSummary.TotalBounsThisMonth,
+            TotalPenaltyThisMonth = transactionSummary.TotalPenaltyThisMonth
         };
     }
+
+    #endregion
+
+
 }

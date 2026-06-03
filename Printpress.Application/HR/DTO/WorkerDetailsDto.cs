@@ -15,5 +15,5 @@ public class WorkerDetailsDto
     public bool IsActive { get; set; }
     public List<WorkerSalaryTransactionDto> Transactions { get; set; }
     public List<WorkerProductionDto> Productions { get; set; }
-    public WorkerSummaryStatsDto Stats { get; set; }
+    public WorkerTransactionsSummaryDto Stats { get; set; }
 }
