@@ -29,7 +29,7 @@ export class InventoryServicesUsageReportService {
 
   getInventoryCategories(): Observable<ApiResponseDto<InventoryCategoryFilterDto[]>> {
     return this.httpService.get<ApiResponseDto<InventoryCategoryFilterDto[]>>(
-      ApiUrlResource.ReportsAPI.InventoryCategoryAll
+      ApiUrlResource.InventoryAPI.CategoryBasicInfoAll
     );
   }
 

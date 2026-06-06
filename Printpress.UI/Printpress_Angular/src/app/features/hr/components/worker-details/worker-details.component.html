@@ -185,8 +185,10 @@
           </mat-form-field>
           <button mat-raised-button color="primary" (click)="onFilterProductions()">
             <mat-icon>search</mat-icon>
-            عرض
+            بحث
           </button>
+          <button mat-stroked-button (click)="resetProductionFilter()">إعادة</button>
+
         </div>
       </div>
       <div *ngIf="flatProductions.length > 0; else noProductions">

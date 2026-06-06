@@ -17,10 +17,10 @@ export class OrderInventoryItemsReportService {
   }
 
   getCategories(): Observable<ApiResponseDto<InventoryCategoryFilterDto[]>> {
-    return this.httpService.get<ApiResponseDto<InventoryCategoryFilterDto[]>>(ApiUrlResource.ReportsAPI.filterCategories);
+    return this.httpService.get<ApiResponseDto<InventoryCategoryFilterDto[]>>(ApiUrlResource.InventoryAPI.InventoryCategoryBasicInfo);
   }
 
   getItemsByCategory(categoryId: number): Observable<ApiResponseDto<InventoryItemFilterDto[]>> {
-    return this.httpService.get<ApiResponseDto<InventoryItemFilterDto[]>>(ApiUrlResource.ReportsAPI.filterItems, { categoryId });
+    return this.httpService.get<ApiResponseDto<InventoryItemFilterDto[]>>(ApiUrlResource.InventoryAPI.ItemBasicInfo, { categoryId });
   }
 }

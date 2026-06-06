@@ -55,4 +55,31 @@ public class InventoryController(IInventoryItemService _inventoryItemService) : 
         await _inventoryItemService.DeactivateAsync(id, UserId);
         return Ok();
     }
+
+    #region Basic Info
+
+
+    [HttpGet("inventory-categories")]
+    public async Task<IActionResult> GetInventoryCategories()
+    {
+        var result = await _inventoryItemService.GetCategoriesLinkToServiceAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("inventory-categories-All")]
+    public async Task<IActionResult> GetInventoryCategoriesAll()
+    {
+        var result = await _inventoryItemService.GetCategoriesAllAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("inventory-items")]
+    public async Task<IActionResult> GetInventoryItemsByCategory([FromQuery] int categoryId)
+    {
+        var result = await _inventoryItemService.GetItemsByCategoryAsync(categoryId);
+        return Ok(result);
+    }
+
+
+    #endregion
 }

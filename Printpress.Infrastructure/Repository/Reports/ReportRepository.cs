@@ -143,44 +143,6 @@ internal class ReportRepository : IReportRepository
             .ToList();
     }
 
-    public async Task<List<InventoryCategoryFilterDto>> GetInventoryCategoriesAllAsync()
-    {
-        return await _context.InventoryItemCategory_LKP
-            .Select(g => new InventoryCategoryFilterDto
-            {
-                Id = g.Id,
-                Name = g.Name
-            })
-            .ToListAsync();
-    }
-
-    public async Task<List<InventoryCategoryFilterDto>> GetInventoryCategoriesForReportAsync()
-    {
-        return await _context.ServiceCategory
-            .Where(sc => sc.InventoryItemCategoryId != null && sc.InventoryItemCategory_LKP != null)
-            .GroupBy(sc => sc.InventoryItemCategoryId!.Value)
-            .Select(g => new InventoryCategoryFilterDto
-            {
-                Id = g.Key,
-                Name = g.First().InventoryItemCategory_LKP.Name
-            })
-            .ToListAsync();
-    }
-
-    public async Task<List<InventoryItemFilterDto>> GetInventoryItemsForReportAsync(int categoryId)
-    {
-        var linkedItemIds = await _context.Service
-            .Where(s => s.InventoryItemId != null)
-            .Select(s => s.InventoryItemId!.Value)
-            .Distinct()
-            .ToListAsync();
-
-        return await _context.InventoryItem
-            .Where(i => i.InventoryItemCategoryId == categoryId && linkedItemIds.Contains(i.Id))
-            .Select(i => new InventoryItemFilterDto { Id = i.Id, Name = i.Name })
-            .ToListAsync();
-    }
-
     // ── Report 2: Inventory & Services Usage ────────────────────────────────
 
     public async Task<List<InventoryItemStockProjection>> GetInventoryItemsStockByCategoryAsync(

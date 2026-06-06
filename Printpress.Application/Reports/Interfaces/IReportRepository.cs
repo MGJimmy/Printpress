@@ -6,9 +6,6 @@ public interface IReportRepository
     Task<int> GetInventoryCartonsInAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo);
     Task<int> GetInventorycartonsOutAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo);
     Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo);
-    Task<List<InventoryCategoryFilterDto>> GetInventoryCategoriesForReportAsync();
-    Task<List<InventoryCategoryFilterDto>> GetInventoryCategoriesAllAsync();
-    Task<List<InventoryItemFilterDto>> GetInventoryItemsForReportAsync(int categoryId);
 
     // Report 2: Inventory & Services Usage
     Task<List<InventoryItemStockProjection>> GetInventoryItemsStockByCategoryAsync(int categoryId, DateTime? dateFrom, DateTime? dateTo);

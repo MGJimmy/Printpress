@@ -19,26 +19,6 @@ public class ReportsController(
         return Ok(result);
     }
 
-    [HttpGet("filter/inventory-categories")]
-    public async Task<IActionResult> GetInventoryCategories()
-    {
-        var result = await _reportService.GetCategoriesLinkToServiceAsync();
-        return Ok(result);
-    }
-
-    [HttpGet("filter/inventory-categories-All")]
-    public async Task<IActionResult> GetInventoryCategoriesAll()
-    {
-        var result = await _reportService.GetCategoriesAllAsync();
-        return Ok(result);
-    }
-
-    [HttpGet("filter/inventory-items")]
-    public async Task<IActionResult> GetInventoryItemsByCategory([FromQuery] int categoryId)
-    {
-        var result = await _reportService.GetItemsByCategoryAsync(categoryId);
-        return Ok(result);
-    }
 
     // ── Report 2: Inventory & Services Usage ────────────────────────────────
 

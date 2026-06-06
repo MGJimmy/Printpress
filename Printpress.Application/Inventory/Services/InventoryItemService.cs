@@ -92,6 +92,21 @@ internal sealed class InventoryItemService(
         await _unitOfWork.SaveChangesAsync(userId);
     }
 
+
+    #region Basic Info
+
+    public Task<List<EnumBasicInfoDto>> GetCategoriesLinkToServiceAsync()
+    => _unitOfWork.InventoryItemRepository.GetServiceCategoriesAsync();
+
+    public Task<List<EnumBasicInfoDto>> GetCategoriesAllAsync()
+        => _unitOfWork.InventoryItemRepository.GetInventoryCategoriesAllAsync();
+
+    public Task<List<EntityBasicInfoDto>> GetItemsByCategoryAsync(int categoryId)
+        => _unitOfWork.InventoryItemRepository.GetInventoryItemsForReportAsync(categoryId);
+
+    #endregion
+
+
     private static async Task ValidateAsync<T>(IValidator<T> validator, T payload)
     {
         var result = await validator.ValidateAsync(payload);

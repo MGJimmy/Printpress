@@ -95,5 +95,44 @@ namespace Printpress.Infrastructure
                 })
                 .ToListAsync();
         }
+
+
+        public async Task<List<EnumBasicInfoDto>> GetInventoryCategoriesAllAsync()
+        {
+            return await Context.InventoryItemCategory_LKP
+                .Select(g => new EnumBasicInfoDto
+                {
+                    Id = g.Id,
+                    Name = g.Name
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<EnumBasicInfoDto>> GetServiceCategoriesAsync()
+        {
+            return await Context.ServiceCategory
+                .Where(sc => sc.InventoryItemCategoryId != null && sc.InventoryItemCategory_LKP != null)
+                .GroupBy(sc => sc.InventoryItemCategoryId!.Value)
+                .Select(g => new EnumBasicInfoDto
+                {
+                    Id = g.Key,
+                    Name = g.First().InventoryItemCategory_LKP.Name
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<EntityBasicInfoDto>> GetInventoryItemsForReportAsync(int categoryId)
+        {
+            var linkedItemIds = await Context.Service
+                .Where(s => s.InventoryItemId != null)
+                .Select(s => s.InventoryItemId!.Value)
+                .Distinct()
+                .ToListAsync();
+
+            return await Context.InventoryItem
+                .Where(i => i.InventoryItemCategoryId == categoryId && linkedItemIds.Contains(i.Id))
+                .Select(i => new EntityBasicInfoDto { Id = i.Id, Name = i.Name })
+                .ToListAsync();
+        }
     }
 }

@@ -9,4 +9,12 @@ public interface IInventoryItemService
     Task<List<InventoryItemDto>> GetByCategoryAsync(int categoryId);
     Task DeleteAsync(Guid id, string userId);
     Task DeactivateAsync(Guid id, string userId);
+
+    #region Basi Info
+
+    Task<List<EnumBasicInfoDto>> GetCategoriesLinkToServiceAsync();
+    Task<List<EnumBasicInfoDto>> GetCategoriesAllAsync();
+    Task<List<EntityBasicInfoDto>> GetItemsByCategoryAsync(int categoryId);
+
+    #endregion
 }

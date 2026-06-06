@@ -33,13 +33,4 @@ internal sealed class OrderInventoryItemsReportService(IUnitOfWork _unitOfWork) 
             Difference = difference
         };
     }
-
-    public Task<List<InventoryCategoryFilterDto>> GetCategoriesLinkToServiceAsync()
-        => _unitOfWork.ReportRepository.GetInventoryCategoriesForReportAsync();
-
-    public Task<List<InventoryCategoryFilterDto>> GetCategoriesAllAsync()
-    => _unitOfWork.ReportRepository.GetInventoryCategoriesAllAsync();
-
-    public Task<List<InventoryItemFilterDto>> GetItemsByCategoryAsync(int categoryId)
-        => _unitOfWork.ReportRepository.GetInventoryItemsForReportAsync(categoryId);
 }

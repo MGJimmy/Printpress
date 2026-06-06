@@ -76,6 +76,11 @@ export class ApiUrlResource {
     update: (id: string) => `${ApiUrlResource.Inventory_URL}/update/${id}`,
     delete: (id: string) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
     deactivate: (id: string) => `${ApiUrlResource.Inventory_URL}/deactivate/${id}`,
+
+    InventoryCategoryBasicInfo: ApiUrlResource.Inventory_URL + '/inventory-categories',
+    CategoryBasicInfoAll: ApiUrlResource.Inventory_URL + '/inventory-categories-All',
+    ItemBasicInfo: ApiUrlResource.Inventory_URL + '/inventory-items',
+
   };
 
   private static InventoryTransaction_URL = '/api/InventoryTransaction';
@@ -160,9 +165,6 @@ export class ApiUrlResource {
   public static readonly ReportsAPI = {
     orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',
     inventoryServicesUsage: ApiUrlResource.Reports_URL + '/inventory-services-usage',
-    filterCategories: ApiUrlResource.Reports_URL + '/filter/inventory-categories',
-    InventoryCategoryAll: ApiUrlResource.Reports_URL + '/filter/inventory-categories-All',
-    filterItems: ApiUrlResource.Reports_URL + '/filter/inventory-items',
     filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories'
   };
 

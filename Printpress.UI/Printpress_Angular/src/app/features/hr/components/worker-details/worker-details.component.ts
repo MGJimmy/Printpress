@@ -182,9 +182,6 @@ export class WorkerDetailsComponent implements OnInit {
     });
   }
 
-  private loadTransactionType(){
-
-  }
 
   private preselectTodayPeriod(): void {
     const today = new Date().toISOString().split('T')[0];
@@ -200,6 +197,15 @@ export class WorkerDetailsComponent implements OnInit {
     if (!this.worker) return;
     this.loadWorker(this.worker.id, this.productionDateFrom, this.productionDateTo);
   }
+
+  resetProductionFilter(): void {
+    this.productionDateFrom = null;
+    this.productionDateTo = null;
+
+    if (!this.worker) return;
+    this.loadWorker(this.worker.id, this.productionDateFrom, this.productionDateTo);
+  }
+
 
   onAddTransaction(): void {
     if (this.transactionForm.invalid) {
@@ -263,8 +269,8 @@ export class WorkerDetailsComponent implements OnInit {
   }
 
   loadInventoryTransactions(): void {
-    const dateFrom = this.invDateFrom ? this.invDateFrom.toISOString().split('T')[0] : undefined;
-    const dateTo = this.invDateTo ? this.invDateTo.toISOString().split('T')[0] : undefined;
+    const dateFrom = this.invDateFrom ? this.invDateFrom.toISOString() : undefined;
+    const dateTo = this.invDateTo ? this.invDateTo.toISOString() : undefined;
     this.invTransactionService.getByWorkerId(
       this.workerId,
       this.invPageNumber,
@@ -286,6 +292,7 @@ export class WorkerDetailsComponent implements OnInit {
     this.invPageSize = event.pageSize;
     this.loadInventoryTransactions();
   }
+  
 
   applyInvFilter(): void {
     this.invPageNumber = 1;
