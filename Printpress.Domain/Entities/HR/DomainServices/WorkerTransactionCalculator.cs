@@ -16,7 +16,6 @@ namespace Printpress.Domain
             var totalPaidThisMonth = thisMonthTransactions
                 .Where(t =>
                  (t.TransactionType == SalaryTransactionType.Salary)
-                 || (t.TransactionType == SalaryTransactionType.Bonus)
                  || (t.TransactionType == SalaryTransactionType.Adjustment)
                  )
                 .Sum(t => t.Amount);

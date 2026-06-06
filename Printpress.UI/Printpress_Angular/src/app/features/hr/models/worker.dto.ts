@@ -92,9 +92,10 @@ export const SalaryTypeLabels: Record<number, string> = {
 
 export const SalaryTransactionTypeLabels: Record<number, string> = {
   1: 'سلفة',
-  2: 'دفعة يومية',
-  3: 'راتب شهري',
-  4: 'مكافأة',
-  5: 'خصم / غرامة',
-  6: 'تسوية'
+  2: 'راتب',
+  3: 'مكافأة',
+  4: 'خصم / غرامة',
+  5: 'تسوية',
+  6: 'رد سلفة راتب'
 };
+  

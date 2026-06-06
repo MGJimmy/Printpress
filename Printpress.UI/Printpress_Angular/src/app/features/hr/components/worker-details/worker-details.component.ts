@@ -106,12 +106,12 @@ export class WorkerDetailsComponent implements OnInit {
   }>;
 
   transactionTypeOptions = [
-    { value: TransactionType.Advance, label: 'سلفة' },
-    { value: TransactionType.Salary, label: 'راتب' },
-    { value: TransactionType.Bonus, label: 'مكافأة' },
-    { value: TransactionType.Penalty, label: 'خصم / غرامة' },
-    { value: TransactionType.Settlement, label: 'تسوية' },
-    { value: TransactionType.SalaryAdvancePayment, label: 'رد سلفة' }
+    { value: TransactionType.Advance, label: this.transactionTypeLabels[TransactionType.Advance] },
+    { value: TransactionType.Salary, label: this.transactionTypeLabels[TransactionType.Salary] },
+    { value: TransactionType.Bonus, label: this.transactionTypeLabels[TransactionType.Bonus] },
+    { value: TransactionType.Penalty, label: this.transactionTypeLabels[TransactionType.Penalty] },
+    //{ value: TransactionType.Settlement, label: this.transactionTypeLabels[TransactionType.Settlement] },
+    { value: TransactionType.SalaryAdvancePayment, label: this.transactionTypeLabels[TransactionType.SalaryAdvancePayment] }
   ];
 
 
