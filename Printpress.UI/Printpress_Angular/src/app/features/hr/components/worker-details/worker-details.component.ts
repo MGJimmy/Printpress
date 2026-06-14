@@ -102,13 +102,11 @@ export class WorkerDetailsComponent implements OnInit {
   ];
 
   inventoryColDefs: TableColDefinitionModel[] = [
-    { column: 'productionDate', headerName: 'التاريخ' },
-    { column: 'serviceCategoryName', headerName: 'فئة الخدمة' },
-    { column: 'orderName', headerName: 'الطلبية' },
-    { column: 'groupName', headerName: 'المجموعة' },
-    { column: 'itemName', headerName: 'العنصر' },
+    { column: 'inventoryItemName', headerName: 'الصنف' },
+    { column: 'inventoryTransactionType', headerName: 'نوع الحركة' },
     { column: 'quantity', headerName: 'الكمية' },
-    { column: 'notes', headerName: 'ملاحظات' }
+    { column: 'notes', headerName: 'ملاحظات' },
+    { column: 'createdAt', headerName: 'التاريخ' }
   ];
 
 
@@ -302,8 +300,8 @@ export class WorkerDetailsComponent implements OnInit {
       event.pageSize, event.currentPage, this.productionDateFrom, this.productionDateTo);
   }
 
-  onInvPageChange(event: any): void {
-    this.invPageNumber = event.pageIndex + 1;
+  onInvPageChange(event: PageChangedModel): void {
+    this.invPageNumber = event.currentPage;
     this.invPageSize = event.pageSize;
     this.loadInventoryTransactions();
   }

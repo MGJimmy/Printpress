@@ -39,12 +39,12 @@ export class InventoryTransactionService {
     inventoryItemId?: string,
     dateFrom?: string,
     dateTo?: string
-  ): Observable<any> {
+  ): Observable<InventoryTransactionDto[]> {
     const params: any = { pageNumber, pageSize };
     if (inventoryItemCategoryId !== undefined && inventoryItemCategoryId !== null) params['inventoryItemCategoryId'] = inventoryItemCategoryId;
     if (inventoryItemId) params['inventoryItemId'] = inventoryItemId;
     if (dateFrom) params['dateFrom'] = dateFrom;
     if (dateTo) params['dateTo'] = dateTo;
-    return this.httpService.get(`${ApiUrlResource.InventoryTransactionAPI.getByWorkerId}/${workerId}`, params);
+    return this.httpService.get<InventoryTransactionDto[]>(`${ApiUrlResource.InventoryTransactionAPI.getByWorkerId}/${workerId}`, params);
   }
 }
