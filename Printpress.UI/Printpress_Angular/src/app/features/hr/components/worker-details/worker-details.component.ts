@@ -52,9 +52,7 @@ import { PageChangedModel } from '../../../../shared/models/page-changed.model';
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
-    TableTemplateComponent,
-    SharedPaginationComponent,
-    DatePipe
+    TableTemplateComponent
   ],
   templateUrl: './worker-details.component.html'
 })
@@ -103,7 +101,12 @@ export class WorkerDetailsComponent implements OnInit {
 
   inventoryColDefs: TableColDefinitionModel[] = [
     { column: 'inventoryItemName', headerName: 'الصنف' },
-    { column: 'inventoryTransactionType', headerName: 'نوع الحركة' },
+    { 
+      column: 'inventoryTransactionType', 
+      headerName: 'نوع الحركة' ,
+      translationPrefix: 'inventory.enum.inventoryTransactionType'
+    
+    },
     { column: 'quantity', headerName: 'الكمية' },
     { column: 'notes', headerName: 'ملاحظات' },
     { column: 'createdAt', headerName: 'التاريخ' }

@@ -12,6 +12,7 @@ import { PageChangedModel } from '../../models/page-changed.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faTrash, faBan } from '@fortawesome/free-solid-svg-icons';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-table-template',
@@ -24,7 +25,8 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
     MatTableModule,
     CommonModule,
     FontAwesomeModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    TranslateModule
 
   ],
   templateUrl: './table-template.component.html',
@@ -95,6 +97,11 @@ export class TableTemplateComponent implements OnInit {
     return this.columnDefs.find(c => c.column === column)?.headerName;
   }
 
+  getTranslationPrefix(column: string): string | undefined {
+    return this.columnDefs.find(c => c.column === column)?.translationPrefix;
+
+  }
+
   onPageChangeClick(event: PageEvent): void {
     let pageChangedModel: PageChangedModel = {
       currentPage: event.pageIndex + 1,
@@ -124,4 +131,6 @@ export class TableTemplateComponent implements OnInit {
   onLinkColumnClick(element: any): void {
     this.linkColumnClicked.emit(element);
   }
+
+
 }

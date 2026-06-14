@@ -83,5 +83,29 @@
     "col_quantity": "الكمية",
     "col_execution_date": "تاريخ التنفيذ",
     "col_notes": "ملاحظات"
+  },
+  "inventory": {
+    "enum":{
+      "inventoryTransactionType": {
+        "In": "دخول",
+        "Out": "خروج",
+        "Adjustment": "تعديل"
+      }
+    },
+    "transaction_not_found": "حركة المخزون غير موجودة",
+    "item_not_found": "الصنف غير موجود",
+    "category_not_found": "الفئة غير موجودة",
+    "worker_not_found": "العامل غير موجود",
+    "invalid_transaction_type": "نوع حركة المخزون غير معروف",
+    "quantity_must_be_positive": "يجب أن تكون الكمية قيمة موجبة",
+    "transaction_saved": "تم حفظ حركة المخزون بنجاح",
+    "transaction_deleted": "تم حذف حركة المخزون بنجاح",
+    "apply_filter": "تطبيق الفلتر",
+    "reset_filter": "إعادة تعيين الفلتر",
+    "col_inventory_item": "الصنف",
+    "col_transaction_type": "نوع الحركة",
+    "col_quantity": "الكمية",
+    "col_notes": "ملاحظات",
+    "col_date": "التاريخ"
   }
 }
