@@ -5,6 +5,7 @@ public interface IWorkerService
     Task<List<WorkerDto>> GetAllAsync();
     Task<List<WorkerDto>> GetActiveAsync();
     Task<WorkerDetailsDto> GetDetailsAsync(Guid id, DateTime? productionDateFrom, DateTime? productionDateTo);
+    Task<PagedList<WorkerProductionDto>> GetWorkerProduction(Guid id, Paging paging, DateTime? productionDateFrom, DateTime? productionDateTo);
     Task<WorkerDto> CreateAsync(WorkerCreateDto payload, string userId);
     Task<WorkerDto> UpdateAsync(WorkerUpdateDto payload, string userId);
     Task DeactivateAsync(Guid id, string userId);

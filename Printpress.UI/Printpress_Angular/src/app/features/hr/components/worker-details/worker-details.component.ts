@@ -24,7 +24,8 @@ import {
   WorkerDetailsDto,
   AddSalaryTransactionDto,
   SalaryTypeLabels,
-  SalaryTransactionTypeLabels
+  SalaryTransactionTypeLabels,
+  WorkerProductionDto
 } from '../../models/worker.dto';
 import { PayrollPeriodDto } from '../../models/payroll-period.dto';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -33,6 +34,7 @@ import { SharedPaginationComponent } from '../../../../shared/components/shared-
 import { DatePipe } from '@angular/common';
 import { TransactionType } from '../../models/transaction-type.enum';
 import { SalaryType } from '../../models/salary-type.enum';
+import { PageChangedModel } from '../../../../shared/models/page-changed.model';
 
 @Component({
   selector: 'app-worker-details',
@@ -60,7 +62,9 @@ export class WorkerDetailsComponent implements OnInit {
   worker: WorkerDetailsDto | null = null;
   openPeriods: PayrollPeriodDto[] = [];
   flatTransactions: any[] = [];
-  flatProductions: any[] = [];
+  
+  workerProductions: WorkerProductionDto[] = [];
+  ProdTotalCount = 0;
 
   workerId: string = '';
 
@@ -74,6 +78,7 @@ export class WorkerDetailsComponent implements OnInit {
   invDateTo: Date | null = null;
   invCategories: InventoryCategoryFilterDto[] = [];
   invItems: InventoryItemDto[] = [];
+
 
   salaryTypeLabels = SalaryTypeLabels;
   transactionTypeLabels = SalaryTransactionTypeLabels;
@@ -89,10 +94,24 @@ export class WorkerDetailsComponent implements OnInit {
   productionColDefs: TableColDefinitionModel[] = [
     { column: 'productionDate', headerName: 'التاريخ' },
     { column: 'serviceCategoryName', headerName: 'فئة الخدمة' },
-    { column: 'orderName', headerName: 'المجموعة / الطلبية' },
+    { column: 'orderName', headerName: 'الطلبية' },
+    { column: 'groupName', headerName: 'المجموعة' },
+    { column: 'itemName', headerName: 'العنصر' },
     { column: 'quantity', headerName: 'الكمية' },
     { column: 'notes', headerName: 'ملاحظات' }
   ];
+
+  inventoryColDefs: TableColDefinitionModel[] = [
+    { column: 'productionDate', headerName: 'التاريخ' },
+    { column: 'serviceCategoryName', headerName: 'فئة الخدمة' },
+    { column: 'orderName', headerName: 'الطلبية' },
+    { column: 'groupName', headerName: 'المجموعة' },
+    { column: 'itemName', headerName: 'العنصر' },
+    { column: 'quantity', headerName: 'الكمية' },
+    { column: 'notes', headerName: 'ملاحظات' }
+  ];
+
+
 
   productionDateFrom: Date | null = null;
   productionDateTo: Date | null = null;
@@ -140,6 +159,7 @@ export class WorkerDetailsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.workerId = id;
     this.loadWorker(id);
+    this.loadWorkerProductions(id, 10, 1, this.productionDateFrom, this.productionDateTo);
     this.loadOpenPeriods();
     this.loadInvCategories();
     this.loadInventoryTransactions();
@@ -160,15 +180,56 @@ export class WorkerDetailsComponent implements OnInit {
           transactionDate: t.transactionDate ? new Date(t.transactionDate).toLocaleDateString('ar-EG') : '—',
           note: t.note || '—'
         }));
-        this.flatProductions = res.data.productions.map(p => ({
-          productionDate: p.productionDate ? new Date(p.productionDate).toLocaleDateString('ar-EG') : '—',
-          serviceCategoryName: p.serviceCategoryName,
-          orderName: p.orderName,
-          quantity: p.quantity,
-          notes: p.notes || '—'
-        }));
       },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل بيانات العامل'); }
+    });
+  }
+
+  private loadWorkerProductions(
+    id: string,     
+    pageSize: number,
+    pageNumber: number,
+    productionDateFrom?: Date | null, 
+    productionDateTo?: Date | null,
+    ): void {
+
+    const fromStr = productionDateFrom ? productionDateFrom.toISOString() : undefined;
+    const toStr = productionDateTo ? productionDateTo.toISOString() : undefined;
+
+    this.workerService.getWorkerProduction(id, fromStr, toStr, pageSize, pageNumber).subscribe({
+      next: (res) => {
+        this.workerProductions = res.data.items;
+        this.ProdTotalCount = res.data.totalCount;
+      },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل بيانات سجل الانتاج'); }
+    });
+  }
+
+
+  
+  loadInventoryTransactions(): void {
+    const dateFrom = this.invDateFrom ? this.invDateFrom.toISOString() : undefined;
+    const dateTo = this.invDateTo ? this.invDateTo.toISOString() : undefined;
+    this.invTransactionService.getByWorkerId(
+      this.workerId,
+      this.invPageNumber,
+      this.invPageSize,
+      this.invCategoryId ?? undefined,
+      this.invItemId ?? undefined,
+      dateFrom,
+      dateTo
+    ).subscribe({
+      next: (res: any) => {
+        this.inventoryTransactions = res.data?.items ?? res.data ?? [];
+        this.invTotalCount = res.data?.totalCount ?? 0;
+      }
+    });
+  }
+
+  
+  loadInvCategories(): void {
+    this.reportService.getInventoryCategories().subscribe({
+      next: (res) => { this.invCategories = res.data; }
     });
   }
 
@@ -183,6 +244,7 @@ export class WorkerDetailsComponent implements OnInit {
   }
 
 
+  // Helper Methods
   private preselectTodayPeriod(): void {
     const today = new Date().toISOString().split('T')[0];
     const todayPeriod = this.openPeriods.find(p =>
@@ -193,6 +255,13 @@ export class WorkerDetailsComponent implements OnInit {
     }
   }
 
+
+  isMonthly(): boolean {
+    return this.worker?.salaryType === SalaryType.Monthly;
+  }
+
+
+  // Filter Methods
   onFilterProductions(): void {
     if (!this.worker) return;
     this.loadWorker(this.worker.id, this.productionDateFrom, this.productionDateTo);
@@ -206,6 +275,52 @@ export class WorkerDetailsComponent implements OnInit {
     this.loadWorker(this.worker.id, this.productionDateFrom, this.productionDateTo);
   }
 
+  applyInvFilter(): void {
+    this.invPageNumber = 1;
+    this.loadInventoryTransactions();
+  }
+
+  resetInvFilter(): void {
+    this.invCategoryId = null;
+    this.invItemId = null;
+    this.invItems = [];
+    this.invDateFrom = null;
+    this.invDateTo = null;
+    this.invPageNumber = 1;
+    this.loadInventoryTransactions();
+  }
+
+
+
+
+
+
+  // Events Section
+
+  onPageProductionChanged(event: PageChangedModel): void {
+    this.loadWorkerProductions(this.workerId, 
+      event.pageSize, event.currentPage, this.productionDateFrom, this.productionDateTo);
+  }
+
+  onInvPageChange(event: any): void {
+    this.invPageNumber = event.pageIndex + 1;
+    this.invPageSize = event.pageSize;
+    this.loadInventoryTransactions();
+  }
+  
+  onBack(): void {
+    this.router.navigate(['/hr/workers']);
+  }
+
+    onInvCategoryChange(): void {
+    this.invItemId = null;
+    this.invItems = [];
+    if (this.invCategoryId) {
+      this.inventoryService.getByCategory(this.invCategoryId).subscribe({
+        next: (res) => { this.invItems = res.data; }
+      });
+    }
+  }
 
   onAddTransaction(): void {
     if (this.transactionForm.invalid) {
@@ -250,70 +365,5 @@ export class WorkerDetailsComponent implements OnInit {
         this.alertService.showError(msg);
       }
     });
-  }
-
-  loadInvCategories(): void {
-    this.reportService.getInventoryCategories().subscribe({
-      next: (res) => { this.invCategories = res.data; }
-    });
-  }
-
-  onInvCategoryChange(): void {
-    this.invItemId = null;
-    this.invItems = [];
-    if (this.invCategoryId) {
-      this.inventoryService.getByCategory(this.invCategoryId).subscribe({
-        next: (res) => { this.invItems = res.data; }
-      });
-    }
-  }
-
-  loadInventoryTransactions(): void {
-    const dateFrom = this.invDateFrom ? this.invDateFrom.toISOString() : undefined;
-    const dateTo = this.invDateTo ? this.invDateTo.toISOString() : undefined;
-    this.invTransactionService.getByWorkerId(
-      this.workerId,
-      this.invPageNumber,
-      this.invPageSize,
-      this.invCategoryId ?? undefined,
-      this.invItemId ?? undefined,
-      dateFrom,
-      dateTo
-    ).subscribe({
-      next: (res: any) => {
-        this.inventoryTransactions = res.data?.items ?? res.data ?? [];
-        this.invTotalCount = res.data?.totalCount ?? 0;
-      }
-    });
-  }
-
-  onInvPageChange(event: any): void {
-    this.invPageNumber = event.pageIndex + 1;
-    this.invPageSize = event.pageSize;
-    this.loadInventoryTransactions();
-  }
-  
-
-  applyInvFilter(): void {
-    this.invPageNumber = 1;
-    this.loadInventoryTransactions();
-  }
-
-  resetInvFilter(): void {
-    this.invCategoryId = null;
-    this.invItemId = null;
-    this.invItems = [];
-    this.invDateFrom = null;
-    this.invDateTo = null;
-    this.invPageNumber = 1;
-    this.loadInventoryTransactions();
-  }
-
-  onBack(): void {
-    this.router.navigate(['/hr/workers']);
-  }
-
-  isMonthly(): boolean {
-    return this.worker?.salaryType === SalaryType.Monthly;
   }
 }

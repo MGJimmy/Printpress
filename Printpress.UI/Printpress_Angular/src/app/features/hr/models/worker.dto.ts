@@ -47,6 +47,8 @@ export interface WorkerProductionDto {
   id: string;
   productionDate: string;
   serviceCategoryName: string;
+  itemName: string;
+  groupName: string;
   orderName: string;
   quantity: number;
   notes: string;
@@ -62,7 +64,6 @@ export interface WorkerSummaryStatsDto {
 
 export interface WorkerDetailsDto extends WorkerDto {
   transactions: WorkerSalaryTransactionDto[];
-  productions: WorkerProductionDto[];
   stats: WorkerSummaryStatsDto;
 }
 
@@ -98,4 +99,3 @@ export const SalaryTransactionTypeLabels: Record<number, string> = {
   5: 'تسوية',
   6: 'رد سلفة راتب'
 };
-  

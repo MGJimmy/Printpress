@@ -137,6 +137,7 @@ export class ApiUrlResource {
     getAll: ApiUrlResource.Worker_URL + '/getAll',
     getActive: ApiUrlResource.Worker_URL + '/getActive',
     getById: (id: string) => `${ApiUrlResource.Worker_URL}/getById/${id}`,
+    getWorkerProduction: (workerId: string) => `${ApiUrlResource.Worker_URL}/getWorkerProduction/${workerId}`,
     add: ApiUrlResource.Worker_URL + '/add',
     update: ApiUrlResource.Worker_URL + '/update',
     deactivate: (id: string) => `${ApiUrlResource.Worker_URL}/deactivate/${id}`

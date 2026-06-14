@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FluentValidation;
 using Printpress.Domain;
 
@@ -34,21 +35,6 @@ internal sealed class WorkerService(
             .Select(MapTransactionToDto)
             .ToList();
 
-        var productionQuery = _unitOfWork.WorkerProductionRepository
-            .Filter(p => p.WorkerId == id,
-                nameof(ItemServiceExecution.ServiceCategory),
-                $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}");
-
-        if (productionDateFrom.HasValue)
-            productionQuery = productionQuery.Where(p => p.ExecutionDate >= productionDateFrom.Value);
-        if (productionDateTo.HasValue)
-            productionQuery = productionQuery.Where(p => p.ExecutionDate <= productionDateTo.Value);
-
-        var productions = productionQuery
-            .OrderByDescending(p => p.ExecutionDate)
-            .Select(MapProductionToDto)
-            .ToList();
-
         var thisMonthtransactions = GetThisMonthTransactions(id);
         
         
@@ -66,12 +52,45 @@ internal sealed class WorkerService(
             DailySalary = worker.DailySalary,
             IsActive = worker.IsActive,
             Transactions = transactions,
-            Productions = productions,
             Stats = MapToWorkerTransactionSummaryDTO(transactionSummary)
         };
     }
 
-   
+
+    public async Task<PagedList<WorkerProductionDto>> GetWorkerProduction(Guid id, Paging paging, DateTime? productionDateFrom, DateTime? productionDateTo)
+    {
+        Expression<Func<ItemServiceExecution, bool>> filter =
+         p =>
+        p.WorkerId == id
+        && (!productionDateFrom.HasValue || p.ExecutionDate >= productionDateFrom.Value)
+        && (!productionDateTo.HasValue || p.ExecutionDate <= productionDateTo.Value);
+
+        Sorting sorting = new Sorting(nameof(ItemServiceExecution.ExecutionDate), SortingDirection.DESC);
+
+        var productionPageList = await _unitOfWork.WorkerProductionRepository
+            .FilterAsync(
+                paging,
+                filter,
+                sorting,
+                nameof(ItemServiceExecution.ServiceCategory),
+                $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}",
+                $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}.{nameof(OrderGroup.Order)}");
+
+        var productions = productionPageList.Items
+            .Select(MapProductionToDto)
+            .ToList();
+
+        return new PagedList<WorkerProductionDto>
+        {
+            Items = productions,
+            TotalCount = productionPageList.TotalCount,
+            PageNumber = productionPageList.PageNumber,
+            PageSize = productionPageList.PageSize
+        };
+    }
+
+
+
 
     private IEnumerable<WorkerSalaryTransaction> GetThisMonthTransactions(Guid workerId)
     {
@@ -178,7 +197,9 @@ internal sealed class WorkerService(
         Id = p.Id,
         ProductionDate = p.ExecutionDate,
         ServiceCategoryName = p.ServiceCategory?.Name ?? string.Empty,
-        OrderName = p.OrderItem?.OrderGroup?.Name ?? string.Empty,
+        OrderName = p.OrderItem?.OrderGroup?.Order?.Name ?? string.Empty,
+        GroupName = p.OrderItem?.OrderGroup?.Name ?? string.Empty,
+        ItemName = p.OrderItem?.Name ?? string.Empty,
         Quantity = p.Quantity,
         Notes = p.Notes
     };

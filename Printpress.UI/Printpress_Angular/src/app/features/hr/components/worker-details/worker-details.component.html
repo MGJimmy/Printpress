@@ -168,7 +168,7 @@
       <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h6 class="text-muted mb-0">
           سجل الإنتاج
-          <span class="badge bg-secondary ms-2">{{ worker.productions.length }}</span>
+          <span class="badge bg-secondary ms-2">{{ workerProductions.length }}</span>
         </h6>
         <div class="d-flex gap-2 align-items-center">
           <mat-form-field appearance="outline" class="mb-0" style="width:160px">
@@ -191,14 +191,15 @@
 
         </div>
       </div>
-      <div *ngIf="flatProductions.length > 0; else noProductions">
+      <div *ngIf="workerProductions.length > 0; else noProductions">
         <app-table-template
-          [originalSource]="flatProductions"
+          [originalSource]="workerProductions"
           [columnDefs]="productionColDefs"
-          [totalItemsCount]="flatProductions.length"
+          [totalItemsCount]="ProdTotalCount"
           [isShowEditButton]="false"
           [isShowDeleteButton]="false"
-          [showViewButton]="false">
+          [showViewButton]="false"
+          (pageChanged)="onPageProductionChanged($event)">
         </app-table-template>
       </div>
       <ng-template #noProductions>
@@ -206,6 +207,81 @@
       </ng-template>
     </mat-card-content>
   </mat-card>
+
+  <mat-card class="shadow-sm mt-4">
+    <mat-card-header>
+      <mat-card-title>حركات المخزون</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Filters -->
+      <div class="row g-2 mb-3 align-items-end">
+        <div class="col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>الفئة</mat-label>
+            <mat-select [(ngModel)]="invCategoryId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onInvCategoryChange()">
+              <mat-option [value]="null">الكل</mat-option>
+              <mat-option *ngFor="let c of invCategories" [value]="c.id">{{ c.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>الصنف</mat-label>
+            <mat-select [(ngModel)]="invItemId" [ngModelOptions]="{standalone: true}" [disabled]="!invCategoryId">
+              <mat-option [value]="null">الكل</mat-option>
+              <mat-option *ngFor="let item of invItems" [value]="item.id">{{ item.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>من تاريخ</mat-label>
+            <input matInput [matDatepicker]="invPickerFrom" [(ngModel)]="invDateFrom" [ngModelOptions]="{standalone: true}">
+            <mat-datepicker-toggle matSuffix [for]="invPickerFrom"></mat-datepicker-toggle>
+            <mat-datepicker #invPickerFrom></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>إلى تاريخ</mat-label>
+            <input matInput [matDatepicker]="invPickerTo" [(ngModel)]="invDateTo" [ngModelOptions]="{standalone: true}">
+            <mat-datepicker-toggle matSuffix [for]="invPickerTo"></mat-datepicker-toggle>
+            <mat-datepicker #invPickerTo></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2 d-flex gap-2 pb-3">
+          <button mat-raised-button color="primary" (click)="applyInvFilter()">بحث</button>
+          <button mat-stroked-button (click)="resetInvFilter()">إعادة</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+     <div *ngIf="inventoryTransactions.length > 0; else noProductions">
+        <app-table-template
+          [originalSource]="inventoryTransactions"
+          [columnDefs]="inventoryColDefs"
+          [totalItemsCount]="invTotalCount"
+          [isShowEditButton]="false"
+          [isShowDeleteButton]="false"
+          [showViewButton]="false"
+          (pageChanged)="onInvPageChange($event)">
+        </app-table-template>
+      </div>
+      <div *ngIf="inventoryTransactions.length === 0" class="text-center text-muted py-3">
+        لا توجد حركات مخزون
+      </div>
+
+      <app-shared-pagination
+        *ngIf="invTotalCount > invPageSize"
+        [totalItems]="invTotalCount"
+        (onPageChange)="onInvPageChange($event)">
+      </app-shared-pagination>
+    </mat-card-content>
+  </mat-card>
+
+
+
+
 
   <!-- Inventory Transactions Section -->
   <mat-card class="shadow-sm mt-4">

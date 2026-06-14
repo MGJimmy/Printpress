@@ -31,6 +31,20 @@ public class WorkerController(IWorkerService _service) : AppBaseController
         return Ok(result);
     }
 
+    [HttpGet("getWorkerProduction/{workerId}")]
+    public async Task<IActionResult> GetWorkerProduction(
+    Guid workerId,
+    [FromQuery] DateTime? productionDateFrom,
+    [FromQuery] DateTime? productionDateTo,
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
+    {
+        var paging = new Paging(pageNumber, pageSize);
+
+        var result = await _service.GetWorkerProduction(workerId, paging, productionDateFrom, productionDateTo);
+        return Ok(result);
+    }
+
     [HttpPost("add")]
     public async Task<IActionResult> Add(WorkerCreateDto payload)
     {

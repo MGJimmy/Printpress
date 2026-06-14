@@ -93,12 +93,17 @@ namespace Printpress.Infrastructure
                 PageSize = paging.PageSize
             };
         }
-        public async Task<PagedList<T>> FilterAsync(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null)
+        public async Task<PagedList<T>> FilterAsync(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null, params string[] includes)
         {
             var Items = Context.Set<T>()
                 .Where(query)
                 .OrderBy(sorting)
                 .SelectPage(paging);
+
+            if (includes?.Any() == true)
+            {
+                includes.ToList().ForEach(x => Items = Items.Include(x));
+            }
 
             return new PagedList<T>
             {

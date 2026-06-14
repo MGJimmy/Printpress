@@ -14,6 +14,5 @@ public class WorkerDetailsDto
     public decimal? DailySalary { get; set; }
     public bool IsActive { get; set; }
     public List<WorkerSalaryTransactionDto> Transactions { get; set; }
-    public List<WorkerProductionDto> Productions { get; set; }
     public WorkerTransactionsSummaryDto Stats { get; set; }
 }

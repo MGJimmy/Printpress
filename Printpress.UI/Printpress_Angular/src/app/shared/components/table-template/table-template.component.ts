@@ -68,13 +68,13 @@ export class TableTemplateComponent implements OnInit {
 
   ngOnInit(): void {
     try {
-      console.log(this.originalSource)
-      if (this.originalSource && this.originalSource.length > 0) {
-        this.displayedColumns = Object.keys(this.originalSource[0]);
-        this.pushSharedColumns();
-      } else if (this.columnDefs && this.columnDefs.length > 0) {
+       if (this.columnDefs && this.columnDefs.length > 0) {
         // If we have columnDefs but no data, use the column definitions
         this.displayedColumns = this.columnDefs.map(col => col.column);
+        this.pushSharedColumns();
+      }
+      else if (this.originalSource && this.originalSource.length > 0) {
+        this.displayedColumns = Object.keys(this.originalSource[0]);
         this.pushSharedColumns();
       } else {
         this.displayedColumns = [];
