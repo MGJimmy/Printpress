@@ -8,10 +8,32 @@ internal sealed class PayrollPeriodService(
     IValidator<PayrollPeriodCreateDto> _validator,
     IGuidGenerator _guidGenerator) : IPayrollPeriodService
 {
-    public async Task<List<PayrollPeriodDto>> GetAllAsync()
+    public async Task<PagedList<PayrollPeriodDto>> GetAllAsync(Paging paging)
     {
-        var periods = await _unitOfWork.PayrollPeriodRepository.AllAsync();
+        var sorting = new Sorting(nameof(PayrollPeriod.CreatedAt), SortingDirection.DESC);
+
+        var periods = await _unitOfWork.PayrollPeriodRepository.AllAsync(paging, sorting);
+
+
+        return new PagedList<PayrollPeriodDto>
+        {
+            PageNumber = paging.PageNumber,
+            PageSize = paging.PageSize,
+            TotalCount = periods.TotalCount,
+            Items = periods.Items.Select(MapToDto).ToList()
+        };
+    
+    }
+
+    public async Task<List<PayrollPeriodDto>> GetOpenPeriodsAsync()
+    {
+        var sorting = new Sorting(nameof(PayrollPeriod.CreatedAt), SortingDirection.DESC);
+
+        var periods = await _unitOfWork.PayrollPeriodRepository.FilterAsync(x => x.IsClosed == false);
+
+
         return periods.Select(MapToDto).ToList();
+
     }
 
     public async Task<PayrollPeriodDetailsDto> GetDetailsAsync(Guid id)

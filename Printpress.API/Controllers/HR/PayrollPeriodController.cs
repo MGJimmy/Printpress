@@ -8,9 +8,18 @@ namespace Printpress.API;
 public class PayrollPeriodController(IPayrollPeriodService _service) : AppBaseController
 {
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
-        var result = await _service.GetAllAsync();
+        var paging = new Paging(pageNumber, pageSize);
+
+        var result = await _service.GetAllAsync(paging);
+        return Ok(result);
+    }
+
+    [HttpGet("getOpenPeriods")]
+    public async Task<IActionResult> GetOpenPeriods()
+    {
+        var result = await _service.GetOpenPeriodsAsync();
         return Ok(result);
     }
 

@@ -13,6 +13,7 @@ namespace Printpress.Application
         int Count(Expression<Func<T, bool>> query);
         IEnumerable<T> Filter(Expression<Func<T, bool>> query, bool track = true, params string[] includes);
         IEnumerable<T> Filter(Expression<Func<T, bool>> query, params string[] includes);
+        Task<IEnumerable<T>> FilterAsync(Expression<Func<T, bool>> query, params string[] includes);
         PagedList<T> Filter(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null);
 
         Task<PagedList<T>> FilterAsync(Paging paging, Expression<Func<T, bool>> query, Sorting sorting = null, params string[] includes);

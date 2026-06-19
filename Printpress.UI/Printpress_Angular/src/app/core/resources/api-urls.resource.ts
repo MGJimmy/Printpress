@@ -128,6 +128,7 @@ export class ApiUrlResource {
   private static PayrollPeriod_URL = '/api/PayrollPeriod';
   public static readonly PayrollPeriodAPI = {
     getAll: ApiUrlResource.PayrollPeriod_URL + '/getAll',
+    getOpenPeriods: ApiUrlResource.PayrollPeriod_URL + '/getOpenPeriods',
     getById: (id: string) => `${ApiUrlResource.PayrollPeriod_URL}/getById/${id}`,
     add: ApiUrlResource.PayrollPeriod_URL + '/add',
     close: (id: string) => `${ApiUrlResource.PayrollPeriod_URL}/close/${id}`

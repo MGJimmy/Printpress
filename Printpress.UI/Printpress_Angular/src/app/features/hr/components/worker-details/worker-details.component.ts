@@ -236,9 +236,9 @@ export class WorkerDetailsComponent implements OnInit {
   }
 
   private loadOpenPeriods(): void {
-    this.payrollPeriodService.getAll().subscribe({
+    this.payrollPeriodService.getOpenPeriods().subscribe({
       next: (res) => {
-        this.openPeriods = res.data.filter(p => !p.isClosed);
+        this.openPeriods = res.data;
         this.preselectTodayPeriod();
       },
       error: () => {}

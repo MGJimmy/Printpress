@@ -65,6 +65,24 @@ namespace Printpress.Infrastructure
 
             return Items.AsEnumerable();
         }
+
+        public async Task<IEnumerable<T>> FilterAsync(
+            Expression<Func<T, bool>> query,
+            params string[] includes)
+        {
+            IQueryable<T> items = Context.Set<T>().Where(query);
+
+            if (includes?.Any() == true)
+            {
+                foreach (var include in includes)
+                {
+                    items = items.Include(include);
+                }
+            }
+
+            return await items.ToListAsync();
+        }
+
         public IEnumerable<T> Filter(Expression<Func<T, bool>> query, bool track = true, params string[] includes)
         {
             var Items = track ? Context.Set<T>().Where(query) : Context.Set<T>().AsNoTracking().Where(query);

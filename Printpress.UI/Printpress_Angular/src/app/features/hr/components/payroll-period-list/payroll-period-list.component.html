@@ -18,11 +18,12 @@
         <app-table-template
           [originalSource]="rows"
           [columnDefs]="colDefs"
-          [totalItemsCount]="rows.length"
+          [totalItemsCount]="periodsTotalCount"
           [showViewButton]="true"
           [isShowEditButton]="false"
           [isShowDeleteButton]="false"
-          (viewClicked)="onViewDetails($event)">
+          (viewClicked)="onViewDetails($event)"
+          (pageChanged)="onPageChange($event)">
         </app-table-template>
       </div>
 
