@@ -70,7 +70,7 @@ public class WorkerController(IWorkerService _service) : AppBaseController
 
     [HttpPut("activate/{id}")]
     public async Task<IActionResult> Activate(Guid id)
-    {
+              {
         await _service.activateAsync(id, UserId);
         return Ok();
     }

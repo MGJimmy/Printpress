@@ -57,5 +57,11 @@ namespace Printpress.Domain
             return transaction;
         }
 
+        public bool CanChangeSalaryType(bool workHasSalaryTransactions)
+        {
+            return workHasSalaryTransactions ? false : true;
+        }
+
+
     }
 }

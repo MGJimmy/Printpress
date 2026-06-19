@@ -8,6 +8,7 @@ namespace Printpress.Application
         Task<List<T>> AllAsync(params string[] includes);
         bool Any();
         bool Any(Expression<Func<T, bool>> query);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> query);
         int Count();
         int Count(Expression<Func<T, bool>> query);
         IEnumerable<T> Filter(Expression<Func<T, bool>> query, bool track = true, params string[] includes);

@@ -208,6 +208,12 @@ namespace Printpress.Infrastructure
         {
             return Context.Set<T>().Any(query);
         }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> query)
+        {
+            return await Context.Set<T>().AnyAsync(query);
+        }
+
         public void Remove(T entity)
         {
             if (entity != null)

@@ -9,7 +9,8 @@ internal sealed class WorkerService(
     IValidator<WorkerCreateDto> _createValidator,
     IValidator<WorkerUpdateDto> _updateValidator,
     IGuidGenerator _guidGenerator,
-    IWorkerTransactionCalculator _workerSalaryCalculator) : IWorkerService
+    IWorkerTransactionCalculator _workerSalaryCalculator,
+    IWorkerSalaryTransactionRepository _workerSalaryTransactionRepository) : IWorkerService
 {
     public async Task<PagedList<WorkerDto>> GetAllAsync(Paging paging)
     {
@@ -140,8 +141,19 @@ internal sealed class WorkerService(
             throw new ValidationExeption(validationResult.Errors.First().ErrorMessage);
 
         var worker = await _unitOfWork.WorkerRepository.FindAsync(payload.Id);
+
         if (worker is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.Id));
+
+        if(worker.SalaryType != payload.SalaryType)
+        {
+            bool WokerHasSalaryTransactions = await _workerSalaryTransactionRepository.AnyAsync(x => x.WorkerId == payload.Id);
+            if(worker.CanChangeSalaryType(WokerHasSalaryTransactions) == false)
+            {
+                throw new ValidationExeption("لا يمكن تغيير نوع الراتب، العامل لدية سجل حركات مالية");
+
+            }
+        }
 
         worker.Name = payload.Name;
         worker.PhoneNumber = payload.PhoneNumber;
