@@ -48,4 +48,8 @@ export class InventoryService {
   deactivate(id: string): Observable<any> {
     return this.httpService.put<any>(ApiUrlResource.InventoryAPI.deactivate(id), {});
   }
+
+  activate(id: string): Observable<any> {
+    return this.httpService.put<any>(ApiUrlResource.InventoryAPI.activate(id), {});
+  }
 }

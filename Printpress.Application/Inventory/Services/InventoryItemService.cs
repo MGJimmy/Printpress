@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using AutoMapper;
 using FluentValidation;
 using Printpress.Domain;
@@ -41,7 +42,7 @@ internal sealed class InventoryItemService(
 
     public async Task<InventoryItemDto> GetByIdAsync(Guid id)
     {
-        var item = await _unitOfWork.InventoryItemRepository.FindByIdWithStockQuantity(id);
+        var item = await _unitOfWork.InventoryItemRepository.FindByIdWithTransactions(id);
 
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
@@ -51,7 +52,14 @@ internal sealed class InventoryItemService(
 
     public async Task<PagedList<InventoryItemDto>> GetAllAsync(Paging paging)
     {
-        return await _unitOfWork.InventoryItemRepository.GetAllWithStockQuantity(paging);
+        var itemsPageList = await _unitOfWork.InventoryItemRepository.GetAllWithTransactions(paging);
+        return new PagedList<InventoryItemDto>
+        {
+            Items = _mapper.Map<List<InventoryItemDto>>(itemsPageList.Items),
+            TotalCount = itemsPageList.TotalCount,
+            PageNumber = itemsPageList.PageNumber,
+            PageSize = itemsPageList.PageSize
+        };
     }
 
     public async Task<List<InventoryItemDto>> GetByCategoryAsync(int categoryId)
@@ -65,6 +73,11 @@ internal sealed class InventoryItemService(
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
 
+        if (!item.IsActive)
+        {
+            throw new ValidationException("العنصر غير نشط بالفعل");
+        }
+
         item.IsActive = false;
         _unitOfWork.InventoryItemRepository.Update(item);
 
@@ -72,6 +85,31 @@ internal sealed class InventoryItemService(
         foreach (var service in allServices.Where(s => s.InventoryItemId == id))
         {
             service.IsActive = false;
+            _unitOfWork.ServiceRepository.Update(service);
+        }
+
+        await _unitOfWork.SaveChangesAsync(userId);
+    }
+
+
+    public async Task ActivateAsync(Guid id, string userId)
+    {
+        var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);
+        if (item is null)
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
+
+        if (item.IsActive)
+        {
+            throw new ValidationException("العنصر نشط بالفعل");
+        }
+
+        item.IsActive = true;
+        _unitOfWork.InventoryItemRepository.Update(item);
+
+        var allServices = await _unitOfWork.ServiceRepository.AllAsync();
+        foreach (var service in allServices.Where(s => s.InventoryItemId == id))
+        {
+            service.IsActive = true;
             _unitOfWork.ServiceRepository.Update(service);
         }
 

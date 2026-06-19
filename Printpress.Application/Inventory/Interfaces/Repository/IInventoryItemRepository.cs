@@ -9,8 +9,8 @@ namespace Printpress.Application
 {
     public interface IInventoryItemRepository : IGenericRepository<InventoryItem>
     {
-        Task<PagedList<InventoryItemDto>> GetAllWithStockQuantity(Paging paging);
-        Task<InventoryItemDto?> FindByIdWithStockQuantity(Guid id);
+        Task<PagedList<InventoryItem>> GetAllWithTransactions(Paging paging);
+        Task<InventoryItem?> FindByIdWithTransactions(Guid id);
         Task<List<InventoryItemDto>> GetByCategoryIdAsync(int categoryId);
 
         Task<List<EnumBasicInfoDto>> GetServiceCategoriesAsync();

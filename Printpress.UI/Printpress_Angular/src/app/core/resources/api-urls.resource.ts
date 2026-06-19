@@ -76,6 +76,7 @@ export class ApiUrlResource {
     update: (id: string) => `${ApiUrlResource.Inventory_URL}/update/${id}`,
     delete: (id: string) => `${ApiUrlResource.Inventory_URL}/delete/${id}`,
     deactivate: (id: string) => `${ApiUrlResource.Inventory_URL}/deactivate/${id}`,
+    activate: (id: string) => `${ApiUrlResource.Inventory_URL}/activate/${id}`,
 
     InventoryCategoryBasicInfo: ApiUrlResource.Inventory_URL + '/inventory-categories',
     CategoryBasicInfoAll: ApiUrlResource.Inventory_URL + '/inventory-categories-All',
@@ -140,7 +141,8 @@ export class ApiUrlResource {
     getWorkerProduction: (workerId: string) => `${ApiUrlResource.Worker_URL}/getWorkerProduction/${workerId}`,
     add: ApiUrlResource.Worker_URL + '/add',
     update: ApiUrlResource.Worker_URL + '/update',
-    deactivate: (id: string) => `${ApiUrlResource.Worker_URL}/deactivate/${id}`
+    deactivate: (id: string) => `${ApiUrlResource.Worker_URL}/deactivate/${id}`,
+    activate: (id: string) => `${ApiUrlResource.Worker_URL}/activate/${id}`
   };
 
   private static WorkerSalaryTransaction_URL = '/api/WorkerSalaryTransaction';

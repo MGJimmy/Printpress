@@ -24,19 +24,22 @@ export class InventoryItemListComponent implements OnInit {
 
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'الاسم', column: 'name' },
-    { headerName: 'الفئة', column: 'inventoryItemCategory' },
+    { headerName: 'الفئة', 
+      column: 'inventoryItemCategory',
+      translationPrefix: 'inventory.enum.inventoryItemCategory'
+    },
     { headerName: 'عبوات/كرتونة', column: 'packsPerCarton' },
     { headerName: 'وحدات/عبوة', column: 'unitsPerPack' },
     { headerName: 'نسبة الفاقد الشراء %', column: 'expectedPurchaseLossPercent' },
     { headerName: 'نسبة الهالك الإنتاج %', column: 'expectedProductionWastePercent' },
     { headerName: 'الكمية في المخزون', column: 'stockQuantity' },
-    { headerName: 'نشط', column: 'isActive' }
-  ];
+    { headerName: 'الحالة', column: 'isActive', translationPrefix: 'inventory.inventoryItemActiveStatus' }
+  ]; 
 
   constructor(
     private inventoryService: InventoryService,
     private alertService: AlertService,
-    private router: Router,
+    private router: Router 
   ) {}
 
   ngOnInit() {
@@ -46,7 +49,6 @@ export class InventoryItemListComponent implements OnInit {
   private loadItems(pageSize: number, pageNumber: number) {
     this.inventoryService.getAll(pageSize, pageNumber).subscribe({
       next: (response) => {
-        console.log(response);
         this.items = response.data.items as InventoryItemDto[];
         this.totalCount = response.data.totalCount;
       },
@@ -94,8 +96,24 @@ export class InventoryItemListComponent implements OnInit {
           this.alertService.showSuccess('تم تعطيل العنصر بنجاح');
           this.loadItems(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUMBER);
         },
-        error: () => {
-          this.alertService.showError('حدث خطأ أثناء تعطيل العنصر');
+        error: (err: any) => {
+          const msg = err?.error?.message ?? 'حدث خطأ أثناء إضافة الحركة';
+          this.alertService.showError(msg);
+        }
+      });
+    }
+  }
+
+  onActivate(id: string) {
+    if (confirm('هل أنت متأكد من تنشيط هذا العنصر؟')) {
+      this.inventoryService.activate(id).subscribe({
+        next: () => {
+          this.alertService.showSuccess('تم تنشيط العنصر بنجاح');
+          this.loadItems(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUMBER);
+        },
+        error: (err: any) => {
+          const msg = err?.error?.message ?? 'حدث خطأ أثناء إضافة الحركة';
+          this.alertService.showError(msg);
         }
       });
     }

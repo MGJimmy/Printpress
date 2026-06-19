@@ -56,6 +56,14 @@ public class InventoryController(IInventoryItemService _inventoryItemService) : 
         return Ok();
     }
 
+    [HttpPut("activate/{id}")]
+    public async Task<IActionResult> Activate(Guid id)
+    {
+        await _inventoryItemService.DeactivateAsync(id, UserId);
+        return Ok();
+    }
+
+
     #region Basic Info
 
 

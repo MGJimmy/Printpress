@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentValidation;
 using Printpress.Domain;
+using Printpress.Domain.Entities.Inventory.DomainServices;
 
 namespace Printpress.Application;
 
@@ -79,11 +80,14 @@ internal sealed class InventoryTransactionService(
         if (!validationResult.IsValid)
             throw new ValidationExeption(validationResult.Errors.First().ErrorMessage);
 
-        var item = await _unitOfWork.InventoryItemRepository.FindByIdWithStockQuantity(payload.InventoryItemId);
+        var item = await _unitOfWork.InventoryItemRepository.FindByIdWithTransactions(payload.InventoryItemId);
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.InventoryItemId));
 
-        if (payload.Quantity > item.StockQuantity)
+        var stockQuantity = InventoryCalculatorDS.CalculateStockQuantity(item.InventoryTransactions);
+
+
+        if (payload.Quantity > stockQuantity)
             throw new ValidationExeption("الكمية المطلوبة تتجاوز الكمية المتاحة في المخزون");
 
         var transaction = new InventoryTransaction(

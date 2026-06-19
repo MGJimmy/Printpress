@@ -10,7 +10,7 @@ import { TableColDefinitionModel } from '../../models/table-col-definition.model
 import { PageChangedModel } from '../../models/page-changed.model';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faEye, faTrash, faBan } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTrash, faBan, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -49,6 +49,7 @@ export class TableTemplateComponent implements OnInit {
   @Input() showViewButton: boolean = false;
   @Input() showDeactivateButton: boolean = false;
   @Output() deactivateClicked: EventEmitter<string> = new EventEmitter<string>();
+  @Output() activateClicked: EventEmitter<string> = new EventEmitter<string>();
   @Input() linkColumnName: string = '';
   @Output() linkColumnClicked: EventEmitter<any> = new EventEmitter<any>();
 
@@ -61,6 +62,7 @@ export class TableTemplateComponent implements OnInit {
   faEdit = faEdit;
   faView = faEye;
   faBan = faBan;
+  faCheckCircle = faCheckCircle;
 
   get conditionalPagination(): boolean {
     return this.totalItemsCount > this.pageSize;
@@ -126,6 +128,10 @@ export class TableTemplateComponent implements OnInit {
 
   onDeactivate(element: any): void {
     this.deactivateClicked.emit(element.id);
+  }
+
+  onActivate(element: any): void {
+    this.activateClicked.emit(element.id);
   }
 
   onLinkColumnClick(element: any): void {

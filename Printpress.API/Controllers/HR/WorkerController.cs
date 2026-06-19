@@ -8,9 +8,10 @@ namespace Printpress.API;
 public class WorkerController(IWorkerService _service) : AppBaseController
 {
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _service.GetAllAsync();
+        var paging = new Paging(pageNumber, pageSize);
+        var result = await _service.GetAllAsync(paging);
         return Ok(result);
     }
 
@@ -63,6 +64,14 @@ public class WorkerController(IWorkerService _service) : AppBaseController
     public async Task<IActionResult> Deactivate(Guid id)
     {
         await _service.DeactivateAsync(id, UserId);
+        return Ok();
+    }
+
+
+    [HttpPut("activate/{id}")]
+    public async Task<IActionResult> Activate(Guid id)
+    {
+        await _service.activateAsync(id, UserId);
         return Ok();
     }
 }

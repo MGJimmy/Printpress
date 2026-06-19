@@ -54,6 +54,8 @@
     class="mx-3" mat-raised-button color="warn" (click)="onDelete(element)"> <fa-icon [icon]="faTrash"></fa-icon> حذف</button>
   <button *ngIf="showDeactivateButton"
     class="mx-3" mat-raised-button color="accent" (click)="onDeactivate(element)"><fa-icon [icon]="faBan"></fa-icon> تعطيل</button>
+    <button *ngIf="showDeactivateButton"
+    class="mx-3" mat-raised-button color="accent" (click)="onActivate(element)"><fa-icon [icon]="faCheckCircle"></fa-icon> تنشيط</button>
 </ng-template>
 
 <ng-template #dataTemplate let-element = "element" let-column = "column">

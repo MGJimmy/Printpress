@@ -17,29 +17,12 @@ namespace Printpress.Infrastructure
 
         }
 
-        public async Task<PagedList<InventoryItemDto>> GetAllWithStockQuantity(Paging paging)
+        public async Task<PagedList<InventoryItem>> GetAllWithTransactions(Paging paging)
         {
-            var items = Context.InventoryItem
-                .Select(i => new InventoryItemDto
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    InventoryItemCategory = i.InventoryItemCategory,
-                    PacksPerCarton = i.PacksPerCarton,
-                    UnitsPerPack = i.UnitsPerPack,
-                    ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
-                    ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
-                    HasTransactions = i.InventoryTransactions.Any(),
-                    IsActive = i.IsActive,
-                    StockQuantity = Context.InventoryTransaction
-                        .Where(t => t.InventoryItemId == i.Id)
-                        .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
-                            ? t.Quantity
-                            : -t.Quantity)
-                })
+            var items = Context.InventoryItem.Include(x => x.InventoryTransactions)
                 .SelectPage(paging);
 
-            return new PagedList<InventoryItemDto>
+            return new PagedList<InventoryItem>
             {
                 Items = await items.ToListAsync(),
                 TotalCount = Context.InventoryItem.Count(),
@@ -48,28 +31,11 @@ namespace Printpress.Infrastructure
             };
         }
 
-        public async Task<InventoryItemDto?> FindByIdWithStockQuantity(Guid id)
+        public async Task<InventoryItem?> FindByIdWithTransactions(Guid id)
         {
             return await Context.InventoryItem
-                .Where(i => i.Id == id)
-                .Select(i => new InventoryItemDto
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    InventoryItemCategory = i.InventoryItemCategory,
-                    PacksPerCarton = i.PacksPerCarton,
-                    UnitsPerPack = i.UnitsPerPack,
-                    ExpectedPurchaseLossPercent = i.ExpectedPurchaseLossPercent,
-                    ExpectedProductionWastePercent = i.ExpectedProductionWastePercent,
-                    HasTransactions = i.InventoryTransactions.Any(),
-                    IsActive = i.IsActive,
-                    StockQuantity = Context.InventoryTransaction
-                        .Where(t => t.InventoryItemId == i.Id)
-                        .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
-                            ? t.Quantity
-                            : -t.Quantity)
-                })
-                .FirstOrDefaultAsync();
+           .Include(i => i.InventoryTransactions)
+           .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<List<InventoryItemDto>> GetByCategoryIdAsync(int categoryId)

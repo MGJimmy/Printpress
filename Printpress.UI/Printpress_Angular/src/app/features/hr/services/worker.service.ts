@@ -9,8 +9,13 @@ import { WorkerDto, WorkerCreateDto, WorkerUpdateDto, WorkerDetailsDto, WorkerPr
 export class WorkerService {
   constructor(private httpService: HttpService) {}
 
-  getAll(): Observable<ApiResponseDto<WorkerDto[]>> {
-    return this.httpService.get<ApiResponseDto<WorkerDto[]>>(ApiUrlResource.WorkerAPI.getAll);
+  getAll(pageSize?: number, pageNumber?: number): Observable<ApiPagingResponseDto<WorkerDto>> {
+    let url = ApiUrlResource.WorkerAPI.getAll;
+    const params: string[] = [];
+    if (pageSize) params.push(`pageSize=${pageSize}`);
+    if (pageNumber) params.push(`pageNumber=${pageNumber}`);
+    if (params.length) url += '?' + params.join('&');
+    return this.httpService.get<ApiPagingResponseDto<WorkerDto>>(url);
   }
 
   getActive(): Observable<ApiResponseDto<WorkerDto[]>> {
@@ -49,5 +54,9 @@ export class WorkerService {
 
   deactivate(id: string): Observable<any> {
     return this.httpService.put<any>(ApiUrlResource.WorkerAPI.deactivate(id), {});
+  }
+
+  activate(id: string): Observable<any> {
+    return this.httpService.put<any>(ApiUrlResource.WorkerAPI.activate(id), {});
   }
 }

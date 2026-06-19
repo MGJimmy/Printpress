@@ -16,7 +16,8 @@ namespace Printpress.Infrastructure
         protected ApplicationDbContext Context { get; set; }
         public async Task<List<T>> AllAsync(params string[] includes)
         {
-            var Items = Context.Set<T>().AsNoTracking().AsQueryable();
+            var Items = Context.Set<T>()
+                .AsNoTracking().AsQueryable();
 
             if (includes?.Any() == true)
             {

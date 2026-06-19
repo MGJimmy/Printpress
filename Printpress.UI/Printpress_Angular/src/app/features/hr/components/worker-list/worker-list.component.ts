@@ -9,6 +9,7 @@ import { TableColDefinitionModel } from '../../../../shared/models/table-col-def
 import { WorkerService } from '../../services/worker.service';
 import { WorkerDto, SalaryTypeLabels } from '../../models/worker.dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 
 @Component({
   selector: 'app-worker-list',
@@ -18,7 +19,8 @@ import { AlertService } from '../../../../core/services/alert.service';
 })
 export class WorkerListComponent implements OnInit {
   workers: WorkerDto[] = [];
-
+  pageSize = DEFAULT_PAGE_SIZE;
+  pageNumber = DEFAULT_PAGE_NUMBER;
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'الاسم', column: 'name' },
     { headerName: 'رقم الهاتف', column: 'phoneNumber' },
@@ -38,9 +40,9 @@ export class WorkerListComponent implements OnInit {
   }
 
   private loadWorkers(): void {
-    this.workerService.getAll().subscribe({
+    this.workerService.getAll(this.pageSize, this.pageNumber).subscribe({
       next: (res) => {
-        this.workers = res.data.map(w => ({
+        this.workers = res.data.items.map(w => ({
           ...w,
           salaryTypeLabel: SalaryTypeLabels[w.salaryType] ?? '',
           salaryValue: w.salaryType === 1 ? (w.monthlySalary ?? 0) : (w.dailySalary ?? 0),
@@ -75,5 +77,24 @@ export class WorkerListComponent implements OnInit {
         this.alertService.showError(msg);
       }
     });
+  }
+
+  onActivate(id: string): void {
+    if (!confirm('هل أنت متأكد من تفعيل هذا العامل؟')) return;
+    this.workerService.activate(id).subscribe({
+      next: () => {
+        this.alertService.showSuccess('تم تفعيل العامل بنجاح');
+        this.loadWorkers();
+      },
+      error: (err) => {
+        const msg = err?.error?.message ?? 'حدث خطأ أثناء التفعيل';
+        this.alertService.showError(msg);
+      }
+    });
+  }
+  onPageChange(event: { pageSize: number; currentPage: number }): void {
+    this.pageSize = event.pageSize;
+    this.pageNumber = event.currentPage;
+    this.loadWorkers();
   }
 }

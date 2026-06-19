@@ -83,7 +83,7 @@ export class ExecuteItemServiceComponent implements OnInit {
       error: () => this.alertService.showError(this._t.t('orders.error_loading_item'))
     });
 
-    this.workerService.getAll().subscribe({
+    this.workerService.getActive().subscribe({
       next: (res) => {
         this.workers = res.data.filter(w => w.isActive);
       },

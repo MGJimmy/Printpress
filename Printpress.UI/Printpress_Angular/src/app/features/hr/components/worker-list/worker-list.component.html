@@ -21,7 +21,10 @@
         [showDeactivateButton]="true"
         (editClicked)="onEdit($event)"
         (viewClicked)="onView($event)"
-        (deactivateClicked)="onDeactivate($event)">
+        (deactivateClicked)="onDeactivate($event)"
+        (activateClicked)="onActivate($event)"
+        (pageChanged)="onPageChange($event)"
+        >
       </app-table-template>
     </mat-card-content>
   </mat-card>

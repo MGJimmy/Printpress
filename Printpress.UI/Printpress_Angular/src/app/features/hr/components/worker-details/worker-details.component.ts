@@ -35,6 +35,7 @@ import { DatePipe } from '@angular/common';
 import { TransactionType } from '../../models/transaction-type.enum';
 import { SalaryType } from '../../models/salary-type.enum';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
+import { DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 
 @Component({
   selector: 'app-worker-details',
@@ -68,8 +69,8 @@ export class WorkerDetailsComponent implements OnInit {
 
   inventoryTransactions: any[] = [];
   invTotalCount = 0;
-  invPageSize = 10;
-  invPageNumber = 1;
+  invPageSize = DEFAULT_PAGE_SIZE;
+  invPageNumber = DEFAULT_PAGE_SIZE;
   invCategoryId: number | null = null;
   invItemId: string | null = null;
   invDateFrom: Date | null = null;
@@ -160,7 +161,7 @@ export class WorkerDetailsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.workerId = id;
     this.loadWorker(id);
-    this.loadWorkerProductions(id, 10, 1, this.productionDateFrom, this.productionDateTo);
+    this.loadWorkerProductions(id, this.invPageSize, this.invPageNumber, this.productionDateFrom, this.productionDateTo);
     this.loadOpenPeriods();
     this.loadInvCategories();
     this.loadInventoryTransactions();

@@ -11,10 +11,17 @@ internal sealed class WorkerService(
     IGuidGenerator _guidGenerator,
     IWorkerTransactionCalculator _workerSalaryCalculator) : IWorkerService
 {
-    public async Task<List<WorkerDto>> GetAllAsync()
+    public async Task<PagedList<WorkerDto>> GetAllAsync(Paging paging)
     {
-        var workers = await _unitOfWork.WorkerRepository.AllAsync();
-        return workers.Select(MapToDto).ToList();
+        var sorting = new Sorting(nameof(Worker.CreatedAt), SortingDirection.DESC);
+        var workerPageList = await _unitOfWork.WorkerRepository.AllAsync(paging, sorting);
+        return new PagedList<WorkerDto>
+        {
+            PageNumber = paging.PageNumber,
+            PageSize = paging.PageSize,
+            TotalCount = workerPageList.TotalCount,
+            Items = workerPageList.Items.Select(MapToDto).ToList()
+        };
     }
 
     public async Task<List<WorkerDto>> GetActiveAsync()
@@ -160,6 +167,21 @@ internal sealed class WorkerService(
             throw new ValidationExeption("العامل غير نشط بالفعل");
 
         worker.IsActive = false;
+
+        _unitOfWork.WorkerRepository.Update(worker);
+        await _unitOfWork.SaveChangesAsync(userId);
+    }
+
+    public async Task activateAsync(Guid id, string userId)
+    {
+        var worker = await _unitOfWork.WorkerRepository.FindAsync(id);
+        if (worker is null)
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
+
+        if (worker.IsActive)
+            throw new ValidationExeption("العامل نشط بالفعل");
+
+        worker.IsActive = true;
 
         _unitOfWork.WorkerRepository.Update(worker);
         await _unitOfWork.SaveChangesAsync(userId);

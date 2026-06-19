@@ -158,8 +158,6 @@ export class StockInComponent implements OnInit {
           this.purchaseInvoiceService.uploadFile(fileInput.files[0])
         );
         attachmentFilePath = response.data.filePath;
-        console.log(response);
-        console.log(attachmentFilePath);
       }
 
       const formValue = this.form.getRawValue();

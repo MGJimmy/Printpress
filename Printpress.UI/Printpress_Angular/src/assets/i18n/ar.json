@@ -90,7 +90,19 @@
         "In": "دخول",
         "Out": "خروج",
         "Adjustment": "تعديل"
+      },
+      "inventoryItemCategory": {
+        "Paper": "ورق",
+        "Ink": "حبر",
+        "InkSupplements": "مستلزمات الحبر",
+        "CleaningTools": "أدوات تنظيف",
+        "SparePart": "قطع غيار",
+        "Other": "أخرى"
       }
+    },
+    "inventoryItemActiveStatus": {
+      "true": "نشط",
+      "false": "غير نشط"
     },
     "transaction_not_found": "حركة المخزون غير موجودة",
     "item_not_found": "الصنف غير موجود",
