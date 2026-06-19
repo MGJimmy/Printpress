@@ -256,7 +256,7 @@
       </div>
 
       <!-- Table -->
-     <div *ngIf="inventoryTransactions.length > 0; else noProductions">
+     <div *ngIf="inventoryTransactions.length > 0; else noInventoryTransactions">
         <app-table-template
           [originalSource]="inventoryTransactions"
           [columnDefs]="inventoryColDefs"
@@ -267,9 +267,9 @@
           (pageChanged)="onInvPageChange($event)">
         </app-table-template>
       </div>
-      <div *ngIf="inventoryTransactions.length === 0" class="text-center text-muted py-3">
-        لا توجد حركات مخزون
-      </div>
+      <ng-template #noInventoryTransactions>
+        <div class="text-center text-muted py-4">لا توجد حركات مخزون</div>
+      </ng-template>
     </mat-card-content>
   </mat-card>
 </div>

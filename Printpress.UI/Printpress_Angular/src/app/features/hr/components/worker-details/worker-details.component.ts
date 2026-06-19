@@ -35,7 +35,7 @@ import { DatePipe } from '@angular/common';
 import { TransactionType } from '../../models/transaction-type.enum';
 import { SalaryType } from '../../models/salary-type.enum';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
-import { DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 
 @Component({
   selector: 'app-worker-details',
@@ -70,7 +70,7 @@ export class WorkerDetailsComponent implements OnInit {
   inventoryTransactions: any[] = [];
   invTotalCount = 0;
   invPageSize = DEFAULT_PAGE_SIZE;
-  invPageNumber = DEFAULT_PAGE_SIZE;
+  invPageNumber = DEFAULT_PAGE_NUMBER;
   invCategoryId: number | null = null;
   invItemId: string | null = null;
   invDateFrom: Date | null = null;

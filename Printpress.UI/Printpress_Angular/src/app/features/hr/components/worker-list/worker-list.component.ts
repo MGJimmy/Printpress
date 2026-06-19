@@ -21,6 +21,7 @@ export class WorkerListComponent implements OnInit {
   workers: WorkerDto[] = [];
   pageSize = DEFAULT_PAGE_SIZE;
   pageNumber = DEFAULT_PAGE_NUMBER;
+  workersTotalCount = 0;
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'الاسم', column: 'name' },
     { headerName: 'رقم الهاتف', column: 'phoneNumber' },
@@ -48,6 +49,7 @@ export class WorkerListComponent implements OnInit {
           salaryValue: w.salaryType === 1 ? (w.monthlySalary ?? 0) : (w.dailySalary ?? 0),
           statusLabel: w.isActive ? 'نشط' : 'غير نشط'
         } as any));
+        this.workersTotalCount = res.data.totalCount;
       },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل العمال'); }
     });
