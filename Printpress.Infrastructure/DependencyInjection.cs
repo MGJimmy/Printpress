@@ -20,6 +20,14 @@ public static class DependencyInjection
         services.AddScoped(
             sp => sp.GetRequiredService<IUnitOfWork>().InventoryItemRepository);
 
+
+        #region  Repositories
+
+        services.AddScoped<IWorkerSalaryTransactionRepository, WorkerSalaryTransactionRepository>();
+
+        #endregion
+
+
         services.AddDbContext<ApplicationDbContext>(option =>
         {
             option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
