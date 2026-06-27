@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
-import { CashAccountService } from '../../services/cash-account.service';
 import { CashAccountDto } from '../../models/cash-account.dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { CashAccountService } from '../../services/cash-account.service';
+import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 
 @Component({
   selector: 'app-cash-account-list',

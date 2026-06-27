@@ -27,13 +27,19 @@ internal sealed class CashTransactionService(
         if (!string.IsNullOrEmpty(category))
             categoryEnum = EnumHelper.MapStringToEnum<CashTransactionCategory>(category);
 
+
+        var sorting = new Sorting(nameof(CashTransaction.CreatedAt), SortingDirection.DESC);
+
+
         var result = await _unitOfWork.CashTransactionRepository.FilterAsync(
             paging,
             t => t.CashAccountId == cashAccountId
-                 && (dateFrom == null || t.TransactionDate >= dateFrom)
-                 && (dateTo == null || t.TransactionDate <= dateTo)
+                 && (dateFrom == null || t.TransactionDate.Date >= dateFrom.Value.Date)
+                 && (dateTo == null || t.TransactionDate.Date <= dateTo.Value.Date)
                  && (typeEnum == null || t.Type == typeEnum)
-                 && (categoryEnum == null || t.Category == categoryEnum));
+                 && (categoryEnum == null || t.Category == categoryEnum),
+            sorting
+            );
 
         return new PagedList<CashTransactionDto>
         {

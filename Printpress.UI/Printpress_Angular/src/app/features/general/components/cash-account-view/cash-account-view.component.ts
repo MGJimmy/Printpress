@@ -81,7 +81,7 @@ export class CashAccountViewComponent implements OnInit {
     { headerName: 'الفئة', column: 'category' },
     { headerName: 'المبلغ', column: 'amount' },
     { headerName: 'الوصف', column: 'description' },
-    { headerName: 'التاريخ', column: 'transactionDate' },
+    { headerName: 'تاريخ الحركة', column: 'transactionDate' },
   ];
 
   private accountId!: string;
@@ -123,8 +123,8 @@ export class CashAccountViewComponent implements OnInit {
   }
 
   private loadTransactions(): void {
-    const dateFrom = this.filterDateFrom ? this.filterDateFrom.toISOString().split('T')[0] : undefined;
-    const dateTo = this.filterDateTo ? this.filterDateTo.toISOString().split('T')[0] : undefined;
+    const dateFrom = this.filterDateFrom ? this.filterDateFrom.toISOString() : undefined;
+    const dateTo = this.filterDateTo ? this.filterDateTo.toISOString() : undefined;
     const type = this.filterType || undefined;
     const category = this.filterCategory || undefined;
 
@@ -134,6 +134,8 @@ export class CashAccountViewComponent implements OnInit {
       next: (response) => {
         this.transactions = response.data.items as CashTransactionDto[];
         this.totalTransactionsCount = response.data.totalCount;
+
+        console.log('Transactions loaded:', this.transactions);
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل الحركات');
