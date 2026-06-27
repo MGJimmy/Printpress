@@ -10,6 +10,8 @@ public static class DependencyInjection
         services.AddScoped<IInventoryTransactionDomainService, InventoryTransactionDomainService>();
         services.AddScoped<IWorkerTransactionCalculator, WorkerTransactionCalculator>();
 
+        services.AddScoped<CachAccountDomainService>();
+
         return services;
     }
 

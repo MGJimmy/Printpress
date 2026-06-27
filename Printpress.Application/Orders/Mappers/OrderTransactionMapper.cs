@@ -33,6 +33,7 @@ namespace Printpress.Application
         {
             return new OrderTransaction
             {
+                Id = Guid.NewGuid(),
                 OrderId = destinationEntity.OrderId,
                 Amount = destinationEntity.Amount,
                 TransactionType = EnumHelper.MapStringToEnum<OrderTransactionType>(destinationEntity.TransactionType)

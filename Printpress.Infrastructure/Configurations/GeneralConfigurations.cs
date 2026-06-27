@@ -52,7 +52,7 @@ namespace Printpress.Infrastructure
                 .HasConversion<int?>();
 
             entity.HasOne(x => x.CashAccount)
-                .WithMany()
+                .WithMany(x => x.Transactions)
                 .HasForeignKey(x => x.CashAccountId);
         }
     }

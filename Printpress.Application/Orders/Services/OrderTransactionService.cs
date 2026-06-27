@@ -2,7 +2,9 @@
 
 namespace Printpress.Application;
 
-internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper, ILocalizationService _loc) : IOrderTransactionService
+internal sealed class OrderTransactionService(
+    IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper, 
+    ILocalizationService _loc, CachAccountDomainService _cachAccountDomainService) : IOrderTransactionService
 {
     public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload, string userId)
     {
@@ -23,9 +25,32 @@ internal sealed class OrderTransactionService(IUnitOfWork _unitOfWork, OrderTran
 
         _unitOfWork.OrderRepository.Update(order);
 
+        await AddCachAccountTransaction(payload, isPayment);
+
+
         await _unitOfWork.SaveChangesAsync(userId);
 
         return _orderTransactionMapper.MapFromSourceToDestination(client);
+    }
+
+    private async Task AddCachAccountTransaction(OrderTransactionAddDto payload, bool isPayment)
+    {
+
+        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
+            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
+
+        var transactionType = isPayment ? CashTransactionType.In : CashTransactionType.Out;
+
+        _cachAccountDomainService.AddCachAccountTransaction(
+            cachAccount,
+            transactionType,
+            CashTransactionCategory.Sales,
+            CashTransactionReferenceType.Order,
+            payload.OrderId,
+            payload.Amount,
+            payload.Note,
+            DateTime.UtcNow
+        );
     }
 
     private void ValidateTransactionPayload(OrderTransactionAddDto payload)

@@ -60,18 +60,16 @@ internal sealed class CashTransactionService(
         if (!string.IsNullOrEmpty(payload.ReferenceType))
             referenceTypeEnum = EnumHelper.MapStringToEnum<CashTransactionReferenceType>(payload.ReferenceType);
 
-        var transaction = new CashTransaction
-        {
-            Id = _guidGenerator.NewGuid(),
-            CashAccountId = payload.CashAccountId,
-            Type = typeEnum,
-            Category = categoryEnum,
-            ReferenceType = referenceTypeEnum,
-            ReferenceId = payload.ReferenceId,
-            Amount = payload.Amount,
-            Description = payload.Description,
-            TransactionDate = payload.TransactionDate
-        };
+        var transaction = new CashTransaction(
+            payload.CashAccountId,
+            typeEnum,
+            categoryEnum,
+            referenceTypeEnum,
+            payload.ReferenceId,
+            payload.Amount,
+            payload.Description,
+            payload.TransactionDate
+            );
 
         await _unitOfWork.CashTransactionRepository.AddAsync(transaction);
 

@@ -9,7 +9,9 @@ internal sealed class PurchaseInvoiceService(
     IMapper _mapper,
     IValidator<PurchaseInvoiceCreateDto> _createValidator,
     IInventoryTransactionDomainService _inventoryTransactionService,
-    IGuidGenerator _guidGenerator) : IPurchaseInvoiceService
+    IGuidGenerator _guidGenerator,
+    CachAccountDomainService _cachAccountDomainService,
+    ILocalizationService _loc) : IPurchaseInvoiceService
 {
     public async Task<PurchaseInvoiceDto> CreateAsync(PurchaseInvoiceCreateDto payload, string userId)
     {
@@ -33,8 +35,28 @@ internal sealed class PurchaseInvoiceService(
 
         await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
 
+        await AddCachAccountTransaction(entity);
+
         await _unitOfWork.SaveChangesAsync(userId);
 
         return _mapper.Map<PurchaseInvoiceDto>(saved);
+    }
+
+    private async Task AddCachAccountTransaction(PurchaseInvoice purchaseInvoice)
+    {
+
+        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
+            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
+
+        _cachAccountDomainService.AddCachAccountTransaction(
+            cachAccount,
+            CashTransactionType.Out,
+            CashTransactionCategory.Purchases,
+            CashTransactionReferenceType.PurchaseInvoice,
+            purchaseInvoice.Id,
+            purchaseInvoice.TotalAmount,
+            $"Purchase Invoice Line: {purchaseInvoice.InvoiceNumber}",
+            DateTime.UtcNow
+        );
     }
 }

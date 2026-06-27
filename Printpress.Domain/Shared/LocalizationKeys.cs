@@ -28,4 +28,10 @@ public static class LocalizationKeys
         public const string PaymentExceedsRemaining= "orders.payment_exceeds_remaining";
         public const string RefundExceedsPaid      = "orders.refund_exceeds_paid";
     }
+
+    public static class CashAccounts
+    {
+
+        public const string NotFound = "cashAccounts.not_found";
+    }
 }
