@@ -9,7 +9,9 @@ namespace Printpress.Domain
     public enum CashTransactionReferenceType
     {
         Order = 1,
-        PurchaseInvoice = 2,
+        PurchaseInventoryInvoice = 2,
+        PurchaseSparePartInvoice = 3,
+        SellingSparePartInvoice = 4,
         Other = 99
     }
 }

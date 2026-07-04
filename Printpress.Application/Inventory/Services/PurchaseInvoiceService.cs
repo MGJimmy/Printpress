@@ -52,7 +52,7 @@ internal sealed class PurchaseInvoiceService(
             cachAccount,
             CashTransactionType.Out,
             CashTransactionCategory.Purchases,
-            CashTransactionReferenceType.PurchaseInvoice,
+            CashTransactionReferenceType.PurchaseInventoryInvoice,
             purchaseInvoice.Id,
             purchaseInvoice.TotalAmount,
             $"Purchase Invoice Line: {purchaseInvoice.InvoiceNumber}",

@@ -4,7 +4,9 @@ namespace Printpress.Application;
 
 internal sealed class SparePartPurchaseInvoiceService(
     IUnitOfWork _unitOfWork,
-    IGuidGenerator _guidGenerator) : ISparePartPurchaseInvoiceService
+    IGuidGenerator _guidGenerator,
+    ILocalizationService _loc,
+    CachAccountDomainService _cachAccountDomainService) : ISparePartPurchaseInvoiceService
 {
     public async Task CreateAsync(SparePartPurchaseInvoiceCreateDto payload, string userId)
     {
@@ -13,7 +15,6 @@ internal sealed class SparePartPurchaseInvoiceService(
             payload.InvoiceDate,
             payload.SupplierName,
             payload.AttachmentFilePath ?? string.Empty);
-        invoice.Id = _guidGenerator.NewGuid();
 
         foreach (var line in payload.Lines)
         {
@@ -30,6 +31,27 @@ internal sealed class SparePartPurchaseInvoiceService(
             string.Empty) { Id = _guidGenerator.NewGuid() }).ToList();
 
         await _unitOfWork.SparePartTransactionRepository.AddRange(transactions);
+
+        await AddCachAccountTransaction(invoice);
+
         await _unitOfWork.SaveChangesAsync(userId);
+    }
+
+    private async Task AddCachAccountTransaction(SparePartPurchaseInvoice invoice)
+    {
+
+        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.SpareParts)
+            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
+
+        _cachAccountDomainService.AddCachAccountTransaction(
+            cachAccount,
+            CashTransactionType.Out,
+            CashTransactionCategory.Purchases,
+            CashTransactionReferenceType.PurchaseSparePartInvoice,
+            invoice.Id,
+            invoice.TotalAmount,
+            $"Purchase Invoice Line: {invoice.InvoiceNumber}",
+            DateTime.UtcNow
+        );
     }
 }

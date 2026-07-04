@@ -31,6 +31,7 @@ namespace Printpress.Domain
             string attachmentFilePath
             )
         {
+            Id = Guid.NewGuid();
             InvoiceNumber = invoiceNumber;
             InvoiceDate = invoiceDate;
             SupplierName = suplierName;

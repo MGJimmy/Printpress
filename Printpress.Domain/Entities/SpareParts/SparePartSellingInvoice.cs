@@ -8,11 +8,45 @@ namespace Printpress.Domain
 {
     public class SparePartSellingInvoice : Entity
     {
-        public int InvoiceNumber { get; set; }
-        public string ClientName { get; set; }
-        public DateTime InvoiceDate { get; set; }
-        public decimal TotalAmount { get; set; }
+        public List<SparePartSellingInvoiceLine> _sparePartSellingInvoiceLines = new();
 
-        public virtual ICollection<SparePartSellingInvoiceLine> SparePartSellingInvoiceLines { get; set; }
+        public int InvoiceNumber { get; private set; }
+        public string ClientName { get; private set; }
+        public DateTime InvoiceDate { get; private set; }
+        public decimal TotalAmount { get; private set; }
+
+        public IReadOnlyCollection<SparePartSellingInvoiceLine> SparePartSellingInvoiceLines => _sparePartSellingInvoiceLines.AsReadOnly();
+
+        public SparePartSellingInvoice(
+            int invoiceNumber,
+            string clientName,
+            DateTime invoiceDate
+            )
+        {
+            Id = Guid.NewGuid();
+            InvoiceNumber = invoiceNumber;
+            ClientName = clientName;
+            InvoiceDate = invoiceDate;
+        }
+
+        public void AddLine(
+            Guid inventoryItemId,
+            decimal quantity,
+            decimal unitPrice)
+        {
+            var lineTotalCalculated = quantity * unitPrice;
+
+            var line = new SparePartSellingInvoiceLine
+            {
+                Id = Guid.NewGuid(),
+                SellingInvoiceId = this.Id,
+                InventoryItemId = inventoryItemId,
+                Quantity = quantity,
+                UnitPrice = unitPrice,
+                LineTotal = lineTotalCalculated
+            };
+            _sparePartSellingInvoiceLines.Add(line);
+            TotalAmount += lineTotalCalculated;
+        }
     }
 }
