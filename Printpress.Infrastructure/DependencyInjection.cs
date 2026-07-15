@@ -15,7 +15,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidGenerator, GuidGenerator>();
         services.AddHttpContextAccessor();
-        services.AddScoped<ILocalizationService, LocalizationService>();
+        services.AddSingleton<ILocalizationService, LocalizationService>();
 
         services.AddScoped(
             sp => sp.GetRequiredService<IUnitOfWork>().InventoryItemRepository);
