@@ -14,6 +14,7 @@ namespace Printpress.Domain
         CapitalInjection = 4,
         Maintenance = 5,
         ExternalServices = 6,
+        Salaries = 7,
         Other = 99
     }
 }

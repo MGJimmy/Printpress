@@ -7,7 +7,9 @@ internal sealed class WorkerSalaryTransactionService(
     IUnitOfWork _unitOfWork,
     IValidator<AddSalaryTransactionDto> _validator,
     IGuidGenerator _guidGenerator,
-    IWorkerTransactionCalculator workerTransactionCalculator) : IWorkerSalaryTransactionService
+    IWorkerTransactionCalculator workerTransactionCalculator,
+    ILocalizationService _loc,
+    CachAccountDomainService _cachAccountDomainService) : IWorkerSalaryTransactionService
 {
     public async Task<WorkerSalaryTransactionDto> AddAsync(AddSalaryTransactionDto payload, string userId)
     {
@@ -42,7 +44,17 @@ internal sealed class WorkerSalaryTransactionService(
 
 
         _unitOfWork.WorkerRepository.Update(worker);
+
+        await AddCashTransaction(
+            payload.TransactionType,
+            payload.Amount,
+            worker.Name,
+            payload.Note,
+            payload.TransactionDate);                                                   
+
         await _unitOfWork.SaveChangesAsync(userId);
+
+
 
         return new WorkerSalaryTransactionDto
         {
@@ -54,6 +66,45 @@ internal sealed class WorkerSalaryTransactionService(
             Note = transaction.Note,
             PayrollPeriodName = period.Name
         };
+    }
+
+    private async Task AddCashTransaction(
+        SalaryTransactionType salaryTransactionType, 
+        decimal amount, 
+        string workerName, 
+        string note, 
+        DateTime transactionDate)
+    {
+        // Penalty is not recorded as a cash account transaction. Instead, it reduces the employee's salary,
+        // which limits the amount of salary that can be paid.
+        if (salaryTransactionType == SalaryTransactionType.Penalty)
+            return;
+
+        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
+                            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
+
+        CashTransactionType cashTransactionType = GetCashTransactionType(salaryTransactionType);
+
+        string description = _loc.Get(LocalizationKeys.CashAccounts.addSalaryTransactionDescription,salaryTransactionType.ToString(), workerName, note);
+
+        _cachAccountDomainService.AddCachAccountTransaction(
+            cachAccount, 
+            cashTransactionType,
+            CashTransactionCategory.Salaries,
+            null,
+            null,
+            amount,
+            description                                                                          );
+    }
+
+    private CashTransactionType GetCashTransactionType(SalaryTransactionType salaryTransactionType)
+    {
+        if(salaryTransactionType == SalaryTransactionType.SalaryAdvancePayment)
+        {
+            return CashTransactionType.In;
+        }
+
+        return CashTransactionType.Out;
     }
 
     private void ValidatePayment(AddSalaryTransactionDto payload, Worker worker)

@@ -48,8 +48,7 @@ internal sealed class OrderTransactionService(
             CashTransactionReferenceType.Order,
             payload.OrderId,
             payload.Amount,
-            payload.Note,
-            DateTime.UtcNow
+            payload.Note
         );
     }
 

@@ -55,8 +55,7 @@ internal sealed class PurchaseInvoiceService(
             CashTransactionReferenceType.PurchaseInventoryInvoice,
             purchaseInvoice.Id,
             purchaseInvoice.TotalAmount,
-            $"Purchase Invoice Line: {purchaseInvoice.InvoiceNumber}",
-            DateTime.UtcNow
+            $"Purchase Invoice Line: {purchaseInvoice.InvoiceNumber}"
         );
     }
 }

@@ -33,5 +33,6 @@ public static class LocalizationKeys
     {
 
         public const string NotFound = "cashAccounts.not_found";
+        public const string addSalaryTransactionDescription = "cashAccounts.addSalaryTransactionDescription";
     }
 }

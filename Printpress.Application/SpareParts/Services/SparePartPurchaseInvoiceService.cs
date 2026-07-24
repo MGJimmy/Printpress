@@ -50,8 +50,7 @@ internal sealed class SparePartPurchaseInvoiceService(
             CashTransactionReferenceType.PurchaseSparePartInvoice,
             invoice.Id,
             invoice.TotalAmount,
-            $"Purchase Invoice Line: {invoice.InvoiceNumber}",
-            DateTime.UtcNow
+            $"Purchase Invoice Line: {invoice.InvoiceNumber}"
         );
     }
 }

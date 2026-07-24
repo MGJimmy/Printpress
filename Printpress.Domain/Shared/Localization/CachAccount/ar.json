@@ -1,3 +1,4 @@
 {
-    "cashAccounts.not_found": "الخزنية غير موجوده"
+    "cashAccounts.not_found": "الخزنية غير موجوده",
+    "cashAccounts.addSalaryTransactionDescription": "اضافة حركة مالية نوعها {0} للموظف {1} ملحوظه ({2})"
 }

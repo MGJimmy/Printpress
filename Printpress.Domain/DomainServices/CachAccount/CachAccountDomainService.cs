@@ -16,8 +16,7 @@ namespace Printpress.Domain
             CashTransactionReferenceType? referenceType,
             Guid? referenceId,
             decimal amount,
-            string description,
-            DateTime transactionDate)
+            string description)
         {
             var transaction = new CashTransaction(
                 cashAccount.Id,
@@ -27,7 +26,7 @@ namespace Printpress.Domain
                 referenceId,
                 amount,
                 description,
-                transactionDate);
+                DateTime.UtcNow);
 
             cashAccount.AddTransaction(transaction);
         }
