@@ -6,7 +6,8 @@ import { RouterModule } from '@angular/router';
   selector: 'app-main-layout',
   standalone: true,
   imports: [SidebarComponent, RouterModule],
-  templateUrl: './main-layout.component.html'
+  templateUrl: './main-layout.component.html',
+  styleUrls: ['./main-layout.component.scss']
 })
 export class MainLayoutComponent {
   title = 'Printpress_Angular';

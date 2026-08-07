@@ -1,13 +1,21 @@
 <div id="sidebar-wrapper" [class.toggled]="toggled" [attr.aria-expanded]="toggled">
+<div class="sidebar-header">
   <div class="sidebar-heading">القائمة</div>
-  <div class="list-group list-group-flush">
+  
+  <button (click)="toggleSidebar()" class="toggle-btn" aria-label="Toggle Sidebar">
+    <fa-icon [icon]="toggled ? faBars : faTimes"></fa-icon>
+  </button>
+
+  
+</div>
+  <div class="list-group list-group-flush sidebar-menu">
+
     <a
       *appHasRole="userRoleEnum.admin"
       routerLink="/clients"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="list-group-item list-group-item-action"
-    >
+      class="list-group-item list-group-item-action">
       <fa-icon [icon]="faUserGroup" class="fa-icon mx-2"></fa-icon>
       <span>قائمة العملاء</span>
     </a>
@@ -16,8 +24,7 @@
       routerLink="/orderlist"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="list-group-item list-group-item-action"
-    >
+      class="list-group-item list-group-item-action">
       <fa-icon [icon]="faCartArrowDown" class="fa-icon mx-2"></fa-icon>
       <span>قائمة الطلبات</span>
     </a>
@@ -27,8 +34,7 @@
       routerLink="/services"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="list-group-item list-group-item-action"
-    >
+      class="list-group-item list-group-item-action">
       <fa-icon [icon]="faCog" class="fa-icon mx-2"></fa-icon>
       <span>إعدادات الخدمات</span>
     </a>
@@ -38,8 +44,7 @@
       routerLink="/inventory/items"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="list-group-item list-group-item-action"
-    >
+      class="list-group-item list-group-item-action">
       <fa-icon [icon]="faBars" class="fa-icon mx-2"></fa-icon>
       <span>عناصر المخزون</span>
     </a>
@@ -49,8 +54,7 @@
       routerLink="/spare-parts/items"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="list-group-item list-group-item-action"
-    >
+      class="list-group-item list-group-item-action">
       <fa-icon [icon]="faWrench" class="fa-icon mx-2"></fa-icon>
       <span>قطع الغيار</span>
     </a>
@@ -60,8 +64,7 @@
       routerLink="/users"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: false }"
-      class="list-group-item list-group-item-action"
-    >
+      class="list-group-item list-group-item-action">
       <fa-icon [icon]="faUsers" class="fa-icon mx-2"></fa-icon>
       <span>المستخدمين</span>
     </a>
@@ -71,8 +74,7 @@
       routerLink="/general/cash-accounts"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: false }"
-      class="list-group-item list-group-item-action"
-    >
+      class="list-group-item list-group-item-action">
       <fa-icon [icon]="faMoneyBillWave" class="fa-icon mx-2"></fa-icon>
       <span>الخزينة</span>
     </a>
@@ -82,21 +84,21 @@
       <fa-icon [icon]="faUserTie" class="fa-icon mx-2"></fa-icon>
       <span>الموارد البشرية</span>
     </div>
+
     <div *ngIf="isHRExpanded" class="reports-children">
       <a
         routerLink="/hr/payroll-periods"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: false }"
-        class="list-group-item list-group-item-action ps-5"
-      >
+        class="list-group-item list-group-item-action ps-5">
         <span>دورات الرواتب</span>
       </a>
+
       <a
         routerLink="/hr/workers"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: false }"
-        class="list-group-item list-group-item-action ps-5"
-      >
+        class="list-group-item list-group-item-action ps-5">
         <span>العمال</span>
       </a>
     </div>
@@ -106,41 +108,43 @@
       <fa-icon [icon]="faChartBar" class="fa-icon mx-2"></fa-icon>
       <span>التقارير</span>
     </div>
+
     <div *ngIf="isReportsExpanded" class="reports-children">
       <a
         routerLink="/reports/order-inventory-items"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5"
-      >
-        <span>تقارير عناصر المخزن في الطلبات</span>
+        class="list-group-item list-group-item-action ps-5">
+        <span title="تقارير عناصر المخزن في الطلبات">تقارير عناصر المخزن في الطلبات</span>
       </a>
+
       <a
         routerLink="/reports/inventory-services-usage"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5"
-      >
-        <span>تقرير عناصر المخزن والخدمات المستخدمة</span>
+        class="list-group-item list-group-item-action ps-5">
+        <span title="تقرير عناصر المخزن والخدمات المستخدمة">تقرير عناصر المخزن والخدمات المستخدمة</span>
       </a>
     </div>
+
   </div>
 
   <div class="lang-section">
-    <button (click)="toggleLanguage()" class="lang-btn" [title]="translationService.currentLang === 'ar' ? 'Switch to English' : 'التبديل للعربية'">
+    <button
+      (click)="toggleLanguage()"
+      class="lang-btn"
+      [title]="translationService.currentLang === 'ar' ? 'Switch to English' : 'التبديل للعربية'">
       <fa-icon [icon]="faGlobe" class="mx-2"></fa-icon>
       <span>{{ translationService.currentLang === 'ar' ? 'English' : 'العربية' }}</span>
     </button>
   </div>
 
-  <div class="logout-section list-group-item list-group-item-action">
+  <div class="logout-section">
     <button (click)="confirmLogout()" class="logout-btn">
       <fa-icon class="mx-2" [icon]="faSignOutAlt"></fa-icon>
       <span>تسجيل الخروج</span>
     </button>
   </div>
 
-  <button (click)="toggleSidebar()" class="toggle-btn" aria-label="Toggle Sidebar">
-    <fa-icon [icon]="toggled ? faBars : faTimes"></fa-icon>
-  </button>
+
 </div>

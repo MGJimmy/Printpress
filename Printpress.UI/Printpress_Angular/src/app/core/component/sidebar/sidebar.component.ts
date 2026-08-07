@@ -40,6 +40,8 @@ import { TranslationService } from '../../services/translation.service';
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnDestroy {
+  @Output() toggle = new EventEmitter<boolean>();
+
   userRoleEnum = UserRoleEnum;
   toggled: boolean = false;
 
@@ -71,7 +73,7 @@ export class SidebarComponent implements OnDestroy {
 
   toggleSidebar(): void {
     this.toggled = !this.toggled;
-    //this.toggle.emit(this.toggled);
+    this.toggle.emit(this.toggled);
   }
 
   toggleReports(): void {
@@ -81,7 +83,6 @@ export class SidebarComponent implements OnDestroy {
   toggleHR(): void {
     this.isHRExpanded = !this.isHRExpanded;
   }
-
 
   toggleLanguage(): void {
     const next = this.translationService.currentLang === 'ar' ? 'en' : 'ar';
