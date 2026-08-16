@@ -35,6 +35,26 @@ internal class SparePartItemRepository : GenericRepository<SparePartInventoryIte
         };
     }
 
+    public async Task<List<SparePartItemDto>> GetAllForSelectionAsync()
+    {
+        return await Context.SparePartInventoryItem
+            .OrderBy(i => i.Name)
+            .Select(i => new SparePartItemDto
+            {
+                Id = i.Id,
+                Name = i.Name,
+                PacksPerCarton = i.PacksPerCarton,
+                UnitsPerPack = i.UnitsPerPack,
+                HasTransactions = i.InventoryTransactions.Any(),
+                StockQuantity = Context.SparePartInventoryTransaction
+                    .Where(t => t.InventoryItemId == i.Id)
+                    .Sum(t => t.InventoryTransactionType == SparePartInventoryTransactionType.In
+                        ? t.Quantity
+                        : -t.Quantity)
+            })
+            .ToListAsync();
+    }
+
     public async Task<SparePartItemDto?> FindByIdWithStockQuantityAsync(Guid id)
     {
         return await Context.SparePartInventoryItem

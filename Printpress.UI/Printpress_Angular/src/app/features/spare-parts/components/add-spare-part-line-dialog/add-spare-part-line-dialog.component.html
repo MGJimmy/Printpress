@@ -18,6 +18,9 @@
       <input matInput type="number" formControlName="quantity" min="0.01" />
       <mat-error *ngIf="form.controls.quantity.hasError('required')">يجب إدخال الكمية</mat-error>
       <mat-error *ngIf="form.controls.quantity.hasError('min')">يجب أن تكون الكمية أكبر من صفر</mat-error>
+      <mat-error *ngIf="form.controls.quantity.hasError('stockExceeded')">
+        الكمية المطلوبة أكبر من المتاح في المخزون (المتاح: {{ getSelectedItemStock() }})
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">

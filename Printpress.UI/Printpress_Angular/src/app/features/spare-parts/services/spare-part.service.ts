@@ -22,6 +22,10 @@ export class SparePartService {
     );
   }
 
+  getAllForSelection(): Observable<ApiResponseDto<SparePartItemDto[]>> {
+    return this.httpService.get<ApiResponseDto<SparePartItemDto[]>>(ApiUrlResource.SparePartAPI.getAllForSelection);
+  }
+
   getById(id: string): Observable<ApiResponseDto<SparePartItemDto>> {
     return this.httpService.get<ApiResponseDto<SparePartItemDto>>(ApiUrlResource.SparePartAPI.getById(id));
   }

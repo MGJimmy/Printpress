@@ -10,6 +10,7 @@ import { SparePartItemDto } from '../../models/spare-part-item.dto';
 
 export interface AddSparePartLineDialogData {
   items: SparePartItemDto[];
+  validationMode?: 'stock-in' | 'stock-out';
 }
 
 export interface AddSparePartLineDialogResult {
@@ -53,6 +54,13 @@ export class AddSparePartLineDialogComponent {
     });
   }
 
+  getSelectedItemStock(): number {
+    const value = this.form.get('sparePartItemId')?.value;
+    if (!value) return 0;
+    const item = this.data.items.find(x => x.id === value);
+    return item?.stockQuantity ?? 0;
+  }
+
   onConfirm(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -60,7 +68,18 @@ export class AddSparePartLineDialogComponent {
     }
 
     const { sparePartItemId, quantity, unitPrice } = this.form.getRawValue();
-    const item = this.data.items.find(x => x.id === sparePartItemId)!;
+    const item = this.data.items.find(x => x.id === sparePartItemId);
+
+    if (!item) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    if (this.data.validationMode === 'stock-out' && quantity > item.stockQuantity) {
+      this.form.controls.quantity.setErrors({ stockExceeded: true });
+      this.form.controls.quantity.markAsTouched();
+      return;
+    }
 
     const result: AddSparePartLineDialogResult = {
       sparePartItemId,

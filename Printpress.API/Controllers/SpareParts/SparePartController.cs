@@ -13,6 +13,13 @@ public class SparePartController(ISparePartItemService _service) : AppBaseContro
         return Ok(result);
     }
 
+    [HttpGet("getAllForSelection")]
+    public async Task<IActionResult> GetAllForSelection()
+    {
+        var result = await _service.GetAllForSelectionAsync();
+        return Ok(result);
+    }
+
     [HttpGet("getById/{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {

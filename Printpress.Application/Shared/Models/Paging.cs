@@ -21,7 +21,7 @@
         public int PageSize
         {
             get => _pageSize;
-            set => _pageSize = (value > 0 && value < _maxPageSize) ? value : 20;
+            set => _pageSize = (value > 0 && value < _maxPageSize) ? value : _maxPageSize;
         }
     }
 }

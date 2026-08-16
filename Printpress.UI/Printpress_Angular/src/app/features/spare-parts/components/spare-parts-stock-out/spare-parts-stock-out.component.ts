@@ -79,9 +79,9 @@ export class SparePartsStockOutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sparePartService.getAll(1000, 1).subscribe({
+    this.sparePartService.getAllForSelection().subscribe({
       next: (response) => {
-        this.sparePartItems = response.data.items as SparePartItemDto[];
+        this.sparePartItems = response.data ?? [];
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل قطع الغيار');
@@ -97,7 +97,7 @@ export class SparePartsStockOutComponent implements OnInit {
     const dialogRef = this.dialog.open(AddSparePartLineDialogComponent, {
       width: '500px',
       disableClose: true,
-      data: { items: this.sparePartItems }
+      data: { items: this.sparePartItems, validationMode: 'stock-out' }
     });
 
     dialogRef.afterClosed().subscribe((result: AddSparePartLineDialogResult | undefined) => {

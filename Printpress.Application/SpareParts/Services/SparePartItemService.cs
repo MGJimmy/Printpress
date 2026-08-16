@@ -16,6 +16,11 @@ internal sealed class SparePartItemService(
         return await _unitOfWork.SparePartItemRepository.GetAllWithStockQuantityAsync(paging);
     }
 
+    public async Task<List<SparePartItemDto>> GetAllForSelectionAsync()
+    {
+        return await _unitOfWork.SparePartItemRepository.GetAllForSelectionAsync();
+    }
+
     public async Task<SparePartItemDto> GetByIdAsync(Guid id)
     {
         var item = await _unitOfWork.SparePartItemRepository.FindByIdWithStockQuantityAsync(id);
