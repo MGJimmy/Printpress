@@ -50,7 +50,6 @@ internal class ReportRepository : IReportRepository
 
     public async Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
     {
-        // Get service IDs linked to this inventory item
         var serviceIds = await _context.Service
             .Where(s => s.InventoryItemId == inventoryItemId)
             .Select(s => s.Id)
@@ -59,41 +58,50 @@ internal class ReportRepository : IReportRepository
         if (!serviceIds.Any())
             return [];
 
-        // load all orders has any service of these
         var orders = await _context.Order
-        .Include(o => o.Services)
-            .ThenInclude(os => os.Service) // ��� ����� ������ ������
-        .Include(o => o.OrderGroups)
-            .ThenInclude(og => og.OrderGroupServices)
-                .ThenInclude(ogs => ogs.Service) // ��� ����� ������ ������ �������� ���� group service
-        .Include(o => o.OrderGroups)
-            .ThenInclude(og => og.Items)
-                .ThenInclude(i => i.Details)
-        .Where(o => o.Services.Any(os => serviceIds.Contains(os.ServiceId)))
-        .ToListAsync();
+            .Include(o => o.OrderGroups)
+                .ThenInclude(og => og.OrderGroupServices)
+                    .ThenInclude(ogs => ogs.Service)
+            .Include(o => o.OrderGroups)
+                .ThenInclude(og => og.Items)
+                    .ThenInclude(i => i.Details)
+            .Where(o => o.Services.Any(os => serviceIds.Contains(os.ServiceId)))
+            .ToListAsync();
 
-
-        List<(OrderItem Item, bool IsCover)> orderItems = orders.SelectMany(o => o.OrderGroups)
-            .Where(og => og.OrderGroupServices.Any(os => serviceIds.Contains(os.ServiceId))
-                && og.ExecutionType != GroupExecutionType.External_Full)
-            .SelectMany(og =>
-            {
-                var matchingGroupService = og.OrderGroupServices
-                    .FirstOrDefault(os => serviceIds.Contains(os.ServiceId));
-                var isCover = matchingGroupService?.IsCover == true;
-                return og.Items.Select(item => (Item: item, IsCover: isCover));
-            })
+        var candidates = orders
+            .SelectMany(o => o.OrderGroups ?? [])
+            .Where(og => og.ExecutionType != GroupExecutionType.External_Full)
+            .SelectMany(og => (og.OrderGroupServices ?? [])
+                .Where(os => serviceIds.Contains(os.ServiceId) && os.Service != null)
+                .SelectMany(os => (og.Items ?? [])
+                    .Where(item => !item.IsDeleted)
+                    .Select(item => (Item: item, GroupService: os))))
             .ToList();
 
-        return orderItems.Select(oi => new OrderItemUsageProjection
-        {
-            Quantity = oi.Item.Quantity,
-            NumberOfPages = int.TryParse(oi.Item.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value, out var pages) ? pages : 0,
-            NumberOfPrintingFaces = int.TryParse(oi.Item.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value, out var faces) ? faces : 0,
-            IsCover = oi.IsCover
-        }).ToList();
+        if (candidates.Count == 0)
+            return [];
 
-      
+        var executedQuantities = await GetExecutedQuantitiesAsync(
+            candidates.Select(c => c.Item.Id), dateFrom, dateTo);
+
+        return candidates
+            .Select(c =>
+            {
+                var categoryId = c.GroupService.Service.ServiceCategoryId;
+                if (!executedQuantities.TryGetValue((c.Item.Id, categoryId), out var executedQty) || executedQty <= 0)
+                    return null;
+
+                return new OrderItemUsageProjection
+                {
+                    Quantity = executedQty,
+                    NumberOfPages = int.TryParse(c.Item.Details?.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value, out var pages) ? pages : 0,
+                    NumberOfPrintingFaces = int.TryParse(c.Item.Details?.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value, out var faces) ? faces : 0,
+                    IsCover = c.GroupService.IsCover
+                };
+            })
+            .Where(p => p != null)
+            .Select(p => p!)
+            .ToList();
     }
 
 
@@ -219,10 +227,14 @@ internal class ReportRepository : IReportRepository
             .Where(ogs => serviceIds.Contains(ogs.ServiceId)
                 && !ogs.IsDeleted
                 && !ogs.OrderGroup.IsDeleted
-                && !ogs.OrderGroup.Order.IsDeleted
-                && (dateFrom == null || ogs.OrderGroup.Order.CreatedAt >= dateFrom)
-                && (dateTo == null || ogs.OrderGroup.Order.CreatedAt <= dateTo))
-            .Select(ogs => new { ogs.ServiceId, ogs.OrderGroupId, ogs.IsCover })
+                && !ogs.OrderGroup.Order.IsDeleted)
+            .Select(ogs => new
+            {
+                ogs.ServiceId,
+                ogs.OrderGroupId,
+                ogs.IsCover,
+                ogs.Service.ServiceCategoryId
+            })
             .Distinct()
             .ToListAsync();
 
@@ -234,8 +246,8 @@ internal class ReportRepository : IReportRepository
             .Where(i => groupIds.Contains(i.OrderGroupId) && !i.IsDeleted && i.OrderGroup.ExecutionType != GroupExecutionType.External_Full)
             .Select(i => new
             {
+                i.Id,
                 i.OrderGroupId,
-                i.Quantity,
                 PagesValue = i.Details
                     .Where(d => d.ItemDetailsKeyId == (int)ItemDetailsKeyEnum.NumberOfPages && !d.IsDeleted)
                     .Select(d => d.Value).FirstOrDefault(),
@@ -245,18 +257,58 @@ internal class ReportRepository : IReportRepository
             })
             .ToListAsync();
 
+        if (rawItems.Count == 0)
+            return [];
+
+        var executedQuantities = await GetExecutedQuantitiesAsync(
+            rawItems.Select(i => i.Id), dateFrom, dateTo);
+
         return rawItems
             .Join(serviceGroupPairs,
                 item => item.OrderGroupId,
                 pair => pair.OrderGroupId,
-                (item, pair) => new ServiceItemRaw
+                (item, pair) => new { item, pair })
+            .Select(x =>
+            {
+                if (!executedQuantities.TryGetValue((x.item.Id, x.pair.ServiceCategoryId), out var executedQty) || executedQty <= 0)
+                    return null;
+
+                return new ServiceItemRaw
                 {
-                    ServiceId = pair.ServiceId,
-                    Quantity = item.Quantity,
-                    PagesValue = item.PagesValue,
-                    FacesValue = item.FacesValue,
-                    IsCover = pair.IsCover
-                })
+                    ServiceId = x.pair.ServiceId,
+                    Quantity = executedQty,
+                    PagesValue = x.item.PagesValue,
+                    FacesValue = x.item.FacesValue,
+                    IsCover = x.pair.IsCover
+                };
+            })
+            .Where(r => r != null)
+            .Select(r => r!)
             .ToList();
+    }
+
+    private async Task<Dictionary<(Guid OrderItemId, Guid ServiceCategoryId), int>> GetExecutedQuantitiesAsync(
+        IEnumerable<Guid> orderItemIds, DateTime? dateFrom, DateTime? dateTo)
+    {
+        var itemIds = orderItemIds.Distinct().ToList();
+        if (itemIds.Count == 0)
+            return [];
+
+        var rows = await _context.WorkerProduction
+            .Where(e => itemIds.Contains(e.OrderItemId)
+                && (dateFrom == null || e.ExecutionDate >= dateFrom)
+                && (dateTo == null || e.ExecutionDate <= dateTo))
+            .GroupBy(e => new { e.OrderItemId, e.ServiceCategoryId })
+            .Select(g => new
+            {
+                g.Key.OrderItemId,
+                g.Key.ServiceCategoryId,
+                Quantity = g.Sum(e => e.Quantity)
+            })
+            .ToListAsync();
+
+        return rows
+            .Where(r => r.Quantity > 0)
+            .ToDictionary(r => (r.OrderItemId, r.ServiceCategoryId), r => r.Quantity);
     }
 }
