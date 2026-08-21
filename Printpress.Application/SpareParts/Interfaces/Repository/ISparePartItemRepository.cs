@@ -5,5 +5,6 @@ namespace Printpress.Application;
 public interface ISparePartItemRepository : IGenericRepository<SparePartInventoryItem>
 {
     Task<PagedList<SparePartItemDto>> GetAllWithStockQuantityAsync(Paging paging);
+    Task<List<SparePartItemDto>> GetAllForSelectionAsync();
     Task<SparePartItemDto?> FindByIdWithStockQuantityAsync(Guid id);
 }

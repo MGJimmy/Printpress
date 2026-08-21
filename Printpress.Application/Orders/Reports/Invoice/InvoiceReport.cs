@@ -82,13 +82,6 @@ public class InvoiceReport : IDocument
 
             });
 
-            // Title
-            column.Item()
-                  .PaddingHorizontal(5)
-                  .AlignCenter()
-                  .Text("فاتورة")
-                  .FontSize(20)
-                  .SemiBold();
 
             // Client Information
             column.Item().PaddingHorizontal(40).PaddingTop(6).Text(text =>

@@ -104,6 +104,7 @@ export class ApiUrlResource {
   private static SparePart_URL = '/api/SparePart';
   public static readonly SparePartAPI = {
     getAll: ApiUrlResource.SparePart_URL + '/getAll',
+    getAllForSelection: ApiUrlResource.SparePart_URL + '/getAllForSelection',
     getById: (id: string) => `${ApiUrlResource.SparePart_URL}/getById/${id}`,
     add: ApiUrlResource.SparePart_URL + '/add',
     update: (id: string) => `${ApiUrlResource.SparePart_URL}/update/${id}`,
