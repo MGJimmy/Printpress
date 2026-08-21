@@ -27,6 +27,8 @@
   "orders.service_price_required": "يجب تحديد سعر لكل الخدمات",
   "orders.select_service_type_first": "من فضلك اختر نوع الخدمة أولاً",
   "orders.service_type_duplicate": "لا يمكنك إضافة خدمات من نفس النوع أكثر من مرة",
+  "orders.printing_main_duplicate": "لا يمكن إضافة أكثر من خدمة طباعة رئيسية للمجموعة",
+  "orders.printing_cover_duplicate": "لا يمكن إضافة أكثر من خدمة غلاف للمجموعة",
   "orders.service_delete_has_items": "لا يمكن حذف خدمة، المجموعة تحتوي على عناصر مضافة",
   "orders.services_empty": "لا يمكن حفظ مجموعة بخدمات فارغة",
   "orders.worker_required": "يجب إضافة عامل واحد على الأقل",

@@ -4,5 +4,6 @@
     {
         public Guid Id { get; set; }
         public Guid ServiceId { get; set; }
+        public bool IsCover { get; set; }
     }
 }

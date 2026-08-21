@@ -73,17 +73,24 @@ internal class ReportRepository : IReportRepository
         .ToListAsync();
 
 
-        List<OrderItem> orderItems = orders.SelectMany(o => o.OrderGroups)
+        List<(OrderItem Item, bool IsCover)> orderItems = orders.SelectMany(o => o.OrderGroups)
             .Where(og => og.OrderGroupServices.Any(os => serviceIds.Contains(os.ServiceId))
                 && og.ExecutionType != GroupExecutionType.External_Full)
-            .SelectMany(og => og.Items)
+            .SelectMany(og =>
+            {
+                var matchingGroupService = og.OrderGroupServices
+                    .FirstOrDefault(os => serviceIds.Contains(os.ServiceId));
+                var isCover = matchingGroupService?.IsCover == true;
+                return og.Items.Select(item => (Item: item, IsCover: isCover));
+            })
             .ToList();
 
         return orderItems.Select(oi => new OrderItemUsageProjection
         {
-            Quantity = oi.Quantity,
-            NumberOfPages = int.Parse(oi.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value),
-            NumberOfPrintingFaces = int.Parse(oi.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value)
+            Quantity = oi.Item.Quantity,
+            NumberOfPages = int.TryParse(oi.Item.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value, out var pages) ? pages : 0,
+            NumberOfPrintingFaces = int.TryParse(oi.Item.Details.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value, out var faces) ? faces : 0,
+            IsCover = oi.IsCover
         }).ToList();
 
       
@@ -215,7 +222,7 @@ internal class ReportRepository : IReportRepository
                 && !ogs.OrderGroup.Order.IsDeleted
                 && (dateFrom == null || ogs.OrderGroup.Order.CreatedAt >= dateFrom)
                 && (dateTo == null || ogs.OrderGroup.Order.CreatedAt <= dateTo))
-            .Select(ogs => new { ogs.ServiceId, ogs.OrderGroupId })
+            .Select(ogs => new { ogs.ServiceId, ogs.OrderGroupId, ogs.IsCover })
             .Distinct()
             .ToListAsync();
 
@@ -247,7 +254,8 @@ internal class ReportRepository : IReportRepository
                     ServiceId = pair.ServiceId,
                     Quantity = item.Quantity,
                     PagesValue = item.PagesValue,
-                    FacesValue = item.FacesValue
+                    FacesValue = item.FacesValue,
+                    IsCover = pair.IsCover
                 })
             .ToList();
     }

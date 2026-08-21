@@ -5,6 +5,7 @@ namespace Printpress.Domain
     {
         public Guid OrderGroupId { get; set; }
         public Guid ServiceId { get; set; }
+        public bool IsCover { get; set; }
         public bool IsDeleted { get; set; }
 
         public virtual OrderGroup OrderGroup { get; set; }

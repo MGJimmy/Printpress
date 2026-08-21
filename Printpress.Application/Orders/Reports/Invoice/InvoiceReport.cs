@@ -162,7 +162,8 @@ public class InvoiceReport : IDocument
 
               foreach (var orderService in orderServices)
               {
-                  table.Cell().Element(CellStyle).Text(orderService.Service.Name).AlignCenter();
+                  var displayName = GetServiceDisplayName(orderService.ServiceId, orderService.Service.Name);
+                  table.Cell().Element(CellStyle).Text(displayName).AlignCenter();
                   table.Cell().Element(CellStyle).Text(orderService.Price.ToString()).AlignCenter();
               }
 
@@ -287,7 +288,7 @@ public class InvoiceReport : IDocument
 
     private void ComposeTable(IContainer container, OrderGroup orderGroup)
     {
-        var servicesNames = string.Join(',', orderGroup.OrderGroupServices.Select(s => s.Service.Name));
+        var servicesNames = string.Join(',', orderGroup.OrderGroupServices.Select(FormatGroupServiceName));
         var groupHeader = $"{orderGroup.Name}: ({servicesNames})";
         var isPrinting = IsPrintingService(orderGroup);
         uint columnCount = (uint)(isPrinting ? 7 : 5);
@@ -401,6 +402,21 @@ public class InvoiceReport : IDocument
     {
         return orderGroup.OrderGroupServices.Any(grbService =>
             grbService.Service.ServiceCategory?.Code == "Printing");
+    }
+
+    private static string FormatGroupServiceName(OrderGroupService groupService)
+    {
+        var name = groupService.Service?.Name ?? string.Empty;
+        return groupService.IsCover ? $"غلاف {name}" : name;
+    }
+
+    private string GetServiceDisplayName(Guid serviceId, string serviceName)
+    {
+        var isCover = _model.OrderGroups?
+            .SelectMany(g => g.OrderGroupServices ?? [])
+            .Any(gs => gs.ServiceId == serviceId && gs.IsCover) == true;
+
+        return isCover ? $"غلاف {serviceName}" : serviceName;
     }
 }
 

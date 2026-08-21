@@ -44,6 +44,8 @@
     "service_price_required": "يجب تحديد سعر لكل الخدمات",
     "select_service_type_first": "من فضلك اختر نوع الخدمة أولاً",
     "service_type_duplicate": "لا يمكنك إضافة خدمات من نفس النوع أكثر من مرة",
+    "printing_main_duplicate": "لا يمكن إضافة أكثر من خدمة طباعة رئيسية للمجموعة",
+    "printing_cover_duplicate": "لا يمكن إضافة أكثر من خدمة غلاف للمجموعة",
     "service_delete_has_items": "لا يمكن حذف خدمة، المجموعة تحتوي على عناصر مضافة",
     "services_empty": "لا يمكن حفظ مجموعة بخدمات فارغة",
     "worker_required": "يجب إضافة عامل واحد على الأقل",

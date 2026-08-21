@@ -22,6 +22,9 @@ internal static class OrderInventoryItemsCalculator
 
     private static decimal CalculatePaperUsedForItem(OrderItemUsageProjection item)
     {
+        if (item.IsCover)
+            return item.Quantity;
+
         if (item.NumberOfPrintingFaces <= 0) return 0;
         return Math.Round((decimal)(item.Quantity * item.NumberOfPages) / item.NumberOfPrintingFaces, 2);
     }

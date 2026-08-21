@@ -418,7 +418,7 @@ export class OrderSharedDataService {
     return orderGroupService;
   }
 
-  public addOrderGroupService(orderGroupId: string, service: ServiceGetDto): void {
+  public addOrderGroupService(orderGroupId: string, service: ServiceGetDto, isCover: boolean = false): void {
     let orderGroup: OrderGroupGetDto = this.getOrderGroup(orderGroupId);
 
     if (orderGroup.orderGroupServices.find(x => x.serviceId == service.id)) {
@@ -432,6 +432,7 @@ export class OrderSharedDataService {
       orderGroupId: orderGroupId,
       serviceId: service.id,
       serviceName: service.name,
+      isCover: isCover,
       objectState: ObjectStateEnum.added
     };
 

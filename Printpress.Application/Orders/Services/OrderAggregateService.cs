@@ -106,7 +106,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         var allServices = await _IUnitOfWork.ServiceRepository.AllAsync(nameof(Service.ServiceCategory));
 
-        var groupServicesIds = new HashSet<Guid>(group.OrderGroupServices.NotDeleted().Select(d => d.ServiceId));
+        var activeGroupServices = group.OrderGroupServices.NotDeleted().ToList();
+        var groupServicesIds = new HashSet<Guid>(activeGroupServices.Select(d => d.ServiceId));
         var currentGroupServices = allServices.Where(s => groupServicesIds.Contains(s.Id)).ToList();
 
         if (currentGroupServices.Exists(x => x.ServiceCategory?.Code == "Selling"))
@@ -114,21 +115,28 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             return;
         }
 
-        var printingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Printing");
+        ValidateGroupServices(activeGroupServices, currentGroupServices);
+
+        var printingGroupServices = activeGroupServices
+            .Where(gs => currentGroupServices.Any(s => s.Id == gs.ServiceId && s.ServiceCategory?.Code == "Printing"))
+            .ToList();
         var staplingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Stapling");
         var cluingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Clueing");
         var cuttingService = currentGroupServices.Find(x => x.ServiceCategory?.Code == "Cutting");
-
-        // Validate incoming data to be .... ???/???/???
 
         foreach (var item in group.Items.NotDeleted())
         {
             decimal itemPrice = 0;
 
-            if (printingService != null)
+            foreach (var printingGroupService in printingGroupServices)
             {
-                var servicePrice = GetservicePrice(printingService);
-                itemPrice += CalculatePrintingServicePrice(item, servicePrice);
+                var catalogService = currentGroupServices.First(s => s.Id == printingGroupService.ServiceId);
+                var servicePrice = GetservicePrice(catalogService);
+
+                if (printingGroupService.IsCover)
+                    itemPrice += servicePrice;
+                else
+                    itemPrice += CalculatePrintingServicePrice(item, servicePrice);
             }
 
             if (staplingService != null)
@@ -156,6 +164,32 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
                 return orderService.NotDeleted().First(x => service.Id == x.ServiceId).Price.GetValueOrDefault();
             }
         }
+    }
+
+    private void ValidateGroupServices(List<OrderGroupService> groupServices, List<Service> catalogServices)
+    {
+        var serviceById = catalogServices.ToDictionary(s => s.Id);
+
+        var printingServices = groupServices
+            .Where(gs => serviceById.TryGetValue(gs.ServiceId, out var s) && s.ServiceCategory?.Code == "Printing")
+            .ToList();
+
+        if (printingServices.Count(gs => !gs.IsCover) > 1)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.PrintingMainDuplicate));
+
+        if (printingServices.Count(gs => gs.IsCover) > 1)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.PrintingCoverDuplicate));
+
+        var nonPrintingCategoryCodes = groupServices
+            .Select(gs => serviceById.TryGetValue(gs.ServiceId, out var s) ? s.ServiceCategory?.Code : null)
+            .Where(code => !string.IsNullOrEmpty(code) && code != "Printing" && code != "Selling")
+            .GroupBy(code => code)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+
+        if (nonPrintingCategoryCodes.Count > 0)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.ServiceTypeDuplicate));
     }
 
     private decimal CalculatePrintingServicePrice(OrderItem item, decimal price)

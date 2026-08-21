@@ -42,6 +42,7 @@ function mapOrderGroupServiceGetToUpsert(serviceGet: OrderGroupServiceGetDto): O
     return {
         id: serviceGet.id,
         ServiceId: serviceGet.serviceId,
+        IsCover: serviceGet.isCover === true,
         objectState: serviceGet.objectState
     };
 }

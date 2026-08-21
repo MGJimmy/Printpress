@@ -27,6 +27,9 @@ public static class LocalizationKeys
         public const string AmountMustBePositive   = "orders.amount_must_be_positive";
         public const string PaymentExceedsRemaining= "orders.payment_exceeds_remaining";
         public const string RefundExceedsPaid      = "orders.refund_exceeds_paid";
+        public const string ServiceTypeDuplicate   = "orders.service_type_duplicate";
+        public const string PrintingMainDuplicate  = "orders.printing_main_duplicate";
+        public const string PrintingCoverDuplicate = "orders.printing_cover_duplicate";
     }
 
     public static class CashAccounts

@@ -21,6 +21,7 @@ import { OrderSharedDataService } from '../../services/order-shared-data.service
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
@@ -43,7 +44,8 @@ export interface ServiceCat_interface {
     CommonModule,
     MatDialogModule,
     ServiceCategoryArabicPipe,
-    MatRadioModule
+    MatRadioModule,
+    MatCheckboxModule
   ],
   templateUrl: './order-group-service-upsert.component.html',
   styleUrl: './order-group-service-upsert.component.css'
@@ -60,11 +62,13 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   sellingCategories: ServiceCat_interface[] = [];
   otherCategories: ServiceCat_interface[] = [];
-  serviceCategories!: ServiceCategoryEnum[] 
+  serviceCategories!: ServiceCategoryEnum[]
   allServices: ServiceGetDto[] = [];
 
   selectedCategory: string | null = null;
   selectedServiceId: string | null = null;
+  isCover = false;
+  isCoverCheckboxDisabled = false;
   isSellingSelected: boolean | null = null;
   subscriptions: Subscription = new Subscription();
 
@@ -81,6 +85,10 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     External_WithOurMaterials: 'خارجي (بموادنا)',
     External_Full: 'خارجي (كامل)'
   };
+
+  get isPrintingCategorySelected(): boolean {
+    return this.selectedCategory === ServiceCategoryEnum.Printing;
+  }
 
   constructor(
     private alertService: AlertService,
@@ -141,32 +149,71 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
       return;
     }
-    
+
     this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
   }
 
 
   private fillTableData(){
     let groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
-    
+
     if(!groupServices || groupServices.length == 0){
       this.tableData = [];
       return;
     }
 
     this.serviceService.getServices(groupServices.map(x => x.serviceId)).subscribe(services =>{
-      this.tableData = services;
+      this.tableData = services.map(service => {
+        const groupService = groupServices.find(gs => gs.serviceId === service.id);
+        return {
+          ...service,
+          name: groupService?.isCover ? `غلاف ${service.name}` : service.name
+        };
+      });
     });
   }
 
   onCategorySelect(serviceCategoryEnumValue: string): void {
     this.filteredServices = this.allServices.filter(s => s.serviceCategoryCode === serviceCategoryEnumValue);
+    this.selectedServiceId = null;
+    this.updateCoverCheckboxState();
+  }
+
+  private updateCoverCheckboxState(): void {
+    if (!this.isPrintingCategorySelected) {
+      this.isCover = false;
+      this.isCoverCheckboxDisabled = false;
+      return;
+    }
+
+    const hasCover = this.hasCoverPrintingService();
+    this.isCoverCheckboxDisabled = hasCover;
+    if (hasCover) {
+      this.isCover = false;
+    }
+  }
+
+  private hasCoverPrintingService(): boolean {
+    const groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
+    return groupServices.some(gs => gs.isCover === true);
+  }
+
+  private hasMainPrintingService(): boolean {
+    const groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
+    return groupServices.some(gs => {
+      const service = this.allServices.find(s => s.id === gs.serviceId)
+        ?? this.tableData?.find(s => s.id === gs.serviceId);
+      return service?.serviceCategoryCode === ServiceCategoryEnum.Printing && gs.isCover !== true;
+    });
   }
 
   clearSelections(): void {
     this.isSellingSelected = null;
     this.selectedCategory = null;
     this.selectedServiceId = null;
+    this.isCover = false;
+    this.isCoverCheckboxDisabled = false;
+    this.filteredServices = [];
   }
 
   addGroupService(): void {
@@ -183,12 +230,23 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.tableData?.some((row) => row.serviceCategoryCode === selectedService.serviceCategoryCode)) { // validate on category
+    if (selectedService.serviceCategoryCode === ServiceCategoryEnum.Printing) {
+      if (this.isCover && this.hasCoverPrintingService()) {
+        this.alertService.showError(this._t.t('orders.printing_cover_duplicate'));
+        return;
+      }
+
+      if (!this.isCover && this.hasMainPrintingService()) {
+        this.alertService.showError(this._t.t('orders.printing_main_duplicate'));
+        return;
+      }
+    } else if (this.tableData?.some((row) => row.serviceCategoryCode === selectedService.serviceCategoryCode)) {
       this.alertService.showError(this._t.t('orders.service_type_duplicate'));
       return;
     }
 
-    this.orderSharedDataService.addOrderGroupService(this.groupId, selectedService);
+    const isCover = selectedService.serviceCategoryCode === ServiceCategoryEnum.Printing && this.isCover;
+    this.orderSharedDataService.addOrderGroupService(this.groupId, selectedService, isCover);
     this.fillPageData();
 
     this.alertService.showSuccess(this._t.t('orders.service_added'));
@@ -199,7 +257,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       this.alertService.showError(this._t.t('orders.service_delete_has_items'));
       return;
     }
-    
+
     const dialogData: ConfirmDialogModel = {
       title: this._t.t('orders.confirm_delete'),
       message: this._t.t('orders.delete_service_msg'),
@@ -251,3 +309,4 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   }
 }
+                                                                                                      

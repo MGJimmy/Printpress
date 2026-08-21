@@ -44,6 +44,8 @@
     "service_price_required": "Price must be set for all services",
     "select_service_type_first": "Please select service type first",
     "service_type_duplicate": "Cannot add the same service type more than once",
+    "printing_main_duplicate": "Cannot add more than one main printing service to the group",
+    "printing_cover_duplicate": "Cannot add more than one cover printing service to the group",
     "service_delete_has_items": "Cannot delete service. Group has added items",
     "services_empty": "Cannot save group with empty services",
     "worker_required": "At least one worker must be added",

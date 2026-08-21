@@ -96,6 +96,9 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
 
     private static decimal CalculatePaperUsedForItem(ServiceItemRaw item)
     {
+        if (item.IsCover)
+            return item.Quantity;
+
         int pages = int.TryParse(item.PagesValue, out var p) ? p : 0;
         int faces = int.TryParse(item.FacesValue, out var f) && f > 0 ? f : 1;
         return Math.Round((decimal)(item.Quantity * pages) / faces, 2);

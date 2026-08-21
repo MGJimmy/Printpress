@@ -5,4 +5,5 @@ export interface OrderGroupServiceGetDto extends IObjectState {
     serviceId: string;
     orderGroupId: string;
     serviceName?: string;
+    isCover?: boolean;
 }

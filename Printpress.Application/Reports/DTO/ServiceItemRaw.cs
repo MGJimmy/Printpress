@@ -6,4 +6,5 @@ public class ServiceItemRaw
     public int Quantity { get; set; }
     public string PagesValue { get; set; }
     public string FacesValue { get; set; }
+    public bool IsCover { get; set; }
 }

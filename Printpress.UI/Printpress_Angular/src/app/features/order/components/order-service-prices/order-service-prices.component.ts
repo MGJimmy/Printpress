@@ -88,7 +88,7 @@ export class OrderServicePricesComponent implements OnInit {
       } = {
         id: orderService.id,
         serviceId: service.id,
-        name: service.name,
+        name: groupService?.isCover ? `غلاف ${service.name}` : service.name,
         price: orderService.price,
         objectState: orderService.objectState,
         isNew: orderService.objectState == ObjectStateEnum.temp || orderService.objectState == ObjectStateEnum.added,
@@ -118,13 +118,14 @@ export class OrderServicePricesComponent implements OnInit {
         continue;
       }
 
+      const groupService = allOrderGroupServices[i];
       const tempService: {
         id: string, serviceId: string, name: string, price: number,
         objectState: ObjectStateEnum, isNew: boolean, isDeleted: boolean
       } = {
         id: this._orderSharedService.generateEmptyId(),
         serviceId: service.id,
-        name: service.name,
+        name: groupService?.isCover ? `غلاف ${service.name}` : service.name,
         price: service.price,
         objectState: ObjectStateEnum.temp,
         isNew: true,

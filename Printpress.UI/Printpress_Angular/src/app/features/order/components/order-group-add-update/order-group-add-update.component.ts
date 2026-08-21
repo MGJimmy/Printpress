@@ -55,7 +55,9 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   private updateDisplayedServicesNames(groupServices: OrderGroupServiceGetDto[]) {
-    this.groupServicesNamesCommaseperated = groupServices.map(x => { return x.serviceName }).join(' - ');
+    this.groupServicesNamesCommaseperated = groupServices
+      .map(x => x.isCover ? `غلاف ${x.serviceName}` : x.serviceName)
+      .join(' - ');
   }
 
   protected displayedColumns: string[] = [];

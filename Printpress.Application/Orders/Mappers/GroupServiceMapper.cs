@@ -14,6 +14,7 @@ namespace Printpress.Application
             {
                 Id = destinationEntity.ObjectState == TrackingState.Added ? _guidGenerator.NewGuid() : destinationEntity.Id,
                 ServiceId = destinationEntity.ServiceId,
+                IsCover = destinationEntity.IsCover,
                 ObjectState = destinationEntity.ObjectState
             };
         }

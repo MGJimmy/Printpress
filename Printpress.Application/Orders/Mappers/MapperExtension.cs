@@ -68,6 +68,7 @@ namespace Printpress.Application
                 ServiceId = groupService.ServiceId,
                 OrderGroupId = groupService.OrderGroupId,
                 ServiceName = groupService.Service?.Name,
+                IsCover = groupService.IsCover,
                 ObjectState = TrackingState.Unchanged
             };
 
