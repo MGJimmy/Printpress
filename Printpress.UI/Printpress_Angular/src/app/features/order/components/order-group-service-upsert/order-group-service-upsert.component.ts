@@ -77,6 +77,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   selectedServiceCategoryId: string | null = null;
 
   groupId: string = '';
+  servicesLocked = false;
 
   executionType: string = 'Internal';
   executionTypes = ['Internal', 'External_WithOurMaterials', 'External_Full'];
@@ -108,6 +109,10 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
     const group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
     this.executionType = group.executionType ?? 'Internal';
+    this.servicesLocked = group.status === 'Completed'
+      || group.status === 'Delivered'
+      || !!group.deliveryDate
+      || (group.items ?? []).some(item => item.hasExecutions === true || item.status === 'Completed');
 
     this.fetchServices();
     this.fillPageData()
@@ -217,6 +222,10 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   addGroupService(): void {
+    if (this.servicesLocked) {
+      this.alertService.showError(this._t.t('orders.cannot_change_services_after_execution'));
+      return;
+    }
     if (!this.selectedCategory || !this.selectedServiceId) {
       this.alertService.showError(this._t.t('orders.select_service_type_first'));
       this.clearSelections();
@@ -253,6 +262,10 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   protected onDeleteServiceCat(serviceId: string): void {
+    if (this.servicesLocked) {
+      this.alertService.showError(this._t.t('orders.cannot_change_services_after_execution'));
+      return;
+    }
     if (!this.validateBeforeDelete()) {
       this.alertService.showError(this._t.t('orders.service_delete_has_items'));
       return;
@@ -285,6 +298,9 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   onExecutionTypeChange(type: string): void {
+    if (this.servicesLocked) {
+      return;
+    }
     this.executionType = type;
     this.orderSharedDataService.updateGroupExecutionType(this.groupId, type);
   }

@@ -65,6 +65,10 @@ export class OrderListComponent implements OnInit {
     this.totalCount = response.data.totalCount;
   }
 
+  protected canDeleteOrder(orderStatus: string): boolean {
+    return orderStatus !== OrderStatus.Delivered && orderStatus !== OrderStatus.Completed;
+  }
+
   public async onDeleteOrder(id: string) {
     const dialogData = {
       title: this._t.t('orders.confirm_delete'),

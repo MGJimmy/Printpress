@@ -152,6 +152,12 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   protected onDeleteGroup(groupId: string) {
+    const group = this.OrderSharedService.getOrderGroups_Copy().find(g => g.id === groupId);
+    if (group && this.groupHasExecutedItems(group)) {
+      this.alertService.showError(this._t.t('orders.cannot_delete_group_with_executions'));
+      return;
+    }
+
     const dialogData: ConfirmDialogModel = {
       title: this._t.t('orders.confirm_delete'),
       message: this._t.t('orders.delete_group_msg'),
@@ -173,6 +179,26 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   protected onAddGroup() {
     this.router.navigate([this.orderRoutingService.getGroupAddRoute()]);
+  }
+
+  protected canEditGroup(group: { status?: string; deliveryDate?: Date }): boolean {
+    return !this.isGroupClosed(group);
+  }
+
+  protected canDeleteGroup(group: OrderGroupGridViewModel): boolean {
+    return !this.isGroupClosed(group) && !group.hasExecutedItems;
+  }
+
+  protected canDeliverGroup(group: { status?: string; deliveryDate?: Date }): boolean {
+    return group.status === 'Completed' && !group.deliveryDate;
+  }
+
+  private isGroupClosed(group: { status?: string; deliveryDate?: Date }): boolean {
+    return group.status === 'Completed' || group.status === 'Delivered' || !!group.deliveryDate;
+  }
+
+  private groupHasExecutedItems(group: OrderGroupGetDto): boolean {
+    return (group.items ?? []).some(item => item.hasExecutions === true || item.status === 'Completed');
   }
 
   protected onEditGroup(groupId: string) {
@@ -271,7 +297,8 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
         status: orderGroup.status,
         deliveryDate: orderGroup.deliveryDate,
         deliveredTo: orderGroup.deliveredTo,
-        deliveryNotes: orderGroup.deliveryNotes
+        deliveryNotes: orderGroup.deliveryNotes,
+        hasExecutedItems: this.groupHasExecutedItems(orderGroup)
       }
     });
   }
@@ -347,6 +374,7 @@ interface OrderGroupGridViewModel {
   deliveryDate?: Date;
   deliveredTo?: string;
   deliveryNotes?: string;
+  hasExecutedItems: boolean;
 }
 
 

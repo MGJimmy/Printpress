@@ -30,6 +30,17 @@ public static class LocalizationKeys
         public const string ServiceTypeDuplicate   = "orders.service_type_duplicate";
         public const string PrintingMainDuplicate  = "orders.printing_main_duplicate";
         public const string PrintingCoverDuplicate = "orders.printing_cover_duplicate";
+        public const string OrderAlreadyDelivered  = "orders.order_already_delivered";
+        public const string CannotDeleteHasChildren = "orders.cannot_delete_has_children";
+        public const string CannotDeleteCompletedGroup = "orders.cannot_delete_completed_group";
+        public const string CannotDeleteGroupWithExecutions = "orders.cannot_delete_group_with_executions";
+        public const string CannotEditExecutedItem = "orders.cannot_edit_executed_item";
+        public const string CannotDeleteExecutedItem = "orders.cannot_delete_executed_item";
+        public const string CannotChangeServicesAfterExecution = "orders.cannot_change_services_after_execution";
+        public const string CannotAddItemToClosedGroup = "orders.cannot_add_item_to_closed_group";
+        public const string GroupNotCompletedForDelivery = "orders.group_not_completed_for_delivery";
+        public const string CannotExecuteDelivered = "orders.cannot_execute_delivered";
+        public const string CannotDeleteOrderWithWork = "orders.cannot_delete_order_with_work";
     }
 
     public static class CashAccounts

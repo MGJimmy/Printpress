@@ -14,9 +14,14 @@ internal sealed class GroupService(IUnitOfWork unitOfWork, ILocalizationService 
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupNotFound));
         }
 
-        if (orderGroup.DeliveryDate.HasValue)
+        if (orderGroup.Status == GroupStatusEnum.Delivered || orderGroup.DeliveryDate.HasValue)
         {
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupAlreadyDelivered, orderGroup.DeliveryDate?.ToString("yyyy-MM-dd")));
+        }
+
+        if (orderGroup.Status != GroupStatusEnum.Completed)
+        {
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupNotCompletedForDelivery));
         }
 
         orderGroup.DeliveryDate = groupDeliveryDto.DeliveryDate;

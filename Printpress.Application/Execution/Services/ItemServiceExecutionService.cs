@@ -4,7 +4,8 @@ namespace Printpress.Application;
 
 internal sealed class ItemServiceExecutionService(
     IUnitOfWork _unitOfWork,
-    IGuidGenerator _guidGenerator) : IItemServiceExecutionService
+    IGuidGenerator _guidGenerator,
+    ILocalizationService _loc) : IItemServiceExecutionService
 {
     // ── Public Methods ───────────────────────────────────────────────────────
 
@@ -169,6 +170,17 @@ internal sealed class ItemServiceExecutionService(
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.OrderItemId));
 
+        var group = item.OrderGroup ?? await _unitOfWork.OrderGroupRepository.FindAsync(item.OrderGroupId);
+        if (group is not null)
+        {
+            if (group.Status == GroupStatusEnum.Delivered)
+                throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+
+            var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
+            if (order?.Status == OrderStatusEnum.Delivered)
+                throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+        }
+
         if (item.OrderItemStatus == OrderItemStatus.Completed)
             throw new ValidationExeption("العنصر مكتمل بالفعل ولا يمكن تنفيذ خدمات عليه");
 
@@ -223,6 +235,17 @@ internal sealed class ItemServiceExecutionService(
 
         if (item.OrderItemStatus == OrderItemStatus.Completed)
             return;
+
+        var group = await _unitOfWork.OrderGroupRepository.FindAsync(item.OrderGroupId);
+        if (group is not null)
+        {
+            if (group.Status == GroupStatusEnum.Delivered)
+                throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+
+            var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
+            if (order?.Status == OrderStatusEnum.Delivered)
+                throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+        }
 
         item.OrderItemStatus = OrderItemStatus.Completed;
         await _unitOfWork.SaveChangesAsync(userId);
@@ -318,7 +341,7 @@ internal sealed class ItemServiceExecutionService(
         if (!allItemsComplete) return;
 
         var group = await _unitOfWork.OrderGroupRepository.FindAsync(groupId);
-        if (group is null || group.Status == GroupStatusEnum.Completed) return;
+        if (group is null || group.Status is GroupStatusEnum.Completed or GroupStatusEnum.Delivered) return;
 
         group.Status = GroupStatusEnum.Completed;
         _unitOfWork.OrderGroupRepository.Update(group);
@@ -342,7 +365,7 @@ internal sealed class ItemServiceExecutionService(
         if (!allGroupsComplete) return;
 
         var order = await _unitOfWork.OrderRepository.FindAsync(orderId);
-        if (order is null || order.Status == OrderStatusEnum.Completed) return;
+        if (order is null || order.Status is OrderStatusEnum.Completed or OrderStatusEnum.Delivered) return;
 
         order.Status = OrderStatusEnum.Completed;
         _unitOfWork.OrderRepository.Update(order);

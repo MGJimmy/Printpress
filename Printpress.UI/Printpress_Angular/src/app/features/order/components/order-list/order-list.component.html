@@ -80,7 +80,7 @@
                     <mat-icon>edit</mat-icon>
                     <span>تعديل</span>
                   </button>
-                  <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onDeleteOrder(element.id)">
+                  <button *ngIf="canDeleteOrder(element.orderStatus)" mat-menu-item (click)="onDeleteOrder(element.id)">
                     <mat-icon>delete</mat-icon>
                     <span>حذف</span>
                   </button>

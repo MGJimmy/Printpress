@@ -136,11 +136,33 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.displayedColumns = allColumns.filter(x => x.condition()).map(x => x.key);
   }
 
+  protected get isGroupClosed(): boolean {
+    const group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+    return group.status === 'Completed' || group.status === 'Delivered' || !!group.deliveryDate;
+  }
+
+  protected get areServicesLocked(): boolean {
+    if (this.isGroupClosed) {
+      return true;
+    }
+
+    return this.groupItems.some(item => this.isItemLocked(item));
+  }
+
+  protected isItemLocked(item: ItemGetDto): boolean {
+    return item.hasExecutions === true || item.status === 'Completed';
+  }
+
   protected groupNameChanged() {
     this.orderSharedService.updateOrderGroupName(this.groupId, this.groupName);
   }
 
   protected editGroupService_Click(): void {
+    if (this.areServicesLocked) {
+      this.alertService.showError(this._t.t('orders.cannot_change_services_after_execution'));
+      return;
+    }
+
     this.openServicesModal();
   }
 
@@ -168,14 +190,30 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected addItem_Click() {
+    if (this.isGroupClosed) {
+      this.alertService.showError(this._t.t('orders.cannot_add_item_to_closed_group'));
+      return;
+    }
+
     this.router.navigate([this.orderRoutingService.getItemAddRoute(this.groupId)]);
   }
 
-  protected editItem_Click(item: ItemGetDto) {
+  protected editItem_Click(item: { id: string }) {
+    const current = this.orderSharedService.getItem_copy(this.groupId, item.id);
+    if (this.isItemLocked(current)) {
+      this.alertService.showError(this._t.t('orders.cannot_edit_executed_item'));
+      return;
+    }
+
     this.router.navigate([this.orderRoutingService.getItemEditRoute(this.groupId, item.id)]);
   }
 
-  protected deleteItem_Click(item: ItemGetDto) {
+  protected deleteItem_Click(item: { id: string }) {
+    const current = this.orderSharedService.getItem_copy(this.groupId, item.id);
+    if (this.isItemLocked(current)) {
+      this.alertService.showError(this._t.t('orders.cannot_delete_executed_item'));
+      return;
+    }
     const dialogData: ConfirmDialogModel = {
       title: this._t.t('orders.confirm_delete'),
       message: this._t.t('orders.delete_item_msg'),
@@ -270,7 +308,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
         boughtItemsCount: boughtItemsCount?.value ?? '',
         numberOfPages: numberOfPages?.value ?? '',
         printedItemsCount: printedItemsCount?.value ?? '',
-        stapledItemsCount: stapledItemsCount?.value ?? ''
+        stapledItemsCount: stapledItemsCount?.value ?? '',
+        isLocked: this.isItemLocked(item)
       };
 
       itemVMList.push(itemVM);
@@ -280,6 +319,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
   // Excel Import Methods
   protected importFromExcel_Click(): void {
+    if (this.isGroupClosed) {
+      this.alertService.showError(this._t.t('orders.cannot_add_item_to_closed_group'));
+      return;
+    }
+
     this.fileInput.nativeElement.click();
   }
 

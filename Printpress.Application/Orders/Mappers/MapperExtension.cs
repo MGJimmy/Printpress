@@ -84,6 +84,7 @@ namespace Printpress.Application
                 Price = item.Price,
                 Quantity = item.Quantity,
                 Details = item.Details.MapAsList(MapToItemDetailsDTO),
+                Status = item.OrderItemStatus,
                 ObjectState = TrackingState.Unchanged
             };
 

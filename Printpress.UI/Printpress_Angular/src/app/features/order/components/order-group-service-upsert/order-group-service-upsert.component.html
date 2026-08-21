@@ -4,7 +4,7 @@
     <div class="row mb-3">
       <div class="col-12">
         <label class="form-label fw-bold">نوع التنفيذ:</label>
-        <mat-radio-group [(ngModel)]="executionType" (change)="onExecutionTypeChange($event.value)" class="d-flex gap-4 mt-1">
+        <mat-radio-group [(ngModel)]="executionType" (change)="onExecutionTypeChange($event.value)" [disabled]="servicesLocked" class="d-flex gap-4 mt-1">
           <mat-radio-button *ngFor="let t of executionTypes" [value]="t">
             {{ executionTypeLabels[t] }}
           </mat-radio-button>
@@ -16,7 +16,7 @@
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>الفئة</mat-label>
-          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategorySelect($event.value)">
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategorySelect($event.value)" [disabled]="servicesLocked">
             <mat-option *ngFor="let cat of serviceCategories" [value]="cat">{{ cat |serviceCategoryArabic }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -26,7 +26,7 @@
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>الخدمة</mat-label>
-          <mat-select [(ngModel)]="selectedServiceId" [disabled]="!filteredServices ||filteredServices.length === 0">
+          <mat-select [(ngModel)]="selectedServiceId" [disabled]="servicesLocked || !filteredServices ||filteredServices.length === 0">
             <mat-option *ngFor="let service of filteredServices" [value]="service.id">
               {{ service.name }}
             </mat-option>
@@ -36,7 +36,7 @@
         <mat-checkbox
           *ngIf="isPrintingCategorySelected"
           [(ngModel)]="isCover"
-          [disabled]="isCoverCheckboxDisabled"
+          [disabled]="servicesLocked || isCoverCheckboxDisabled"
           class="mt-1">
           غلاف
         </mat-checkbox>
@@ -46,12 +46,12 @@
     <div class="row my-3">
       <!-- Add Button -->
       <div class="col-md-12 text-center">
-        <button mat-raised-button color="primary" (click)="addGroupService()">إضافة</button>
+        <button mat-raised-button color="primary" [disabled]="servicesLocked" (click)="addGroupService()">إضافة</button>
       </div>
     </div>
   </mat-card-content>
   <div></div>
-  <app-table-template style="width: 95%;" class="mx-auto mt-3" *ngIf="tableData" [isShowDeleteButton]="true"
+  <app-table-template style="width: 95%;" class="mx-auto mt-3" *ngIf="tableData" [isShowDeleteButton]="!servicesLocked"
     [columnDefs]="columnDefs" [originalSource]="tableData" (deleteClicked)="onDeleteServiceCat($event)">
   </app-table-template>
 

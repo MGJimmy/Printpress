@@ -9,7 +9,7 @@
         </div>
 
         <div class="d-flex">
-            <button mat-raised-button color="primary" (click)="editGroupService_Click()">
+            <button mat-raised-button color="primary" [disabled]="areServicesLocked" (click)="editGroupService_Click()">
                 إضافة/ تعديل خدمات المجموعة
             </button>
         </div>
@@ -27,8 +27,8 @@
         </div>
     </div>
     <div class="my-5">
-        <button mat-raised-button color="accent" (click)="addItem_Click()">إضافة عنصر</button>
-        <button mat-raised-button color="accent" (click)="importFromExcel_Click()" class="ms-2">
+        <button *ngIf="!isGroupClosed" mat-raised-button color="accent" (click)="addItem_Click()">إضافة عنصر</button>
+        <button *ngIf="!isGroupClosed" mat-raised-button color="accent" (click)="importFromExcel_Click()" class="ms-2">
             استيراد من Excel
         </button>
         <input #fileInput type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" style="display: none;">
@@ -75,10 +75,10 @@
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>اجراء</th>
                 <td mat-cell *matCellDef="let element">
-                    <button mat-raised-button color="primary" (click)="editItem_Click(element)">
+                    <button *ngIf="!element.isLocked" mat-raised-button color="primary" (click)="editItem_Click(element)">
                         تعديل
                     </button>
-                    <button mat-raised-button color="warn" (click)="deleteItem_Click(element)">
+                    <button *ngIf="!element.isLocked" mat-raised-button color="warn" (click)="deleteItem_Click(element)">
                         حذف
                     </button>
                 </td>

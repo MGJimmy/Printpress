@@ -14,6 +14,8 @@ import { itemDetailsKeyEnum } from '../../models/enums/item-details-key.enum';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
+import { AlertService } from '../../../../core/services/alert.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-item-add-update',
@@ -51,7 +53,9 @@ export class ItemAddUpdateComponent implements OnInit {
     private router: Router, private activateRoute: ActivatedRoute,
     private fb: NonNullableFormBuilder,    
     private dialogService: DialogService,
-    private orderRoutingService: OrderRoutingService
+    private orderRoutingService: OrderRoutingService,
+    private alertService: AlertService,
+    private _t: TranslationService
   ) { }
 
   ngOnInit(): void {
@@ -91,12 +95,26 @@ export class ItemAddUpdateComponent implements OnInit {
   }
 
   private initAddModeData() {
+    this.group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
+    const groupClosed = this.group.status === 'Completed' || this.group.status === 'Delivered' || !!this.group.deliveryDate;
+    if (groupClosed) {
+      this.alertService.showError(this._t.t('orders.cannot_add_item_to_closed_group'));
+      this.navigateToGroup();
+      return;
+    }
+
     let itemId = this.orderSharedService.initializeTempItem(this.groupId);
     this.item = this.orderSharedService.getItem_copy(this.groupId, itemId);
   }
 
   private initEditModeData() {
     this.item = this.orderSharedService.getItem_copy(this.groupId, this.itemIdToEdit);
+    if (this.item.hasExecutions === true || this.item.status === 'Completed') {
+      this.alertService.showError(this._t.t('orders.cannot_edit_executed_item'));
+      this.navigateToGroup();
+      return;
+    }
+
     this.fillFormWithItemData(this.item);
   }
 

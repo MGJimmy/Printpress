@@ -237,13 +237,13 @@
                     <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #menu="matMenu">
-                    <button *ngIf="(componentMode.isEditMode||componentMode.isaddMode) && !element.deliveryDate" 
+                    <button *ngIf="(componentMode.isEditMode||componentMode.isaddMode) && canEditGroup(element)" 
                             mat-menu-item
                             (click)="onEditGroup(element.id)">
                         <mat-icon>edit</mat-icon>
                         <span>تعديل</span>
                     </button>
-                    <button *ngIf="(componentMode.isEditMode||componentMode.isaddMode) && !element.deliveryDate" 
+                    <button *ngIf="(componentMode.isEditMode||componentMode.isaddMode) && canDeleteGroup(element)" 
                             mat-menu-item
                             (click)="onDeleteGroup(element.id)">
                         <mat-icon>delete</mat-icon>
@@ -261,7 +261,7 @@
                         <mat-icon>list_alt</mat-icon>
                         <span>عرض العناصر</span>
                     </button>
-                    <button *ngIf="componentMode.isViewMode && !element.deliveryDate"
+                    <button *ngIf="componentMode.isViewMode && canDeliverGroup(element)"
                             mat-menu-item
                             (click)="onDeleverGroup(element.id)">
                         <mat-icon>local_shipping</mat-icon>
