@@ -37,6 +37,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   private groupId!: string;
+  private isCreatingNewGroup = false;
 
   protected isEdit: boolean = false;
   protected groupName: string = '';
@@ -80,12 +81,11 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.setGroupId();
 
     this.setIsEdit();
+    if (this.isCreatingNewGroup) {
+      this.applyDefaultServicesForNewGroup();
+    }
     this.setCurrentGroupData();
     this.updateDisplayedColumns();
-
-    if (!this.groupItems || this.groupItems.length == 0) {
-      this.openServicesModal();
-    }
   }
 
   private setGroupId(): void {
@@ -94,7 +94,21 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       this.groupId = param_GroupId;
     } else {
       this.groupId = this.orderSharedService.intializeNewGroup();
+      this.isCreatingNewGroup = true;
     }
+  }
+
+  private applyDefaultServicesForNewGroup(): void {
+    if (this.isEdit) {
+      return;
+    }
+
+    const sourceGroup = this.orderSharedService.getDefaultGroupSetupSource(this.groupId);
+    if (sourceGroup) {
+      this.orderSharedService.copyGroupSetup(sourceGroup.id, this.groupId);
+    }
+
+    this.openServicesModal(true);
   }
 
   private setIsEdit() {
@@ -185,12 +199,12 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       return;
     }
 
-    this.openServicesModal();
+    this.openServicesModal(false);
   }
 
-  private openServicesModal() {
+  private openServicesModal(deleteGroupOnCancel = false) {
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
-      data: { groupId: this.groupId },
+      data: { groupId: this.groupId, deleteGroupOnCancel },
       width: '1000px',
       disableClose: true,
       injector: this.injector
@@ -198,10 +212,13 @@ export class OrderGroupAddUpdateComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((isSave: boolean) => {
       if (!isSave) {
+        if (deleteGroupOnCancel) {
+          this.orderSharedService.discardTempGroup(this.groupId);
+          this.navigateToOrderPage();
+        }
         return;
       }
-      const groupServices = this.orderSharedService.getOrderGroupServices_copy(this.groupId);
-      this.updateDisplayedServicesNames(groupServices);
+      this.setCurrentGroupData();
       this.updateDisplayedColumns();
     });
   }

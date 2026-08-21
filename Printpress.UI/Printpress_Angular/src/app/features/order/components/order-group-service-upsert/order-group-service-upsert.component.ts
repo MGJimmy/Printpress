@@ -23,9 +23,6 @@ import { TranslationService } from '../../../../core/services/translation.servic
 import { isStatus } from '../../models/enums/status-display';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
-import { OrderRoutingService } from '../../services/order-routing.service';
-import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 
 export interface ServiceCat_interface {
   id: string;
@@ -100,9 +97,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     private serviceService: ServiceService,
     private orderSharedDataService:OrderSharedDataService,
     @Inject(MAT_DIALOG_DATA) public inputData: any,
-    private _t: TranslationService,
-    private router: Router,
-    private orderRoutingService: OrderRoutingService
+    private _t: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -306,13 +301,11 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   }
 
   onCancel(): void {
-    this.currentComponentDialogRef.close(false);
-    const order = this.orderSharedDataService.getOrderObject_copy();
-    if (order.objectState === ObjectStateEnum.temp) {
-      this.router.navigate([this.orderRoutingService.getOrderAddRoute()]);
-    } else {
-      this.router.navigate([this.orderRoutingService.getOrderEditRoute(order.id)]);
+    if (this.inputData?.deleteGroupOnCancel) {
+      this.orderSharedDataService.discardTempGroup(this.groupId);
     }
+
+    this.currentComponentDialogRef.close(false);
   }
 
   protected onClickSave() {

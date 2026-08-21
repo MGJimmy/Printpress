@@ -84,7 +84,6 @@ export class OrderSharedDataService {
       clientName: '',
       status: 'New',
       objectState: ObjectStateEnum.temp,
-      objectState: ObjectStateEnum.temp,
       orderGroups: [],
       orderServices: [],
       sellingItems: []
@@ -159,7 +158,50 @@ export class OrderSharedDataService {
     };
 
     this.orderObject.orderGroups.push(orderGroup);
+
+    const sourceGroup = this.getDefaultGroupSetupSource(tempId);
+    if (sourceGroup) {
+      this.copyGroupSetup(sourceGroup.id, tempId);
+    }
+
     return tempId
+  }
+
+  public getDefaultGroupSetupSource(excludeGroupId: string): OrderGroupGetDto | undefined {
+    const otherGroups = this.getOrderGroups().filter(group => group.id !== excludeGroupId);
+    if (otherGroups.length === 0) {
+      return undefined;
+    }
+
+    return [...otherGroups].reverse().find(group => this.getActiveGroupServices(group).length > 0)
+      ?? otherGroups[otherGroups.length - 1];
+  }
+
+  public copyGroupSetup(sourceGroupId: string, targetGroupId: string): void {
+    const source = this.getOrderGroup(sourceGroupId);
+    const target = this.getOrderGroup(targetGroupId);
+
+    target.executionType = source.executionType ?? 'Internal';
+    target.isHasPrintingService = source.isHasPrintingService;
+    target.isHasSellingService = source.isHasSellingService;
+    target.isHasStaplingService = source.isHasStaplingService;
+    target.orderGroupServices = this.getActiveGroupServices(source).map(s => ({
+      id: this.generateTempId(),
+      orderGroupId: targetGroupId,
+      serviceId: s.serviceId || (s as any).ServiceId,
+      serviceName: s.serviceName,
+      isCover: s.isCover === true,
+      objectState: ObjectStateEnum.added
+    }));
+
+    this.updateGroupFlagsOnServicesCategories(targetGroupId);
+  }
+
+  private getActiveGroupServices(group: OrderGroupGetDto): OrderGroupServiceGetDto[] {
+    return (group.orderGroupServices ?? []).filter(service =>
+      service.objectState !== ObjectStateEnum.deleted
+      && String(service.objectState).toLowerCase() !== 'deleted'
+    );
   }
 
   public getOrderGroup_Copy(id: string): OrderGroupGetDto {
@@ -207,6 +249,17 @@ export class OrderSharedDataService {
   public addOrderGroup(id: string) {
     let orderGroup = this.getOrderGroup(id);
     orderGroup.objectState = ObjectStateEnum.added;
+  }
+
+  public discardTempGroup(groupId: string): void {
+    const group = this.orderObject.orderGroups.find(x => x.id === groupId);
+    if (!group) {
+      return;
+    }
+
+    if (group.objectState === ObjectStateEnum.temp || group.objectState === ObjectStateEnum.added) {
+      this.hardDeleteGroup(groupId);
+    }
   }
 
   public deleteGroup(groupId: string) {

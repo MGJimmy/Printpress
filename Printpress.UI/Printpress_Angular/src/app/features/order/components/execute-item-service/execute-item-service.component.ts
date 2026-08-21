@@ -47,7 +47,6 @@ export class ExecuteItemServiceComponent implements OnInit {
   groupId!: string;
   itemSummary: ItemExecutionSummaryDto | null = null;
   workers: WorkerDto[] = [];
-  workers: WorkerDto[] = [];
   selectedService: ServiceProgressDto | null = null;
   isSaving = false;
 
