@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
 import { OrderAddUpdateComponent } from '../order-add-update/order-add-update.component';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { RouterModule } from '@angular/router';
@@ -23,6 +24,7 @@ export const imports = [
   MatButtonModule,
   MatIconModule,
   MatMenuModule,
+  MatDialogModule,
   SharedPaginationComponent,
   OrderAddUpdateComponent,
   RouterModule,

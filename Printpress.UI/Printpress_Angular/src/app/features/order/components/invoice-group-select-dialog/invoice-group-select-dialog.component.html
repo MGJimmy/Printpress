@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{ _t.t('orders.select_invoice_groups') }}</h2>
+
+<mat-dialog-content class="rtl">
+  <div *ngIf="isLoading" class="text-muted py-3">{{ _t.t('shared.loading') }}</div>
+
+  <ng-container *ngIf="!isLoading">
+    <mat-checkbox
+      [checked]="allSelected"
+      [indeterminate]="someSelected"
+      (change)="toggleAll($event.checked)">
+      {{ _t.t('orders.all') }}
+    </mat-checkbox>
+
+    <div class="group-list">
+      <div class="group-row" *ngFor="let group of groups">
+        <mat-checkbox [(ngModel)]="group.selected">
+          <span class="group-label">
+            <span>{{ group.name }}</span>
+            <span class="group-status">{{ getStatusText(group.status) }}</span>
+          </span>
+        </mat-checkbox>
+      </div>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ _t.t('shared.cancel') }}</button>
+  <button mat-raised-button color="primary" [disabled]="!hasSelection" (click)="onConfirm()">
+    {{ _t.t('orders.issue_invoice') }}
+  </button>
+</mat-dialog-actions>

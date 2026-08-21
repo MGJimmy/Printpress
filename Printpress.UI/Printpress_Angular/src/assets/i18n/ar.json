@@ -13,7 +13,8 @@
     "add": "إضافة",
     "back": "رجوع",
     "confirm": "تأكيد",
-    "search": "بحث"
+    "search": "بحث",
+    "loading": "جاري التحميل..."
   },
   "orders": {
     "order_not_found": "الطلبية غير موجودة",
@@ -53,6 +54,10 @@
     "error_loading_item": "حدث خطأ أثناء تحميل بيانات العنصر",
     "error_loading_workers": "حدث خطأ أثناء تحميل بيانات العمال",
     "error_loading_history": "حدث خطأ أثناء تحميل سجل التنفيذ",
+    "all": "الكل",
+    "issue_invoice": "إصدار فاتورة",
+    "select_invoice_groups": "اختيار مجموعات الفاتورة",
+    "error_loading_groups": "حدث خطأ أثناء تحميل المجموعات",
     "error_loading_group": "حدث خطأ أثناء تحميل بيانات المجموعة",
     "error_deleting_order": "حدث خطأ أثناء حذف الطلبية",
     "error_saving_order": "حدث خطأ أثناء حفظ الطلبية",

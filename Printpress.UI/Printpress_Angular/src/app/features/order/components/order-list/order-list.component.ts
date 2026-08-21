@@ -10,9 +10,11 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { OrderStatus } from '../../models/enums/order-status.enum';
 import { UserRoleEnum } from '../../../../core/models/user-role.enum';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { InvoiceGroupSelectDialogComponent } from '../invoice-group-select-dialog/invoice-group-select-dialog.component';
 
 @Component({
   selector: 'app-order-view',
@@ -35,6 +37,7 @@ export class OrderListComponent implements OnInit {
     private dialogService: DialogService,
     private router: Router,
     private orderRoutingService: OrderRoutingService,
+    private dialog: MatDialog,
     private _t: TranslationService
   )  {
     this.dataSource = new MatTableDataSource<OrderSummaryDto>();
@@ -95,8 +98,20 @@ export class OrderListComponent implements OnInit {
     this.router.navigate([this.orderRoutingService.getOrderAddRoute()]);
   }
 
-  protected generateInvoice_Click(orderId: string) {
-    window.open(`report-viewer?reportName=invoice&id=${orderId}`, "_blank");
+  protected async generateInvoice_Click(orderId: string) {
+    const selectedIds = await firstValueFrom(
+      this.dialog.open(InvoiceGroupSelectDialogComponent, {
+        width: '420px',
+        data: { orderId },
+        disableClose: true
+      }).afterClosed()
+    ) as string[] | undefined;
+
+    if (!selectedIds?.length) {
+      return;
+    }
+
+    window.open(`report-viewer?reportName=invoice&id=${orderId}&groupIds=${selectedIds.join(',')}`, '_blank');
   }
 
   getStatusBadgeClass(status: OrderStatus): string {

@@ -13,7 +13,8 @@
     "add": "Add",
     "back": "Back",
     "confirm": "Confirm",
-    "search": "Search"
+    "search": "Search",
+    "loading": "Loading..."
   },
   "orders": {
     "order_not_found": "Order not found",
@@ -53,6 +54,10 @@
     "error_loading_item": "Error loading item data",
     "error_loading_workers": "Error loading workers data",
     "error_loading_history": "Error loading execution history",
+    "all": "All",
+    "issue_invoice": "Issue Invoice",
+    "select_invoice_groups": "Select invoice groups",
+    "error_loading_groups": "Error loading groups",
     "error_loading_group": "Error loading group data",
     "error_deleting_order": "Error deleting order",
     "error_saving_order": "Error saving order",

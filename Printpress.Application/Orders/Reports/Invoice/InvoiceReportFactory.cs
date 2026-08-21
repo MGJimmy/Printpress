@@ -28,10 +28,54 @@ namespace Printpress.Application
 
             var model = await unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == id, true, includes);
 
-            var document = new InvoiceReport(model, configuration);
+            var isPartial = ApplyGroupFilter(model, queryParams.Get("groupIds"));
+
+            var document = new InvoiceReport(model, configuration, isPartial);
 
             return document;
 
+        }
+
+        private static bool ApplyGroupFilter(Order model, string groupIdsRaw)
+        {
+            if (model is null || string.IsNullOrWhiteSpace(groupIdsRaw))
+                return false;
+
+            var selectedGroupIds = groupIdsRaw
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(value => Guid.TryParse(value, out var id) ? id : (Guid?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToHashSet();
+
+            if (selectedGroupIds.Count == 0)
+                return false;
+
+            var originalGroupCount = model.OrderGroups?.Count ?? 0;
+            model.OrderGroups = (model.OrderGroups ?? [])
+                .Where(g => selectedGroupIds.Contains(g.Id))
+                .ToList();
+
+            var selectedServiceIds = model.OrderGroups
+                .SelectMany(g => g.OrderGroupServices ?? [])
+                .Select(gs => gs.ServiceId)
+                .ToHashSet();
+
+            model.Services = (model.Services ?? [])
+                .Where(s => selectedServiceIds.Contains(s.ServiceId))
+                .ToList();
+
+            var isPartial = model.OrderGroups.Count < originalGroupCount;
+            if (!isPartial)
+                return false;
+
+            model.SellingItems = [];
+            model.TotalPrice = model.OrderGroups
+                .SelectMany(g => g.Items ?? [])
+                .Where(i => !i.IsDeleted)
+                .Sum(i => i.Price * i.Quantity);
+
+            return true;
         }
     }
 }

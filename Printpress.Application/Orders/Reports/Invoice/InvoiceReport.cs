@@ -13,17 +13,19 @@ public class InvoiceReport : IDocument
 {
     private readonly string _companyName;
     private readonly string _companyPhone;
+    private readonly bool _isPartial;
 
     /// <summary>
     /// Gets or sets the order model for the invoice
     /// </summary>
     private Order _model { get; set; }
 
-    public InvoiceReport(Order model, IConfiguration configuration)
+    public InvoiceReport(Order model, IConfiguration configuration, bool isPartial = false)
     {
         _companyName = configuration.GetRequiredSection("CompanyInfo:Name").Value;
         _companyPhone = configuration.GetRequiredSection("CompanyInfo:Phone").Value;
         _model = model;
+        _isPartial = isPartial;
     }
 
     /// <inheritdoc />
@@ -234,6 +236,10 @@ public class InvoiceReport : IDocument
 
             AddText("الأجمالي الكلي  :", 10, true);
             AddText(_model.TotalPrice.ToString());
+
+            if (_isPartial)
+                return;
+
             AddText("المدفوع  :", 40, true);
             AddText(totalPaid.ToString());
             AddText("الباقي  :", 40, true);
