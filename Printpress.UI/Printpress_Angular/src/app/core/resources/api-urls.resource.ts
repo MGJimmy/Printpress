@@ -70,6 +70,7 @@ export class ApiUrlResource {
   private static Inventory_URL = '/api/Inventory';
   public static readonly InventoryAPI = {
     getAll: ApiUrlResource.Inventory_URL + '/getAll',
+    getAllForSelection: ApiUrlResource.Inventory_URL + '/getAllForSelection',
     getByCategory: (categoryId: number) => `${ApiUrlResource.Inventory_URL}/getByCategory/${categoryId}`,
     getById: (id: string) => `${ApiUrlResource.Inventory_URL}/getById/${id}`,
     add: ApiUrlResource.Inventory_URL + '/add',

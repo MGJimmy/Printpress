@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { InventoryService } from '../../../inventory/services/inventory.service';
-import { InventoryItemDto } from '../../../inventory/models/inventory-item.dto';
+import { InventoryItemSelectionDto } from '../../../inventory/models/inventory-item-selection.dto';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { Subscription } from 'rxjs';
@@ -33,7 +33,7 @@ import { Subscription } from 'rxjs';
 export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
-  inventoryItems: InventoryItemDto[] = [];
+  inventoryItems: InventoryItemSelectionDto[] = [];
   isInventoryItem: boolean = false;
   isEdit: boolean = false;
   itemId: string = '';
@@ -94,9 +94,8 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
   }
 
   private loadInventoryItems(): void {
-    this.inventoryService.getAll(1000, 1).subscribe(res => {
-      this.inventoryItems = res.data?.items ?? [];
-      this.inventoryItems = this.inventoryItems.filter(item => item.isActive !== false);
+    this.inventoryService.getAllForSelection().subscribe(res => {
+      this.inventoryItems = (res.data ?? []).filter(item => item.isActive !== false);
     });
   }
 

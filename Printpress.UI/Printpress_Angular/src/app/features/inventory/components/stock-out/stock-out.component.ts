@@ -10,7 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryTransactionService } from '../../services/inventory-transaction.service';
-import { InventoryItemDto } from '../../models/inventory-item.dto';
+import { InventoryItemSelectionDto } from '../../models/inventory-item-selection.dto';
 import { WorkerService } from '../../../hr/services/worker.service';
 import { WorkerDto } from '../../../hr/models/worker.dto';
 import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
@@ -39,8 +39,8 @@ function maxStockValidator(getMax: () => number) {
   templateUrl: './stock-out.component.html',
 })
 export class StockOutComponent implements OnInit {
-  inventoryItems: InventoryItemDto[] = [];
-  selectedItem: InventoryItemDto | null = null;
+  inventoryItems: InventoryItemSelectionDto[] = [];
+  selectedItem: InventoryItemSelectionDto | null = null;
   workers: WorkerDto[] = [];
   workerItems: SearchSelectItem[] = [];
 
@@ -80,9 +80,9 @@ export class StockOutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.inventoryService.getAll(1000, 1).subscribe({
+    this.inventoryService.getAllForSelection().subscribe({
       next: (response) => {
-        this.inventoryItems = response.data.items as InventoryItemDto[];
+        this.inventoryItems = response.data ?? [];
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');

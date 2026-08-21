@@ -62,6 +62,24 @@ namespace Printpress.Infrastructure
                 .ToListAsync();
         }
 
+        public async Task<List<InventoryItemSelectionDto>> GetAllForSelectionAsync()
+        {
+            return await Context.InventoryItem
+                .OrderBy(i => i.Name)
+                .Select(i => new InventoryItemSelectionDto
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    IsActive = i.IsActive,
+                    StockQuantity = Context.InventoryTransaction
+                        .Where(t => t.InventoryItemId == i.Id)
+                        .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
+                            ? t.Quantity
+                            : -t.Quantity)
+                })
+                .ToListAsync();
+        }
+
 
         public async Task<List<EnumBasicInfoDto>> GetInventoryCategoriesAllAsync()
         {

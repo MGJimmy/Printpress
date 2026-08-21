@@ -12,6 +12,7 @@ namespace Printpress.Application
         Task<PagedList<InventoryItem>> GetAllWithTransactions(Paging paging);
         Task<InventoryItem?> FindByIdWithTransactions(Guid id);
         Task<List<InventoryItemDto>> GetByCategoryIdAsync(int categoryId);
+        Task<List<InventoryItemSelectionDto>> GetAllForSelectionAsync();
 
         Task<List<EnumBasicInfoDto>> GetServiceCategoriesAsync();
         Task<List<EnumBasicInfoDto>> GetInventoryCategoriesAllAsync();

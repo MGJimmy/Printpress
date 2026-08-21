@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { InventoryItemDto } from '../models/inventory-item.dto';
+import { InventoryItemSelectionDto } from '../models/inventory-item-selection.dto';
 import { ApiPagingResponseDto, ApiResponseDto } from '../../../core/models/api-response.dto';
 
 export interface InventoryItemUpsertDto {
@@ -22,6 +23,12 @@ export class InventoryService {
     return this.httpService.get<ApiPagingResponseDto<InventoryItemDto>>(
       ApiUrlResource.InventoryAPI.getAll,
       { pageSize, pageNumber }
+    );
+  }
+
+  getAllForSelection(): Observable<ApiResponseDto<InventoryItemSelectionDto[]>> {
+    return this.httpService.get<ApiResponseDto<InventoryItemSelectionDto[]>>(
+      ApiUrlResource.InventoryAPI.getAllForSelection
     );
   }
 

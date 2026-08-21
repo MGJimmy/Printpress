@@ -67,6 +67,9 @@ internal sealed class InventoryItemService(
         return await _unitOfWork.InventoryItemRepository.GetByCategoryIdAsync(categoryId);
     }
 
+    public Task<List<InventoryItemSelectionDto>> GetAllForSelectionAsync()
+        => _unitOfWork.InventoryItemRepository.GetAllForSelectionAsync();
+
     public async Task DeactivateAsync(Guid id, string userId)
     {
         var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);

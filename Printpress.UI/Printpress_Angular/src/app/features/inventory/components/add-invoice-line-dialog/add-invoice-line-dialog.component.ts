@@ -6,10 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { InventoryItemDto } from '../../models/inventory-item.dto';
+import { InventoryItemSelectionDto } from '../../models/inventory-item-selection.dto';
 
 export interface AddInvoiceLineDialogData {
-  inventoryItems: InventoryItemDto[];
+  inventoryItems: InventoryItemSelectionDto[];
 }
 
 export interface AddInvoiceLineDialogResult {

@@ -84,9 +84,9 @@ export class SparePartsStockInComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sparePartService.getAll(1000, 1).subscribe({
+    this.sparePartService.getAllForSelection().subscribe({
       next: (response) => {
-        this.sparePartItems = response.data.items as SparePartItemDto[];
+        this.sparePartItems = response.data ?? [];
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل قطع الغيار');

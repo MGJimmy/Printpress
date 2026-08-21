@@ -16,7 +16,7 @@ import { TableColDefinitionModel } from '../../../../shared/models/table-col-def
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryService } from '../../services/inventory.service';
 import { PurchaseInvoiceService } from '../../services/purchase-invoice.service';
-import { InventoryItemDto } from '../../models/inventory-item.dto';
+import { InventoryItemSelectionDto } from '../../models/inventory-item-selection.dto';
 import { PurchaseInvoiceCreateDto } from '../../models/purchase-invoice-create.dto';
 import { AddInvoiceLineDialogComponent, AddInvoiceLineDialogResult } from '../add-invoice-line-dialog/add-invoice-line-dialog.component';
 
@@ -67,7 +67,7 @@ export class StockInComponent implements OnInit {
     { headerName: 'الإجمالي', column: 'lineTotal' }
   ];
 
-  private inventoryItems: InventoryItemDto[] = [];
+  private inventoryItems: InventoryItemSelectionDto[] = [];
   private isSaving = false;
 
   constructor(
@@ -90,10 +90,9 @@ export class StockInComponent implements OnInit {
   }
 
   private loadInventoryItems(): void {
-    this.inventoryService.getAll(1000, 1).subscribe({
+    this.inventoryService.getAllForSelection().subscribe({
       next: (response) => {
-        console.log(response);
-        this.inventoryItems = response.data.items as InventoryItemDto[];
+        this.inventoryItems = response.data ?? [];
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');
