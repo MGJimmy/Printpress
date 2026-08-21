@@ -16,6 +16,7 @@ import { OrderRoutingService } from '../../services/order-routing.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { isStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/status-display';
 
 @Component({
   selector: 'app-item-add-update',
@@ -96,7 +97,7 @@ export class ItemAddUpdateComponent implements OnInit {
 
   private initAddModeData() {
     this.group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
-    const groupClosed = this.group.status === 'Completed' || this.group.status === 'Delivered' || !!this.group.deliveryDate;
+    const groupClosed = isStatus(this.group.status, 'Completed', 'Delivered') || !!this.group.deliveryDate;
     if (groupClosed) {
       this.alertService.showError(this._t.t('orders.cannot_add_item_to_closed_group'));
       this.navigateToGroup();
@@ -109,13 +110,21 @@ export class ItemAddUpdateComponent implements OnInit {
 
   private initEditModeData() {
     this.item = this.orderSharedService.getItem_copy(this.groupId, this.itemIdToEdit);
-    if (this.item.hasExecutions === true || this.item.status === 'Completed') {
+    if (this.item.hasExecutions === true || isStatus(this.item.status, 'Completed')) {
       this.alertService.showError(this._t.t('orders.cannot_edit_executed_item'));
       this.navigateToGroup();
       return;
     }
 
     this.fillFormWithItemData(this.item);
+  }
+
+  protected get itemStatusLabel(): string {
+    return this._t.t(statusI18nKey(this.item?.status));
+  }
+
+  protected get itemStatusBadgeClass(): string {
+    return statusBadgeClass(this.item?.status);
   }
 
   private fillFormWithItemData(item: ItemGetDto) {

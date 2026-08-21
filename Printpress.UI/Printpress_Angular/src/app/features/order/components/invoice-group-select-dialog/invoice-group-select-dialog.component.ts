@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { firstValueFrom } from 'rxjs';
 import { OrderService } from '../../services/order.service';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { normalizeStatus, statusI18nKey } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 
@@ -53,7 +54,7 @@ export class InvoiceGroupSelectDialogComponent implements OnInit {
       this.groups = orderGroups.map(g => ({
         id: g.id,
         name: g.name,
-        status: g.status,
+        status: normalizeStatus(g.status),
         selected: true
       }));
     } catch {
@@ -81,13 +82,7 @@ export class InvoiceGroupSelectDialogComponent implements OnInit {
   }
 
   getStatusText(status?: string): string {
-    switch (status) {
-      case 'New':        return this._t.t('orders.status_new');
-      case 'InProgress': return this._t.t('orders.status_in_progress');
-      case 'Completed':  return this._t.t('orders.status_completed');
-      case 'Delivered':  return this._t.t('orders.status_delivered');
-      default:           return this._t.t('orders.status_unknown');
-    }
+    return this._t.t(statusI18nKey(status));
   }
 
   onConfirm(): void {

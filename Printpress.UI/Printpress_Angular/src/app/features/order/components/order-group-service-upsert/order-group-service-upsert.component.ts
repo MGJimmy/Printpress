@@ -20,6 +20,7 @@ import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { isStatus } from '../../models/enums/status-display';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
@@ -109,10 +110,9 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
     const group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
     this.executionType = group.executionType ?? 'Internal';
-    this.servicesLocked = group.status === 'Completed'
-      || group.status === 'Delivered'
+    this.servicesLocked = isStatus(group.status, 'Completed', 'Delivered')
       || !!group.deliveryDate
-      || (group.items ?? []).some(item => item.hasExecutions === true || item.status === 'Completed');
+      || (group.items ?? []).some(item => item.hasExecutions === true || isStatus(item.status, 'Completed'));
 
     this.fetchServices();
     this.fillPageData()

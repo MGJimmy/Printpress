@@ -16,13 +16,8 @@
         <!-- Group status badge -->
         <div *ngIf="groupData" class="d-flex align-items-center gap-2">
           <span class="text-muted">حالة المجموعة:</span>
-          <span class="badge"
-                [ngClass]="{
-                  'bg-success': groupData.groupStatus === 'Completed' || groupData.groupStatus === 'Delivered',
-                  'bg-warning text-dark': groupData.groupStatus === 'InProgress',
-                  'bg-secondary': groupData.groupStatus === 'New'
-                }">
-            {{ groupStatusLabels[groupData.groupStatus] || groupData.groupStatus }}
+          <span class="badge" [ngClass]="getGroupStatusBadgeClass()">
+            {{ groupStatusLabel(groupData.groupStatus) }}
           </span>
         </div>
 
@@ -70,13 +65,8 @@
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef class="fw-bold">الحالة</th>
               <td mat-cell *matCellDef="let item">
-                <span class="badge"
-                      [ngClass]="{
-                        'bg-success': item.status === 'Completed',
-                        'bg-warning text-dark': item.status === 'InProgress',
-                        'bg-secondary': item.status === 'New'
-                      }">
-                  {{ itemStatusLabels[item.status] || item.status }}
+                <span class="badge" [ngClass]="getStatusBadgeClass(item.status)">
+                  {{ itemStatusLabel(item.status) }}
                 </span>
               </td>
             </ng-container>
@@ -88,10 +78,10 @@
               <td mat-cell *matCellDef="let item">
                 <!-- External groups: no execution tracking — show status-based display only -->
                 <ng-container *ngIf="groupData?.executionType !== 'Internal'">
-                  <span *ngIf="item.status === 'Completed'" class="text-success fw-bold">
+                  <span *ngIf="isStatus(item.status, 'Completed')" class="text-success fw-bold">
                     {{ item.quantity }} / {{ item.quantity }}
                   </span>
-                  <span *ngIf="item.status !== 'Completed'" class="text-muted">
+                  <span *ngIf="!isStatus(item.status, 'Completed')" class="text-muted">
                     0 / {{ item.quantity }}
                   </span>
                 </ng-container>
@@ -125,18 +115,18 @@
                   <button mat-menu-item
                           *ngIf="groupData?.executionType === 'Internal'"
                           (click)="onExecuteItem(item.id)"
-                          [disabled]="item.status === 'Completed'">
-                    <mat-icon [style.color]="item.status !== 'Completed' ? '#1976d2' : ''">play_circle</mat-icon>
-                    <span>{{ item.status === 'Completed' ? 'مكتمل' : 'تنفيذ' }}</span>
+                          [disabled]="isStatus(item.status, 'Completed')">
+                    <mat-icon [style.color]="!isStatus(item.status, 'Completed') ? '#1976d2' : ''">play_circle</mat-icon>
+                    <span>{{ isStatus(item.status, 'Completed') ? 'مكتمل' : 'تنفيذ' }}</span>
                   </button>
 
                   <!-- Complete (External types) -->
                   <button mat-menu-item
                           *ngIf="groupData?.executionType !== 'Internal'"
                           (click)="onCompleteItem(item.id)"
-                          [disabled]="item.status === 'Completed'">
-                    <mat-icon [style.color]="item.status !== 'Completed' ? '#388e3c' : ''">check_circle</mat-icon>
-                    <span>{{ item.status === 'Completed' ? 'مكتمل' : 'اكتمل' }}</span>
+                          [disabled]="isStatus(item.status, 'Completed')">
+                    <mat-icon [style.color]="!isStatus(item.status, 'Completed') ? '#388e3c' : ''">check_circle</mat-icon>
+                    <span>{{ isStatus(item.status, 'Completed') ? 'مكتمل' : 'اكتمل' }}</span>
                   </button>
                 </mat-menu>
               </td>

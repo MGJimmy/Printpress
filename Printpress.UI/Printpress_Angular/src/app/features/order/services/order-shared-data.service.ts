@@ -82,7 +82,8 @@ export class OrderSharedDataService {
       name: '',
       clientId: '',
       clientName: '',
-      status:'',
+      status: 'New',
+      objectState: ObjectStateEnum.temp,
       objectState: ObjectStateEnum.temp,
       orderGroups: [],
       orderServices: [],
@@ -148,6 +149,7 @@ export class OrderSharedDataService {
       orderId: this.orderObject.id,
       name: '',
       executionType: 'Internal',
+      status: 'New',
       isHasPrintingService: false,
       isHasSellingService: false,
       isHasStaplingService: false,
@@ -288,6 +290,8 @@ export class OrderSharedDataService {
       quantity: 0,
       price: 0,
       groupId: orderGroupId,
+      status: 'New',
+      hasExecutions: false,
       details: itemDetails,
       objectState: ObjectStateEnum.temp
     }

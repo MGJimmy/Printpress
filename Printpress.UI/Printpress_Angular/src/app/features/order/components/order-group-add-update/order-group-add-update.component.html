@@ -1,6 +1,9 @@
 <div class="container mt-5">
     <div>
-        <h1 *ngIf="isEdit">تعديل مجموعة</h1>
+        <h1 *ngIf="isEdit" class="d-flex align-items-center gap-2">
+            تعديل مجموعة
+            <span *ngIf="groupStatus" class="badge fs-6" [ngClass]="groupStatusBadgeClass">{{ groupStatusLabel }}</span>
+        </h1>
         <h1 *ngIf="!isEdit">إضافة مجموعة</h1>
         <hr>
         <div class="form-group col-md-6">
@@ -70,6 +73,13 @@
             <ng-container matColumnDef="boughtItemsCount">
                 <th mat-header-cell *matHeaderCellDef>عدد العناصر المشتراه</th>
                 <td mat-cell *matCellDef="let element"> {{ element.boughtItemsCount }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>الحالة</th>
+                <td mat-cell *matCellDef="let element">
+                    <span class="badge" [ngClass]="itemStatusBadgeClass(element.status)">{{ itemStatusLabel(element.status) }}</span>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="actions">

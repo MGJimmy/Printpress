@@ -22,7 +22,7 @@
           <div>
             <span class="text-muted">الحالة: </span>
             <span class="badge" [ngClass]="getStatusBadgeClass(history.status)">
-              {{ itemStatusLabels[history.status] || history.status }}
+              {{ itemStatusLabel(history.status) }}
             </span>
           </div>
         </div>

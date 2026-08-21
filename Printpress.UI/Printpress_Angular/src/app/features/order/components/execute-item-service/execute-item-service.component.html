@@ -14,13 +14,8 @@
           <div><span class="text-muted">الكمية: </span><strong>{{ itemSummary.quantity }}</strong></div>
           <div>
             <span class="text-muted">الحالة: </span>
-            <span class="badge"
-                  [ngClass]="{
-                    'bg-success': itemSummary.status === 'Completed',
-                    'bg-warning text-dark': itemSummary.status === 'InProgress',
-                    'bg-secondary': itemSummary.status === 'New'
-                  }">
-              {{ itemSummary.status }}
+            <span class="badge" [ngClass]="itemStatusBadgeClass(itemSummary.status)">
+              {{ itemStatusLabel(itemSummary.status) }}
             </span>
           </div>
         </div>

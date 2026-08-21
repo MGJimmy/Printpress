@@ -17,8 +17,10 @@ import { WorkerDto } from '../../../hr/models/worker.dto';
 import {
   ItemExecutionSummaryDto,
   ServiceProgressDto,
-  ExecuteServiceRequestDto
+  ExecuteServiceRequestDto,
+  ItemStatusLabels
 } from '../../models/execution/execution.dto';
+import { normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 import { TranslationService } from '../../../../core/services/translation.service';
 
@@ -45,6 +47,7 @@ export class ExecuteItemServiceComponent implements OnInit {
   groupId!: string;
   itemSummary: ItemExecutionSummaryDto | null = null;
   workers: WorkerDto[] = [];
+  workers: WorkerDto[] = [];
   selectedService: ServiceProgressDto | null = null;
   isSaving = false;
 
@@ -57,6 +60,15 @@ export class ExecuteItemServiceComponent implements OnInit {
 
   get workerRows(): FormArray {
     return this.form.controls.workerRows;
+  }
+
+  protected itemStatusLabel(status?: string): string {
+    const normalized = normalizeStatus(status);
+    return ItemStatusLabels[normalized] || normalized;
+  }
+
+  protected itemStatusBadgeClass(status?: string): string {
+    return statusBadgeClass(status);
   }
 
   constructor(

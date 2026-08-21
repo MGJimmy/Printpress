@@ -25,6 +25,7 @@ import { OrderServicesGetDTO } from '../../models/order-service/order-service-ge
 import { mapOrderGetToUpsert } from '../../models/order-mapper';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { isStatus, normalizeStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/status-display';
 
 @Component({
   selector: 'app-order-add-update',
@@ -52,6 +53,24 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       Completed: this._t.t('orders.status_completed'),
       Delivered: this._t.t('orders.status_delivered')
     };
+  }
+
+  public get orderStatusLabel(): string {
+    return this._t.t(statusI18nKey(this.orderGetDto?.status));
+  }
+
+  public get orderStatusCardClass(): string {
+    const status = normalizeStatus(this.orderGetDto?.status);
+    return status === 'InProgress' ? 'bg-warning text-dark' : `${statusBadgeClass(status)} text-white`;
+  }
+
+  protected groupStatusLabel(status?: string | number): string {
+    const normalized = normalizeStatus(status);
+    return this.groupStatusLabels[normalized] || normalized;
+  }
+
+  protected groupStatusBadgeClass(status?: string | number): string {
+    return statusBadgeClass(status);
   }
   public clients: ClientGetDto[] = [];
   public orderClientId!: string
@@ -127,7 +146,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public applyGroupFilter(): void {
     const filtered = this.groupStatusFilter === 'all'
       ? this.allGroupRows
-      : this.allGroupRows.filter(g => g.status === this.groupStatusFilter);
+      : this.allGroupRows.filter(g => normalizeStatus(g.status) === this.groupStatusFilter);
     this.orderGroupGridDataSource = new MatTableDataSource<OrderGroupGridViewModel>(filtered);
   }
 
@@ -190,15 +209,15 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   protected canDeliverGroup(group: { status?: string; deliveryDate?: Date }): boolean {
-    return group.status === 'Completed' && !group.deliveryDate;
+    return isStatus(group.status, 'Completed') && !group.deliveryDate;
   }
 
   private isGroupClosed(group: { status?: string; deliveryDate?: Date }): boolean {
-    return group.status === 'Completed' || group.status === 'Delivered' || !!group.deliveryDate;
+    return isStatus(group.status, 'Completed', 'Delivered') || !!group.deliveryDate;
   }
 
   private groupHasExecutedItems(group: OrderGroupGetDto): boolean {
-    return (group.items ?? []).some(item => item.hasExecutions === true || item.status === 'Completed');
+    return (group.items ?? []).some(item => item.hasExecutions === true || isStatus(item.status, 'Completed'));
   }
 
   protected onEditGroup(groupId: string) {
@@ -294,7 +313,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
         id: orderGroup.id,
         name: orderGroup.name,
         executionType: orderGroup.executionType,
-        status: orderGroup.status,
+        status: normalizeStatus(orderGroup.status),
         deliveryDate: orderGroup.deliveryDate,
         deliveredTo: orderGroup.deliveredTo,
         deliveryNotes: orderGroup.deliveryNotes,

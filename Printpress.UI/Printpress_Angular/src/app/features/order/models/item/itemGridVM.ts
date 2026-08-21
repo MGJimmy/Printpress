@@ -9,5 +9,6 @@ export interface ItemGridVM {
     numberOfPages: string;
     stapledItemsCount: string;
     printedItemsCount: string;
+    status?: string;
     isLocked: boolean;
 }

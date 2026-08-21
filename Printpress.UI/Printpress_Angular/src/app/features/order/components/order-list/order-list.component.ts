@@ -12,6 +12,7 @@ import { OrderRoutingService } from '../../services/order-routing.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderStatus } from '../../models/enums/order-status.enum';
+import { isStatus, normalizeStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/status-display';
 import { UserRoleEnum } from '../../../../core/models/user-role.enum';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { InvoiceGroupSelectDialogComponent } from '../invoice-group-select-dialog/invoice-group-select-dialog.component';
@@ -66,7 +67,7 @@ export class OrderListComponent implements OnInit {
   }
 
   protected canDeleteOrder(orderStatus: string): boolean {
-    return orderStatus !== OrderStatus.Delivered && orderStatus !== OrderStatus.Completed;
+    return !isStatus(orderStatus, OrderStatus.Delivered, OrderStatus.Completed);
   }
 
   public async onDeleteOrder(id: string) {
@@ -118,29 +119,14 @@ export class OrderListComponent implements OnInit {
     window.open(`report-viewer?reportName=invoice&id=${orderId}&groupIds=${selectedIds.join(',')}`, '_blank');
   }
 
-  getStatusBadgeClass(status: OrderStatus): string {
-    switch (status) {
-      case OrderStatus.New:
-        return 'bg-primary';
-      case OrderStatus.InProgress:
-        return 'bg-warning';
-      case OrderStatus.Completed:
-        return 'bg-success';
-      case OrderStatus.Delivered:
-        return 'bg-info';
-      default:
-        return 'bg-secondary';
-    }
+  getStatusBadgeClass(status: OrderStatus | string | number): string {
+    return statusBadgeClass(status);
   }
 
-  getStatusText(status: OrderStatus): string {
-    switch (status) {
-      case OrderStatus.New:        return this._t.t('orders.status_new');
-      case OrderStatus.InProgress: return this._t.t('orders.status_in_progress');
-      case OrderStatus.Completed:  return this._t.t('orders.status_completed');
-      case OrderStatus.Delivered:  return this._t.t('orders.status_delivered');
-      default:                     return this._t.t('orders.status_unknown');
-    }
+  getStatusText(status: OrderStatus | string | number): string {
+    return this._t.t(statusI18nKey(status));
   }
+
+  protected isStatus = isStatus;
 }
 

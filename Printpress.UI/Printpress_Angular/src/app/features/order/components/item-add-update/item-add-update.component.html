@@ -2,7 +2,10 @@
 
   <form [formGroup]="itemForm" (submit)="onSave()">
 
-    <h3 class="text-center">إضافة عنصر</h3>
+    <h3 class="text-center">
+      {{ isEditMode ? 'تعديل عنصر' : 'إضافة عنصر' }}
+      <span *ngIf="isEditMode && item?.status" class="badge fs-6 ms-2" [ngClass]="itemStatusBadgeClass">{{ itemStatusLabel }}</span>
+    </h3>
 
     <div class="row g-3">
       <!-- Item Name -->

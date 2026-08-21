@@ -76,7 +76,7 @@
                 </button>
                 
                 <div *appHasRole="userRoleEnum.admin" >
-                  <button *ngIf="element.orderStatus !== OrderStatus.Delivered" mat-menu-item (click)="onEditOrder(element.id)">
+                  <button *ngIf="!isStatus(element.orderStatus, OrderStatus.Delivered)" mat-menu-item (click)="onEditOrder(element.id)">
                     <mat-icon>edit</mat-icon>
                     <span>تعديل</span>
                   </button>

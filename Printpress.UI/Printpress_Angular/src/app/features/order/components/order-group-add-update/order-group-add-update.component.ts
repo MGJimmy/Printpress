@@ -22,6 +22,7 @@ import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import * as XLSX from 'xlsx';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { isStatus, normalizeStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/status-display';
 
 @Component({
   selector: 'app-order-group-add-update',
@@ -129,6 +130,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
       { key: 'printedItemsCount', condition: () => group.isHasPrintingService },
       { key: 'stapledItemsCount', condition: () => group.isHasStaplingService },
       { key: 'boughtItemsCount', condition: () => group.isHasSellingService },
+      { key: 'status', condition: () => true },
       { key: 'total', condition: () => false },
       { key: 'actions', condition: () => true }
     ];
@@ -136,9 +138,29 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     this.displayedColumns = allColumns.filter(x => x.condition()).map(x => x.key);
   }
 
+  protected get groupStatus(): string {
+    return normalizeStatus(this.orderSharedService.getOrderGroup_Copy(this.groupId).status);
+  }
+
+  protected get groupStatusLabel(): string {
+    return this._t.t(statusI18nKey(this.groupStatus));
+  }
+
+  protected get groupStatusBadgeClass(): string {
+    return statusBadgeClass(this.groupStatus);
+  }
+
+  protected itemStatusLabel(status?: string): string {
+    return this._t.t(statusI18nKey(status));
+  }
+
+  protected itemStatusBadgeClass(status?: string): string {
+    return statusBadgeClass(status);
+  }
+
   protected get isGroupClosed(): boolean {
     const group = this.orderSharedService.getOrderGroup_Copy(this.groupId);
-    return group.status === 'Completed' || group.status === 'Delivered' || !!group.deliveryDate;
+    return isStatus(group.status, 'Completed', 'Delivered') || !!group.deliveryDate;
   }
 
   protected get areServicesLocked(): boolean {
@@ -150,7 +172,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected isItemLocked(item: ItemGetDto): boolean {
-    return item.hasExecutions === true || item.status === 'Completed';
+    return item.hasExecutions === true || isStatus(item.status, 'Completed');
   }
 
   protected groupNameChanged() {
@@ -309,6 +331,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
         numberOfPages: numberOfPages?.value ?? '',
         printedItemsCount: printedItemsCount?.value ?? '',
         stapledItemsCount: stapledItemsCount?.value ?? '',
+        status: normalizeStatus(item.status),
         isLocked: this.isItemLocked(item)
       };
 

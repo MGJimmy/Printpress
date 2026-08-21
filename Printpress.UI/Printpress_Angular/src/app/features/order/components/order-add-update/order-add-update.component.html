@@ -77,11 +77,11 @@
                     </mat-card>
                 </div>
                 <div class="col-md-4">
-                    <mat-card class="bg-danger text-white">
+                    <mat-card [ngClass]="orderStatusCardClass">
                         <mat-card-content>
                             <div class="d-flex align-items-center">
                                 <mat-icon class="me-2">pending_actions</mat-icon>
-                                <span>حالة الطلبية: غير منتهية</span>
+                                <span>حالة الطلبية: {{ orderStatusLabel }}</span>
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -200,13 +200,8 @@
                 <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef>الحالة</th>
                 <td mat-cell *matCellDef="let element">
-                    <span *ngIf="element.status" class="badge"
-                          [ngClass]="{
-                            'badge-success': element.status === 'Completed' || element.status === 'Delivered',
-                            'badge-warning': element.status === 'InProgress',
-                            'badge-secondary': element.status === 'New'
-                          }">
-                        {{ groupStatusLabels[element.status] || element.status }}
+                    <span class="badge" [ngClass]="groupStatusBadgeClass(element.status)">
+                        {{ groupStatusLabel(element.status) }}
                     </span>
                 </td>
                 </ng-container>

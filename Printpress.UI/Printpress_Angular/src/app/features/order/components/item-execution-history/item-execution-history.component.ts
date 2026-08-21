@@ -8,6 +8,7 @@ import { TableTemplateComponent } from '../../../../shared/components/table-temp
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { ItemServiceExecutionService } from '../../services/item-service-execution.service';
 import { ItemExecutionHistoryDto, ItemStatusLabels } from '../../models/execution/execution.dto';
+import { normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 
 @Component({
@@ -77,11 +78,12 @@ export class ItemExecutionHistoryComponent implements OnInit {
   }
 
   getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'Completed': return 'bg-success';
-      case 'InProgress': return 'bg-warning text-dark';
-      default: return 'bg-secondary';
-    }
+    return statusBadgeClass(status);
+  }
+
+  itemStatusLabel(status?: string): string {
+    const normalized = normalizeStatus(status);
+    return ItemStatusLabels[normalized] || normalized;
   }
 
   onBack(): void {

@@ -18,6 +18,7 @@ import {
   GroupStatusLabels,
   ItemStatusLabels
 } from '../../models/execution/execution.dto';
+import { isStatus, normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 
 @Component({
@@ -80,10 +81,10 @@ export class OrderGroupItemsComponent implements OnInit {
 
     switch (this.statusFilter) {
       case 'completed':
-        this.filteredItems = this.groupData.items.filter(i => i.status === 'Completed');
+        this.filteredItems = this.groupData.items.filter(i => isStatus(i.status, 'Completed'));
         break;
       case 'notCompleted':
-        this.filteredItems = this.groupData.items.filter(i => i.status !== 'Completed');
+        this.filteredItems = this.groupData.items.filter(i => !isStatus(i.status, 'Completed'));
         break;
       default:
         this.filteredItems = [...this.groupData.items];
@@ -117,14 +118,22 @@ export class OrderGroupItemsComponent implements OnInit {
   }
 
   getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'Completed': return 'badge-completed';
-      case 'InProgress': return 'badge-inprogress';
-      default: return 'badge-new';
-    }
+    return statusBadgeClass(status);
   }
 
   getGroupStatusBadgeClass(): string {
     return this.getStatusBadgeClass(this.groupData?.groupStatus ?? '');
   }
+
+  groupStatusLabel(status?: string): string {
+    const normalized = normalizeStatus(status);
+    return GroupStatusLabels[normalized] || normalized;
+  }
+
+  itemStatusLabel(status?: string): string {
+    const normalized = normalizeStatus(status);
+    return ItemStatusLabels[normalized] || normalized;
+  }
+
+  protected isStatus = isStatus;
 }
