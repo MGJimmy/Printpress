@@ -266,7 +266,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             return [];
 
         return _IUnitOfWork.OrderItemRepository
-            .Filter(i => ids.Contains(i.OrderGroupId) && !i.IsDeleted)
+            .Filter(i => ids.Contains(i.OrderGroupId) && !i.IsDeleted, track: false)
             .Select(i => i.Id)
             .ToList();
     }
@@ -278,7 +278,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             return [];
 
         return _IUnitOfWork.WorkerProductionRepository
-            .Filter(e => ids.Contains(e.OrderItemId))
+            .Filter(e => ids.Contains(e.OrderItemId), track: false)
             .Select(e => e.OrderItemId)
             .ToHashSet();
     }
@@ -318,7 +318,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             if (persistedItems.Count == 0 && groupItemIds.Count > 0)
             {
                 persistedItems = _IUnitOfWork.OrderItemRepository
-                    .Filter(i => i.OrderGroupId == persistedGroup.Id && !i.IsDeleted)
+                    .Filter(i => i.OrderGroupId == persistedGroup.Id && !i.IsDeleted, track: false)
                     .ToList();
             }
 
