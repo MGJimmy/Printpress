@@ -140,6 +140,14 @@ public class AccountController : AppBaseController
         return Ok(result);
     }
 
+    [HttpPost("update-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordAnonymousCommand request)
+    {
+        var result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
     [HttpGet("get-all-roles")]
     [Role(RoleName.Admin)]
     public IActionResult GetAllRoles()

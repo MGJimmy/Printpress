@@ -10,6 +10,7 @@ export class ApiUrlResource {
     updateUser: ApiUrlResource.Account_URL + '/update-user',
     deleteUser: (id: string) => `${ApiUrlResource.Account_URL}/delete-user/${id}`,
     changePassword: ApiUrlResource.Account_URL + '/change-password',
+    updatePassword: ApiUrlResource.Account_URL + '/update-password',
   };
 
   private static Cliet_URL = '/api/client';
