@@ -1,0 +1,148 @@
+<div class="inv-report" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>menu_book</mat-icon>
+    </div>
+    <div>
+      <h1>كشف حركة المخزن</h1>
+      <p>دفتر العنصر مع رصيد أول المدة والرصيد المتحرك بعد كل دخول أو صرف</p>
+    </div>
+  </header>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية الكشف</span>
+    </div>
+    <form [formGroup]="filterForm">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>التصنيف</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          </mat-select>
+          <mat-error>يجب اختيار التصنيف</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>العنصر</mat-label>
+          <mat-select formControlName="inventoryItemId" [disabled]="items.length === 0">
+            <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
+          </mat-select>
+          <mat-error>يجب اختيار العنصر</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button"
+                (click)="search()" [disabled]="filterForm.invalid || isLoading">
+          <mat-icon>search</mat-icon>
+          بحث
+        </button>
+        <button mat-stroked-button type="button" (click)="reset()" [disabled]="isLoading">
+          <mat-icon>restart_alt</mat-icon>
+          إعادة تعيين
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <div class="loading" *ngIf="isLoading && !report">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="report">
+    <section class="kpis">
+      <article class="kpi kpi-opening">
+        <span class="kpi-label">أول المدة</span>
+        <strong>{{ report.openingBalance | number }}</strong>
+        <small>{{ report.itemName }}</small>
+      </article>
+      <article class="kpi kpi-in">
+        <span class="kpi-label">دخول الفترة</span>
+        <strong>{{ report.totalIn | number }}</strong>
+      </article>
+      <article class="kpi kpi-out">
+        <span class="kpi-label">خروج الفترة</span>
+        <strong>{{ report.totalOut | number }}</strong>
+      </article>
+      <article class="kpi kpi-stock">
+        <span class="kpi-label">آخر المدة</span>
+        <strong>{{ report.closingBalance | number }}</strong>
+        <small>{{ report.categoryName }}</small>
+      </article>
+    </section>
+
+    <p class="hint">
+      الرصيد المتحرك بالكراتين: الدخول من فواتير الشراء، والخروج من الصرف اليدوي.
+      التسوية إن وُجدت تُخصم مثل الخروج. تاريخ الحركة هو تاريخ التسجيل في الدفتر.
+    </p>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>swap_vert</mat-icon>
+        <span>الحركات</span>
+        <span class="count">{{ report.lines.length }}</span>
+      </div>
+      <div class="table-wrap" *ngIf="report.lines.length; else emptyRows">
+        <table mat-table [dataSource]="report.lines" class="cash-table">
+          <ng-container matColumnDef="movementDate">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.movementDate | date:'yyyy-MM-dd HH:mm' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>النوع</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" [ngClass]="typeClass(row.type)">{{ row.type }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="referenceType">
+            <th mat-header-cell *matHeaderCellDef>المصدر</th>
+            <td mat-cell *matCellDef="let row">{{ row.referenceType }}</td>
+          </ng-container>
+          <ng-container matColumnDef="inQuantity">
+            <th mat-header-cell *matHeaderCellDef>دخول</th>
+            <td mat-cell *matCellDef="let row" class="amt-in">
+              {{ row.inQuantity ? (row.inQuantity | number) : '—' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="outQuantity">
+            <th mat-header-cell *matHeaderCellDef>خروج</th>
+            <td mat-cell *matCellDef="let row" class="amt-out">
+              {{ row.outQuantity ? (row.outQuantity | number) : '—' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="runningBalance">
+            <th mat-header-cell *matHeaderCellDef>الرصيد</th>
+            <td mat-cell *matCellDef="let row" class="amt-balance">{{ row.runningBalance | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="workerName">
+            <th mat-header-cell *matHeaderCellDef>العامل</th>
+            <td mat-cell *matCellDef="let row">{{ row.workerName || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let row" class="notes">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+        </table>
+      </div>
+      <ng-template #emptyRows>
+        <p class="empty">لا توجد حركات في الفترة، والرصيد الختامي يساوي أول المدة</p>
+      </ng-template>
+    </mat-card>
+  </ng-container>
+
+  <p class="empty" *ngIf="!report && !isLoading">اختر عنصراً ثم اضغط بحث لعرض الكشف</p>
+</div>

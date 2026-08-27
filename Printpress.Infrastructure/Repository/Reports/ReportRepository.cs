@@ -441,4 +441,23 @@ internal class ReportRepository : IReportRepository
             })
             .ToListAsync();
     }
+
+    public async Task<List<InventoryMovementTxProjection>> GetInventoryMovementsAsync(Guid inventoryItemId)
+    {
+        return await _context.InventoryTransaction
+            .Where(t => t.InventoryItemId == inventoryItemId)
+            .OrderBy(t => t.CreatedAt)
+            .ThenBy(t => t.Id)
+            .Select(t => new InventoryMovementTxProjection
+            {
+                Id = t.Id,
+                CreatedAt = t.CreatedAt,
+                Type = t.InventoryTransactionType,
+                Quantity = t.Quantity,
+                ReferenceType = t.ReferenceType,
+                WorkerName = t.Worker != null ? t.Worker.Name : null,
+                Notes = t.Notes
+            })
+            .ToListAsync();
+    }
 }

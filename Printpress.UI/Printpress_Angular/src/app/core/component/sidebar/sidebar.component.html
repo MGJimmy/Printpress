@@ -132,6 +132,13 @@
         <span>صرف المخزن</span>
       </a>
       <a
+        routerLink="/reports/inventory-movement"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="list-group-item list-group-item-action ps-5">
+        <span>كشف حركة المخزن</span>
+      </a>
+      <a
         routerLink="/reports/order-inventory-items"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: true }"

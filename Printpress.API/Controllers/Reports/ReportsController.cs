@@ -16,7 +16,8 @@ public class ReportsController(
     ICashTreasuryReportService _cashTreasuryReportService,
     IInventoryStockBalanceReportService _inventoryStockBalanceService,
     IInventoryPurchaseReportService _inventoryPurchaseService,
-    IInventoryStockOutReportService _inventoryStockOutService) : AppBaseController
+    IInventoryStockOutReportService _inventoryStockOutService,
+    IInventoryMovementReportService _inventoryMovementService) : AppBaseController
 {
     [Authorize]
     [HttpGet("order-inventory-items")]
@@ -97,6 +98,19 @@ public class ReportsController(
         DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
         var result = await _inventoryStockOutService.GetReportAsync(
             categoryId, inventoryItemId, workerId, from, toExclusive);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("inventory-movement")]
+    public async Task<IActionResult> GetInventoryMovement(
+        [FromQuery] Guid inventoryItemId,
+        [FromQuery] DateOnly? dateFrom,
+        [FromQuery] DateOnly? dateTo)
+    {
+        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
+        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        var result = await _inventoryMovementService.GetReportAsync(inventoryItemId, from, toExclusive);
         return Ok(result);
     }
 

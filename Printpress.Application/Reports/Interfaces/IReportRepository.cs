@@ -22,4 +22,6 @@ public interface IReportRepository
 
     Task<List<InventoryStockOutRowDto>> GetInventoryStockOutsAsync(
         int? categoryId, Guid? inventoryItemId, Guid? workerId, DateTime? dateFrom, DateTime? dateToExclusive);
+
+    Task<List<InventoryMovementTxProjection>> GetInventoryMovementsAsync(Guid inventoryItemId);
 }
