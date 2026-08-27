@@ -90,6 +90,7 @@ public static class DependencyInjection
         #region Reports
         services.AddScoped<IOrderInventoryItemsReportService, OrderInventoryItemsReportService>();
         services.AddScoped<IInventoryServicesUsageReportService, InventoryServicesUsageReportService>();
+        services.AddScoped<IInventoryStockBalanceReportService, InventoryStockBalanceReportService>();
         services.AddScoped<ICashBookReportService, CashBookReportService>();
         services.AddScoped<ICashReconcileReportService, CashReconcileReportService>();
         services.AddScoped<ICashMovementSummaryReportService, CashMovementSummaryReportService>();

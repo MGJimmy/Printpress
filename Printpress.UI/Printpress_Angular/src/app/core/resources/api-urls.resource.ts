@@ -174,6 +174,7 @@ export class ApiUrlResource {
   public static readonly ReportsAPI = {
     orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',
     inventoryServicesUsage: ApiUrlResource.Reports_URL + '/inventory-services-usage',
+    inventoryStockBalance: ApiUrlResource.Reports_URL + '/inventory-stock-balance',
     filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories',
     cashBook: ApiUrlResource.Reports_URL + '/cash-book',
     cashReconcile: ApiUrlResource.Reports_URL + '/cash-reconcile',

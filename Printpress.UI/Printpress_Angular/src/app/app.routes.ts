@@ -280,6 +280,13 @@ export const routes: Routes = [
         path: 'reports',
         children: [
           {
+            path: 'inventory-stock-balance',
+            loadComponent: () =>
+              import('./features/reports/components/inventory-stock-balance-report/inventory-stock-balance-report.component')
+                .then(m => m.InventoryStockBalanceReportComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'order-inventory-items',
             loadComponent: () =>
               import('./features/reports/components/order-inventory-items-report/order-inventory-items-report.component')

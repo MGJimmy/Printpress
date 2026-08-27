@@ -1,0 +1,154 @@
+<div class="inv-report" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>inventory</mat-icon>
+    </div>
+    <div>
+      <h1>أرصدة المخزن</h1>
+      <p>رصيد أول المدة وحركة الدخول والخروج خلال الفترة والرصيد الختامي من دفتر حركات المخزن</p>
+    </div>
+  </header>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية التقرير</span>
+    </div>
+    <form [formGroup]="filterForm">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>التصنيف</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoading">
+          <mat-icon>search</mat-icon>
+          بحث
+        </button>
+        <button mat-stroked-button type="button" (click)="reset()" [disabled]="isLoading">
+          <mat-icon>restart_alt</mat-icon>
+          إعادة تعيين
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <div class="loading" *ngIf="isLoading && !report">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="report">
+    <section class="kpis">
+      <article class="kpi kpi-opening">
+        <span class="kpi-label">أول المدة (كراتين)</span>
+        <strong>{{ report.totalOpeningCartons | number }}</strong>
+      </article>
+      <article class="kpi kpi-in">
+        <span class="kpi-label">دخول الفترة</span>
+        <strong>{{ report.totalPeriodInCartons | number }}</strong>
+      </article>
+      <article class="kpi kpi-out">
+        <span class="kpi-label">خروج الفترة</span>
+        <strong>{{ report.totalPeriodOutCartons | number }}</strong>
+      </article>
+      <article class="kpi kpi-stock">
+        <span class="kpi-label">آخر المدة</span>
+        <strong>{{ report.totalClosingCartons | number }}</strong>
+        <small>{{ report.totalClosingUnits | number }} وحدة · {{ report.itemCount }} عنصر</small>
+      </article>
+    </section>
+
+    <p class="hint">
+      الرصيد يُحسب من حركات المخزن فقط: الدخول من فواتير الشراء، والخروج من صرف المخزن.
+      الطلبات لا تخصم من الرصيد تلقائياً. الوحدة الأساسية هي الكرتونة، والوحدات تُحسب من الباكيات × الوحدات في الباكية.
+    </p>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>table_chart</mat-icon>
+        <span>الأرصدة حسب العنصر</span>
+        <span class="count">{{ report.itemCount }}</span>
+      </div>
+      <div class="table-wrap" *ngIf="report.rows.length; else emptyRows">
+        <table mat-table [dataSource]="report.rows" class="cash-table">
+          <ng-container matColumnDef="itemName">
+            <th mat-header-cell *matHeaderCellDef>العنصر</th>
+            <td mat-cell *matCellDef="let row">
+              <a [routerLink]="['/inventory/items/view', row.itemId]">{{ row.itemName }}</a>
+            </td>
+            <td mat-footer-cell *matFooterCellDef><strong>الإجمالي</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="categoryName">
+            <th mat-header-cell *matHeaderCellDef>التصنيف</th>
+            <td mat-cell *matCellDef="let row">{{ row.categoryName }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="packs">
+            <th mat-header-cell *matHeaderCellDef>التعبئة</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.packsPerCarton ?? '—' }} × {{ row.unitsPerPack ?? '—' }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="opening">
+            <th mat-header-cell *matHeaderCellDef>أول المدة</th>
+            <td mat-cell *matCellDef="let row" [ngClass]="stockClass(row.openingCartons)">
+              {{ row.openingCartons | number }}
+              <small>{{ row.openingUnits | number }} و</small>
+            </td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ report.totalOpeningCartons | number }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="periodIn">
+            <th mat-header-cell *matHeaderCellDef>دخول</th>
+            <td mat-cell *matCellDef="let row" class="amt-in">{{ row.periodInCartons | number }}</td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ report.totalPeriodInCartons | number }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="periodOut">
+            <th mat-header-cell *matHeaderCellDef>خروج</th>
+            <td mat-cell *matCellDef="let row" class="amt-out">{{ row.periodOutCartons | number }}</td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ report.totalPeriodOutCartons | number }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="closing">
+            <th mat-header-cell *matHeaderCellDef>آخر المدة</th>
+            <td mat-cell *matCellDef="let row" [ngClass]="stockClass(row.closingCartons)">
+              {{ row.closingCartons | number }}
+              <small>{{ row.closingUnits | number }} و</small>
+            </td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ report.totalClosingCartons | number }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>الحالة</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" [class.badge-on]="row.isActive" [class.badge-off]="!row.isActive">
+                {{ row.isActive ? 'نشط' : 'موقوف' }}
+              </span>
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+          <tr mat-footer-row *matFooterRowDef="columns"></tr>
+        </table>
+      </div>
+      <ng-template #emptyRows>
+        <p class="empty">لا توجد عناصر مطابقة للتصفية</p>
+      </ng-template>
+    </mat-card>
+  </ng-container>
+</div>

@@ -314,4 +314,79 @@ internal class ReportRepository : IReportRepository
             .Where(r => r.Quantity > 0)
             .ToDictionary(r => (r.OrderItemId, r.ServiceCategoryId), r => r.Quantity);
     }
+
+    public async Task<List<InventoryStockBalanceRowDto>> GetInventoryStockBalanceAsync(
+        int? categoryId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        var query = _context.InventoryItem.AsQueryable();
+        if (categoryId is int id)
+            query = query.Where(i => i.InventoryItemCategoryId == id);
+
+        var rows = await query
+            .Select(i => new
+            {
+                i.Id,
+                i.Name,
+                CategoryId = i.InventoryItemCategoryId,
+                CategoryName = i.InventoryItemCategory_LKP.Name,
+                i.PacksPerCarton,
+                i.UnitsPerPack,
+                i.IsActive,
+                OpeningIn = i.InventoryTransactions
+                    .Where(t => t.InventoryTransactionType == InventoryTransactionType.In
+                        && dateFrom != null
+                        && t.CreatedAt < dateFrom)
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                OpeningOut = i.InventoryTransactions
+                    .Where(t => t.InventoryTransactionType != InventoryTransactionType.In
+                        && dateFrom != null
+                        && t.CreatedAt < dateFrom)
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                PeriodIn = i.InventoryTransactions
+                    .Where(t => t.InventoryTransactionType == InventoryTransactionType.In
+                        && (dateFrom == null || t.CreatedAt >= dateFrom)
+                        && (dateToExclusive == null || t.CreatedAt < dateToExclusive))
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                PeriodOut = i.InventoryTransactions
+                    .Where(t => t.InventoryTransactionType != InventoryTransactionType.In
+                        && (dateFrom == null || t.CreatedAt >= dateFrom)
+                        && (dateToExclusive == null || t.CreatedAt < dateToExclusive))
+                    .Sum(t => (int?)t.Quantity) ?? 0
+            })
+            .OrderBy(x => x.CategoryName)
+            .ThenBy(x => x.Name)
+            .ToListAsync();
+
+        return rows.Select(x =>
+        {
+            var unitsPerCarton = UnitsPerCarton(x.PacksPerCarton, x.UnitsPerPack);
+            var opening = x.OpeningIn - x.OpeningOut;
+            var closing = opening + x.PeriodIn - x.PeriodOut;
+            return new InventoryStockBalanceRowDto
+            {
+                ItemId = x.Id,
+                ItemName = x.Name,
+                CategoryId = x.CategoryId,
+                CategoryName = x.CategoryName,
+                PacksPerCarton = x.PacksPerCarton,
+                UnitsPerPack = x.UnitsPerPack,
+                IsActive = x.IsActive,
+                OpeningCartons = opening,
+                OpeningUnits = opening * unitsPerCarton,
+                PeriodInCartons = x.PeriodIn,
+                PeriodInUnits = x.PeriodIn * unitsPerCarton,
+                PeriodOutCartons = x.PeriodOut,
+                PeriodOutUnits = x.PeriodOut * unitsPerCarton,
+                ClosingCartons = closing,
+                ClosingUnits = closing * unitsPerCarton
+            };
+        }).ToList();
+    }
+
+    private static int UnitsPerCarton(int? packsPerCarton, int? unitsPerPack)
+    {
+        if (packsPerCarton is null or 0 || unitsPerPack is null or 0)
+            return 1;
+        return packsPerCarton.Value * unitsPerPack.Value;
+    }
 }

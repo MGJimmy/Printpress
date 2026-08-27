@@ -13,7 +13,8 @@ public class ReportsController(
     ICashMovementSummaryReportService _cashMovementSummaryReportService,
     ICashFlowReportService _cashFlowReportService,
     ICashByDocumentReportService _cashByDocumentReportService,
-    ICashTreasuryReportService _cashTreasuryReportService) : AppBaseController
+    ICashTreasuryReportService _cashTreasuryReportService,
+    IInventoryStockBalanceReportService _inventoryStockBalanceService) : AppBaseController
 {
     [Authorize]
     [HttpGet("order-inventory-items")]
@@ -51,6 +52,19 @@ public class ReportsController(
     public async Task<IActionResult> GetServiceCategories()
     {
         var result = await _inventoryServicesService.GetServiceCategoriesAsync();
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("inventory-stock-balance")]
+    public async Task<IActionResult> GetInventoryStockBalance(
+        [FromQuery] int? categoryId,
+        [FromQuery] DateOnly? dateFrom,
+        [FromQuery] DateOnly? dateTo)
+    {
+        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
+        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        var result = await _inventoryStockBalanceService.GetReportAsync(categoryId, from, toExclusive);
         return Ok(result);
     }
 
