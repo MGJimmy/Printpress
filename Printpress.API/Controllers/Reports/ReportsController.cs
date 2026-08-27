@@ -10,7 +10,8 @@ public class ReportsController(
     IInventoryServicesUsageReportService _inventoryServicesService,
     ICashBookReportService _cashBookReportService,
     ICashReconcileReportService _cashReconcileReportService,
-    ICashMovementSummaryReportService _cashMovementSummaryReportService) : AppBaseController
+    ICashMovementSummaryReportService _cashMovementSummaryReportService,
+    ICashFlowReportService _cashFlowReportService) : AppBaseController
 {
     [HttpGet("order-inventory-items")]
     public async Task<IActionResult> GetOrderInventoryItemsReport(
@@ -86,6 +87,19 @@ public class ReportsController(
         DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
         DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
         var result = await _cashMovementSummaryReportService.GetReportAsync(cashAccountId, from, to);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("cash-flow")]
+    public async Task<IActionResult> GetCashFlow(
+        [FromQuery] Guid? cashAccountId,
+        [FromQuery] DateOnly? dateFrom,
+        [FromQuery] DateOnly? dateTo)
+    {
+        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
+        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        var result = await _cashFlowReportService.GetReportAsync(cashAccountId, from, to);
         return Ok(result);
     }
 }
