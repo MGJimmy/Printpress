@@ -327,6 +327,13 @@ export const routes: Routes = [
               import('./features/reports/components/cash-by-document-report/cash-by-document-report.component')
                 .then(m => m.CashByDocumentReportComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'cash-treasury',
+            loadComponent: () =>
+              import('./features/reports/components/cash-treasury-report/cash-treasury-report.component')
+                .then(m => m.CashTreasuryReportComponent),
+            canActivate: [authGuard],
           }
         ]
       },

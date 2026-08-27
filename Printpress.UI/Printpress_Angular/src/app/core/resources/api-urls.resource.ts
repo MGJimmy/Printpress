@@ -180,6 +180,7 @@ export class ApiUrlResource {
     cashMovementSummary: ApiUrlResource.Reports_URL + '/cash-movement-summary',
     cashFlow: ApiUrlResource.Reports_URL + '/cash-flow',
     cashByDocument: ApiUrlResource.Reports_URL + '/cash-by-document',
+    cashTreasury: ApiUrlResource.Reports_URL + '/cash-treasury',
   };
 
 }
