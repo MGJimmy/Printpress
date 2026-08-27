@@ -11,6 +11,8 @@ export interface CashDocumentGroupDto {
   referenceType: string | number | null;
   referenceId: string | null;
   referenceTypeName: string;
+  referenceLabel?: string | null;
+  referenceRoute?: string | null;
   transactionCount: number;
   totalIn: number;
   totalOut: number;

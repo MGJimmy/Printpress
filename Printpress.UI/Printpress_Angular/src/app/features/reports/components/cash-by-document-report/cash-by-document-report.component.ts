@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,7 +23,7 @@ import { CashByDocumentReportDto, CashDocumentGroupDto } from '../../models/cash
   selector: 'app-cash-by-document-report',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
+    CommonModule, RouterLink, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
     MatSelectModule, MatButtonModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
     MatTableModule, MatProgressSpinnerModule,
   ],
@@ -34,7 +35,7 @@ export class CashByDocumentReportComponent implements OnInit {
   accounts: CashAccountDto[] = [];
   report: CashByDocumentReportDto | null = null;
   isLoading = false;
-  columns = ['type', 'referenceId', 'transactionCount', 'totalIn', 'totalOut', 'net'];
+  columns = ['type', 'reference', 'transactionCount', 'totalIn', 'totalOut', 'net'];
 
   typeLabels: Record<string, string> = {
     None: 'بدون مرجع',

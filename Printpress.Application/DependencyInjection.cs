@@ -104,6 +104,7 @@ public static class DependencyInjection
 
         #region General
         services.AddScoped<ICashAccountService, CashAccountService>();
+        services.AddScoped<CashReferenceResolver>();
         services.AddScoped<ICashTransactionService, CashTransactionService>();
         services.AddScoped<IValidator<AddCashTransactionDto>, AddCashTransactionDtoValidator>();
         services.AddScoped<IValidator<TransferCashTransactionDto>, TransferCashTransactionDtoValidator>();

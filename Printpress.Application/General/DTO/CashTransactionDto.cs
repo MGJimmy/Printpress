@@ -18,6 +18,8 @@ public class CashTransactionDto
     public CashTransactionReferenceType? ReferenceType { get; set; }
 
     public Guid? ReferenceId { get; set; }
+    public string ReferenceLabel { get; set; }
+    public string ReferenceRoute { get; set; }
     public decimal Amount { get; set; }
     public string Description { get; set; }
     public DateTime TransactionDate { get; set; }

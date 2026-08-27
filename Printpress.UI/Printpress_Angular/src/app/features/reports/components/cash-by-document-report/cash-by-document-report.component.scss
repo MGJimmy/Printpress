@@ -24,5 +24,7 @@
 .amt-in { color: #2e7d32; font-weight: 700; }
 .amt-out { color: #c62828; font-weight: 700; }
 .amt-balance { color: #1565c0; font-weight: 800; }
+.ref-link { color: #1565c0; font-weight: 700; text-decoration: none; }
+.ref-link:hover { text-decoration: underline; }
 .empty { text-align: center; color: #78909c; padding: 1.2rem; }
 .loading { display: flex; justify-content: center; padding: 2.5rem 0; }

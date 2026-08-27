@@ -22,6 +22,8 @@ export interface CashTreasuryMovementDto {
   amount: number;
   category: string;
   description: string;
+  referenceLabel?: string | null;
+  referenceRoute?: string | null;
 }
 
 export interface CashTransferRegisterRowDto {
@@ -29,7 +31,9 @@ export interface CashTransferRegisterRowDto {
   transactionDate: string;
   amount: number;
   fromAccountName: string;
+  fromAccountId?: string | null;
   toAccountName: string;
+  toAccountId?: string | null;
   description: string;
   isComplete: boolean;
 }

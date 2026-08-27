@@ -10,6 +10,7 @@ internal sealed class CashTransactionService(
     IValidator<AddCashTransactionDto> _validator,
     IValidator<TransferCashTransactionDto> _transferValidator,
     CashAccountDomainService _cashAccountDomainService,
+    CashReferenceResolver _referenceResolver,
     ILocalizationService _loc) : ICashTransactionService
 {
     public async Task<PagedList<CashTransactionDto>> GetByCashAccountIdAsync(
@@ -40,9 +41,21 @@ internal sealed class CashTransactionService(
             sorting
             );
 
+        var items = result.Items.ToList();
+        var links = await _referenceResolver.ForTransactionsAsync(items);
+        var dtos = _mapper.Map<List<CashTransactionDto>>(items);
+        foreach (var dto in dtos)
+        {
+            if (links.TryGetValue(dto.Id, out var link))
+            {
+                dto.ReferenceLabel = link.Label;
+                dto.ReferenceRoute = link.Route;
+            }
+        }
+
         return new PagedList<CashTransactionDto>
         {
-            Items = _mapper.Map<List<CashTransactionDto>>(result.Items),
+            Items = dtos,
             TotalCount = result.TotalCount,
             PageNumber = result.PageNumber,
             PageSize = result.PageSize

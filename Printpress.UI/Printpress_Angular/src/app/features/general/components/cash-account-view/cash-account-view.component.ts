@@ -8,9 +8,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { finalize } from 'rxjs';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
@@ -22,6 +23,7 @@ import { CashTransactionDto } from '../../models/cash-transaction.dto';
 import { AddCashTransactionDialogComponent } from '../add-cash-transaction-dialog/add-cash-transaction-dialog.component';
 import { TransferCashDialogComponent } from '../transfer-cash-dialog/transfer-cash-dialog.component';
 import { DialogService } from '../../../../shared/services/dialog.service';
+import { openCashReference } from '../../utils/cash-reference.util';
 
 @Component({
   selector: 'app-cash-account-view',
@@ -41,10 +43,13 @@ import { DialogService } from '../../../../shared/services/dialog.service';
     MatDialogModule,
     TableTemplateComponent,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './cash-account-view.component.html',
+  styleUrl: './cash-account-view.component.scss',
 })
 export class CashAccountViewComponent implements OnInit {
   account: CashAccountDto | null = null;
+  isLoading = false;
 
   form: FormGroup<{
     name: FormControl<string>;
@@ -59,8 +64,8 @@ export class CashAccountViewComponent implements OnInit {
 
   filterDateFrom: Date | null = null;
   filterDateTo: Date | null = null;
-  filterType: string = '';
-  filterCategory: string = '';
+  filterType = '';
+  filterCategory = '';
 
   transactionTypeOptions = [
     { value: '', label: 'الكل' },
@@ -86,6 +91,7 @@ export class CashAccountViewComponent implements OnInit {
     { headerName: 'الحالة', column: 'status' },
     { headerName: 'نوع الحركة', column: 'type' },
     { headerName: 'الفئة', column: 'category' },
+    { headerName: 'المرجع', column: 'referenceLabel' },
     { headerName: 'المبلغ', column: 'amount' },
     { headerName: 'الوصف', column: 'description' },
     { headerName: 'تاريخ الحركة', column: 'transactionDate' },
@@ -133,20 +139,25 @@ export class CashAccountViewComponent implements OnInit {
   }
 
   private loadTransactions(): void {
-    const dateFrom = this.filterDateFrom ? this.filterDateFrom.toISOString() : undefined;
-    const dateTo = this.filterDateTo ? this.filterDateTo.toISOString() : undefined;
-    const type = this.filterType || undefined;
-    const category = this.filterCategory || undefined;
-
+    const from = this.asDate(this.filterDateFrom);
+    const to = this.asDate(this.filterDateTo);
+    this.isLoading = true;
     this.cashTransactionService.getByCashAccountId(
-      this.accountId, this.currentPage, this.pageSize, dateFrom, dateTo, type, category
-    ).subscribe({
+      this.accountId,
+      this.currentPage,
+      this.pageSize,
+      from ? this.toIsoDate(from) : undefined,
+      to ? this.toIsoDate(to) : undefined,
+      this.filterType || undefined,
+      this.filterCategory || undefined,
+    ).pipe(finalize(() => { this.isLoading = false; })).subscribe({
       next: (response) => {
         this.transactions = (response.data.items as CashTransactionDto[]).map((t) => ({
           ...t,
           type: this.toTypeLabel(t.type),
           category: this.toCategoryLabel(t.category),
-          status: t.isVoided ? 'ملغاة' : t.reversesTransactionId ? 'عكس' : '',
+          status: t.isVoided ? 'ملغاة' : t.reversesTransactionId ? 'عكس' : 'عادية',
+          referenceLabel: t.referenceLabel || '—',
         }));
         this.totalTransactionsCount = response.data.totalCount;
       },
@@ -174,6 +185,10 @@ export class CashAccountViewComponent implements OnInit {
     this.currentPage = event.currentPage;
     this.pageSize = event.pageSize;
     this.loadTransactions();
+  }
+
+  onReferenceClicked(row: CashTransactionDto): void {
+    openCashReference(this.router, row.referenceRoute);
   }
 
   onAddTransaction(): void {
@@ -240,5 +255,18 @@ export class CashAccountViewComponent implements OnInit {
 
   private toCategoryLabel(category: string): string {
     return this.categoryOptions.find((c) => c.value === category)?.label ?? category;
+  }
+
+  private asDate(value: Date | null): Date | null {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  private toIsoDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 }

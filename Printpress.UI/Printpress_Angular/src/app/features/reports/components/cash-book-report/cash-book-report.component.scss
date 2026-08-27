@@ -191,6 +191,16 @@
 .amt-out { color: #c62828; font-weight: 700; }
 .amt-balance { color: #1565c0; font-weight: 800; }
 
+.ref-link {
+  color: #1565c0;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ref-link:hover {
+  text-decoration: underline;
+}
+
 .desc {
   text-align: right !important;
   max-width: 280px;

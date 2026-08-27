@@ -4,6 +4,7 @@ namespace Printpress.Application;
 
 internal sealed class CashByDocumentReportService(
     IUnitOfWork _unitOfWork,
+    CashReferenceResolver _referenceResolver,
     ILocalizationService _loc) : ICashByDocumentReportService
 {
     public async Task<CashByDocumentReportDto> GetReportAsync(
@@ -48,6 +49,17 @@ internal sealed class CashByDocumentReportService(
             .OrderBy(d => d.ReferenceTypeName)
             .ThenByDescending(d => d.TotalIn + d.TotalOut)
             .ToList();
+
+        var links = await _referenceResolver.ForDocumentKeysAsync(
+            documents.Select(d => (d.ReferenceType, d.ReferenceId)).ToList());
+        foreach (var doc in documents)
+        {
+            if (links.TryGetValue(CashReferenceResolver.DocumentKey(doc.ReferenceType, doc.ReferenceId), out var link))
+            {
+                doc.ReferenceLabel = link.Label;
+                doc.ReferenceRoute = link.Route;
+            }
+        }
 
         return new CashByDocumentReportDto
         {

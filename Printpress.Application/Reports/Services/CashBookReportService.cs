@@ -4,6 +4,7 @@ namespace Printpress.Application;
 
 internal sealed class CashBookReportService(
     IUnitOfWork _unitOfWork,
+    CashReferenceResolver _referenceResolver,
     ILocalizationService _loc) : ICashBookReportService
 {
     public async Task<CashBookReportDto> GetReportAsync(
@@ -139,6 +140,19 @@ internal sealed class CashBookReportService(
         var pagedLines = totalLines == 0
             ? lines
             : lines.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+        var pagedTxs = totalLines == 0
+            ? []
+            : ordered.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        var links = await _referenceResolver.ForTransactionsAsync(pagedTxs);
+        foreach (var line in pagedLines)
+        {
+            if (links.TryGetValue(line.Id, out var link))
+            {
+                line.ReferenceLabel = link.Label;
+                line.ReferenceRoute = link.Route;
+            }
+        }
 
         return new CashBookReportDto
         {

@@ -1,129 +1,100 @@
-<div class="container mt-4" dir="rtl">
+<div class="cash-account" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+    <div class="hero-text">
+      <h1>{{ account?.name || 'تفاصيل الخزينة' }}</h1>
+      <p>حركات الخزينة مع رابط للمستند المرتبط: الطلب، العامل، أو الخزينة المحوَّل إليها</p>
+    </div>
+    <button mat-stroked-button class="hero-back" type="button" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+      رجوع
+    </button>
+  </header>
 
-  <!-- Account Details Card -->
-  <mat-card>
-    <mat-card-header>
-      <div class="w-100 d-flex justify-content-between align-items-center">
-        <mat-card-title>تفاصيل الخزينة</mat-card-title>
-        <button mat-button (click)="onBack()">
-          <mat-icon>arrow_back</mat-icon>
-          رجوع
-        </button>
-      </div>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="form" class="mt-3">
-        <div class="row">
-          <div class="col-md-4">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>اسم الخزينة</mat-label>
-              <input matInput formControlName="name" />
-            </mat-form-field>
-          </div>
-          <div class="col-md-4">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>نوع الخزينة</mat-label>
-              <input matInput formControlName="type" />
-            </mat-form-field>
-          </div>
-          <div class="col-md-4">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>الرصيد الحالي</mat-label>
-              <input matInput formControlName="balance" />
-            </mat-form-field>
-          </div>
-        </div>
-      </form>
-    </mat-card-content>
+  <section class="kpis" *ngIf="account">
+    <article class="kpi kpi-type">
+      <span class="kpi-label">النوع</span>
+      <strong>{{ form.controls.type.value }}</strong>
+    </article>
+    <article class="kpi kpi-balance">
+      <span class="kpi-label">الرصيد الحالي</span>
+      <strong>{{ account.balance | number:'1.2-2' }}</strong>
+    </article>
+  </section>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية الحركات</span>
+    </div>
+    <div class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>من تاريخ</mat-label>
+        <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="filterDateFrom">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>إلى تاريخ</mat-label>
+        <input matInput [matDatepicker]="pickerTo" [(ngModel)]="filterDateTo">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>نوع الحركة</mat-label>
+        <mat-select [(ngModel)]="filterType">
+          <mat-option *ngFor="let t of transactionTypeOptions" [value]="t.value">{{ t.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>الفئة</mat-label>
+        <mat-select [(ngModel)]="filterCategory">
+          <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="actions">
+      <button mat-raised-button color="primary" type="button" (click)="applyFilter()" [disabled]="isLoading">
+        <mat-icon>search</mat-icon>
+        بحث
+      </button>
+      <button mat-stroked-button type="button" (click)="resetFilter()" [disabled]="isLoading">
+        <mat-icon>restart_alt</mat-icon>
+        إعادة تعيين
+      </button>
+    </div>
   </mat-card>
 
-  <!-- Filter Card -->
-  <mat-card class="mt-4">
-    <mat-card-header>
-      <mat-card-title>تصفية الحركات</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="row mt-3 align-items-end g-3">
-        <div class="col-md-3">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>من تاريخ</mat-label>
-            <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="filterDateFrom">
-            <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-            <mat-datepicker #pickerFrom></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <div class="col-md-3">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>إلى تاريخ</mat-label>
-            <input matInput [matDatepicker]="pickerTo" [(ngModel)]="filterDateTo">
-            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
-            <mat-datepicker #pickerTo></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <div class="col-md-2">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>نوع الحركة</mat-label>
-            <mat-select [(ngModel)]="filterType">
-              <mat-option *ngFor="let t of transactionTypeOptions" [value]="t.value">{{ t.label }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="col-md-2">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>الفئة</mat-label>
-            <mat-select [(ngModel)]="filterCategory">
-              <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="col-md-2 d-flex gap-2">
-          <button mat-raised-button color="primary" (click)="applyFilter()">بحث</button>
-          <button mat-stroked-button (click)="resetFilter()">إعادة تعيين</button>
-        </div>
-      </div>
-    </mat-card-content>
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>receipt_long</mat-icon>
+      <span>الحركات المالية</span>
+      <span class="count">{{ totalTransactionsCount }}</span>
+    </div>
+    <div class="toolbar">
+      <button mat-stroked-button color="primary" type="button" (click)="onCashBook()">كشف حساب الخزنة</button>
+      <button mat-stroked-button color="primary" type="button" (click)="onReconcile()">مطابقة الرصيد</button>
+      <button mat-stroked-button color="primary" type="button" (click)="onTransfer()">تحويل بين الخزائن</button>
+      <button mat-raised-button color="primary" type="button" (click)="onAddTransaction()">
+        <mat-icon>add</mat-icon>
+        إضافة حركة
+      </button>
+    </div>
+    <div class="table-wrap">
+      <app-table-template
+        [columnDefs]="columnDefs"
+        [originalSource]="transactions"
+        [totalItemsCount]="totalTransactionsCount"
+        [isShowEditButton]="false"
+        [isShowDeleteButton]="false"
+        [showViewButton]="false"
+        [showVoidButton]="true"
+        [linkColumnName]="'referenceLabel'"
+        (linkColumnClicked)="onReferenceClicked($event)"
+        (voidClicked)="onVoid($event)"
+        (pageChanged)="onPageChanged($event)">
+      </app-table-template>
+      <p *ngIf="transactions.length === 0" class="empty">لا توجد حركات مالية لهذه الخزينة.</p>
+    </div>
   </mat-card>
-
-  <!-- Transactions Card -->
-  <mat-card class="mt-4">
-    <mat-card-header>
-      <div class="w-100 d-flex justify-content-between align-items-center">
-        <mat-card-title>الحركات المالية</mat-card-title>
-        <div class="d-flex gap-2">
-          <button mat-stroked-button color="primary" (click)="onCashBook()">
-            كشف حساب الخزنة
-          </button>
-          <button mat-stroked-button color="primary" (click)="onReconcile()">
-            مطابقة الرصيد
-          </button>
-          <button mat-stroked-button color="primary" (click)="onTransfer()">
-            تحويل بين الخزائن
-          </button>
-          <button mat-raised-button color="primary" (click)="onAddTransaction()">
-            <mat-icon>add</mat-icon>
-            إضافة حركة
-          </button>
-        </div>
-      </div>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="mt-3">
-        <app-table-template
-          [columnDefs]="columnDefs"
-          [originalSource]="transactions"
-          [totalItemsCount]="totalTransactionsCount"
-          [isShowEditButton]="false"
-          [isShowDeleteButton]="false"
-          [showViewButton]="false"
-          [showVoidButton]="true"
-          (voidClicked)="onVoid($event)"
-          (pageChanged)="onPageChanged($event)">
-        </app-table-template>
-        <p *ngIf="transactions.length === 0" class="text-muted text-center mt-2">
-          لا توجد حركات مالية لهذه الخزينة.
-        </p>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
 </div>

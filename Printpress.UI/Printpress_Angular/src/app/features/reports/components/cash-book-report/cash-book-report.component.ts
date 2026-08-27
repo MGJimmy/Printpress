@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -25,6 +25,7 @@ import { CashBookLineDto, CashBookReportDto } from '../../models/cash-book-repor
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -72,7 +73,7 @@ export class CashBookReportComponent implements OnInit {
 
   lineColumns = [
     'transactionDate', 'lineAccountName', 'inAmount', 'outAmount',
-    'runningBalance', 'category', 'status', 'description', 'createdBy',
+    'runningBalance', 'category', 'reference', 'status', 'description', 'createdBy',
   ];
 
   summaryColumns = ['summaryAccountName', 'summaryOpening', 'summaryIn', 'summaryOut', 'summaryClosing'];

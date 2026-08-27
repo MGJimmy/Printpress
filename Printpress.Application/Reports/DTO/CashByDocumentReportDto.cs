@@ -20,6 +20,8 @@ public class CashDocumentGroupDto
 
     public Guid? ReferenceId { get; set; }
     public string ReferenceTypeName { get; set; }
+    public string ReferenceLabel { get; set; }
+    public string ReferenceRoute { get; set; }
     public int TransactionCount { get; set; }
     public decimal TotalIn { get; set; }
     public decimal TotalOut { get; set; }

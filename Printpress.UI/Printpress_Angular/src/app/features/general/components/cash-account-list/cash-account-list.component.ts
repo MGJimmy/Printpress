@@ -57,6 +57,10 @@ export class CashAccountListComponent implements OnInit {
     this.router.navigate(['/general/cash-accounts/view', id]);
   }
 
+  onNameClicked(row: CashAccountDto): void {
+    this.onView(row.id);
+  }
+
   onTransfer(): void {
     this.dialog.open(TransferCashDialogComponent, {
       width: '560px',

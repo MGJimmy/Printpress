@@ -4,6 +4,7 @@ namespace Printpress.Application;
 
 internal sealed class CashTreasuryReportService(
     IUnitOfWork _unitOfWork,
+    CashReferenceResolver _referenceResolver,
     ILocalizationService _loc) : ICashTreasuryReportService
 {
     public async Task<CashTreasuryReportDto> GetReportAsync(DateTime? dateFrom, DateTime? dateTo)
@@ -30,19 +31,23 @@ internal sealed class CashTreasuryReportService(
                  && (periodEndExclusive == null || t.TransactionDate < periodEndExclusive),
             nameof(CashTransaction.CashAccount))).ToList();
 
-        var largestIn = periodTxs
+        var largestInTx = periodTxs
             .Where(t => t.Type == CashTransactionType.In)
             .OrderByDescending(t => t.Amount)
             .Take(10)
-            .Select(ToMovement)
             .ToList();
 
-        var largestOut = periodTxs
+        var largestOutTx = periodTxs
             .Where(t => t.Type == CashTransactionType.Out)
             .OrderByDescending(t => t.Amount)
             .Take(10)
-            .Select(ToMovement)
             .ToList();
+
+        var movementLinks = await _referenceResolver.ForTransactionsAsync(
+            largestInTx.Concat(largestOutTx).ToList());
+
+        var largestIn = largestInTx.Select(t => ToMovement(t, movementLinks)).ToList();
+        var largestOut = largestOutTx.Select(t => ToMovement(t, movementLinks)).ToList();
 
         var transfers = periodTxs
             .Where(t => t.Category == CashTransactionCategory.Transfer && t.ReferenceId is not null)
@@ -58,7 +63,9 @@ internal sealed class CashTreasuryReportService(
                     TransactionDate = sample?.TransactionDate ?? default,
                     Amount = sample?.Amount ?? 0,
                     FromAccountName = from?.CashAccount?.Name ?? "—",
+                    FromAccountId = from?.CashAccountId,
                     ToAccountName = to?.CashAccount?.Name ?? "—",
+                    ToAccountId = to?.CashAccountId,
                     Description = sample?.Description,
                     IsComplete = from is not null && to is not null
                 };
@@ -78,13 +85,20 @@ internal sealed class CashTreasuryReportService(
         };
     }
 
-    private static CashTreasuryMovementDto ToMovement(CashTransaction t) => new()
+    private static CashTreasuryMovementDto ToMovement(
+        CashTransaction t, IReadOnlyDictionary<Guid, CashReferenceLink> links)
     {
-        Id = t.Id,
-        TransactionDate = t.TransactionDate,
-        CashAccountName = t.CashAccount?.Name ?? string.Empty,
-        Amount = t.Amount,
-        Category = t.Category.ToString(),
-        Description = t.Description
-    };
+        links.TryGetValue(t.Id, out var link);
+        return new CashTreasuryMovementDto
+        {
+            Id = t.Id,
+            TransactionDate = t.TransactionDate,
+            CashAccountName = t.CashAccount?.Name ?? string.Empty,
+            Amount = t.Amount,
+            Category = t.Category.ToString(),
+            Description = t.Description,
+            ReferenceLabel = link?.Label,
+            ReferenceRoute = link?.Route
+        };
+    }
 }

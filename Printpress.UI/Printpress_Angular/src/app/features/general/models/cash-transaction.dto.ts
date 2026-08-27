@@ -13,6 +13,8 @@ export interface CashTransactionDto {
   reversesTransactionId: string | null;
   canVoid: boolean;
   status?: string;
+  referenceLabel?: string | null;
+  referenceRoute?: string | null;
 }
 
 export interface ExternalOrderDto {

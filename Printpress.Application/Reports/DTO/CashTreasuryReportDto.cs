@@ -27,6 +27,8 @@ public class CashTreasuryMovementDto
     public decimal Amount { get; set; }
     public string Category { get; set; }
     public string Description { get; set; }
+    public string ReferenceLabel { get; set; }
+    public string ReferenceRoute { get; set; }
 }
 
 public class CashTransferRegisterRowDto
@@ -35,7 +37,9 @@ public class CashTransferRegisterRowDto
     public DateTime TransactionDate { get; set; }
     public decimal Amount { get; set; }
     public string FromAccountName { get; set; }
+    public Guid? FromAccountId { get; set; }
     public string ToAccountName { get; set; }
+    public Guid? ToAccountId { get; set; }
     public string Description { get; set; }
     public bool IsComplete { get; set; }
 }

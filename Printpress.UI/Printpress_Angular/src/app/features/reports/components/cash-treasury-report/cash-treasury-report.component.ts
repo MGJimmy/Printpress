@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,7 +20,7 @@ import { CashTreasuryReportDto } from '../../models/cash-treasury-report.dto';
   selector: 'app-cash-treasury-report',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
+    CommonModule, RouterLink, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
     MatButtonModule, MatIconModule, MatDatepickerModule, MatNativeDateModule, MatTableModule,
     MatProgressSpinnerModule,
   ],
@@ -30,8 +31,8 @@ import { CashTreasuryReportDto } from '../../models/cash-treasury-report.dto';
 export class CashTreasuryReportComponent implements OnInit {
   report: CashTreasuryReportDto | null = null;
   isLoading = false;
-  inColumns = ['inDate', 'inAccount', 'inAmount', 'inCategory', 'inDesc'];
-  outColumns = ['outDate', 'outAccount', 'outAmount', 'outCategory', 'outDesc'];
+  inColumns = ['inDate', 'inAccount', 'inAmount', 'inCategory', 'inRef', 'inDesc'];
+  outColumns = ['outDate', 'outAccount', 'outAmount', 'outCategory', 'outRef', 'outDesc'];
   transferColumns = ['trDate', 'trFrom', 'trTo', 'trAmount', 'trStatus', 'trDesc'];
 
   filterForm: FormGroup<{

@@ -17,6 +17,8 @@
               [isShowEditButton]="false"
               [isShowDeleteButton]="false"
               [showViewButton]="true"
+              [linkColumnName]="'name'"
+              (linkColumnClicked)="onNameClicked($event)"
               (viewClicked)="onView($event)">
             </app-table-template>
           </div>

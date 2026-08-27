@@ -35,4 +35,6 @@ export interface CashBookLineDto {
   description: string;
   status: string;
   createdBy: string;
+  referenceLabel?: string | null;
+  referenceRoute?: string | null;
 }
