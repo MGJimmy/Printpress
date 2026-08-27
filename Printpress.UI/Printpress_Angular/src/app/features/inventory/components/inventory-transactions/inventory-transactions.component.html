@@ -1,0 +1,167 @@
+<div class="inv-docs theme-tx" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>swap_vert</mat-icon>
+    </div>
+    <div>
+      <h1>حركات المخزن</h1>
+      <p>كل حركات الدخول والخروج والتسوية، مع المرجع والعامل إن وُجد</p>
+    </div>
+    <div class="hero-actions">
+      <button mat-stroked-button type="button" (click)="goItems()">
+        <mat-icon>inventory_2</mat-icon>
+        العناصر
+      </button>
+      <button mat-stroked-button type="button" (click)="goCreateOut()">
+        <mat-icon>remove</mat-icon>
+        صرف جديد
+      </button>
+    </div>
+  </header>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية الحركات</span>
+    </div>
+    <form [formGroup]="filterForm">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>التصنيف</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>العنصر</mat-label>
+          <mat-select formControlName="itemId" [disabled]="!filterForm.controls.categoryId.value">
+            <mat-option value="">الكل</mat-option>
+            <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>نوع الحركة</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="">الكل</mat-option>
+            <mat-option value="In">دخول</mat-option>
+            <mat-option value="Out">خروج</mat-option>
+            <mat-option value="Adjustment">تسوية</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>العامل</mat-label>
+          <mat-select formControlName="workerId">
+            <mat-option value="">الكل</mat-option>
+            <mat-option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoading">
+          <mat-icon>search</mat-icon>
+          بحث
+        </button>
+        <button mat-stroked-button type="button" (click)="reset()" [disabled]="isLoading">
+          <mat-icon>restart_alt</mat-icon>
+          إعادة تعيين
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <div class="loading" *ngIf="isLoading && !report">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="report">
+    <section class="kpis">
+      <article class="kpi kpi-invoices">
+        <span class="kpi-label">عدد الحركات</span>
+        <strong>{{ report.movementCount | number }}</strong>
+      </article>
+      <article class="kpi kpi-lines">
+        <span class="kpi-label">العناصر</span>
+        <strong>{{ report.itemCount | number }}</strong>
+      </article>
+      <article class="kpi kpi-qty">
+        <span class="kpi-label">كمية الدخول</span>
+        <strong>{{ report.totalInQuantity | number }}</strong>
+      </article>
+      <article class="kpi kpi-amount">
+        <span class="kpi-label">كمية الخروج</span>
+        <strong>{{ report.totalOutQuantity | number }}</strong>
+      </article>
+    </section>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>list_alt</mat-icon>
+        <span>الحركات</span>
+      </div>
+      <div class="table-wrap" *ngIf="report.rows.length; else emptyRows">
+        <table mat-table [dataSource]="report.rows" class="lines-table">
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>النوع</th>
+            <td mat-cell *matCellDef="let row">
+              <span [class]="typeClass(row.inventoryTransactionType)">{{ typeLabel(row.inventoryTransactionType) }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="itemName">
+            <th mat-header-cell *matHeaderCellDef>العنصر</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="item-link" [routerLink]="['/inventory/items/view', row.itemId]">{{ row.itemName }}</a>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="categoryName">
+            <th mat-header-cell *matHeaderCellDef>التصنيف</th>
+            <td mat-cell *matCellDef="let row">{{ row.categoryName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>الكمية</th>
+            <td mat-cell *matCellDef="let row" [class]="qtyClass(row.inventoryTransactionType)">{{ row.quantity | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a *ngIf="row.referenceRoute" class="ref-link" href="javascript:void(0)" (click)="openReference(row.referenceRoute)">{{ row.referenceLabel }}</a>
+              <span *ngIf="!row.referenceRoute">{{ row.referenceLabel }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="workerName">
+            <th mat-header-cell *matHeaderCellDef>العامل</th>
+            <td mat-cell *matCellDef="let row">
+              <a *ngIf="row.workerId" class="item-link" [routerLink]="['/hr/workers', row.workerId]">{{ row.workerName }}</a>
+              <span *ngIf="!row.workerId">{{ row.workerName || '—' }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
+      <ng-template #emptyRows>
+        <p class="empty">لا توجد حركات في الفترة المحددة</p>
+      </ng-template>
+    </mat-card>
+  </ng-container>
+</div>

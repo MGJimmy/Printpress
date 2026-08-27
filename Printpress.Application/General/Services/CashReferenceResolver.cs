@@ -122,7 +122,11 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
                 => new CashReferenceLink { Label = "حركة راتب" },
 
             CashTransactionReferenceType.PurchaseInventoryInvoice when lookups.Purchases.TryGetValue(key, out var inv)
-                => new CashReferenceLink { Label = $"فاتورة مخزن: {inv.InvoiceNumber}" },
+                => new CashReferenceLink
+                {
+                    Label = $"فاتورة مخزن: {inv.InvoiceNumber}",
+                    Route = $"/inventory/stock-in/invoices?invoiceId={inv.Id}"
+                },
             CashTransactionReferenceType.PurchaseInventoryInvoice
                 => new CashReferenceLink { Label = "فاتورة مشتريات مخزن" },
 

@@ -153,6 +153,22 @@ export const routes: Routes = [
                 './features/inventory/components/stock-out/stock-out.component'
               ).then((m) => m.StockOutComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'stock-in/invoices',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/inventory-stock-in-invoices/inventory-stock-in-invoices.component'
+              ).then((m) => m.InventoryStockInInvoicesComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'transactions',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/inventory-transactions/inventory-transactions.component'
+              ).then((m) => m.InventoryTransactionsComponent),
+            canActivate: [authGuard],
           }
         ]
       },

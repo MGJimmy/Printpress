@@ -10,13 +10,14 @@ import { InventoryService } from '../../services/inventory.service';
 import { InventoryItemDto } from '../../models/inventory-item.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
-import { MatIcon } from "@angular/material/icon";
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-inventory-item-list',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, TableTemplateComponent, MatIcon],
+  imports: [CommonModule, MatCardModule, MatButtonModule, TableTemplateComponent, MatIconModule],
   templateUrl: './inventory-item-list.component.html',
+  styleUrl: './inventory-item-list.component.scss',
 })
 export class InventoryItemListComponent implements OnInit {
   items: InventoryItemDto[] = [];
@@ -123,7 +124,15 @@ export class InventoryItemListComponent implements OnInit {
     this.router.navigate(['/inventory/stock-in']);
   }
 
+  onStockInInvoicesClick() {
+    this.router.navigate(['/inventory/stock-in/invoices']);
+  }
+
   onStockOutClick() {
     this.router.navigate(['/inventory/stock-out']);
+  }
+
+  onTransactionsClick() {
+    this.router.navigate(['/inventory/transactions']);
   }
 }

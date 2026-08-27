@@ -42,6 +42,62 @@ internal sealed class PurchaseInvoiceService(
         return _mapper.Map<PurchaseInvoiceDto>(saved);
     }
 
+    public async Task<InventoryPurchaseInvoiceListDto> GetAllAsync(
+        int? categoryId, Guid? itemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        if (dateFrom is not null && dateToExclusive is not null && dateFrom >= dateToExclusive)
+            throw new ValidationExeption("تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له");
+
+        var invoices = (await _unitOfWork.PurchaseInvoiceRepository.FilterAsync(
+                i => (dateFrom == null || i.InvoiceDate >= dateFrom)
+                    && (dateToExclusive == null || i.InvoiceDate < dateToExclusive)
+                    && (itemId == null || i.PurchaseInvoiceLines.Any(l => l.InventoryItemId == itemId))
+                    && (categoryId == null || i.PurchaseInvoiceLines.Any(l => l.InventoryItem.InventoryItemCategoryId == categoryId)),
+                nameof(PurchaseInvoice.PurchaseInvoiceLines),
+                $"{nameof(PurchaseInvoice.PurchaseInvoiceLines)}.{nameof(PurchaseInvoiceLine.InventoryItem)}",
+                $"{nameof(PurchaseInvoice.PurchaseInvoiceLines)}.{nameof(PurchaseInvoiceLine.InventoryItem)}.{nameof(InventoryItem.InventoryItemCategory_LKP)}"))
+            .OrderByDescending(i => i.InvoiceDate)
+            .ThenByDescending(i => i.CreatedAt)
+            .ToList();
+
+        var items = invoices.Select(invoice => new InventoryPurchaseInvoiceListItemDto
+        {
+            Id = invoice.Id,
+            InvoiceNumber = invoice.InvoiceNumber,
+            InvoiceDate = invoice.InvoiceDate,
+            SupplierName = invoice.SupplierName,
+            TotalAmount = invoice.TotalAmount,
+            AttachmentFilePath = invoice.AttachmentFilePath,
+            CreatedAt = invoice.CreatedAt,
+            Lines = invoice.PurchaseInvoiceLines
+                .OrderBy(l => l.InventoryItem?.Name)
+                .Select(MapLine)
+                .ToList()
+        }).ToList();
+
+        return new InventoryPurchaseInvoiceListDto
+        {
+            Invoices = items,
+            InvoiceCount = items.Count,
+            LineCount = items.Sum(i => i.Lines.Count),
+            TotalQuantity = items.SelectMany(i => i.Lines).Sum(l => l.Quantity),
+            TotalAmount = items.Sum(i => i.TotalAmount)
+        };
+    }
+
+    private static InventoryPurchaseInvoiceLineDto MapLine(PurchaseInvoiceLine line) => new()
+    {
+        Id = line.Id,
+        ItemId = line.InventoryItemId,
+        ItemName = line.InventoryItem?.Name ?? "—",
+        CategoryName = line.InventoryItem?.InventoryItemCategory_LKP?.Name ?? "—",
+        PacksPerCarton = line.InventoryItem?.PacksPerCarton,
+        UnitsPerPack = line.InventoryItem?.UnitsPerPack,
+        Quantity = line.Quantity,
+        UnitPrice = line.UnitPrice,
+        LineTotal = line.LineTotal
+    };
+
     private async Task AddCashAccountTransaction(PurchaseInvoice purchaseInvoice)
     {
         var cashAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)

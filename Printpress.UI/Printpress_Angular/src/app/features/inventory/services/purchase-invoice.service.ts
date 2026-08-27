@@ -4,6 +4,7 @@ import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { PurchaseInvoiceCreateDto } from '../models/purchase-invoice-create.dto';
 import { ApiResponseDto } from '../../../core/models/api-response.dto';
+import { InventoryPurchaseInvoiceListDto } from '../models/inventory-document-list.dto';
 
 @Injectable({ providedIn: 'root' })
 export class PurchaseInvoiceService {
@@ -17,5 +18,22 @@ export class PurchaseInvoiceService {
 
   createInvoice(dto: PurchaseInvoiceCreateDto): Observable<any> {
     return this.httpService.post<any>(ApiUrlResource.PurchaseInvoiceAPI.add, dto);
+  }
+
+  getAll(
+    categoryId?: number | null,
+    itemId?: string | null,
+    dateFrom?: string,
+    dateTo?: string,
+  ): Observable<ApiResponseDto<InventoryPurchaseInvoiceListDto>> {
+    const params: Record<string, string | number> = {};
+    if (categoryId != null) params['categoryId'] = categoryId;
+    if (itemId) params['itemId'] = itemId;
+    if (dateFrom) params['dateFrom'] = dateFrom;
+    if (dateTo) params['dateTo'] = dateTo;
+    return this.httpService.get<ApiResponseDto<InventoryPurchaseInvoiceListDto>>(
+      ApiUrlResource.PurchaseInvoiceAPI.getAll,
+      params,
+    );
   }
 }
