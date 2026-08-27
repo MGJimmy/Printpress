@@ -70,7 +70,9 @@ function handleTokenRefresh(
                 // Retry the original request with the new token
                 const retried = req.clone({
                     withCredentials: true,
-                    headers: req.headers.set('Authorization', `Bearer ${response.token.token}`)
+                    headers: req.headers
+                      .set('Authorization', `Bearer ${response.token.token}`)
+                      .set('Accept-Language', 'ar')
                 });
                 return next(retried);
             })
@@ -84,7 +86,9 @@ function handleTokenRefresh(
         switchMap(token => {
             const retried = req.clone({
                 withCredentials: true,
-                headers: req.headers.set('Authorization', `Bearer ${token!}`)
+                headers: req.headers
+                  .set('Authorization', `Bearer ${token!}`)
+                  .set('Accept-Language', 'ar')
             });
             return next(retried);
         })
@@ -101,6 +105,9 @@ function handle400(error: HttpErrorResponse, toastr: ToastrService) {
         const errorMessages: string[] = [];
 
         if (error.error.errors) {
+            if (Array.isArray(error.error.errors)) {
+                errorMessages.push(...error.error.errors.filter((m: unknown) => typeof m === 'string'));
+            } else {
             for (const key in error.error.errors) {
                 if (error.error.errors.hasOwnProperty(key)) {
                     const messages = error.error.errors[key];
@@ -110,6 +117,7 @@ function handle400(error: HttpErrorResponse, toastr: ToastrService) {
                         errorMessages.push(messages);
                     }
                 }
+            }
             }
         } else if (error.error.message) {
             errorMessages.push(error.error.message);

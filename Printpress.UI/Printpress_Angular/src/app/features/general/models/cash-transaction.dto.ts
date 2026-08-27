@@ -9,6 +9,10 @@ export interface CashTransactionDto {
   description: string;
   transactionDate: string;
   createdAt: string;
+  isVoided: boolean;
+  reversesTransactionId: string | null;
+  canVoid: boolean;
+  status?: string;
 }
 
 export interface ExternalOrderDto {

@@ -165,6 +165,8 @@ export class ApiUrlResource {
   public static readonly CashTransactionAPI = {
     getByCashAccountId: (cashAccountId: string) => `${ApiUrlResource.CashTransaction_URL}/getByCashAccountId/${cashAccountId}`,
     add: ApiUrlResource.CashTransaction_URL + '/add',
+    void: (id: string) => `${ApiUrlResource.CashTransaction_URL}/void/${id}`,
+    transfer: ApiUrlResource.CashTransaction_URL + '/transfer',
     externalOrders: ApiUrlResource.CashTransaction_URL + '/external-orders',
   };
 
@@ -172,7 +174,8 @@ export class ApiUrlResource {
   public static readonly ReportsAPI = {
     orderInventoryItems: ApiUrlResource.Reports_URL + '/order-inventory-items',
     inventoryServicesUsage: ApiUrlResource.Reports_URL + '/inventory-services-usage',
-    filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories'
+    filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories',
+    cashBook: ApiUrlResource.Reports_URL + '/cash-book',
   };
 
 }

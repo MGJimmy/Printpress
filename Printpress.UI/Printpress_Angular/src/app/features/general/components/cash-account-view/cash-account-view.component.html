@@ -89,10 +89,18 @@
     <mat-card-header>
       <div class="w-100 d-flex justify-content-between align-items-center">
         <mat-card-title>الحركات المالية</mat-card-title>
-        <button mat-raised-button color="primary" (click)="onAddTransaction()">
-          <mat-icon>add</mat-icon>
-          إضافة حركة
-        </button>
+        <div class="d-flex gap-2">
+          <button mat-stroked-button color="primary" (click)="onCashBook()">
+            كشف حساب الخزنة
+          </button>
+          <button mat-stroked-button color="primary" (click)="onTransfer()">
+            تحويل بين الخزائن
+          </button>
+          <button mat-raised-button color="primary" (click)="onAddTransaction()">
+            <mat-icon>add</mat-icon>
+            إضافة حركة
+          </button>
+        </div>
       </div>
     </mat-card-header>
     <mat-card-content>
@@ -104,6 +112,8 @@
           [isShowEditButton]="false"
           [isShowDeleteButton]="false"
           [showViewButton]="false"
+          [showVoidButton]="true"
+          (voidClicked)="onVoid($event)"
           (pageChanged)="onPageChanged($event)">
         </app-table-template>
         <p *ngIf="transactions.length === 0" class="text-muted text-center mt-2">

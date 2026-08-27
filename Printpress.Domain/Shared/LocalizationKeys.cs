@@ -52,5 +52,27 @@ public static class LocalizationKeys
         public const string PurchaseInvoiceDescription = "cashAccounts.purchase_invoice_description";
         public const string SparePurchaseInvoiceDescription = "cashAccounts.spare_purchase_invoice_description";
         public const string SpareSellingInvoiceDescription = "cashAccounts.spare_selling_invoice_description";
+        public const string AlreadyVoided = "cashAccounts.already_voided";
+        public const string CannotVoidReversing = "cashAccounts.cannot_void_reversing";
+        public const string CannotVoidOrderOrInvoice = "cashAccounts.cannot_void_order_or_invoice";
+        public const string CannotVoidSalaryFromVault = "cashAccounts.cannot_void_salary_from_vault";
+        public const string CannotTransferSameAccount = "cashAccounts.cannot_transfer_same_account";
+        public const string TransferPairIncomplete = "cashAccounts.transfer_pair_incomplete";
+        public const string VoidDescription = "cashAccounts.void_description";
+        public const string TransferDescription = "cashAccounts.transfer_description";
+        public const string InvalidType = "cashAccounts.invalid_type";
+        public const string InvalidCategory = "cashAccounts.invalid_category";
+        public const string InvalidReferenceType = "cashAccounts.invalid_reference_type";
+        public const string FieldCashAccount = "cashAccounts.field_cash_account";
+        public const string FieldType = "cashAccounts.field_type";
+        public const string FieldCategory = "cashAccounts.field_category";
+        public const string FieldAmount = "cashAccounts.field_amount";
+        public const string FieldDate = "cashAccounts.field_date";
+        public const string FieldDescription = "cashAccounts.field_description";
+        public const string FieldReferenceId = "cashAccounts.field_reference_id";
+        public const string FieldFromAccount = "cashAccounts.field_from_account";
+        public const string FieldToAccount = "cashAccounts.field_to_account";
+        public const string TransactionNotFound = "cashAccounts.transaction_not_found";
+        public const string InvalidDateRange = "cashAccounts.invalid_date_range";
     }
 }

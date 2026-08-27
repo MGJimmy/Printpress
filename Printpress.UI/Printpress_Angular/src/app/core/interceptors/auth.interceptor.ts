@@ -6,7 +6,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
 
     // Always send withCredentials so the HttpOnly refresh token cookie is included
-    const withCreds = req.clone({ withCredentials: true });
+    const withCreds = req.clone({
+      withCredentials: true,
+      setHeaders: { 'Accept-Language': 'ar' },
+    });
 
     if (authService.shouldSkipAuth(req.url)) {
         return next(withCreds);

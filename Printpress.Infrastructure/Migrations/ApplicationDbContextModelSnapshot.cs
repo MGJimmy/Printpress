@@ -84,11 +84,17 @@ namespace Printpress.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<bool>("IsVoided")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("ReferenceId")
                         .HasColumnType("uuid");
 
                     b.Property<int?>("ReferenceType")
                         .HasColumnType("integer");
+
+                    b.Property<Guid?>("ReversesTransactionId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("timestamp with time zone");
@@ -105,6 +111,8 @@ namespace Printpress.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CashAccountId");
+
+                    b.HasIndex("ReversesTransactionId");
 
                     b.ToTable("CashTransactions", "General");
                 });
@@ -1217,12 +1225,19 @@ namespace Printpress.Infrastructure.Migrations
             modelBuilder.Entity("Printpress.Domain.CashTransaction", b =>
                 {
                     b.HasOne("Printpress.Domain.CashAccount", "CashAccount")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("CashAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Printpress.Domain.CashTransaction", "ReversesTransaction")
+                        .WithMany()
+                        .HasForeignKey("ReversesTransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("CashAccount");
+
+                    b.Navigation("ReversesTransaction");
                 });
 
             modelBuilder.Entity("Printpress.Domain.InventoryItem", b =>
@@ -1531,6 +1546,11 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.Navigation("Services");
 
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Printpress.Domain.CashAccount", b =>
+                {
                     b.Navigation("Transactions");
                 });
 

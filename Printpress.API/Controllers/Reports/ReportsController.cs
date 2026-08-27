@@ -7,7 +7,8 @@ namespace Printpress.API;
 [AllowAnonymous]
 public class ReportsController(
     IOrderInventoryItemsReportService _reportService,
-    IInventoryServicesUsageReportService _inventoryServicesService) : AppBaseController
+    IInventoryServicesUsageReportService _inventoryServicesService,
+    ICashBookReportService _cashBookReportService) : AppBaseController
 {
     [HttpGet("order-inventory-items")]
     public async Task<IActionResult> GetOrderInventoryItemsReport(
@@ -38,6 +39,25 @@ public class ReportsController(
     public async Task<IActionResult> GetServiceCategories()
     {
         var result = await _inventoryServicesService.GetServiceCategoriesAsync();
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("cash-book")]
+    public async Task<IActionResult> GetCashBook(
+        [FromQuery] Guid? cashAccountId,
+        [FromQuery] DateOnly? dateFrom,
+        [FromQuery] DateOnly? dateTo,
+        [FromQuery] string? type,
+        [FromQuery] string? category,
+        [FromQuery] string? search,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
+        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        var result = await _cashBookReportService.GetReportAsync(
+            cashAccountId, from, to, type, category, search, page, pageSize);
         return Ok(result);
     }
 }

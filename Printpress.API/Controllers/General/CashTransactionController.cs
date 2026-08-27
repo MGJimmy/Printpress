@@ -33,6 +33,20 @@ public class CashTransactionController(ICashTransactionService _cashTransactionS
         return Ok(result);
     }
 
+    [HttpPost("void/{id}")]
+    public async Task<IActionResult> Void(Guid id, [FromBody] VoidCashTransactionDto payload)
+    {
+        await _cashTransactionService.VoidAsync(id, payload, UserId);
+        return Ok();
+    }
+
+    [HttpPost("transfer")]
+    public async Task<IActionResult> Transfer([FromBody] TransferCashTransactionDto payload)
+    {
+        await _cashTransactionService.TransferAsync(payload, UserId);
+        return Ok();
+    }
+
     [HttpGet("external-orders")]
     public async Task<IActionResult> GetExternalOrders()
     {

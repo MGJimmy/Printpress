@@ -16,8 +16,11 @@ namespace Printpress.Domain
         public decimal Amount { get; private set; }
         public string Description { get; private set; }
         public DateTime TransactionDate { get; private set; }
+        public bool IsVoided { get; private set; }
+        public Guid? ReversesTransactionId { get; private set; }
 
         public virtual CashAccount CashAccount { get; private set; }
+        public virtual CashTransaction ReversesTransaction { get; private set; }
 
         // For EF Core only
         private CashTransaction()
@@ -44,6 +47,17 @@ namespace Printpress.Domain
             Amount = amount;
             Description = description;
             TransactionDate = transactionDate;
+            IsVoided = false;
+        }
+
+        public void MarkAsVoided()
+        {
+            IsVoided = true;
+        }
+
+        public void SetReversesTransactionId(Guid originalTransactionId)
+        {
+            ReversesTransactionId = originalTransactionId;
         }
     }
 }

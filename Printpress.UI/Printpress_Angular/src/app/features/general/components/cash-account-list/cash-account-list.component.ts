@@ -7,12 +7,14 @@ import { TableColDefinitionModel } from '../../../../shared/models/table-col-def
 import { CashAccountDto } from '../../models/cash-account.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { CashAccountService } from '../../services/cash-account.service';
+import { TransferCashDialogComponent } from '../transfer-cash-dialog/transfer-cash-dialog.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 
 @Component({
   selector: 'app-cash-account-list',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, TableTemplateComponent],
+  imports: [CommonModule, MatCardModule, MatButtonModule, TableTemplateComponent, MatDialogModule],
   templateUrl: './cash-account-list.component.html',
 })
 export class CashAccountListComponent implements OnInit {
@@ -29,6 +31,7 @@ export class CashAccountListComponent implements OnInit {
     private cashAccountService: CashAccountService,
     private alertService: AlertService,
     private router: Router,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -52,5 +55,14 @@ export class CashAccountListComponent implements OnInit {
 
   onView(id: string): void {
     this.router.navigate(['/general/cash-accounts/view', id]);
+  }
+
+  onTransfer(): void {
+    this.dialog.open(TransferCashDialogComponent, {
+      width: '560px',
+      data: { fromCashAccountId: this.accounts[0]?.id ?? '' },
+    }).afterClosed().subscribe((done: boolean) => {
+      if (done) this.loadAccounts();
+    });
   }
 }

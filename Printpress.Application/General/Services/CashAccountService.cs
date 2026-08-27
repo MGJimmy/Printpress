@@ -5,7 +5,8 @@ namespace Printpress.Application;
 
 internal sealed class CashAccountService(
     IUnitOfWork _unitOfWork,
-    IMapper _mapper) : ICashAccountService
+    IMapper _mapper,
+    ILocalizationService _loc) : ICashAccountService
 {
     public async Task<List<CashAccountDto>> GetAllAsync()
     {
@@ -17,7 +18,7 @@ internal sealed class CashAccountService(
     {
         var account = await _unitOfWork.CashAccountRepository.FindAsync(id);
         if (account is null)
-            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
 
         return _mapper.Map<CashAccountDto>(account);
     }

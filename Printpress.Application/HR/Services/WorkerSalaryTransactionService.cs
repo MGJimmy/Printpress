@@ -141,15 +141,20 @@ internal sealed class WorkerSalaryTransactionService(
 
         var cashTransaction = await _unitOfWork.CashTransactionRepository.FirstOrDefaultAsync(
             t => t.ReferenceType == CashTransactionReferenceType.WorkerSalaryTransaction
-                 && t.ReferenceId == transaction.Id);
+                 && t.ReferenceId == transaction.Id
+                 && t.ReversesTransactionId == null);
 
-        if (cashTransaction is not null)
+        if (cashTransaction is not null && !cashTransaction.IsVoided)
         {
             var cashAccount = await _unitOfWork.CashAccountRepository.FindAsync(cashTransaction.CashAccountId)
                 ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
 
-            _cashAccountDomainService.RemoveCashAccountTransaction(cashAccount, cashTransaction);
-            _unitOfWork.CashTransactionRepository.Remove(cashTransaction);
+            var description = _loc.Get(LocalizationKeys.CashAccounts.VoidDescription, cashTransaction.Description ?? string.Empty);
+            if (description.Length > 500)
+                description = description[..500];
+
+            _cashAccountDomainService.Void(cashAccount, cashTransaction, description, DateTime.UtcNow);
+            _unitOfWork.CashTransactionRepository.Update(cashTransaction);
             _unitOfWork.CashAccountRepository.Update(cashAccount);
         }
 

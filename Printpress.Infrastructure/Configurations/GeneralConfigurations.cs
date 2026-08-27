@@ -54,6 +54,14 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.ReferenceType)
                 .HasConversion<int?>();
 
+            entity.Property(x => x.IsVoided)
+                .IsRequired();
+
+            entity.HasOne(x => x.ReversesTransaction)
+                .WithMany()
+                .HasForeignKey(x => x.ReversesTransactionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             entity.HasOne(x => x.CashAccount)
                 .WithMany(x => x.Transactions)
                 .HasForeignKey(x => x.CashAccountId);

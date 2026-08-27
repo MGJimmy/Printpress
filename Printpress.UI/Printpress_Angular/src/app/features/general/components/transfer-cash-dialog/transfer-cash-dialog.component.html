@@ -1,0 +1,49 @@
+add<h2 mat-dialog-title>تحويل بين الخزائن</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="mt-2">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>من خزينة</mat-label>
+          <mat-select formControlName="fromCashAccountId">
+            <mat-option *ngFor="let a of accounts" [value]="a.id">{{ accountLabel(a) }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>إلى خزينة</mat-label>
+          <mat-select formControlName="toCashAccountId">
+            <mat-option *ngFor="let a of accounts" [value]="a.id">{{ accountLabel(a) }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>المبلغ</mat-label>
+          <input matInput type="number" formControlName="amount" min="0.01" />
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>التاريخ</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="transactionDate" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>الوصف</mat-label>
+          <input matInput formControlName="description" />
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">إلغاء</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()" [disabled]="isSubmitting">تحويل</button>
+</mat-dialog-actions>

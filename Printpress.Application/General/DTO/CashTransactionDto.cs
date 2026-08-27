@@ -22,4 +22,7 @@ public class CashTransactionDto
     public string Description { get; set; }
     public DateTime TransactionDate { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool IsVoided { get; set; }
+    public Guid? ReversesTransactionId { get; set; }
+    public bool CanVoid { get; set; }
 }

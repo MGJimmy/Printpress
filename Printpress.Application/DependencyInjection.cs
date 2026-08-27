@@ -90,12 +90,14 @@ public static class DependencyInjection
         #region Reports
         services.AddScoped<IOrderInventoryItemsReportService, OrderInventoryItemsReportService>();
         services.AddScoped<IInventoryServicesUsageReportService, InventoryServicesUsageReportService>();
+        services.AddScoped<ICashBookReportService, CashBookReportService>();
         #endregion
 
         #region General
         services.AddScoped<ICashAccountService, CashAccountService>();
         services.AddScoped<ICashTransactionService, CashTransactionService>();
         services.AddScoped<IValidator<AddCashTransactionDto>, AddCashTransactionDtoValidator>();
+        services.AddScoped<IValidator<TransferCashTransactionDto>, TransferCashTransactionDtoValidator>();
         services.AddAutoMapper(typeof(CashAccountProfile));
         services.AddAutoMapper(typeof(CashTransactionProfile));
         #endregion

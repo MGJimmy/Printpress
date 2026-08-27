@@ -22,32 +22,12 @@
             ApplyBalance(transaction);
         }
 
-        public void RemoveTransaction(CashTransaction transaction)
-        {
-            if (transaction.Type == CashTransactionType.In && transaction.Amount > Balance)
-                throw new BusinessExceptions(LocalizationKeys.CashAccounts.InsufficientFunds);
-
-            ReverseBalance(transaction);
-
-            var existing = _transactions.FirstOrDefault(t => t.Id == transaction.Id);
-            if (existing != null)
-                _transactions.Remove(existing);
-        }
-
         private void ApplyBalance(CashTransaction transaction)
         {
             if (transaction.Type == CashTransactionType.In)
                 Balance += transaction.Amount;
             else if (transaction.Type == CashTransactionType.Out)
                 Balance -= transaction.Amount;
-        }
-
-        private void ReverseBalance(CashTransaction transaction)
-        {
-            if (transaction.Type == CashTransactionType.In)
-                Balance -= transaction.Amount;
-            else if (transaction.Type == CashTransactionType.Out)
-                Balance += transaction.Amount;
         }
     }
 }

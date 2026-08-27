@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Input, OnInit, input } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { SharedPaginationComponent } from '../shared-pagination/shared-pagination.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,9 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatTableModule,
     CommonModule,
     FontAwesomeModule,
-    FontAwesomeModule,
     TranslateModule
-
   ],
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.css'],
@@ -44,6 +42,8 @@ export class TableTemplateComponent implements OnInit {
   @Input() totalItemsCount!: number;
   @Input() isShowEditButton: boolean = false;
   @Input() isShowDeleteButton: boolean = false;
+  @Input() showVoidButton: boolean = false;
+  @Output() voidClicked: EventEmitter<string> = new EventEmitter<string>();
   @Input() isShowHeader: boolean = true;
   @Input() reportTable: boolean = false;
   @Input() showViewButton: boolean = false;
@@ -118,6 +118,10 @@ export class TableTemplateComponent implements OnInit {
   }
   onDelete(element: any): void {
     this.deleteClicked.emit(element.id);
+  }
+
+  onVoid(element: any): void {
+    this.voidClicked.emit(element.id);
   }
 
   onView(element: any): void {

@@ -52,6 +52,8 @@
     class="mx-3" mat-raised-button color="primary" (click)="onEdit(element)"><fa-icon [icon]="faEdit"></fa-icon> تعديل</button>
   <button *ngIf="isShowDeleteButton"
     class="mx-3" mat-raised-button color="warn" (click)="onDelete(element)"> <fa-icon [icon]="faTrash"></fa-icon> حذف</button>
+  <button *ngIf="showVoidButton && element.canVoid"
+    class="mx-3" mat-raised-button color="warn" (click)="onVoid(element)">إلغاء</button>
   <button *ngIf="showDeactivateButton"
     class="mx-3" mat-raised-button color="accent" (click)="onDeactivate(element)"><fa-icon [icon]="faBan"></fa-icon> تعطيل</button>
     <button *ngIf="showDeactivateButton"

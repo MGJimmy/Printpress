@@ -20,6 +20,8 @@ import { CashTransactionService } from '../../services/cash-transaction.service'
 import { CashAccountDto } from '../../models/cash-account.dto';
 import { CashTransactionDto } from '../../models/cash-transaction.dto';
 import { AddCashTransactionDialogComponent } from '../add-cash-transaction-dialog/add-cash-transaction-dialog.component';
+import { TransferCashDialogComponent } from '../transfer-cash-dialog/transfer-cash-dialog.component';
+import { DialogService } from '../../../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-cash-account-view',
@@ -76,10 +78,12 @@ export class CashAccountViewComponent implements OnInit {
     { value: 'Maintenance', label: 'صيانة' },
     { value: 'ExternalServices', label: 'خدمات خارجية' },
     { value: 'Salaries', label: 'رواتب' },
+    { value: 'Transfer', label: 'تحويل' },
     { value: 'Other', label: 'أخرى' },
   ];
 
   columnDefs: TableColDefinitionModel[] = [
+    { headerName: 'الحالة', column: 'status' },
     { headerName: 'نوع الحركة', column: 'type' },
     { headerName: 'الفئة', column: 'category' },
     { headerName: 'المبلغ', column: 'amount' },
@@ -97,6 +101,7 @@ export class CashAccountViewComponent implements OnInit {
     private cashAccountService: CashAccountService,
     private cashTransactionService: CashTransactionService,
     private dialog: MatDialog,
+    private dialogService: DialogService,
   ) {
     this.form = this.fb.group({
       name: this.fb.control({ value: '', disabled: true }),
@@ -141,6 +146,7 @@ export class CashAccountViewComponent implements OnInit {
           ...t,
           type: this.toTypeLabel(t.type),
           category: this.toCategoryLabel(t.category),
+          status: t.isVoided ? 'ملغاة' : t.reversesTransactionId ? 'عكس' : '',
         }));
         this.totalTransactionsCount = response.data.totalCount;
       },
@@ -181,6 +187,42 @@ export class CashAccountViewComponent implements OnInit {
         this.loadAccount();
         this.loadTransactions();
       }
+    });
+  }
+
+  onCashBook(): void {
+    this.router.navigate(['/reports/cash-book'], { queryParams: { cashAccountId: this.accountId } });
+  }
+
+  onTransfer(): void {
+    const dialogRef = this.dialog.open(TransferCashDialogComponent, {
+      width: '560px',
+      data: { fromCashAccountId: this.accountId },
+    });
+
+    dialogRef.afterClosed().subscribe((done: boolean) => {
+      if (done) {
+        this.loadAccount();
+        this.loadTransactions();
+      }
+    });
+  }
+
+  onVoid(id: string): void {
+    this.dialogService.confirmDialog({
+      title: 'تأكيد الإلغاء',
+      message: 'سيتم عكس هذه الحركة في الخزينة. هل تريد المتابعة؟',
+      confirmText: 'نعم',
+      cancelText: 'إلغاء',
+    }).subscribe((confirmed) => {
+      if (!confirmed) return;
+      this.cashTransactionService.void(id).subscribe({
+        next: () => {
+          this.alertService.showSuccess('تم إلغاء الحركة');
+          this.loadAccount();
+          this.loadTransactions();
+        },
+      });
     });
   }
 

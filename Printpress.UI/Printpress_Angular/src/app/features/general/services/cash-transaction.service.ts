@@ -4,6 +4,7 @@ import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { CashTransactionDto, ExternalOrderDto } from '../models/cash-transaction.dto';
 import { AddCashTransactionDto } from '../models/add-cash-transaction.dto';
+import { TransferCashTransactionDto } from '../models/transfer-cash-transaction.dto';
 import { ApiPagingResponseDto, ApiResponseDto } from '../../../core/models/api-response.dto';
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +33,14 @@ export class CashTransactionService {
 
   add(payload: AddCashTransactionDto): Observable<ApiResponseDto<CashTransactionDto>> {
     return this.httpService.post<ApiResponseDto<CashTransactionDto>>(ApiUrlResource.CashTransactionAPI.add, payload);
+  }
+
+  void(id: string, reason?: string): Observable<ApiResponseDto<void>> {
+    return this.httpService.post<ApiResponseDto<void>>(ApiUrlResource.CashTransactionAPI.void(id), { reason: reason ?? '' });
+  }
+
+  transfer(payload: TransferCashTransactionDto): Observable<ApiResponseDto<void>> {
+    return this.httpService.post<ApiResponseDto<void>>(ApiUrlResource.CashTransactionAPI.transfer, payload);
   }
 
   getExternalOrders(): Observable<ApiResponseDto<ExternalOrderDto[]>> {

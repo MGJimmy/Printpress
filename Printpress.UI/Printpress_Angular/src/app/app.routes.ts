@@ -292,6 +292,13 @@ export const routes: Routes = [
               import('./features/reports/components/inventory-services-usage-report/inventory-services-usage-report.component')
                 .then(m => m.InventoryServicesUsageReportComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'cash-book',
+            loadComponent: () =>
+              import('./features/reports/components/cash-book-report/cash-book-report.component')
+                .then(m => m.CashBookReportComponent),
+            canActivate: [authGuard],
           }
         ]
       },
