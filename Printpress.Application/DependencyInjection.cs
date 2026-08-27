@@ -94,6 +94,7 @@ public static class DependencyInjection
         services.AddScoped<ICashReconcileReportService, CashReconcileReportService>();
         services.AddScoped<ICashMovementSummaryReportService, CashMovementSummaryReportService>();
         services.AddScoped<ICashFlowReportService, CashFlowReportService>();
+        services.AddScoped<ICashByDocumentReportService, CashByDocumentReportService>();
         #endregion
 
         #region General

@@ -179,6 +179,7 @@ export class ApiUrlResource {
     cashReconcile: ApiUrlResource.Reports_URL + '/cash-reconcile',
     cashMovementSummary: ApiUrlResource.Reports_URL + '/cash-movement-summary',
     cashFlow: ApiUrlResource.Reports_URL + '/cash-flow',
+    cashByDocument: ApiUrlResource.Reports_URL + '/cash-by-document',
   };
 
 }
