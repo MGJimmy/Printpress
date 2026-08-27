@@ -34,7 +34,7 @@ internal class ReportRepository : IReportRepository
             .Where(t => t.InventoryItemId == inventoryItemId
                 && t.InventoryTransactionType == InventoryTransactionType.In
                 && (dateFrom == null || t.CreatedAt >= dateFrom)
-                && (dateTo == null || t.CreatedAt <= dateTo))
+                && (dateTo == null || t.CreatedAt < dateTo))
             .SumAsync(t => (int?)t.Quantity) ?? 0;
     }
 
@@ -44,7 +44,7 @@ internal class ReportRepository : IReportRepository
             .Where(t => t.InventoryItemId == inventoryItemId
                 && t.InventoryTransactionType == InventoryTransactionType.Out
                 && (dateFrom == null || t.CreatedAt >= dateFrom)
-                && (dateTo == null || t.CreatedAt <= dateTo))
+                && (dateTo == null || t.CreatedAt < dateTo))
             .SumAsync(t => (int?)t.Quantity) ?? 0;
     }
 
@@ -176,13 +176,16 @@ internal class ReportRepository : IReportRepository
                 CartonsIn = i.InventoryTransactions
                     .Where(t => t.InventoryTransactionType == InventoryTransactionType.In
                         && (dateFrom == null || t.CreatedAt >= dateFrom)
-                        && (dateTo == null || t.CreatedAt <= dateTo))
+                        && (dateTo == null || t.CreatedAt < dateTo))
                     .Sum(t => (int?)t.Quantity) ?? 0,
                 CartonsOut = i.InventoryTransactions
                     .Where(t => t.InventoryTransactionType == InventoryTransactionType.Out
                         && (dateFrom == null || t.CreatedAt >= dateFrom)
-                        && (dateTo == null || t.CreatedAt <= dateTo))
-                    .Sum(t => (int?)t.Quantity) ?? 0
+                        && (dateTo == null || t.CreatedAt < dateTo))
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                CurrentStockCartons =
+                    (i.InventoryTransactions.Where(t => t.InventoryTransactionType == InventoryTransactionType.In).Sum(t => (int?)t.Quantity) ?? 0)
+                    - (i.InventoryTransactions.Where(t => t.InventoryTransactionType == InventoryTransactionType.Out).Sum(t => (int?)t.Quantity) ?? 0)
             })
             .ToListAsync();
     }
@@ -210,7 +213,7 @@ internal class ReportRepository : IReportRepository
                 && !os.IsDeleted
                 && !os.Order.IsDeleted
                 && (dateFrom == null || os.Order.CreatedAt >= dateFrom)
-                && (dateTo == null || os.Order.CreatedAt <= dateTo))
+                && (dateTo == null || os.Order.CreatedAt < dateTo))
             .GroupBy(os => os.ServiceId)
             .Select(g => new
             {
@@ -297,7 +300,7 @@ internal class ReportRepository : IReportRepository
         var rows = await _context.WorkerProduction
             .Where(e => itemIds.Contains(e.OrderItemId)
                 && (dateFrom == null || e.ExecutionDate >= dateFrom)
-                && (dateTo == null || e.ExecutionDate <= dateTo))
+                && (dateTo == null || e.ExecutionDate < dateTo))
             .GroupBy(e => new { e.OrderItemId, e.ServiceCategoryId })
             .Select(g => new
             {

@@ -6,9 +6,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderInventoryItemsReportService } from '../../services/order-inventory-items-report.service';
 import { OrderInventoryItemsReportDto, InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
@@ -24,12 +27,15 @@ import { OrderInventoryItemsReportDto, InventoryCategoryFilterDto, InventoryItem
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatTableModule
+    MatTableModule,
+    MatProgressSpinnerModule,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './order-inventory-items-report.component.html',
-  styleUrls: ['./order-inventory-items-report.component.scss']
+  styleUrl: './order-inventory-items-report.component.scss',
 })
 export class OrderInventoryItemsReportComponent implements OnInit {
   categories: InventoryCategoryFilterDto[] = [];
@@ -47,35 +53,38 @@ export class OrderInventoryItemsReportComponent implements OnInit {
   displayedColumns = [
     'itemCategory', 'itemName', 'packsPerCarton', 'unitsPerPack',
     'cartonsIn', 'unitsIn', 'cartonsOut', 'unitsOut',
-    'paperUsedUnits', 'expectedWaste', 'difference'
+    'periodNetCartons', 'currentStockCartons',
+    'paperUsedUnits', 'expectedWaste', 'difference',
   ];
 
   constructor(
     private fb: NonNullableFormBuilder,
     private reportService: OrderInventoryItemsReportService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {
+    const now = new Date();
     this.filterForm = this.fb.group({
       categoryId: new FormControl<number | null>(null, Validators.required),
       inventoryItemId: this.fb.control('', Validators.required),
-      dateFrom: new FormControl<Date | null>(null),
-      dateTo: new FormControl<Date | null>(null)
+      dateFrom: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1)),
+      dateTo: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
     });
   }
 
   ngOnInit(): void {
     this.reportService.getCategories().subscribe({
-      next: (res) => { this.categories = res.data; },
-      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); }
+      next: (res) => { this.categories = res.data ?? []; },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
 
     this.filterForm.controls.categoryId.valueChanges.subscribe(categoryId => {
       this.items = [];
       this.filterForm.controls.inventoryItemId.setValue('');
+      this.reportResult = null;
       if (categoryId != null) {
         this.reportService.getItemsByCategory(categoryId).subscribe({
-          next: (res) => { this.items = res.data; },
-          error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); }
+          next: (res) => { this.items = res.data ?? []; },
+          error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }
     });
@@ -88,28 +97,57 @@ export class OrderInventoryItemsReportComponent implements OnInit {
     }
 
     const { inventoryItemId, dateFrom, dateTo } = this.filterForm.getRawValue();
+    const from = this.asDate(dateFrom);
+    const to = this.asDate(dateTo);
+
+    if (from && to && from > to) {
+      this.alertService.showError('تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له');
+      return;
+    }
+
     this.isLoading = true;
     this.reportResult = null;
 
     this.reportService.getReport(
       inventoryItemId,
-      dateFrom ? dateFrom.toISOString() : undefined,
-      dateTo ? this.toEndOfDay(dateTo).toISOString() : undefined
+      from ? this.toIsoDate(from) : undefined,
+      to ? this.toIsoDate(to) : undefined,
+    ).pipe(
+      finalize(() => { this.isLoading = false; }),
     ).subscribe({
-      next: (res) => {
-        this.reportResult = res.data;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل التقرير');
-        this.isLoading = false;
-      }
+      next: (res) => { this.reportResult = res.data; },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التقرير'); },
     });
   }
 
-  private toEndOfDay(date: Date): Date {
-    const d = new Date(date);
-    d.setHours(23, 59, 59, 999);
-    return d;
+  reset(): void {
+    const now = new Date();
+    this.items = [];
+    this.reportResult = null;
+    this.filterForm.reset({
+      categoryId: null,
+      inventoryItemId: '',
+      dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
+      dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+    });
+  }
+
+  differenceClass(value: number): string {
+    if (value < 0) return 'amt-out';
+    if (value > 0) return 'amt-in';
+    return 'amt-balance';
+  }
+
+  private asDate(value: Date | null): Date | null {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  private toIsoDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 }

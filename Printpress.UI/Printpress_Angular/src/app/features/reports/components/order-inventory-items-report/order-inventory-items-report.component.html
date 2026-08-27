@@ -1,139 +1,175 @@
-<div class="container mt-4" dir="rtl">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>تقرير استهلاك عناصر المخزن في الطلبات</mat-card-title>
-    </mat-card-header>
+<div class="inv-report" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>inventory_2</mat-icon>
+    </div>
+    <div>
+      <h1>تقرير استهلاك عنصر المخزن في الطلبات</h1>
+      <p>حركة الكراتين خلال الفترة مقابل الإنتاج المنفَّذ والهالك المتوقع، مع الرصيد الحالي للمخزن</p>
+    </div>
+  </header>
 
-    <mat-card-content>
-      <!-- Filters -->
-      <form [formGroup]="filterForm" class="mt-3">
-        <div class="row g-3 align-items-end">
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية التقرير</span>
+    </div>
+    <form [formGroup]="filterForm">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>تصنيف عنصر المخزن</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          </mat-select>
+          <mat-error>يجب اختيار التصنيف</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>عنصر المخزن</mat-label>
+          <mat-select formControlName="inventoryItemId" [disabled]="items.length === 0">
+            <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
+          </mat-select>
+          <mat-error>يجب اختيار العنصر</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button"
+                [disabled]="filterForm.invalid || isLoading"
+                (click)="onViewReport()">
+          <mat-icon>search</mat-icon>
+          {{ isLoading ? 'جاري التحميل...' : 'عرض التقرير' }}
+        </button>
+        <button mat-stroked-button type="button" (click)="reset()" [disabled]="isLoading">
+          <mat-icon>restart_alt</mat-icon>
+          إعادة تعيين
+        </button>
+      </div>
+    </form>
+  </mat-card>
 
-          <div class="col-md-3">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>تصنيف عنصر المخزن</mat-label>
-              <mat-select formControlName="categoryId">
-                <mat-option *ngFor="let cat of categories" [value]="cat.id">
-                  {{ cat.name }}
-                </mat-option>
-              </mat-select>
-              <mat-error>يجب اختيار التصنيف</mat-error>
-            </mat-form-field>
-          </div>
+  <div class="loading" *ngIf="isLoading && !reportResult">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
 
-          <div class="col-md-3">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>عنصر المخزن</mat-label>
-              <mat-select formControlName="inventoryItemId" [disabled]="items.length === 0">
-                <mat-option *ngFor="let item of items" [value]="item.id">
-                  {{ item.name }}
-                </mat-option>
-              </mat-select>
-              <mat-error>يجب اختيار العنصر</mat-error>
-            </mat-form-field>
-          </div>
+  <ng-container *ngIf="reportResult">
+    <section class="kpis">
+      <article class="kpi kpi-in">
+        <span class="kpi-label">دخول الفترة (كراتين)</span>
+        <strong>{{ reportResult.cartonsIn | number }}</strong>
+        <small>{{ reportResult.unitsIn | number }} وحدة</small>
+      </article>
+      <article class="kpi kpi-out">
+        <span class="kpi-label">خروج الفترة (كراتين)</span>
+        <strong>{{ reportResult.cartonsOut | number }}</strong>
+        <small>{{ reportResult.unitsOut | number }} وحدة</small>
+      </article>
+      <article class="kpi kpi-net">
+        <span class="kpi-label">صافي الفترة</span>
+        <strong>{{ reportResult.periodNetCartons | number }}</strong>
+        <small>{{ reportResult.periodNetUnits | number }} وحدة</small>
+      </article>
+      <article class="kpi kpi-stock">
+        <span class="kpi-label">الرصيد الحالي</span>
+        <strong>{{ reportResult.currentStockCartons | number }}</strong>
+        <small>{{ reportResult.currentStockUnits | number }} وحدة</small>
+      </article>
+      <article class="kpi kpi-paper">
+        <span class="kpi-label">الإنتاج المنفَّذ</span>
+        <strong>{{ reportResult.paperUsedUnits | number:'1.2-2' }}</strong>
+        <small>هالك متوقع {{ reportResult.expectedWaste | number:'1.2-2' }}</small>
+      </article>
+      <article class="kpi kpi-diff">
+        <span class="kpi-label">الفرق (خروج − إنتاج وهالك)</span>
+        <strong>{{ reportResult.difference | number:'1.2-2' }}</strong>
+        <small>سالب يعني صرف أكثر من المتوقع</small>
+      </article>
+    </section>
 
-          <div class="col-md-2">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>من تاريخ</mat-label>
-              <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
-              <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-              <mat-datepicker #pickerFrom></mat-datepicker>
-            </mat-form-field>
-          </div>
+    <p class="hint">
+      الرصيد الحالي يحسب من كل حركات المخزن (دخول − خروج) وليس من الفترة فقط.
+      الاستهلاك الإنتاجي يعتمد على الكميات المنفَّذة في الإنتاج، ويستثني المجموعات الخارجية الكاملة.
+    </p>
 
-          <div class="col-md-2">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>إلى تاريخ</mat-label>
-              <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
-              <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
-              <mat-datepicker #pickerTo></mat-datepicker>
-            </mat-form-field>
-          </div>
-
-          <div class="col-md-2 pb-3">
-            <button mat-raised-button color="primary" class="w-100"
-                    [disabled]="filterForm.invalid || isLoading"
-                    (click)="onViewReport()">
-              {{ isLoading ? 'جاري التحميل...' : 'عرض التقرير' }}
-            </button>
-          </div>
-
-        </div>
-      </form>
-
-      <!-- Results Table -->
-      <div *ngIf="reportResult" class="mt-4 table-wrapper">
-        <table mat-table [dataSource]="[reportResult]" class="mat-elevation-z2 w-100">
-
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>table_chart</mat-icon>
+        <span>تفاصيل العنصر</span>
+      </div>
+      <div class="table-wrap">
+        <table mat-table [dataSource]="[reportResult]" class="cash-table">
           <ng-container matColumnDef="itemCategory">
-            <th mat-header-cell *matHeaderCellDef>تصنيف العنصر</th>
+            <th mat-header-cell *matHeaderCellDef>التصنيف</th>
             <td mat-cell *matCellDef="let row">{{ row.itemCategory }}</td>
           </ng-container>
-
           <ng-container matColumnDef="itemName">
-            <th mat-header-cell *matHeaderCellDef>اسم العنصر</th>
+            <th mat-header-cell *matHeaderCellDef>العنصر</th>
             <td mat-cell *matCellDef="let row">{{ row.itemName }}</td>
           </ng-container>
-
           <ng-container matColumnDef="packsPerCarton">
-            <th mat-header-cell *matHeaderCellDef>عدد الباكيات في الكرتونة</th>
+            <th mat-header-cell *matHeaderCellDef>باكيات/كرتونة</th>
             <td mat-cell *matCellDef="let row">{{ row.packsPerCarton ?? '—' }}</td>
           </ng-container>
-
           <ng-container matColumnDef="unitsPerPack">
-            <th mat-header-cell *matHeaderCellDef>عدد الوحدات في الباكية</th>
+            <th mat-header-cell *matHeaderCellDef>وحدات/باكية</th>
             <td mat-cell *matCellDef="let row">{{ row.unitsPerPack ?? '—' }}</td>
           </ng-container>
-
           <ng-container matColumnDef="cartonsIn">
-            <th mat-header-cell *matHeaderCellDef>عدد الكراتين الداخلة</th>
-            <td mat-cell *matCellDef="let row">{{ row.cartonsIn | number:'1.2-2' }}</td>
+            <th mat-header-cell *matHeaderCellDef>كراتين داخلة</th>
+            <td mat-cell *matCellDef="let row" class="amt-in">{{ row.cartonsIn | number }}</td>
           </ng-container>
-
           <ng-container matColumnDef="unitsIn">
-            <th mat-header-cell *matHeaderCellDef>عدد الوحدات الداخلة</th>
-            <td mat-cell *matCellDef="let row">{{ row.unitsIn }}</td>
+            <th mat-header-cell *matHeaderCellDef>وحدات داخلة</th>
+            <td mat-cell *matCellDef="let row">{{ row.unitsIn | number }}</td>
           </ng-container>
-
           <ng-container matColumnDef="cartonsOut">
-            <th mat-header-cell *matHeaderCellDef>عدد الكراتين الخارجة</th>
-            <td mat-cell *matCellDef="let row">{{ row.cartonsOut | number:'1.2-2' }}</td>
+            <th mat-header-cell *matHeaderCellDef>كراتين خارجة</th>
+            <td mat-cell *matCellDef="let row" class="amt-out">{{ row.cartonsOut | number }}</td>
           </ng-container>
-
           <ng-container matColumnDef="unitsOut">
-            <th mat-header-cell *matHeaderCellDef>عدد الوحدات الخارجة</th>
-            <td mat-cell *matCellDef="let row">{{ row.unitsOut }}</td>
+            <th mat-header-cell *matHeaderCellDef>وحدات خارجة</th>
+            <td mat-cell *matCellDef="let row">{{ row.unitsOut | number }}</td>
           </ng-container>
-
+          <ng-container matColumnDef="periodNetCartons">
+            <th mat-header-cell *matHeaderCellDef>صافي الفترة</th>
+            <td mat-cell *matCellDef="let row" class="amt-balance">{{ row.periodNetCartons | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="currentStockCartons">
+            <th mat-header-cell *matHeaderCellDef>رصيد حالي</th>
+            <td mat-cell *matCellDef="let row" class="amt-balance">{{ row.currentStockCartons | number }}</td>
+          </ng-container>
           <ng-container matColumnDef="paperUsedUnits">
-            <th mat-header-cell *matHeaderCellDef>عدد الوحدات المستخدمة في الإنتاج</th>
+            <th mat-header-cell *matHeaderCellDef>إنتاج منفَّذ</th>
             <td mat-cell *matCellDef="let row">{{ row.paperUsedUnits | number:'1.2-2' }}</td>
           </ng-container>
-
           <ng-container matColumnDef="expectedWaste">
-            <th mat-header-cell *matHeaderCellDef>الهالك المتوقع</th>
+            <th mat-header-cell *matHeaderCellDef>هالك متوقع</th>
             <td mat-cell *matCellDef="let row">{{ row.expectedWaste | number:'1.2-2' }}</td>
           </ng-container>
-
           <ng-container matColumnDef="difference">
             <th mat-header-cell *matHeaderCellDef>الفرق</th>
-            <td mat-cell *matCellDef="let row"
-                [class.text-danger]="row.difference < 0"
-                [class.text-success]="row.difference >= 0">
+            <td mat-cell *matCellDef="let row" [ngClass]="differenceClass(row.difference)">
               {{ row.difference | number:'1.2-2' }}
             </td>
           </ng-container>
-
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
       </div>
+    </mat-card>
+  </ng-container>
 
-      <div *ngIf="!reportResult && !isLoading" class="mt-4 text-center text-muted">
-        اختر العنصر وانقر "عرض التقرير" لعرض النتائج
-      </div>
-
-    </mat-card-content>
-  </mat-card>
+  <p class="empty" *ngIf="!reportResult && !isLoading">
+    اختر التصنيف والعنصر ثم اضغط «عرض التقرير»
+  </p>
 </div>

@@ -15,31 +15,38 @@ public class ReportsController(
     ICashByDocumentReportService _cashByDocumentReportService,
     ICashTreasuryReportService _cashTreasuryReportService) : AppBaseController
 {
+    [Authorize]
     [HttpGet("order-inventory-items")]
     public async Task<IActionResult> GetOrderInventoryItemsReport(
         [FromQuery] Guid inventoryItemId,
-        [FromQuery] DateTime? dateFrom,
-        [FromQuery] DateTime? dateTo)
+        [FromQuery] DateOnly? dateFrom,
+        [FromQuery] DateOnly? dateTo)
     {
-        var result = await _reportService.GetReportAsync(inventoryItemId, dateFrom, dateTo);
+        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
+        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        var result = await _reportService.GetReportAsync(inventoryItemId, from, toExclusive);
         return Ok(result);
     }
 
 
     // ── Report 2: Inventory & Services Usage ────────────────────────────────
 
+    [Authorize]
     [HttpGet("inventory-services-usage")]
     public async Task<IActionResult> GetInventoryServicesUsage(
         [FromQuery] int inventoryItemCategoryId,
         [FromQuery] Guid serviceCategoryId,
-        [FromQuery] DateTime? dateFrom,
-        [FromQuery] DateTime? dateTo)
+        [FromQuery] DateOnly? dateFrom,
+        [FromQuery] DateOnly? dateTo)
     {
+        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
+        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
         var result = await _inventoryServicesService.GetReportAsync(
-            inventoryItemCategoryId, serviceCategoryId, dateFrom, dateTo);
+            inventoryItemCategoryId, serviceCategoryId, from, toExclusive);
         return Ok(result);
     }
 
+    [Authorize]
     [HttpGet("filter/service-categories")]
     public async Task<IActionResult> GetServiceCategories()
     {

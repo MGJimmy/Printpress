@@ -7,6 +7,10 @@ export interface InventoryItemUsageRowDto {
   unitsIn: number;
   cartonsOut: number;
   unitsOut: number;
+  periodNetCartons: number;
+  periodNetUnits: number;
+  currentStockCartons: number;
+  currentStockUnits: number;
   expectedProductionWastePercent: number;
 }
 
@@ -23,6 +27,10 @@ export interface InventoryServicesUsageReportDto {
   totalUnitsIn: number;
   totalCartonsOut: number;
   totalUnitsOut: number;
+  totalPeriodNetCartons: number;
+  totalPeriodNetUnits: number;
+  totalCurrentStockCartons: number;
+  totalCurrentStockUnits: number;
   services: ServiceUsageRowDto[];
   totalOrders: number;
   totalItems: number;

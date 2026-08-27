@@ -6,9 +6,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryServicesUsageReportService } from '../../services/inventory-services-usage-report.service';
 import {
@@ -28,11 +31,15 @@ import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-r
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatTableModule
+    MatTableModule,
+    MatProgressSpinnerModule,
   ],
-  templateUrl: './inventory-services-usage-report.component.html'
+  providers: [provideNativeDateAdapter()],
+  templateUrl: './inventory-services-usage-report.component.html',
+  styleUrl: './inventory-services-usage-report.component.scss',
 })
 export class InventoryServicesUsageReportComponent implements OnInit {
   inventoryCategories: InventoryCategoryFilterDto[] = [];
@@ -48,22 +55,24 @@ export class InventoryServicesUsageReportComponent implements OnInit {
   }>;
 
   inventoryColumns = [
-    'itemCategory', 'itemName', 'packsPerCarton', 'unitsPerPack',
-    'cartonsIn', 'unitsIn', 'cartonsOut', 'unitsOut', 'expectedProductionWastePercent'
+    'invCategory', 'invName', 'invPacks', 'invUnitsPerPack',
+    'invIn', 'invUnitsIn', 'invOut', 'invUnitsOut',
+    'invNet', 'invStock', 'invWaste',
   ];
 
-  serviceColumns = ['serviceName', 'orderCount', 'itemCount', 'paperUsed'];
+  serviceColumns = ['svcName', 'svcOrders', 'svcItems', 'svcPaper'];
 
   constructor(
     private fb: NonNullableFormBuilder,
     private reportService: InventoryServicesUsageReportService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {
+    const now = new Date();
     this.filterForm = this.fb.group({
       inventoryItemCategoryId: new FormControl<number | null>(null, Validators.required),
       serviceCategoryId: this.fb.control('', Validators.required),
-      dateFrom: new FormControl<Date | null>(null),
-      dateTo: new FormControl<Date | null>(null)
+      dateFrom: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1)),
+      dateTo: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
     });
   }
 
@@ -73,13 +82,13 @@ export class InventoryServicesUsageReportComponent implements OnInit {
 
   private loadFilters(): void {
     this.reportService.getInventoryCategories().subscribe({
-      next: (res) => { this.inventoryCategories = res.data; },
-      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل تصنيفات المخزون'); }
+      next: (res) => { this.inventoryCategories = res.data ?? []; },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل تصنيفات المخزون'); },
     });
 
     this.reportService.getServiceCategories().subscribe({
-      next: (res) => { this.serviceCategories = res.data; },
-      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل تصنيفات الخدمات'); }
+      next: (res) => { this.serviceCategories = res.data ?? []; },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل تصنيفات الخدمات'); },
     });
   }
 
@@ -90,29 +99,51 @@ export class InventoryServicesUsageReportComponent implements OnInit {
     }
 
     const { inventoryItemCategoryId, serviceCategoryId, dateFrom, dateTo } = this.filterForm.getRawValue();
+    const from = this.asDate(dateFrom);
+    const to = this.asDate(dateTo);
+
+    if (from && to && from > to) {
+      this.alertService.showError('تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له');
+      return;
+    }
+
     this.isLoading = true;
     this.reportResult = null;
 
     this.reportService.getReport(
       inventoryItemCategoryId!,
       serviceCategoryId,
-      dateFrom ? dateFrom.toISOString() : undefined,
-      dateTo ? this.toEndOfDay(dateTo).toISOString() : undefined
+      from ? this.toIsoDate(from) : undefined,
+      to ? this.toIsoDate(to) : undefined,
+    ).pipe(
+      finalize(() => { this.isLoading = false; }),
     ).subscribe({
-      next: (res) => {
-        this.reportResult = res.data;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل التقرير');
-        this.isLoading = false;
-      }
+      next: (res) => { this.reportResult = res.data; },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التقرير'); },
     });
   }
 
-  private toEndOfDay(date: Date): Date {
-    const d = new Date(date);
-    d.setHours(23, 59, 59, 999);
-    return d;
+  reset(): void {
+    const now = new Date();
+    this.reportResult = null;
+    this.filterForm.reset({
+      inventoryItemCategoryId: null,
+      serviceCategoryId: '',
+      dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
+      dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+    });
+  }
+
+  private asDate(value: Date | null): Date | null {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  private toIsoDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 }

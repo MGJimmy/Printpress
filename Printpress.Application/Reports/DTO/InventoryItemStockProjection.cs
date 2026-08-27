@@ -10,4 +10,5 @@ public class InventoryItemStockProjection
     public int ExpectedProductionWastePercent { get; set; }
     public int CartonsIn { get; set; }
     public int CartonsOut { get; set; }
+    public int CurrentStockCartons { get; set; }
 }

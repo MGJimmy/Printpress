@@ -25,8 +25,11 @@ internal static class OrderInventoryItemsCalculator
         if (item.IsCover)
             return item.Quantity;
 
-        if (item.NumberOfPrintingFaces <= 0) return 0;
-        return Math.Round((decimal)(item.Quantity * item.NumberOfPages) / item.NumberOfPrintingFaces, 2);
+        if (item.NumberOfPages <= 0)
+            return 0;
+
+        var faces = item.NumberOfPrintingFaces > 0 ? item.NumberOfPrintingFaces : 1;
+        return Math.Round((decimal)(item.Quantity * item.NumberOfPages) / faces, 2);
     }
 
     public static decimal CalculateExpectedWaste(decimal paperUsed, int wastePercent)

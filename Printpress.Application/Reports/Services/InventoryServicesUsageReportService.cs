@@ -32,6 +32,10 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
             TotalUnitsIn = inventoryRows.Sum(r => r.UnitsIn),
             TotalCartonsOut = inventoryRows.Sum(r => r.CartonsOut),
             TotalUnitsOut = inventoryRows.Sum(r => r.UnitsOut),
+            TotalPeriodNetCartons = inventoryRows.Sum(r => r.PeriodNetCartons),
+            TotalPeriodNetUnits = inventoryRows.Sum(r => r.PeriodNetUnits),
+            TotalCurrentStockCartons = inventoryRows.Sum(r => r.CurrentStockCartons),
+            TotalCurrentStockUnits = inventoryRows.Sum(r => r.CurrentStockUnits),
             Services = serviceRows,
             TotalOrders = serviceRows.Sum(r => r.OrderCount),
             TotalItems = serviceRows.Sum(r => r.ItemCount),
@@ -57,6 +61,10 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
             UnitsIn = CalculateUnits(i.CartonsIn, i.PacksPerCarton, i.UnitsPerPack),
             CartonsOut = i.CartonsOut,
             UnitsOut = CalculateUnits(i.CartonsOut, i.PacksPerCarton, i.UnitsPerPack),
+            PeriodNetCartons = i.CartonsIn - i.CartonsOut,
+            PeriodNetUnits = CalculateUnits(i.CartonsIn - i.CartonsOut, i.PacksPerCarton, i.UnitsPerPack),
+            CurrentStockCartons = i.CurrentStockCartons,
+            CurrentStockUnits = CalculateUnits(i.CurrentStockCartons, i.PacksPerCarton, i.UnitsPerPack),
             ExpectedProductionWastePercent = i.ExpectedProductionWastePercent
         }).ToList();
     }
@@ -100,6 +108,9 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
             return item.Quantity;
 
         int pages = int.TryParse(item.PagesValue, out var p) ? p : 0;
+        if (pages <= 0)
+            return 0;
+
         int faces = int.TryParse(item.FacesValue, out var f) && f > 0 ? f : 1;
         return Math.Round((decimal)(item.Quantity * pages) / faces, 2);
     }
