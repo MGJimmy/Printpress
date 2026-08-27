@@ -1,38 +1,52 @@
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <mat-card>
-        <mat-card-header>
-          <div class="w-100 d-flex justify-content-between align-items-center">
-            <mat-card-title>قائمة قطع الغيار</mat-card-title>
-            <button mat-raised-button color="primary" (click)="onAdd()">إضافة قطعة</button>
-          </div>
-        </mat-card-header>
-        <mat-card-content>
-          <button mat-raised-button color="accent" (click)="onStockInClick()">
-            <mat-icon>add</mat-icon>
-            إدخال للمخزن
-          </button>
-          <button mat-raised-button color="warn" class="ms-2" (click)="onStockOutClick()">
-            <mat-icon>remove</mat-icon>
-            فاتورة بيع / صرف
-          </button>
-          <div class="mt-4">
-            <app-table-template
-              [columnDefs]="columnDefs"
-              [originalSource]="items"
-              [totalItemsCount]="totalCount"
-              [isShowEditButton]="true"
-              [isShowDeleteButton]="true"
-              [showViewButton]="true"
-              (editClicked)="onEdit($event)"
-              (deleteClicked)="onDelete($event)"
-              (viewClicked)="onView($event)"
-              (pageChanged)="onPageChange($event)">
-            </app-table-template>
-          </div>
-        </mat-card-content>
-      </mat-card>
+<div class="sp-items" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>build</mat-icon>
     </div>
-  </div>
+    <div>
+      <h1>قطع الغيار</h1>
+      <p>الأصناف في المخزن، مع إدخال وصرف الفواتير من هنا</p>
+    </div>
+    <div class="hero-actions">
+      <button mat-flat-button type="button" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        إضافة قطعة
+      </button>
+    </div>
+  </header>
+
+  <mat-card class="panel">
+    <div class="toolbar">
+      <button mat-stroked-button color="primary" (click)="onStockInClick()">
+        <mat-icon>add</mat-icon>
+        إدخال للمخزن
+      </button>
+      <button mat-stroked-button color="primary" (click)="onStockInInvoicesClick()">
+        <mat-icon>receipt_long</mat-icon>
+        فواتير الإدخال
+      </button>
+      <button mat-stroked-button color="warn" (click)="onStockOutClick()">
+        <mat-icon>remove</mat-icon>
+        فاتورة بيع / صرف
+      </button>
+      <button mat-stroked-button color="warn" (click)="onStockOutInvoicesClick()">
+        <mat-icon>receipt_long</mat-icon>
+        فواتير الصرف
+      </button>
+    </div>
+    <div class="table-wrap">
+      <app-table-template
+        [columnDefs]="columnDefs"
+        [originalSource]="items"
+        [totalItemsCount]="totalCount"
+        [isShowEditButton]="true"
+        [isShowDeleteButton]="true"
+        [showViewButton]="true"
+        (editClicked)="onEdit($event)"
+        (deleteClicked)="onDelete($event)"
+        (viewClicked)="onView($event)"
+        (pageChanged)="onPageChange($event)">
+      </app-table-template>
+    </div>
+  </mat-card>
 </div>

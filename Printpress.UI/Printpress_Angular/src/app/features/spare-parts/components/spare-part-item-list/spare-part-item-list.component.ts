@@ -17,6 +17,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
   standalone: true,
   imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, TableTemplateComponent],
   templateUrl: './spare-part-item-list.component.html',
+  styleUrl: './spare-part-item-list.component.scss',
 })
 export class SparePartItemListComponent implements OnInit {
   items: SparePartItemDto[] = [];
@@ -85,7 +86,15 @@ export class SparePartItemListComponent implements OnInit {
     this.router.navigate(['/spare-parts/stock-in']);
   }
 
+  onStockInInvoicesClick() {
+    this.router.navigate(['/spare-parts/stock-in/invoices']);
+  }
+
   onStockOutClick() {
     this.router.navigate(['/spare-parts/stock-out']);
+  }
+
+  onStockOutInvoicesClick() {
+    this.router.navigate(['/spare-parts/stock-out/invoices']);
   }
 }

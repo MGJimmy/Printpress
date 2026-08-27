@@ -195,10 +195,24 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'stock-in/invoices',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-parts-stock-in-invoices/spare-parts-stock-in-invoices.component')
+                .then(m => m.SparePartsStockInInvoicesComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'stock-out',
             loadComponent: () =>
               import('./features/spare-parts/components/spare-parts-stock-out/spare-parts-stock-out.component')
                 .then(m => m.SparePartsStockOutComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'stock-out/invoices',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-parts-stock-out-invoices/spare-parts-stock-out-invoices.component')
+                .then(m => m.SparePartsStockOutInvoicesComponent),
             canActivate: [authGuard],
           }
         ]

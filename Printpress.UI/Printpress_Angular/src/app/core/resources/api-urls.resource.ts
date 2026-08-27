@@ -120,12 +120,14 @@ export class ApiUrlResource {
 
   private static SparePartPurchaseInvoice_URL = '/api/SparePartPurchaseInvoice';
   public static readonly SparePartPurchaseInvoiceAPI = {
-    add: ApiUrlResource.SparePartPurchaseInvoice_URL + '/add'
+    add: ApiUrlResource.SparePartPurchaseInvoice_URL + '/add',
+    getAll: ApiUrlResource.SparePartPurchaseInvoice_URL + '/getAll',
   };
 
   private static SparePartSellingInvoice_URL = '/api/SparePartSellingInvoice';
   public static readonly SparePartSellingInvoiceAPI = {
-    add: ApiUrlResource.SparePartSellingInvoice_URL + '/add'
+    add: ApiUrlResource.SparePartSellingInvoice_URL + '/add',
+    getAll: ApiUrlResource.SparePartSellingInvoice_URL + '/getAll',
   };
 
   private static PayrollPeriod_URL = '/api/PayrollPeriod';

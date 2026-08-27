@@ -127,12 +127,20 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
                 => new CashReferenceLink { Label = "فاتورة مشتريات مخزن" },
 
             CashTransactionReferenceType.PurchaseSparePartInvoice when lookups.SparePurchases.TryGetValue(key, out var inv)
-                => new CashReferenceLink { Label = $"شراء قطع: {inv.InvoiceNumber}" },
+                => new CashReferenceLink
+                {
+                    Label = $"شراء قطع: {inv.InvoiceNumber}",
+                    Route = $"/spare-parts/stock-in/invoices?invoiceId={inv.Id}"
+                },
             CashTransactionReferenceType.PurchaseSparePartInvoice
                 => new CashReferenceLink { Label = "فاتورة شراء قطع غيار" },
 
             CashTransactionReferenceType.SellingSparePartInvoice when lookups.SpareSells.TryGetValue(key, out var inv)
-                => new CashReferenceLink { Label = $"بيع قطع: {inv.InvoiceNumber} — {inv.ClientName}" },
+                => new CashReferenceLink
+                {
+                    Label = $"بيع قطع: {inv.InvoiceNumber} — {inv.ClientName}",
+                    Route = $"/spare-parts/stock-out/invoices?invoiceId={inv.Id}"
+                },
             CashTransactionReferenceType.SellingSparePartInvoice
                 => new CashReferenceLink { Label = "فاتورة بيع قطع غيار" },
 

@@ -12,4 +12,16 @@ public class SparePartSellingInvoiceController(ISparePartSellingInvoiceService _
         var result = await _service.CreateAsync(payload, UserId);
         return Ok(result);
     }
+
+    [HttpGet("getAll")]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] Guid? itemId,
+        [FromQuery] DateOnly? dateFrom,
+        [FromQuery] DateOnly? dateTo)
+    {
+        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
+        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        var result = await _service.GetAllAsync(itemId, from, toExclusive);
+        return Ok(result);
+    }
 }
