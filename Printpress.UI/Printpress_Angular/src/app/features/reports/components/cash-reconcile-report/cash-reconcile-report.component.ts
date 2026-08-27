@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,17 +11,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { CashAccountService } from '../../../general/services/cash-account.service';
 import { CashAccountDto } from '../../../general/models/cash-account.dto';
-import { CashBookReportService } from '../../services/cash-book-report.service';
-import { CashBookLineDto, CashBookReportDto } from '../../models/cash-book-report.dto';
+import { CashReconcileReportService } from '../../services/cash-reconcile-report.service';
+import { CashReconcileAccountDto, CashReconcileReportDto } from '../../models/cash-reconcile-report.dto';
 
 @Component({
-  selector: 'app-cash-book-report',
+  selector: 'app-cash-reconcile-report',
   standalone: true,
   imports: [
     CommonModule,
@@ -35,62 +34,34 @@ import { CashBookLineDto, CashBookReportDto } from '../../models/cash-book-repor
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
-    MatPaginatorModule,
     MatProgressSpinnerModule,
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './cash-book-report.component.html',
-  styleUrl: './cash-book-report.component.scss',
+  templateUrl: './cash-reconcile-report.component.html',
+  styleUrl: './cash-reconcile-report.component.scss',
 })
-export class CashBookReportComponent implements OnInit {
+export class CashReconcileReportComponent implements OnInit {
   accounts: CashAccountDto[] = [];
-  report: CashBookReportDto | null = null;
+  report: CashReconcileReportDto | null = null;
   isLoading = false;
-  pageIndex = 0;
-  pageSize = 10;
-  pageSizeOptions = [5, 10, 25, 50];
 
-  typeOptions = [
-    { value: '', label: 'الكل' },
-    { value: 'In', label: 'وارد' },
-    { value: 'Out', label: 'صادر' },
+  columns = [
+    'cashAccountName', 'storedBalance', 'computedBalance', 'difference',
+    'match', 'openingBalance', 'periodIn', 'periodOut', 'periodClosing', 'periodCheck',
   ];
-
-  categoryOptions = [
-    { value: '', label: 'الكل' },
-    { value: 'Sales', label: 'مبيعات' },
-    { value: 'SalesReturn', label: 'مرتجع مبيعات' },
-    { value: 'Purchases', label: 'مشتريات' },
-    { value: 'Expenses', label: 'مصروفات' },
-    { value: 'CapitalInjection', label: 'ضخ رأس المال' },
-    { value: 'Maintenance', label: 'صيانة' },
-    { value: 'ExternalServices', label: 'خدمات خارجية' },
-    { value: 'Salaries', label: 'رواتب' },
-    { value: 'Transfer', label: 'تحويل' },
-    { value: 'Other', label: 'أخرى' },
-  ];
-
-  lineColumns = [
-    'transactionDate', 'lineAccountName', 'inAmount', 'outAmount',
-    'runningBalance', 'category', 'status', 'description', 'createdBy',
-  ];
-
-  summaryColumns = ['summaryAccountName', 'summaryOpening', 'summaryIn', 'summaryOut', 'summaryClosing'];
 
   filterForm: FormGroup<{
     cashAccountId: FormControl<string>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
-    type: FormControl<string>;
-    category: FormControl<string>;
-    search: FormControl<string>;
   }>;
 
   constructor(
     private fb: NonNullableFormBuilder,
     private route: ActivatedRoute,
+    private router: Router,
     private cashAccountService: CashAccountService,
-    private reportService: CashBookReportService,
+    private reportService: CashReconcileReportService,
     private alertService: AlertService,
   ) {
     const now = new Date();
@@ -98,9 +69,6 @@ export class CashBookReportComponent implements OnInit {
       cashAccountId: this.fb.control(''),
       dateFrom: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1)),
       dateTo: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
-      type: this.fb.control(''),
-      category: this.fb.control(''),
-      search: this.fb.control(''),
     });
   }
 
@@ -110,10 +78,6 @@ export class CashBookReportComponent implements OnInit {
       if (preselected) {
         this.filterForm.controls.cashAccountId.setValue(preselected);
       }
-      const from = this.parseIsoDate(params.get('dateFrom'));
-      if (from) this.filterForm.controls.dateFrom.setValue(from);
-      const to = this.parseIsoDate(params.get('dateTo'));
-      if (to) this.filterForm.controls.dateTo.setValue(to);
     });
 
     this.cashAccountService.getAll().subscribe({
@@ -123,30 +87,11 @@ export class CashBookReportComponent implements OnInit {
     this.search();
   }
 
-  get lines(): CashBookLineDto[] {
-    return this.report?.lines ?? [];
-  }
-
-  get summaries() {
-    return this.report?.accountSummaries ?? [];
-  }
-
-  get totalLines(): number {
-    return this.report?.totalLineCount ?? 0;
+  get rows(): CashReconcileAccountDto[] {
+    return this.report?.accounts ?? [];
   }
 
   search(): void {
-    this.pageIndex = 0;
-    this.load();
-  }
-
-  onPage(event: PageEvent): void {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.load();
-  }
-
-  load(): void {
     const v = this.filterForm.getRawValue();
     const from = this.asDate(v.dateFrom);
     const to = this.asDate(v.dateTo);
@@ -161,21 +106,10 @@ export class CashBookReportComponent implements OnInit {
       cashAccountId: v.cashAccountId || undefined,
       dateFrom: from ? this.toIsoDate(from) : undefined,
       dateTo: to ? this.toIsoDate(to) : undefined,
-      type: v.type || undefined,
-      category: v.category || undefined,
-      search: v.search?.trim() || undefined,
-      page: this.pageIndex + 1,
-      pageSize: this.pageSize,
     }).pipe(
       finalize(() => { this.isLoading = false; })
     ).subscribe({
-      next: (res) => {
-        this.report = res.data;
-        if (this.report?.page) {
-          this.pageIndex = this.report.page - 1;
-          this.pageSize = this.report.pageSize || this.pageSize;
-        }
-      },
+      next: (res) => { this.report = res.data; },
     });
   }
 
@@ -185,41 +119,25 @@ export class CashBookReportComponent implements OnInit {
       cashAccountId: this.route.snapshot.queryParamMap.get('cashAccountId') ?? '',
       dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
       dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-      type: '',
-      category: '',
-      search: '',
     });
     this.search();
   }
 
-  categoryLabel(category: string | number): string {
-    const value = String(category);
-    return this.categoryOptions.find((c) => c.value === value)?.label ?? value;
+  openCashBook(row: CashReconcileAccountDto): void {
+    const v = this.filterForm.getRawValue();
+    this.router.navigate(['/reports/cash-book'], {
+      queryParams: {
+        cashAccountId: row.cashAccountId,
+        dateFrom: this.asDate(v.dateFrom) ? this.toIsoDate(this.asDate(v.dateFrom)!) : undefined,
+        dateTo: this.asDate(v.dateTo) ? this.toIsoDate(this.asDate(v.dateTo)!) : undefined,
+      },
+    });
   }
 
-  statusLabel(status: string): string {
-    if (status === 'Voided') return 'ملغاة';
-    if (status === 'Reversal') return 'عكس';
-    return 'عادية';
-  }
-
-  statusClass(status: string): string {
-    if (status === 'Voided') return 'badge-voided';
-    if (status === 'Reversal') return 'badge-reversal';
-    return 'badge-normal';
-  }
-
-  rowClass(row: CashBookLineDto): string {
-    if (row.status === 'Voided') return 'row-voided';
-    if (row.status === 'Reversal') return 'row-reversal';
-    return '';
-  }
-
-  private parseIsoDate(value: string | null): Date | null {
-    if (!value) return null;
-    const parts = value.split('-').map(Number);
-    if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) return null;
-    return new Date(parts[0], parts[1] - 1, parts[2]);
+  typeLabel(type: string): string {
+    if (type === 'SpareParts') return 'قطع غيار';
+    if (type === 'Main') return 'رئيسية';
+    return type;
   }
 
   private asDate(value: Date | null): Date | null {

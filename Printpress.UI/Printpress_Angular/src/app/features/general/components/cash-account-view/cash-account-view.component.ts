@@ -194,6 +194,10 @@ export class CashAccountViewComponent implements OnInit {
     this.router.navigate(['/reports/cash-book'], { queryParams: { cashAccountId: this.accountId } });
   }
 
+  onReconcile(): void {
+    this.router.navigate(['/reports/cash-reconcile'], { queryParams: { cashAccountId: this.accountId } });
+  }
+
   onTransfer(): void {
     const dialogRef = this.dialog.open(TransferCashDialogComponent, {
       width: '560px',

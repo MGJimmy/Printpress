@@ -1,0 +1,140 @@
+<div class="cash-report" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>verified</mat-icon>
+    </div>
+    <div>
+      <h1>مطابقة الرصيد</h1>
+      <p>مقارنة الرصيد المخزَّن في الخزينة مع مجموع الحركات (بما فيها الملغاة والعكس)</p>
+    </div>
+  </header>
+
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية المطابقة</span>
+    </div>
+    <form [formGroup]="filterForm" class="filter-form">
+      <mat-form-field appearance="outline">
+        <mat-label>الخزينة</mat-label>
+        <mat-select formControlName="cashAccountId">
+          <mat-option value="">الكل</mat-option>
+          <mat-option *ngFor="let a of accounts" [value]="a.id">{{ a.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>من تاريخ</mat-label>
+        <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>إلى تاريخ</mat-label>
+        <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoading">
+          <mat-icon>search</mat-icon>
+          مطابقة
+        </button>
+        <button mat-stroked-button type="button" (click)="reset()" [disabled]="isLoading">
+          <mat-icon>restart_alt</mat-icon>
+          إعادة تعيين
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <div class="loading" *ngIf="isLoading && !report">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="report">
+    <section class="kpis">
+      <article class="kpi" [class.kpi-ok]="report.mismatchCount === 0" [class.kpi-bad]="report.mismatchCount > 0">
+        <span class="kpi-label">حالة المطابقة</span>
+        <strong>{{ report.mismatchCount === 0 ? 'مطابق' : report.mismatchCount + ' اختلاف' }}</strong>
+      </article>
+      <article class="kpi kpi-muted">
+        <span class="kpi-label">الرصيد المخزَّن</span>
+        <strong>{{ report.totalStoredBalance | number:'1.2-2' }}</strong>
+      </article>
+      <article class="kpi kpi-in">
+        <span class="kpi-label">الرصيد من الحركات</span>
+        <strong>{{ report.totalComputedBalance | number:'1.2-2' }}</strong>
+      </article>
+      <article class="kpi" [class.kpi-ok]="report.totalDifference === 0" [class.kpi-bad]="report.totalDifference !== 0">
+        <span class="kpi-label">الفرق</span>
+        <strong>{{ report.totalDifference | number:'1.2-2' }}</strong>
+      </article>
+    </section>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>account_balance</mat-icon>
+        <span>الخزائن</span>
+      </div>
+      <div class="table-wrap">
+        <table mat-table [dataSource]="rows" class="cash-table">
+          <ng-container matColumnDef="cashAccountName">
+            <th mat-header-cell *matHeaderCellDef>الخزينة</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.cashAccountName }}
+              <small class="type">{{ typeLabel(row.accountType) }}</small>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="storedBalance">
+            <th mat-header-cell *matHeaderCellDef>المخزَّن</th>
+            <td mat-cell *matCellDef="let row">{{ row.storedBalance | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="computedBalance">
+            <th mat-header-cell *matHeaderCellDef>من الحركات</th>
+            <td mat-cell *matCellDef="let row">{{ row.computedBalance | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="difference">
+            <th mat-header-cell *matHeaderCellDef>الفرق</th>
+            <td mat-cell *matCellDef="let row" [class.amt-out]="row.difference !== 0">{{ row.difference | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="match">
+            <th mat-header-cell *matHeaderCellDef>المطابقة</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" [class.badge-normal]="row.isMatched" [class.badge-voided]="!row.isMatched">
+                {{ row.isMatched ? 'مطابق' : 'اختلاف' }}
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="openingBalance">
+            <th mat-header-cell *matHeaderCellDef>أول المدة</th>
+            <td mat-cell *matCellDef="let row">{{ row.openingBalance | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="periodIn">
+            <th mat-header-cell *matHeaderCellDef>وارد الفترة</th>
+            <td mat-cell *matCellDef="let row" class="amt-in">{{ row.periodIn | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="periodOut">
+            <th mat-header-cell *matHeaderCellDef>صادر الفترة</th>
+            <td mat-cell *matCellDef="let row" class="amt-out">{{ row.periodOut | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="periodClosing">
+            <th mat-header-cell *matHeaderCellDef>آخر المدة</th>
+            <td mat-cell *matCellDef="let row" class="amt-balance">{{ row.periodClosing | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="periodCheck">
+            <th mat-header-cell *matHeaderCellDef>حساب الفترة</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" [class.badge-normal]="row.periodIdentityOk" [class.badge-voided]="!row.periodIdentityOk">
+                {{ row.periodIdentityOk ? 'صحيح' : 'خطأ' }}
+              </span>
+              <button mat-button color="primary" type="button" (click)="openCashBook(row)">الكشف</button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns" [class.row-mismatch]="!row.isMatched"></tr>
+        </table>
+      </div>
+      <p class="hint">الرصيد المخزَّن يُقارن بكل الحركات على الإطلاق. أول/آخر المدة حسب الفترة المحددة. الملغاة والعكس داخلة في الجمع حتى يبقى الصافي صفراً بعد الإلغاء.</p>
+    </mat-card>
+  </ng-container>
+</div>

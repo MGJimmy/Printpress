@@ -91,6 +91,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderInventoryItemsReportService, OrderInventoryItemsReportService>();
         services.AddScoped<IInventoryServicesUsageReportService, InventoryServicesUsageReportService>();
         services.AddScoped<ICashBookReportService, CashBookReportService>();
+        services.AddScoped<ICashReconcileReportService, CashReconcileReportService>();
         #endregion
 
         #region General

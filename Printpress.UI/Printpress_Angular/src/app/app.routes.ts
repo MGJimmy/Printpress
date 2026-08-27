@@ -299,6 +299,13 @@ export const routes: Routes = [
               import('./features/reports/components/cash-book-report/cash-book-report.component')
                 .then(m => m.CashBookReportComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'cash-reconcile',
+            loadComponent: () =>
+              import('./features/reports/components/cash-reconcile-report/cash-reconcile-report.component')
+                .then(m => m.CashReconcileReportComponent),
+            canActivate: [authGuard],
           }
         ]
       },

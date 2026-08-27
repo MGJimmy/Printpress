@@ -176,6 +176,7 @@ export class ApiUrlResource {
     inventoryServicesUsage: ApiUrlResource.Reports_URL + '/inventory-services-usage',
     filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories',
     cashBook: ApiUrlResource.Reports_URL + '/cash-book',
+    cashReconcile: ApiUrlResource.Reports_URL + '/cash-reconcile',
   };
 
 }
