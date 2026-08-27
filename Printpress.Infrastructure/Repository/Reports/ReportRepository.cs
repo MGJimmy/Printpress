@@ -415,4 +415,30 @@ internal class ReportRepository : IReportRepository
             })
             .ToListAsync();
     }
+
+    public async Task<List<InventoryStockOutRowDto>> GetInventoryStockOutsAsync(
+        int? categoryId, Guid? inventoryItemId, Guid? workerId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.InventoryTransaction
+            .Where(t => t.InventoryTransactionType == InventoryTransactionType.Out
+                && (categoryId == null || t.InventoryItem.InventoryItemCategoryId == categoryId)
+                && (inventoryItemId == null || t.InventoryItemId == inventoryItemId)
+                && (workerId == null || t.WorkerId == workerId)
+                && (dateFrom == null || t.CreatedAt >= dateFrom)
+                && (dateToExclusive == null || t.CreatedAt < dateToExclusive))
+            .OrderByDescending(t => t.CreatedAt)
+            .Select(t => new InventoryStockOutRowDto
+            {
+                Id = t.Id,
+                MovementDate = t.CreatedAt,
+                ItemId = t.InventoryItemId,
+                ItemName = t.InventoryItem.Name,
+                CategoryName = t.InventoryItem.InventoryItemCategory_LKP.Name,
+                Quantity = t.Quantity,
+                WorkerId = t.WorkerId,
+                WorkerName = t.Worker != null ? t.Worker.Name : null,
+                Notes = t.Notes
+            })
+            .ToListAsync();
+    }
 }

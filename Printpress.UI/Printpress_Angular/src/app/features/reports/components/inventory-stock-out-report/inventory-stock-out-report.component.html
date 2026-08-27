@@ -1,0 +1,145 @@
+<div class="inv-report" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>outbox</mat-icon>
+    </div>
+    <div>
+      <h1>صرف المخزن</h1>
+      <p>حركات الخروج اليدوي من المخزن، مع العامل إن وُجد. الطلبات لا تُنشئ صرفاً تلقائياً</p>
+    </div>
+  </header>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية التقرير</span>
+    </div>
+    <form [formGroup]="filterForm">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>التصنيف</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>العنصر</mat-label>
+          <mat-select formControlName="inventoryItemId" [disabled]="!filterForm.controls.categoryId.value">
+            <mat-option value="">الكل</mat-option>
+            <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>العامل</mat-label>
+          <mat-select formControlName="workerId">
+            <mat-option value="">الكل</mat-option>
+            <mat-option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoading">
+          <mat-icon>search</mat-icon>
+          بحث
+        </button>
+        <button mat-stroked-button type="button" (click)="reset()" [disabled]="isLoading">
+          <mat-icon>restart_alt</mat-icon>
+          إعادة تعيين
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <div class="loading" *ngIf="isLoading && !report">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="report">
+    <section class="kpis">
+      <article class="kpi kpi-count">
+        <span class="kpi-label">عدد الحركات</span>
+        <strong>{{ report.movementCount | number }}</strong>
+      </article>
+      <article class="kpi kpi-out">
+        <span class="kpi-label">الكراتين المصروفة</span>
+        <strong>{{ report.totalCartons | number }}</strong>
+      </article>
+      <article class="kpi kpi-items">
+        <span class="kpi-label">العناصر</span>
+        <strong>{{ report.itemCount | number }}</strong>
+      </article>
+      <article class="kpi kpi-workers">
+        <span class="kpi-label">عمال مرتبطون</span>
+        <strong>{{ report.workerCount | number }}</strong>
+      </article>
+    </section>
+
+    <p class="hint">
+      الصرف يتم من شاشة صرف المخزن فقط، ويُرفض إذا تجاوز الرصيد الحالي.
+      التاريخ هو تاريخ تسجيل الحركة. الإنتاج في الطلبات يظهر في تقارير الاستهلاك ولا يخصم من هنا.
+    </p>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>list_alt</mat-icon>
+        <span>حركات الصرف</span>
+        <span class="count">{{ report.movementCount }}</span>
+      </div>
+      <div class="table-wrap" *ngIf="report.rows.length; else emptyRows">
+        <table mat-table [dataSource]="report.rows" class="cash-table">
+          <ng-container matColumnDef="movementDate">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.movementDate | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td mat-footer-cell *matFooterCellDef><strong>الإجمالي</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="itemName">
+            <th mat-header-cell *matHeaderCellDef>العنصر</th>
+            <td mat-cell *matCellDef="let row">
+              <a [routerLink]="['/inventory/items/view', row.itemId]">{{ row.itemName }}</a>
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="categoryName">
+            <th mat-header-cell *matHeaderCellDef>التصنيف</th>
+            <td mat-cell *matCellDef="let row">{{ row.categoryName }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>الكمية</th>
+            <td mat-cell *matCellDef="let row" class="amt-out">{{ row.quantity | number }}</td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ report.totalCartons | number }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="workerName">
+            <th mat-header-cell *matHeaderCellDef>العامل</th>
+            <td mat-cell *matCellDef="let row">{{ row.workerName || '—' }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let row" class="notes">{{ row.notes || '—' }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+          <tr mat-footer-row *matFooterRowDef="columns"></tr>
+        </table>
+      </div>
+      <ng-template #emptyRows>
+        <p class="empty">لا توجد حركات صرف في الفترة المحددة</p>
+      </ng-template>
+    </mat-card>
+  </ng-container>
+</div>

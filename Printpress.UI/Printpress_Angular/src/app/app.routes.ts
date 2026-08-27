@@ -294,6 +294,13 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'inventory-stock-out',
+            loadComponent: () =>
+              import('./features/reports/components/inventory-stock-out-report/inventory-stock-out-report.component')
+                .then(m => m.InventoryStockOutReportComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'order-inventory-items',
             loadComponent: () =>
               import('./features/reports/components/order-inventory-items-report/order-inventory-items-report.component')

@@ -176,6 +176,7 @@ export class ApiUrlResource {
     inventoryServicesUsage: ApiUrlResource.Reports_URL + '/inventory-services-usage',
     inventoryStockBalance: ApiUrlResource.Reports_URL + '/inventory-stock-balance',
     inventoryPurchases: ApiUrlResource.Reports_URL + '/inventory-purchases',
+    inventoryStockOut: ApiUrlResource.Reports_URL + '/inventory-stock-out',
     filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories',
     cashBook: ApiUrlResource.Reports_URL + '/cash-book',
     cashReconcile: ApiUrlResource.Reports_URL + '/cash-reconcile',
