@@ -389,4 +389,30 @@ internal class ReportRepository : IReportRepository
             return 1;
         return packsPerCarton.Value * unitsPerPack.Value;
     }
+
+    public async Task<List<InventoryPurchaseLineRowDto>> GetInventoryPurchasesAsync(
+        int? categoryId, Guid? inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.PurchaseInvoiceLine
+            .Where(l => (categoryId == null || l.InventoryItem.InventoryItemCategoryId == categoryId)
+                && (inventoryItemId == null || l.InventoryItemId == inventoryItemId)
+                && (dateFrom == null || l.PurchaseInvoice.InvoiceDate >= dateFrom)
+                && (dateToExclusive == null || l.PurchaseInvoice.InvoiceDate < dateToExclusive))
+            .OrderByDescending(l => l.PurchaseInvoice.InvoiceDate)
+            .ThenBy(l => l.PurchaseInvoice.InvoiceNumber)
+            .Select(l => new InventoryPurchaseLineRowDto
+            {
+                InvoiceId = l.PurchaseInvoiceId,
+                InvoiceNumber = l.PurchaseInvoice.InvoiceNumber,
+                InvoiceDate = l.PurchaseInvoice.InvoiceDate,
+                SupplierName = l.PurchaseInvoice.SupplierName,
+                ItemId = l.InventoryItemId,
+                ItemName = l.InventoryItem.Name,
+                CategoryName = l.InventoryItem.InventoryItemCategory_LKP.Name,
+                Quantity = l.Quantity,
+                UnitPrice = l.UnitPrice,
+                LineTotal = l.LineTotal
+            })
+            .ToListAsync();
+    }
 }

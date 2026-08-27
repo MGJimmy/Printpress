@@ -16,4 +16,7 @@ public interface IReportRepository
 
     Task<List<InventoryStockBalanceRowDto>> GetInventoryStockBalanceAsync(
         int? categoryId, DateTime? dateFrom, DateTime? dateToExclusive);
+
+    Task<List<InventoryPurchaseLineRowDto>> GetInventoryPurchasesAsync(
+        int? categoryId, Guid? inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
 }
