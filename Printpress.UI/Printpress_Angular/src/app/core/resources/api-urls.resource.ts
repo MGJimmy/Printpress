@@ -177,6 +177,7 @@ export class ApiUrlResource {
     filterServiceCategories: ApiUrlResource.Reports_URL + '/filter/service-categories',
     cashBook: ApiUrlResource.Reports_URL + '/cash-book',
     cashReconcile: ApiUrlResource.Reports_URL + '/cash-reconcile',
+    cashMovementSummary: ApiUrlResource.Reports_URL + '/cash-movement-summary',
   };
 
 }

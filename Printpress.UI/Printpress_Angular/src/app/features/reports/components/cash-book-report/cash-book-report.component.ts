@@ -114,6 +114,10 @@ export class CashBookReportComponent implements OnInit {
       if (from) this.filterForm.controls.dateFrom.setValue(from);
       const to = this.parseIsoDate(params.get('dateTo'));
       if (to) this.filterForm.controls.dateTo.setValue(to);
+      const category = params.get('category');
+      if (category) this.filterForm.controls.category.setValue(category);
+      const type = params.get('type');
+      if (type) this.filterForm.controls.type.setValue(type);
     });
 
     this.cashAccountService.getAll().subscribe({

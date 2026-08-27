@@ -306,6 +306,13 @@ export const routes: Routes = [
               import('./features/reports/components/cash-reconcile-report/cash-reconcile-report.component')
                 .then(m => m.CashReconcileReportComponent),
             canActivate: [authGuard],
+          },
+          {
+            path: 'cash-movement-summary',
+            loadComponent: () =>
+              import('./features/reports/components/cash-movement-summary-report/cash-movement-summary-report.component')
+                .then(m => m.CashMovementSummaryReportComponent),
+            canActivate: [authGuard],
           }
         ]
       },
