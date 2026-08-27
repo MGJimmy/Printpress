@@ -1,4 +1,5 @@
-﻿using Printpress.Application;
+﻿using Microsoft.EntityFrameworkCore;
+using Printpress.Application;
 using Printpress.Domain;
 
 namespace Printpress.Infrastructure
@@ -300,7 +301,14 @@ namespace Printpress.Infrastructure
         public async Task SaveChangesAsync(string userId)
         {
             _context.CurrentUserId = userId;
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new BusinessExceptions(LocalizationKeys.CashAccounts.ConcurrencyConflict);
+            }
         }
     }
 }

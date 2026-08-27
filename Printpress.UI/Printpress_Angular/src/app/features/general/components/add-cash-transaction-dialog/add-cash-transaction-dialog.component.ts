@@ -53,7 +53,7 @@ export class AddCashTransactionDialogComponent implements OnInit {
     amount: FormControl<number>;
     description: FormControl<string>;
     transactionDate: FormControl<Date | null>;
-    groupId: FormControl<string>;
+    orderId: FormControl<string>;
   }>;
 
   transactionTypeOptions = [
@@ -64,7 +64,7 @@ export class AddCashTransactionDialogComponent implements OnInit {
   filteredCategories: { value: string; label: string }[] = [];
   externalOrders: ExternalOrderDto[] = [];
   externalOrderItems: SearchSelectItem[] = [];
-  showGroupSelector = false;
+  showOrderSelector = false;
   isSubmitting = false;
 
   constructor(
@@ -80,7 +80,7 @@ export class AddCashTransactionDialogComponent implements OnInit {
       amount: this.fb.control(0, [Validators.required, Validators.min(0.01)]),
       description: this.fb.control(''),
       transactionDate: this.fb.control<Date | null>(new Date(), Validators.required),
-      groupId: this.fb.control(''),
+      orderId: this.fb.control(''),
     });
   }
 
@@ -88,17 +88,17 @@ export class AddCashTransactionDialogComponent implements OnInit {
     this.form.controls.type.valueChanges.subscribe((type) => {
       this.filteredCategories = type === 'In' ? IN_CATEGORIES : OUT_CATEGORIES;
       this.form.controls.category.setValue('');
-      this.showGroupSelector = false;
-      this.form.controls.groupId.setValue('');
+      this.showOrderSelector = false;
+      this.form.controls.orderId.setValue('');
     });
 
     this.form.controls.category.valueChanges.subscribe((category) => {
-      this.showGroupSelector = category === 'ExternalServices';
-      if (this.showGroupSelector && this.externalOrders.length === 0) {
+      this.showOrderSelector = category === 'ExternalServices';
+      if (this.showOrderSelector && this.externalOrders.length === 0) {
         this.loadExternalOrders();
       }
-      if (!this.showGroupSelector) {
-        this.form.controls.groupId.setValue('');
+      if (!this.showOrderSelector) {
+        this.form.controls.orderId.setValue('');
       }
     });
   }
@@ -124,12 +124,12 @@ export class AddCashTransactionDialogComponent implements OnInit {
       return;
     }
 
-    if (this.showGroupSelector && !this.form.controls.groupId.value) {
-      this.alertService.showError('يجب اختيار مجموعة الطلب للخدمات الخارجية');
+    if (this.showOrderSelector && !this.form.controls.orderId.value) {
+      this.alertService.showError('يجب اختيار الطلب');
       return;
     }
 
-    const { type, category, amount, description, transactionDate, groupId } = this.form.getRawValue();
+    const { type, category, amount, description, transactionDate, orderId } = this.form.getRawValue();
 
     const payload: any = {
       cashAccountId: this.data.cashAccountId,
@@ -140,8 +140,8 @@ export class AddCashTransactionDialogComponent implements OnInit {
       transactionDate: transactionDate ? (transactionDate as Date).toISOString() : new Date().toISOString(),
     };
 
-    if (this.showGroupSelector && groupId) {
-      payload.referenceId = groupId;
+    if (this.showOrderSelector && orderId) {
+      payload.referenceId = orderId;
       payload.referenceType = 'Order';
     }
 

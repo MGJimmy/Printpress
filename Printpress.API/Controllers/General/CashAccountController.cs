@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Printpress.API;
 
 [Route("api/[controller]")]
-[AllowAnonymous]
+[Authorize]
 public class CashAccountController(ICashAccountService _cashAccountService) : AppBaseController
 {
     [HttpGet("getAll")]

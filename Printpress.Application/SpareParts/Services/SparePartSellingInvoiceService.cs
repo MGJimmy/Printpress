@@ -8,7 +8,7 @@ internal sealed class SparePartSellingInvoiceService(
     IValidator<SparePartSellingInvoiceCreateDto> _validator,
     IGuidGenerator _guidGenerator,
     ILocalizationService _loc,
-    CachAccountDomainService _cachAccountDomainService) : ISparePartSellingInvoiceService
+    CashAccountDomainService _cashAccountDomainService) : ISparePartSellingInvoiceService
 {
     public async Task<SparePartSellingInvoiceDto> CreateAsync(SparePartSellingInvoiceCreateDto payload, string userId)
     {
@@ -40,7 +40,7 @@ internal sealed class SparePartSellingInvoiceService(
         await _unitOfWork.SparePartTransactionRepository.AddRange(transactions);
 
 
-        await AddCachAccountTransaction(invoice);
+        await AddCashAccountTransaction(invoice);
 
         await _unitOfWork.SaveChangesAsync(userId);
 
@@ -66,20 +66,22 @@ internal sealed class SparePartSellingInvoiceService(
         }
     }
 
-    private async Task AddCachAccountTransaction(SparePartSellingInvoice invoice)
+    private async Task AddCashAccountTransaction(SparePartSellingInvoice invoice)
     {
-
-        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.SpareParts)
+        var cashAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.SpareParts)
             ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
 
-        _cachAccountDomainService.AddCachAccountTransaction(
-            cachAccount,
+        _cashAccountDomainService.AddCashAccountTransaction(
+            cashAccount,
             CashTransactionType.In,
             CashTransactionCategory.Sales,
             CashTransactionReferenceType.SellingSparePartInvoice,
             invoice.Id,
             invoice.TotalAmount,
-            $"Purchase Invoice Line: {invoice.InvoiceNumber}"
+            _loc.Get(LocalizationKeys.CashAccounts.SpareSellingInvoiceDescription, invoice.InvoiceNumber),
+            invoice.InvoiceDate
         );
+
+        _unitOfWork.CashAccountRepository.Update(cashAccount);
     }
 }

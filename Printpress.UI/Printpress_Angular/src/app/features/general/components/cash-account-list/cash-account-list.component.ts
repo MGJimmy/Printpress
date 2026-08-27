@@ -21,6 +21,7 @@ export class CashAccountListComponent implements OnInit {
 
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'الاسم', column: 'name' },
+    { headerName: 'النوع', column: 'type' },
     { headerName: 'الرصيد', column: 'balance' },
   ];
 
@@ -37,7 +38,10 @@ export class CashAccountListComponent implements OnInit {
   private loadAccounts(): void {
     this.cashAccountService.getAll().subscribe({
       next: (response) => {
-        this.accounts = response.data;
+        this.accounts = response.data.map((account) => ({
+          ...account,
+          type: account.type === 'SpareParts' ? 'قطع الغيار' : 'رئيسية',
+        }));
         this.totalCount = response.data.length;
       },
       error: () => {

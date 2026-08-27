@@ -15,6 +15,7 @@ namespace Printpress.Domain
         Maintenance = 5,
         ExternalServices = 6,
         Salaries = 7,
+        SalesReturn = 8,
         Other = 99
     }
 }

@@ -3,8 +3,8 @@
 namespace Printpress.Application;
 
 internal sealed class OrderTransactionService(
-    IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper, 
-    ILocalizationService _loc, CachAccountDomainService _cachAccountDomainService) : IOrderTransactionService
+    IUnitOfWork _unitOfWork, OrderTransactionMapper _orderTransactionMapper,
+    ILocalizationService _loc, CashAccountDomainService _cashAccountDomainService) : IOrderTransactionService
 {
     public async Task<OrderTransactionDto> AddAsync(OrderTransactionAddDto payload, string userId)
     {
@@ -14,8 +14,11 @@ internal sealed class OrderTransactionService(
 
         ValidatePayloadAmountComparedToOrder(order, payload);
 
-        
-        var client = await _unitOfWork.OrderTransactionRepository.AddAsync(_orderTransactionMapper.MapFromDestinationToSource(payload));
+        var transactionDate = DateTime.UtcNow;
+        var orderTransaction = _orderTransactionMapper.MapFromDestinationToSource(payload);
+        orderTransaction.CreatedOn = transactionDate;
+
+        await _unitOfWork.OrderTransactionRepository.AddAsync(orderTransaction);
 
         var isPayment = EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Payment;
 
@@ -25,31 +28,33 @@ internal sealed class OrderTransactionService(
 
         _unitOfWork.OrderRepository.Update(order);
 
-        await AddCachAccountTransaction(payload, isPayment);
-
+        await AddCashAccountTransaction(payload, isPayment, transactionDate);
 
         await _unitOfWork.SaveChangesAsync(userId);
 
-        return _orderTransactionMapper.MapFromSourceToDestination(client);
+        return _orderTransactionMapper.MapFromSourceToDestination(orderTransaction);
     }
 
-    private async Task AddCachAccountTransaction(OrderTransactionAddDto payload, bool isPayment)
+    private async Task AddCashAccountTransaction(OrderTransactionAddDto payload, bool isPayment, DateTime transactionDate)
     {
-
-        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
+        var cashAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
             ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
 
         var transactionType = isPayment ? CashTransactionType.In : CashTransactionType.Out;
+        var category = isPayment ? CashTransactionCategory.Sales : CashTransactionCategory.SalesReturn;
 
-        _cachAccountDomainService.AddCachAccountTransaction(
-            cachAccount,
+        _cashAccountDomainService.AddCashAccountTransaction(
+            cashAccount,
             transactionType,
-            CashTransactionCategory.Sales,
+            category,
             CashTransactionReferenceType.Order,
             payload.OrderId,
             payload.Amount,
-            payload.Note
+            payload.Note,
+            transactionDate
         );
+
+        _unitOfWork.CashAccountRepository.Update(cashAccount);
     }
 
     private void ValidateTransactionPayload(OrderTransactionAddDto payload)
@@ -80,14 +85,11 @@ internal sealed class OrderTransactionService(
 
     public async Task<PagedList<OrderTransactionDto>> GetByPage(Guid orderId, int pageNumber, int pageSize)
     {
-
         PagedList<OrderTransaction> pagedList = await _unitOfWork.OrderTransactionRepository.FilterAsync(
             new Paging(pageNumber, pageSize),
             (transaction) => transaction.OrderId == orderId,
             new Sorting(nameof(OrderTransaction.Id), SortingDirection.DESC)
             );
-
-        // check if no data returned then return no data founds
 
         var result = _orderTransactionMapper.MapFromSourceToDestination(pagedList);
 

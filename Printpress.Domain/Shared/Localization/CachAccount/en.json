@@ -1,3 +1,9 @@
 {
-    "cashAccounts.not_found": "Cach account not found"
+    "cashAccounts.not_found": "Cash account not found",
+    "cashAccounts.insufficient_funds": "Insufficient cash account balance for this transaction",
+    "cashAccounts.concurrency_conflict": "The cash account balance was changed by another operation. Please retry.",
+    "cashAccounts.addSalaryTransactionDescription": "Salary movement of type {0} for employee {1} note ({2})",
+    "cashAccounts.purchase_invoice_description": "Inventory purchase invoice {0}",
+    "cashAccounts.spare_purchase_invoice_description": "Spare parts purchase invoice {0}",
+    "cashAccounts.spare_selling_invoice_description": "Spare parts selling invoice {0}"
 }

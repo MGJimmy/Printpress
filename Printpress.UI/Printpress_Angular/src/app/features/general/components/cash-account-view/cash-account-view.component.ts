@@ -46,6 +46,7 @@ export class CashAccountViewComponent implements OnInit {
 
   form: FormGroup<{
     name: FormControl<string>;
+    type: FormControl<string>;
     balance: FormControl<number>;
   }>;
 
@@ -68,11 +69,13 @@ export class CashAccountViewComponent implements OnInit {
   categoryOptions = [
     { value: '', label: 'الكل' },
     { value: 'Sales', label: 'مبيعات' },
+    { value: 'SalesReturn', label: 'مرتجع مبيعات' },
     { value: 'Purchases', label: 'مشتريات' },
     { value: 'Expenses', label: 'مصروفات' },
     { value: 'CapitalInjection', label: 'ضخ رأس المال' },
     { value: 'Maintenance', label: 'صيانة' },
     { value: 'ExternalServices', label: 'خدمات خارجية' },
+    { value: 'Salaries', label: 'رواتب' },
     { value: 'Other', label: 'أخرى' },
   ];
 
@@ -97,6 +100,7 @@ export class CashAccountViewComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       name: this.fb.control({ value: '', disabled: true }),
+      type: this.fb.control({ value: '', disabled: true }),
       balance: this.fb.control({ value: 0, disabled: true }),
     });
   }
@@ -113,6 +117,7 @@ export class CashAccountViewComponent implements OnInit {
         this.account = response.data;
         this.form.patchValue({
           name: this.account.name,
+          type: this.account.type === 'SpareParts' ? 'قطع الغيار' : 'رئيسية',
           balance: this.account.balance,
         });
       },
@@ -132,10 +137,12 @@ export class CashAccountViewComponent implements OnInit {
       this.accountId, this.currentPage, this.pageSize, dateFrom, dateTo, type, category
     ).subscribe({
       next: (response) => {
-        this.transactions = response.data.items as CashTransactionDto[];
+        this.transactions = (response.data.items as CashTransactionDto[]).map((t) => ({
+          ...t,
+          type: this.toTypeLabel(t.type),
+          category: this.toCategoryLabel(t.category),
+        }));
         this.totalTransactionsCount = response.data.totalCount;
-
-        console.log('Transactions loaded:', this.transactions);
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل الحركات');
@@ -179,5 +186,13 @@ export class CashAccountViewComponent implements OnInit {
 
   onBack(): void {
     this.router.navigate(['/general/cash-accounts']);
+  }
+
+  private toTypeLabel(type: string): string {
+    return type === 'In' ? 'وارد' : type === 'Out' ? 'صادر' : type;
+  }
+
+  private toCategoryLabel(category: string): string {
+    return this.categoryOptions.find((c) => c.value === category)?.label ?? category;
   }
 }

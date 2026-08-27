@@ -45,8 +45,12 @@ public static class LocalizationKeys
 
     public static class CashAccounts
     {
-
         public const string NotFound = "cashAccounts.not_found";
+        public const string InsufficientFunds = "cashAccounts.insufficient_funds";
+        public const string ConcurrencyConflict = "cashAccounts.concurrency_conflict";
         public const string addSalaryTransactionDescription = "cashAccounts.addSalaryTransactionDescription";
+        public const string PurchaseInvoiceDescription = "cashAccounts.purchase_invoice_description";
+        public const string SparePurchaseInvoiceDescription = "cashAccounts.spare_purchase_invoice_description";
+        public const string SpareSellingInvoiceDescription = "cashAccounts.spare_selling_invoice_description";
     }
 }

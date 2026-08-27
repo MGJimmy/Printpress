@@ -6,7 +6,7 @@ internal sealed class SparePartPurchaseInvoiceService(
     IUnitOfWork _unitOfWork,
     IGuidGenerator _guidGenerator,
     ILocalizationService _loc,
-    CachAccountDomainService _cachAccountDomainService) : ISparePartPurchaseInvoiceService
+    CashAccountDomainService _cashAccountDomainService) : ISparePartPurchaseInvoiceService
 {
     public async Task CreateAsync(SparePartPurchaseInvoiceCreateDto payload, string userId)
     {
@@ -32,25 +32,27 @@ internal sealed class SparePartPurchaseInvoiceService(
 
         await _unitOfWork.SparePartTransactionRepository.AddRange(transactions);
 
-        await AddCachAccountTransaction(invoice);
+        await AddCashAccountTransaction(invoice);
 
         await _unitOfWork.SaveChangesAsync(userId);
     }
 
-    private async Task AddCachAccountTransaction(SparePartPurchaseInvoice invoice)
+    private async Task AddCashAccountTransaction(SparePartPurchaseInvoice invoice)
     {
-
-        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.SpareParts)
+        var cashAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.SpareParts)
             ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
 
-        _cachAccountDomainService.AddCachAccountTransaction(
-            cachAccount,
+        _cashAccountDomainService.AddCashAccountTransaction(
+            cashAccount,
             CashTransactionType.Out,
             CashTransactionCategory.Purchases,
             CashTransactionReferenceType.PurchaseSparePartInvoice,
             invoice.Id,
             invoice.TotalAmount,
-            $"Purchase Invoice Line: {invoice.InvoiceNumber}"
+            _loc.Get(LocalizationKeys.CashAccounts.SparePurchaseInvoiceDescription, invoice.InvoiceNumber),
+            invoice.InvoiceDate
         );
+
+        _unitOfWork.CashAccountRepository.Update(cashAccount);
     }
 }

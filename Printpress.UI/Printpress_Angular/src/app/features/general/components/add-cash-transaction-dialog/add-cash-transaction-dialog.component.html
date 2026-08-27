@@ -24,11 +24,11 @@
         </mat-form-field>
       </div>
 
-      <div class="col-md-6" *ngIf="showGroupSelector">
+      <div class="col-md-6" *ngIf="showOrderSelector">
         <app-search-select
-          formControlName="groupId"
+          formControlName="orderId"
           [items]="externalOrderItems"
-          label="مجموعة الطلب (خارجي)"
+          label="الطلب (تنفيذ خارجي)"
           [required]="true">
         </app-search-select>
       </div>

@@ -1,4 +1,9 @@
 {
-    "cashAccounts.not_found": "الخزنية غير موجوده",
-    "cashAccounts.addSalaryTransactionDescription": "اضافة حركة مالية نوعها {0} للموظف {1} ملحوظه ({2})"
+    "cashAccounts.not_found": "الخزينة غير موجودة",
+    "cashAccounts.insufficient_funds": "رصيد الخزينة غير كافٍ لإتمام هذه الحركة",
+    "cashAccounts.concurrency_conflict": "تم تعديل رصيد الخزينة من عملية أخرى. أعد المحاولة.",
+    "cashAccounts.addSalaryTransactionDescription": "اضافة حركة مالية نوعها {0} للموظف {1} ملحوظه ({2})",
+    "cashAccounts.purchase_invoice_description": "فاتورة مشتريات مخزون رقم {0}",
+    "cashAccounts.spare_purchase_invoice_description": "فاتورة شراء قطع غيار رقم {0}",
+    "cashAccounts.spare_selling_invoice_description": "فاتورة بيع قطع غيار رقم {0}"
 }

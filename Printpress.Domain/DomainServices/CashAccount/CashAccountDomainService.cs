@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Printpress.Domain;
-
 namespace Printpress.Domain
 {
-    public class CachAccountDomainService
+    public class CashAccountDomainService
     {
-        public void AddCachAccountTransaction(
-            CashAccount cashAccount, 
+        public CashTransaction AddCashAccountTransaction(
+            CashAccount cashAccount,
             CashTransactionType cashTransactionType,
             CashTransactionCategory cashTransactionCategory,
             CashTransactionReferenceType? referenceType,
             Guid? referenceId,
             decimal amount,
-            string description)
+            string description,
+            DateTime transactionDate)
         {
             var transaction = new CashTransaction(
                 cashAccount.Id,
@@ -26,12 +20,15 @@ namespace Printpress.Domain
                 referenceId,
                 amount,
                 description,
-                DateTime.UtcNow);
+                transactionDate);
 
             cashAccount.AddTransaction(transaction);
+            return transaction;
         }
 
-
-
+        public void RemoveCashAccountTransaction(CashAccount cashAccount, CashTransaction transaction)
+        {
+            cashAccount.RemoveTransaction(transaction);
+        }
     }
 }

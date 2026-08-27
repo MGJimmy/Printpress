@@ -9,7 +9,7 @@ internal sealed class WorkerSalaryTransactionService(
     IGuidGenerator _guidGenerator,
     IWorkerTransactionCalculator workerTransactionCalculator,
     ILocalizationService _loc,
-    CachAccountDomainService _cachAccountDomainService) : IWorkerSalaryTransactionService
+    CashAccountDomainService _cashAccountDomainService) : IWorkerSalaryTransactionService
 {
     public async Task<WorkerSalaryTransactionDto> AddAsync(AddSalaryTransactionDto payload, string userId)
     {
@@ -31,10 +31,9 @@ internal sealed class WorkerSalaryTransactionService(
         if (period.IsClosed)
             throw new ValidationExeption("لا يمكن إضافة حركة مالية في دورة رواتب مغلقة");
 
-
         ValidatePayment(payload, worker);
 
-        var transaction =  worker.AddTransaction(
+        var transaction = worker.AddTransaction(
             _guidGenerator.NewGuid(),
             payload.PayrollPeriodId,
             payload.TransactionType,
@@ -42,19 +41,17 @@ internal sealed class WorkerSalaryTransactionService(
             payload.TransactionDate,
             payload.Note);
 
-
         _unitOfWork.WorkerRepository.Update(worker);
 
         await AddCashTransaction(
+            transaction.Id,
             payload.TransactionType,
             payload.Amount,
             worker.Name,
             payload.Note,
-            payload.TransactionDate);                                                   
+            payload.TransactionDate);
 
         await _unitOfWork.SaveChangesAsync(userId);
-
-
 
         return new WorkerSalaryTransactionDto
         {
@@ -69,37 +66,40 @@ internal sealed class WorkerSalaryTransactionService(
     }
 
     private async Task AddCashTransaction(
-        SalaryTransactionType salaryTransactionType, 
-        decimal amount, 
-        string workerName, 
-        string note, 
+        Guid salaryTransactionId,
+        SalaryTransactionType salaryTransactionType,
+        decimal amount,
+        string workerName,
+        string note,
         DateTime transactionDate)
     {
-        // Penalty is not recorded as a cash account transaction. Instead, it reduces the employee's salary,
-        // which limits the amount of salary that can be paid.
+        // Penalty reduces remaining salary payable only. It is not cash in or out of the vault.
         if (salaryTransactionType == SalaryTransactionType.Penalty)
             return;
 
-        var cachAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
+        var cashAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
                             ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
 
         CashTransactionType cashTransactionType = GetCashTransactionType(salaryTransactionType);
 
-        string description = _loc.Get(LocalizationKeys.CashAccounts.addSalaryTransactionDescription,salaryTransactionType.ToString(), workerName, note);
+        string description = _loc.Get(LocalizationKeys.CashAccounts.addSalaryTransactionDescription, salaryTransactionType.ToString(), workerName, note);
 
-        _cachAccountDomainService.AddCachAccountTransaction(
-            cachAccount, 
+        _cashAccountDomainService.AddCashAccountTransaction(
+            cashAccount,
             cashTransactionType,
             CashTransactionCategory.Salaries,
-            null,
-            null,
+            CashTransactionReferenceType.WorkerSalaryTransaction,
+            salaryTransactionId,
             amount,
-            description                                                                          );
+            description,
+            transactionDate);
+
+        _unitOfWork.CashAccountRepository.Update(cashAccount);
     }
 
     private CashTransactionType GetCashTransactionType(SalaryTransactionType salaryTransactionType)
     {
-        if(salaryTransactionType == SalaryTransactionType.SalaryAdvancePayment)
+        if (salaryTransactionType == SalaryTransactionType.SalaryAdvancePayment)
         {
             return CashTransactionType.In;
         }
@@ -117,10 +117,9 @@ internal sealed class WorkerSalaryTransactionService(
             && (worker.UnpaidAdvanceAmount - payload.Amount) < 0)
         {
             throw new ValidationExeption("لا يمكن رد قيمة سلفة اكبر من المتبقي من السلفة ");
-
         }
 
-        if ((payload.TransactionType == SalaryTransactionType.Penalty 
+        if ((payload.TransactionType == SalaryTransactionType.Penalty
             || payload.TransactionType == SalaryTransactionType.Salary)
             && transactionSummary.RemainingThisMonth - payload.Amount < 0)
         {
@@ -139,6 +138,20 @@ internal sealed class WorkerSalaryTransactionService(
 
         if (periodIsClosed)
             throw new ValidationExeption("لا يمكن حذف حركة مالية في دورة رواتب مغلقة");
+
+        var cashTransaction = await _unitOfWork.CashTransactionRepository.FirstOrDefaultAsync(
+            t => t.ReferenceType == CashTransactionReferenceType.WorkerSalaryTransaction
+                 && t.ReferenceId == transaction.Id);
+
+        if (cashTransaction is not null)
+        {
+            var cashAccount = await _unitOfWork.CashAccountRepository.FindAsync(cashTransaction.CashAccountId)
+                ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
+
+            _cashAccountDomainService.RemoveCashAccountTransaction(cashAccount, cashTransaction);
+            _unitOfWork.CashTransactionRepository.Remove(cashTransaction);
+            _unitOfWork.CashAccountRepository.Update(cashAccount);
+        }
 
         _unitOfWork.WorkerSalaryTransactionRepository.Remove(transaction);
         await _unitOfWork.SaveChangesAsync(userId);

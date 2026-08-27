@@ -25,6 +25,9 @@ namespace Printpress.Infrastructure
 
             entity.Property(x => x.Balance)
                 .HasPrecision(18, 4);
+
+            entity.UseXminAsConcurrencyToken();
+            entity.Navigation(x => x.Transactions).UsePropertyAccessMode(PropertyAccessMode.Field);
         }
 
         private static void Configure(this EntityTypeBuilder<CashTransaction> entity)

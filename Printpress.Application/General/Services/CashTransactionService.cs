@@ -1,6 +1,5 @@
 using AutoMapper;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Printpress.Domain;
 
 namespace Printpress.Application;
@@ -9,7 +8,7 @@ internal sealed class CashTransactionService(
     IUnitOfWork _unitOfWork,
     IMapper _mapper,
     IValidator<AddCashTransactionDto> _validator,
-    IGuidGenerator _guidGenerator) : ICashTransactionService
+    CashAccountDomainService _cashAccountDomainService) : ICashTransactionService
 {
     public async Task<PagedList<CashTransactionDto>> GetByCashAccountIdAsync(
         Guid cashAccountId,
@@ -27,9 +26,7 @@ internal sealed class CashTransactionService(
         if (!string.IsNullOrEmpty(category))
             categoryEnum = EnumHelper.MapStringToEnum<CashTransactionCategory>(category);
 
-
         var sorting = new Sorting(nameof(CashTransaction.CreatedAt), SortingDirection.DESC);
-
 
         var result = await _unitOfWork.CashTransactionRepository.FilterAsync(
             paging,
@@ -66,23 +63,15 @@ internal sealed class CashTransactionService(
         if (!string.IsNullOrEmpty(payload.ReferenceType))
             referenceTypeEnum = EnumHelper.MapStringToEnum<CashTransactionReferenceType>(payload.ReferenceType);
 
-        var transaction = new CashTransaction(
-            payload.CashAccountId,
+        var transaction = _cashAccountDomainService.AddCashAccountTransaction(
+            account,
             typeEnum,
             categoryEnum,
             referenceTypeEnum,
             payload.ReferenceId,
             payload.Amount,
             payload.Description,
-            payload.TransactionDate
-            );
-
-        await _unitOfWork.CashTransactionRepository.AddAsync(transaction);
-
-        if (typeEnum == CashTransactionType.In)
-            account.Balance += payload.Amount;
-        else
-            account.Balance -= payload.Amount;
+            payload.TransactionDate);
 
         _unitOfWork.CashAccountRepository.Update(account);
 

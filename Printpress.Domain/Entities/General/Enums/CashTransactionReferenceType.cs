@@ -12,6 +12,7 @@ namespace Printpress.Domain
         PurchaseInventoryInvoice = 2,
         PurchaseSparePartInvoice = 3,
         SellingSparePartInvoice = 4,
+        WorkerSalaryTransaction = 5,
         Other = 99
     }
 }
