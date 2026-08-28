@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Identity.Service;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Printpress.Infrastructure;
@@ -6,55 +8,60 @@ using Printpress.MigrationRunner;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
-            // Build configuration (e.g., from appsettings.json)
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            // Set up dependency injection
             var serviceProvider = new ServiceCollection()
-                .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")))
+                .AddLogging()
+                .AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")))
+                .AddDbContext<IdentityDbContext>(options =>
+                    options.UseNpgsql(configuration.GetConnectionString("UserConnectionString")))
+                .AddIdentity<User, IdentityRole>(options =>
+                {
+                    options.User.RequireUniqueEmail = true;
+                    options.Password.RequiredLength = 7;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = false;
+                })
+                .AddEntityFrameworkStores<IdentityDbContext>()
+                .AddDefaultTokenProviders()
+                .Services
                 .AddScoped<SeedingDbContext>()
                 .BuildServiceProvider();
 
-            // Resolve the DbContext and run database migrations
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var seedingDbContext = scope.ServiceProvider.GetRequiredService<SeedingDbContext>();
+            using var scope = serviceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var identityDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+            var seedingDbContext = scope.ServiceProvider.GetRequiredService<SeedingDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+            dbContext.Database.Migrate();
+            identityDbContext.Database.Migrate();
 
-                // Apply migrations
-                dbContext.Database.Migrate();
+            seedingDbContext.SeedingData();
 
-                //use this in development only
-                //seedingDbContext.SeedingMockData();
+            dbContext.CurrentUserId = "Seeding";
+            dbContext.SaveChanges();
 
-                //use this to add lockup data
-                seedingDbContext.SeedingData();
+            await IdentitySeeder.SeedAsync(userManager, roleManager);
 
-                //call save changes only here to save the data dont call it in the seeding methods
-                dbContext.CurrentUserId = "Seeding";
-                dbContext.SaveChanges();
-
-                Console.WriteLine("Database migrations applied successfully.");
-
-                Console.ReadLine();
-            }
-
+            Console.WriteLine("Database migrations and default data applied successfully.");
         }
         catch (Exception ex)
         {
             Console.WriteLine("An error occurred while applying migrations: " + ex.Message);
+            Console.WriteLine(ex);
+            Environment.ExitCode = 1;
         }
-
-
-
     }
 }
-

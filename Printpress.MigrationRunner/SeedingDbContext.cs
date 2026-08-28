@@ -270,7 +270,6 @@ internal sealed class SeedingDbContext
             new ServiceCategory { Id = G(102), Code = "Stapling",  Name = "تدبيس",  RequireInventoryItem = false },
             new ServiceCategory { Id = G(103), Code = "Clueing",   Name = "بشر",    RequireInventoryItem = false },
             new ServiceCategory { Id = G(104), Code = "Cutting",   Name = "قص",     RequireInventoryItem = false },
-            new ServiceCategory { Id = G(105), Code = "Selling",   Name = "بيع",    RequireInventoryItem = false },
         };
 
         foreach (var category in categories)
