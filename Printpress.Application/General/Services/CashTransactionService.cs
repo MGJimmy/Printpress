@@ -31,11 +31,16 @@ internal sealed class CashTransactionService(
 
         var sorting = new Sorting(nameof(CashTransaction.CreatedAt), SortingDirection.DESC);
 
+        var from = UtcDateTime.AsUtc(dateFrom);
+        var toExclusive = dateTo is null
+            ? (DateTime?)null
+            : UtcDateTime.AsUtc(UtcDateTime.AsUtc(dateTo.Value).Date.AddDays(1));
+
         var result = await _unitOfWork.CashTransactionRepository.FilterAsync(
             paging,
             t => t.CashAccountId == cashAccountId
-                 && (dateFrom == null || t.TransactionDate.Date >= dateFrom.Value.Date)
-                 && (dateTo == null || t.TransactionDate.Date <= dateTo.Value.Date)
+                 && (from == null || t.TransactionDate >= from)
+                 && (toExclusive == null || t.TransactionDate < toExclusive)
                  && (typeEnum == null || t.Type == typeEnum)
                  && (categoryEnum == null || t.Category == categoryEnum),
             sorting
@@ -85,7 +90,7 @@ internal sealed class CashTransactionService(
             payload.ReferenceId,
             payload.Amount,
             payload.Description,
-            payload.TransactionDate);
+            UtcDateTime.AsUtc(payload.TransactionDate));
 
         _unitOfWork.CashAccountRepository.Update(account);
 
@@ -132,7 +137,7 @@ internal sealed class CashTransactionService(
             destination,
             payload.Amount,
             Truncate(description, 500),
-            payload.TransactionDate,
+            UtcDateTime.AsUtc(payload.TransactionDate),
             Guid.NewGuid());
 
         _unitOfWork.CashAccountRepository.Update(source);

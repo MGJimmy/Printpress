@@ -19,7 +19,7 @@ internal sealed class PurchaseInvoiceService(
         if (!validationResult.IsValid)
             throw new ValidationExeption(validationResult.Errors.First().ErrorMessage);
 
-        var entity = new PurchaseInvoice(payload.InvoiceNumber, payload.InvoiceDate, payload.SupplierName, payload.AttachmentFilePath);
+        var entity = new PurchaseInvoice(payload.InvoiceNumber, UtcDateTime.AsUtc(payload.InvoiceDate), payload.SupplierName, payload.AttachmentFilePath);
         entity.Id = _guidGenerator.NewGuid();
 
         payload.Lines.ForEach(line =>

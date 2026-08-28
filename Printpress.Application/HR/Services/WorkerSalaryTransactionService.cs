@@ -38,7 +38,7 @@ internal sealed class WorkerSalaryTransactionService(
             payload.PayrollPeriodId,
             payload.TransactionType,
             payload.Amount,
-            payload.TransactionDate,
+            UtcDateTime.AsUtc(payload.TransactionDate),
             payload.Note);
 
         _unitOfWork.WorkerRepository.Update(worker);
@@ -49,7 +49,7 @@ internal sealed class WorkerSalaryTransactionService(
             payload.Amount,
             worker.Name,
             payload.Note,
-            payload.TransactionDate);
+            UtcDateTime.AsUtc(payload.TransactionDate));
 
         await _unitOfWork.SaveChangesAsync(userId);
 

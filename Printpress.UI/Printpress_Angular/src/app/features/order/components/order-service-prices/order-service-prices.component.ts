@@ -55,6 +55,7 @@ export class OrderServicePricesComponent implements OnInit {
       await this.fillFromExistingServices();
     }
     await this.fillFromNewGroupServices();
+    this.isZeroOrder = this.isZeroOrder || this.allActiveServicePricesAreZero();
   }
 
   private async fillFromExistingServices() {
@@ -119,9 +120,7 @@ export class OrderServicePricesComponent implements OnInit {
   }
 
   protected onPriceChange(): void {
-    if (this.isZeroOrder && this._tempServicesList.some(x => !x.isDeleted && (x.price ?? 0) > 0)) {
-      this.isZeroOrder = false;
-    }
+    this.isZeroOrder = this.allActiveServicePricesAreZero();
   }
 
   protected makeZeroOrder(): void {
@@ -143,7 +142,7 @@ export class OrderServicePricesComponent implements OnInit {
       return;
     }
 
-    const isZeroOrder = asZeroOrder || this.isZeroOrder;
+    const isZeroOrder = asZeroOrder || this.allActiveServicePricesAreZero();
     const orderServices: OrderServicesGetDTO[] = this._tempServicesList.map(x => {
       let objectState: ObjectStateEnum;
       if (x.isNew) {
@@ -165,6 +164,11 @@ export class OrderServicePricesComponent implements OnInit {
     });
 
     this.dialogRef.close({ services: orderServices, isZeroOrder });
+  }
+
+  private allActiveServicePricesAreZero(): boolean {
+    const active = this._tempServicesList.filter(x => !x.isDeleted);
+    return active.length > 0 && active.every(x => Number(x.price) === 0);
   }
 
   private validateOrderPrices(): boolean {

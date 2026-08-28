@@ -12,7 +12,7 @@ internal sealed class SparePartPurchaseInvoiceService(
     {
         var invoice = new SparePartPurchaseInvoice(
             payload.InvoiceNumber,
-            payload.InvoiceDate,
+            UtcDateTime.AsUtc(payload.InvoiceDate),
             payload.SupplierName,
             payload.AttachmentFilePath ?? string.Empty);
 

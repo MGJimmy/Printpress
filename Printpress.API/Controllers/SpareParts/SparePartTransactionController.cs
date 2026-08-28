@@ -10,7 +10,7 @@ public class SparePartTransactionController(ISparePartTransactionService _servic
     public async Task<IActionResult> GetByItemId(Guid itemId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
         [FromQuery] DateTime? dateFrom = null, [FromQuery] DateTime? dateTo = null, [FromQuery] string transactionType = null)
     {
-        var result = await _service.GetByItemIdAsync(itemId, new Paging(pageNumber, pageSize), dateFrom, dateTo, transactionType);
+        var result = await _service.GetByItemIdAsync(itemId, new Paging(pageNumber, pageSize), UtcDateTime.AsUtc(dateFrom), UtcDateTime.AsUtc(dateTo), transactionType);
         return Ok(result);
     }
 }

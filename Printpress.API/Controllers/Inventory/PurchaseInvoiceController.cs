@@ -20,8 +20,8 @@ public class PurchaseInvoiceController(IPurchaseInvoiceService _purchaseInvoiceS
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _purchaseInvoiceService.GetAllAsync(categoryId, itemId, from, toExclusive);
         return Ok(result);
     }

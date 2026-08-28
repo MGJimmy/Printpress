@@ -28,7 +28,7 @@ public class WorkerController(IWorkerService _service) : AppBaseController
         [FromQuery] DateTime? productionDateFrom,
         [FromQuery] DateTime? productionDateTo)
     {
-        var result = await _service.GetDetailsAsync(id, productionDateFrom, productionDateTo);
+        var result = await _service.GetDetailsAsync(id, UtcDateTime.AsUtc(productionDateFrom), UtcDateTime.AsUtc(productionDateTo));
         return Ok(result);
     }
 
@@ -42,7 +42,7 @@ public class WorkerController(IWorkerService _service) : AppBaseController
     {
         var paging = new Paging(pageNumber, pageSize);
 
-        var result = await _service.GetWorkerProduction(workerId, paging, productionDateFrom, productionDateTo);
+        var result = await _service.GetWorkerProduction(workerId, paging, UtcDateTime.AsUtc(productionDateFrom), UtcDateTime.AsUtc(productionDateTo));
         return Ok(result);
     }
 

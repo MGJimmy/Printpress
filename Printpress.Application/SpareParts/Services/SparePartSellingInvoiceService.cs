@@ -22,7 +22,7 @@ internal sealed class SparePartSellingInvoiceService(
         var invoice = new SparePartSellingInvoice(
                 default,
                 payload.ClientName,
-                payload.InvoiceDate);
+                UtcDateTime.AsUtc(payload.InvoiceDate));
 
         foreach (var line in payload.Lines)
         {

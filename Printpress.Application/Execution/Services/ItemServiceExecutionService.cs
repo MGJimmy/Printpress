@@ -204,7 +204,7 @@ internal sealed class ItemServiceExecutionService(
             ServiceCategoryId = payload.ServiceCategoryId,
             WorkerId = w.WorkerId,
             Quantity = w.Quantity,
-            ExecutionDate = DateTime.SpecifyKind(payload.ExecutionDate, DateTimeKind.Utc),
+            ExecutionDate = UtcDateTime.AsUtc(payload.ExecutionDate),
             Notes = payload.Notes
         }).ToList();
 

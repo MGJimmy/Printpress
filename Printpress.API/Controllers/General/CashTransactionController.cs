@@ -19,8 +19,8 @@ public class CashTransactionController(ICashTransactionService _cashTransactionS
         var result = await _cashTransactionService.GetByCashAccountIdAsync(
             cashAccountId,
             new Paging(pageNumber, pageSize),
-            dateFrom,
-            dateTo,
+            UtcDateTime.AsUtc(dateFrom),
+            UtcDateTime.AsUtc(dateTo),
             type,
             category);
         return Ok(result);

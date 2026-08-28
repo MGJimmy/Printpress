@@ -27,8 +27,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _reportService.GetReportAsync(inventoryItemId, from, toExclusive);
         return Ok(result);
     }
@@ -44,8 +44,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _inventoryServicesService.GetReportAsync(
             inventoryItemCategoryId, serviceCategoryId, from, toExclusive);
         return Ok(result);
@@ -66,8 +66,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _inventoryStockBalanceService.GetReportAsync(categoryId, from, toExclusive);
         return Ok(result);
     }
@@ -80,8 +80,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _inventoryPurchaseService.GetReportAsync(categoryId, inventoryItemId, from, toExclusive);
         return Ok(result);
     }
@@ -95,8 +95,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _inventoryStockOutService.GetReportAsync(
             categoryId, inventoryItemId, workerId, from, toExclusive);
         return Ok(result);
@@ -109,8 +109,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _inventoryMovementService.GetReportAsync(inventoryItemId, from, toExclusive);
         return Ok(result);
     }
@@ -127,8 +127,8 @@ public class ReportsController(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? to = UtcDateTime.StartOfDay(dateTo);
         var result = await _cashBookReportService.GetReportAsync(
             cashAccountId, from, to, type, category, search, page, pageSize);
         return Ok(result);
@@ -141,8 +141,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? to = UtcDateTime.StartOfDay(dateTo);
         var result = await _cashReconcileReportService.GetReportAsync(cashAccountId, from, to);
         return Ok(result);
     }
@@ -154,8 +154,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? to = UtcDateTime.StartOfDay(dateTo);
         var result = await _cashMovementSummaryReportService.GetReportAsync(cashAccountId, from, to);
         return Ok(result);
     }
@@ -167,8 +167,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? to = UtcDateTime.StartOfDay(dateTo);
         var result = await _cashFlowReportService.GetReportAsync(cashAccountId, from, to);
         return Ok(result);
     }
@@ -180,8 +180,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? to = UtcDateTime.StartOfDay(dateTo);
         var result = await _cashByDocumentReportService.GetReportAsync(cashAccountId, from, to);
         return Ok(result);
     }
@@ -192,8 +192,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? to = dateTo?.ToDateTime(TimeOnly.MinValue);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? to = UtcDateTime.StartOfDay(dateTo);
         var result = await _cashTreasuryReportService.GetReportAsync(from, to);
         return Ok(result);
     }
@@ -204,8 +204,8 @@ public class ReportsController(
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _zeroOrdersReportService.GetReportAsync(from, toExclusive);
         return Ok(result);
     }

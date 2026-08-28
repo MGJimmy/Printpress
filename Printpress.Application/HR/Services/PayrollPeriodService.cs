@@ -65,14 +65,14 @@ internal sealed class PayrollPeriodService(
         if (!validationResult.IsValid)
             throw new ValidationExeption(validationResult.Errors.First().ErrorMessage);
 
-        ValidateNoOverlap(payload.StartDate, payload.EndDate);
+        ValidateNoOverlap(UtcDateTime.AsUtc(payload.StartDate), UtcDateTime.AsUtc(payload.EndDate));
 
         var period = new PayrollPeriod
         {
             Id = _guidGenerator.NewGuid(),
             Name = payload.Name,
-            StartDate = payload.StartDate,
-            EndDate = payload.EndDate,
+            StartDate = UtcDateTime.AsUtc(payload.StartDate),
+            EndDate = UtcDateTime.AsUtc(payload.EndDate),
             IsClosed = false
         };
 

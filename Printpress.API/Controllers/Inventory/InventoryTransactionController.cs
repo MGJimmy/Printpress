@@ -12,7 +12,7 @@ public class InventoryTransactionController(IInventoryTransactionService _servic
     public async Task<IActionResult> GetByItemId(Guid itemId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
         [FromQuery] DateTime? dateFrom = null, [FromQuery] DateTime? dateTo = null, [FromQuery] string transactionType = null)
     {
-        var result = await _service.GetByItemIdAsync(itemId, new Paging(pageNumber, pageSize), dateFrom, dateTo, transactionType);
+        var result = await _service.GetByItemIdAsync(itemId, new Paging(pageNumber, pageSize), UtcDateTime.AsUtc(dateFrom), UtcDateTime.AsUtc(dateTo), transactionType);
         return Ok(result);
     }
 
@@ -32,8 +32,8 @@ public class InventoryTransactionController(IInventoryTransactionService _servic
         [FromQuery] DateOnly? dateFrom,
         [FromQuery] DateOnly? dateTo)
     {
-        DateTime? from = dateFrom?.ToDateTime(TimeOnly.MinValue);
-        DateTime? toExclusive = dateTo?.ToDateTime(TimeOnly.MinValue).AddDays(1);
+        DateTime? from = UtcDateTime.StartOfDay(dateFrom);
+        DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _service.GetAllAsync(categoryId, itemId, workerId, type, from, toExclusive);
         return Ok(result);
     }
@@ -49,7 +49,7 @@ public class InventoryTransactionController(IInventoryTransactionService _servic
         [FromQuery] DateTime? dateTo = null)
     {
         var paging = new Paging(pageNumber, pageSize);
-        var result = await _service.GetByWorkerIdAsync(workerId, paging, inventoryItemCategoryId, inventoryItemId, dateFrom, dateTo);
+        var result = await _service.GetByWorkerIdAsync(workerId, paging, inventoryItemCategoryId, inventoryItemId, UtcDateTime.AsUtc(dateFrom), UtcDateTime.AsUtc(dateTo));
         return Ok(result);
     }
 }
