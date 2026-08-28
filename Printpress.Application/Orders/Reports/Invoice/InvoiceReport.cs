@@ -90,6 +90,8 @@ public class InvoiceReport : IDocument
             {
                 text.Span("اسم الطلبية : ").SemiBold();
                 text.Span(_model.Name);
+                if (_model.IsZeroOrder)
+                    text.Span("  (طلب صفري)").SemiBold().FontColor(Colors.Orange.Darken2);
             });
 
             column.Item().PaddingHorizontal(40).PaddingVertical(4).Text(text =>

@@ -14,6 +14,7 @@ public class OrderDto : TrackedDTO
     public OrderStatusEnum  Status { get; set; }
     public decimal? TotalPrice { get; set; }
     public decimal? TotalPaid { get; set; }
+    public bool IsZeroOrder { get; set; }
 
     public List<OrderGroupDTO> OrderGroups { get; set; }
     public List<OrderServiceDTO> OrderServices { get; set; }

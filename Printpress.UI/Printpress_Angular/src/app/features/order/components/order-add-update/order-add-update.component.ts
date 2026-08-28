@@ -238,9 +238,13 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       width: '1000px'
     });
 
-    dialogRef.afterClosed().subscribe((orderServices: OrderServicesGetDTO[] | undefined) => {
-      if (orderServices) {
-        this.OrderSharedService.setOrderServices(orderServices);
+    dialogRef.afterClosed().subscribe((result: { services: OrderServicesGetDTO[]; isZeroOrder: boolean } | undefined) => {
+      if (result?.services) {
+        this.OrderSharedService.setOrderServices(result.services);
+        this.OrderSharedService.setIsZeroOrder(result.isZeroOrder);
+        if (result.isZeroOrder) {
+          this.OrderSharedService.zeroSellingItemPrices();
+        }
         this.OrderSharedService.updateOrderObjectState();
         
         const orderDTO = this.OrderSharedService.getOrderObject_copy(true);

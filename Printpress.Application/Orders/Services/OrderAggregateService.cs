@@ -80,11 +80,24 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             si.OrderId = order.Id;
         }
 
+        ApplyZeroOrderPrices(order);
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
         await _IUnitOfWork.OrderRepository.AddAsync(order);
 
         await _IUnitOfWork.SaveChangesAsync(userId);
+    }
+
+    private static void ApplyZeroOrderPrices(Order order)
+    {
+        if (!order.IsZeroOrder)
+            return;
+
+        foreach (var service in (order.Services ?? []).NotDeleted())
+            service.Price = 0;
+
+        foreach (var item in (order.SellingItems ?? []).NotDeleted())
+            item.Price = 0;
     }
 
     private async Task<decimal?> CalculateOrderTotalPrice(Order order)
@@ -216,6 +229,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
         PreservePersistedStatuses(order, persisted);
 
+        ApplyZeroOrderPrices(order);
         order.TotalPrice = await CalculateOrderTotalPrice(order);
 
         _IUnitOfWork.OrderRepository.AddOrUpdate(order);

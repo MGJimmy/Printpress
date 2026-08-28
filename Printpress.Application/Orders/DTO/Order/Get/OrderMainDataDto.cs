@@ -7,4 +7,5 @@ public class OrderMainDataDto
     public string ClientName { get; set; }
     public decimal? TotalPrice { get; set; }
     public decimal? TotalPaid { get; set; }
+    public bool IsZeroOrder { get; set; }
 }

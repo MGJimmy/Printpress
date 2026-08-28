@@ -11,7 +11,8 @@ export class OrderUpsertDto extends IObjectState {
         public clientId: string,
         public orderGroups: OrderGroupUpsertDto[],
         public orderServices: OrderServicesUpsertDTO[],
-        public sellingItems: OrderSellingItemUpsertDto[]) {
+        public sellingItems: OrderSellingItemUpsertDto[],
+        public isZeroOrder: boolean = false) {
 
         super();
     }

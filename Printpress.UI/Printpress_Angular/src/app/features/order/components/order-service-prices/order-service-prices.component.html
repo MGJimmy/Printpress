@@ -1,34 +1,37 @@
-<div class="modal-container">
-  <div class="modal-header border-bottom pb-2 mb-3 d-flex justify-content-center">
-    <h4 class="text-primary fw-bold m-0">أسعار خدمات الطلبية</h4>
-  </div>
+<div class="prices-dialog" dir="rtl">
+  <header class="hero" [class.zero]="isZeroOrder">
+    <div>
+      <h4>أسعار خدمات الطلبية</h4>
+      <p>يمكن جعل خدمة واحدة أو أكثر بسعر صفر. الطلب الصفري يصفر كل الخدمات ويُعلَّم في التقارير.</p>
+    </div>
+    <span class="zero-badge" *ngIf="isZeroOrder">طلب صفري</span>
+  </header>
 
-  <div class="alert alert-warning py-2 mb-5" role="alert">
-    <small><i class="fas fa-exclamation-triangle me-1"></i>
-    تنبيه: التعديل في سعر خدمة سيؤدي الي تعديل سعرها ف كل المجموعات التي تحتوي علي هذه الخدمة.</small>
+  <div class="hint">
+    التعديل في سعر خدمة يطبَّق على كل المجموعات التي تحتوي هذه الخدمة.
+    السعر صفر مسموح في الطلب العادي.
   </div>
 
   <div class="services-grid mb-3">
-    <ng-container *ngFor="let service of _tempServicesList; let i = index">
-      <div *ngIf="!service.isDeleted" class="service-item" [ngClass]="(isEditMode && service.isNew) ? 'border-success bg-success bg-opacity-10' : 'border-secondary'">
+    <ng-container *ngFor="let service of _tempServicesList">
+      <div *ngIf="!service.isDeleted" class="service-item" [class.new]="isEditMode && service.isNew" [class.zero-price]="service.price === 0">
         <div class="d-flex justify-content-between align-items-center gap-2">
           <span class="service-name">{{service.name}}</span>
           <span class="badge bg-success" *ngIf="service.isNew">جديد</span>
         </div>
         <div class="input-group input-group-sm">
-          <input type="number" class="form-control text-center" [(ngModel)]="service.price" placeholder="السعر" />
+          <input type="number" min="0" class="form-control text-center" [(ngModel)]="service.price" (ngModelChange)="onPriceChange()" placeholder="السعر" />
           <span class="input-group-text">ج.م</span>
         </div>
       </div>
     </ng-container>
   </div>
 
-  <div class="modal-footer border-top pt-2 d-flex justify-content-center gap-3">
-    <button mat-stroked-button mat-dialog-close>
-      <i class="fas fa-times me-1"></i>رجوع
+  <div class="footer-actions">
+    <button mat-stroked-button type="button" mat-dialog-close>رجوع</button>
+    <button mat-stroked-button color="warn" type="button" (click)="makeZeroOrder()">
+      حفظ كطلب صفري
     </button>
-    <button mat-flat-button color="primary" mat-dialog-close (click)="save_Click()">
-      <i class="fas fa-save me-1"></i>حفظ
-    </button>
+    <button mat-flat-button color="primary" type="button" (click)="save_Click()">حفظ</button>
   </div>
 </div>

@@ -18,6 +18,7 @@ namespace Printpress.Application
                 ClientName = order.Client.Name,
                 TotalPaid = order.TotalPaid,
                 TotalPrice = order.TotalPrice,
+                IsZeroOrder = order.IsZeroOrder,
                 Status= order.Status,
                 OrderServices = order.Services.MapAsList(MapToOrderServiceDTO),
                 OrderGroups = order.OrderGroups.MapAsList(MapToOrderGroupDTO),
@@ -127,7 +128,8 @@ namespace Printpress.Application
                 Name = order.Name,
                 ClientName = order.Client.Name,
                 TotalPaid = order.TotalPaid,
-                TotalPrice = order.TotalPrice
+                TotalPrice = order.TotalPrice,
+                IsZeroOrder = order.IsZeroOrder
             };
 
             return orderMainDataDto;

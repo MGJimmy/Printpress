@@ -8,6 +8,7 @@ namespace Printpress.Domain
         public decimal? TotalPrice { get; set; }
         public decimal? TotalPaid { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsZeroOrder { get; set; }
 
         public OrderStatusEnum Status { get; set; }
 

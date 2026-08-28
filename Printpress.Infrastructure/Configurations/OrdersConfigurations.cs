@@ -127,6 +127,9 @@ namespace Printpress.Infrastructure
                 .Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(200);
+
+            entity.Property(x => x.IsZeroOrder)
+                .HasDefaultValue(false);
         }
 
         private static void Configure(this EntityTypeBuilder<OrderGroup> entity)

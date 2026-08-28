@@ -15,6 +15,7 @@ internal class OrderMapper(
             Id = destinationEntity.ObjectState == TrackingState.Added ? _guidGenerator.NewGuid() : destinationEntity.Id,
             Name = destinationEntity.Name,
             ClientId = destinationEntity.ClientId,
+            IsZeroOrder = destinationEntity.IsZeroOrder,
             ObjectState = destinationEntity.ObjectState
 
         };
@@ -42,7 +43,8 @@ internal class OrderMapper(
         dto.TotalAmount = order.TotalPrice;
         dto.PaidAmount = order.TotalPaid;
         dto.OrderStatus = order.Status;
-        dto.CreatedAt = DateTime.Now;
+        dto.CreatedAt = order.CreatedAt;
+        dto.IsZeroOrder = order.IsZeroOrder;
 
         return dto; ;
 

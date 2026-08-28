@@ -21,7 +21,8 @@ export function mapOrderGetToUpsert(orderGet: OrderGetDto): OrderUpsertDto {
         orderGet.clientId,
         orderGet.orderGroups.map(mapOrderGroupGetToUpsert),
         orderGet.orderServices.map(mapOrderServiceGetToUpsert),
-        orderGet.sellingItems.map(mapOrderSellingItemGetToUpsert)
+        orderGet.sellingItems.map(mapOrderSellingItemGetToUpsert),
+        orderGet.isZeroOrder === true
     );
     orderUpsert.objectState = orderGet.objectState;
     return orderUpsert;

@@ -14,4 +14,5 @@ export interface OrderGetDto extends IObjectState {
     orderGroups: OrderGroupGetDto[];
     orderServices: OrderServicesGetDTO[];
     sellingItems: OrderSellingItemGetDto[];
+    isZeroOrder?: boolean;
 }

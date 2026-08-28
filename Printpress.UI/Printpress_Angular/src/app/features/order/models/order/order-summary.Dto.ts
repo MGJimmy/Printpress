@@ -6,6 +6,7 @@ export  class OrderSummaryDto {
       public paidAmount: number,
       public createdAt: string,
       public orderStatus: string,
-      public id: string
+      public id: string,
+      public isZeroOrder: boolean = false
     ) {}
   }

@@ -352,6 +352,13 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'zero-orders',
+            loadComponent: () =>
+              import('./features/reports/components/zero-orders-report/zero-orders-report.component')
+                .then(m => m.ZeroOrdersReportComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'cash-book',
             loadComponent: () =>
               import('./features/reports/components/cash-book-report/cash-book-report.component')

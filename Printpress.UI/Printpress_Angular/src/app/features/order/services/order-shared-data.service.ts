@@ -86,7 +86,8 @@ export class OrderSharedDataService {
       objectState: ObjectStateEnum.temp,
       orderGroups: [],
       orderServices: [],
-      sellingItems: []
+      sellingItems: [],
+      isZeroOrder: false
     };
   }
 
@@ -122,6 +123,19 @@ export class OrderSharedDataService {
     this.orderObject.totalPaid = orderMainData.totalPaid ?? 0;
     this.orderObject.clientName = orderMainData.clientName;
     this.orderObject.name = orderMainData.name;
+    this.orderObject.isZeroOrder = orderMainData.isZeroOrder === true;
+  }
+
+  public setIsZeroOrder(value: boolean): void {
+    this.orderObject.isZeroOrder = value;
+  }
+
+  public zeroSellingItemPrices(): void {
+    for (const item of this.orderObject.sellingItems ?? []) {
+      if (item.objectState === ObjectStateEnum.deleted) continue;
+      item.price = 0;
+      item.objectState = this.getObjectState(item.objectState, ObjectStateEnum.modified);
+    }
   }
 
   //=======================

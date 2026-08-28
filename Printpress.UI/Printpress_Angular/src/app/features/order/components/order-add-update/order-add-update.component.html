@@ -3,6 +3,7 @@
     <div class="text-center mb-5 border-bottom pb-3 text-primary">
         <h1 *ngIf="componentMode.isEditMode">تعديل طلبية</h1>
         <h1 *ngIf="componentMode.isaddMode">إضافة طلبية</h1>
+        <span *ngIf="orderGetDto?.isZeroOrder" class="badge bg-warning text-dark fs-6">طلب صفري</span>
     </div>
 
     <!-- Order Summary Section -->

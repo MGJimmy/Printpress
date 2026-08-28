@@ -3,4 +3,5 @@ export interface OrderMainDataDto {
     clientName: string;
     totalPrice: number | null;
     totalPaid: number | null;
+    isZeroOrder?: boolean;
 } 
