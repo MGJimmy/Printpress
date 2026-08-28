@@ -80,9 +80,10 @@
     </a>
 
     <!-- HR -->
-    <div class="list-group-item reports-parent" (click)="toggleHR()" style="cursor:pointer;">
+    <div class="list-group-item reports-parent" (click)="toggleHR()">
       <fa-icon [icon]="faUserTie" class="fa-icon mx-2"></fa-icon>
       <span>الموارد البشرية</span>
+      <fa-icon class="chevron" [icon]="isHRExpanded ? faChevronDown : faChevronLeft"></fa-icon>
     </div>
 
     <div *ngIf="isHRExpanded" class="reports-children">
@@ -104,104 +105,133 @@
     </div>
 
     <!-- Reports -->
-    <div class="list-group-item reports-parent" (click)="toggleReports()" style="cursor:pointer;">
+    <div class="list-group-item reports-parent" (click)="toggleReports()">
       <fa-icon [icon]="faChartBar" class="fa-icon mx-2"></fa-icon>
       <span>التقارير</span>
+      <fa-icon class="chevron" [icon]="isReportsExpanded ? faChevronDown : faChevronLeft"></fa-icon>
     </div>
 
     <div *ngIf="isReportsExpanded" class="reports-children">
-      <a
-        routerLink="/reports/inventory-stock-balance"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>أرصدة المخزن</span>
-      </a>
-      <a
-        routerLink="/reports/inventory-purchases"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>فواتير إدخال المخزن</span>
-      </a>
-      <a
-        routerLink="/reports/inventory-stock-out"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>صرف المخزن</span>
-      </a>
-      <a
-        routerLink="/reports/inventory-movement"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>كشف حركة المخزن</span>
-      </a>
-      <a
-        routerLink="/reports/order-inventory-items"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span title="تقارير عناصر المخزن في الطلبات">تقارير عناصر المخزن في الطلبات</span>
-      </a>
+      <div
+        class="list-group-item report-group"
+        [class.open]="isReportGroupOpen('inventory')"
+        (click)="toggleReportGroup('inventory', $event)">
+        <span>تقارير المخزن</span>
+        <fa-icon class="chevron" [icon]="isReportGroupOpen('inventory') ? faChevronDown : faChevronLeft"></fa-icon>
+      </div>
+      <div *ngIf="isReportGroupOpen('inventory')" class="report-group-links">
+        <a
+          routerLink="/reports/inventory-stock-balance"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>أرصدة المخزن</span>
+        </a>
+        <a
+          routerLink="/reports/inventory-purchases"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>فواتير إدخال المخزن</span>
+        </a>
+        <a
+          routerLink="/reports/inventory-stock-out"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>صرف المخزن</span>
+        </a>
+        <a
+          routerLink="/reports/inventory-movement"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>كشف حركة المخزن</span>
+        </a>
+      </div>
 
-      <a
-        routerLink="/reports/inventory-services-usage"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span title="تقرير عناصر المخزن والخدمات المستخدمة">تقرير عناصر المخزن والخدمات المستخدمة</span>
-      </a>
-      <a
-        routerLink="/reports/zero-orders"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>الطلبات الصفرية</span>
-      </a>
-      <a
-        routerLink="/reports/cash-book"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>كشف حساب الخزنة</span>
-      </a>
-      <a
-        routerLink="/reports/cash-reconcile"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>مطابقة الرصيد</span>
-      </a>
-      <a
-        routerLink="/reports/cash-movement-summary"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>ملخص حركة الخزنة</span>
-      </a>
-      <a
-        routerLink="/reports/cash-flow"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>التدفق اليومي والشهري</span>
-      </a>
-      <a
-        routerLink="/reports/cash-by-document"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>الحركات حسب المستند</span>
-      </a>
-      <a
-        routerLink="/reports/cash-treasury"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="list-group-item list-group-item-action ps-5">
-        <span>لوحة الخزائن</span>
-      </a>
+      <div
+        class="list-group-item report-group"
+        [class.open]="isReportGroupOpen('orders')"
+        (click)="toggleReportGroup('orders', $event)">
+        <span>تقارير الطلبات</span>
+        <fa-icon class="chevron" [icon]="isReportGroupOpen('orders') ? faChevronDown : faChevronLeft"></fa-icon>
+      </div>
+      <div *ngIf="isReportGroupOpen('orders')" class="report-group-links">
+        <a
+          routerLink="/reports/order-inventory-items"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>عناصر المخزن في الطلبات</span>
+        </a>
+        <a
+          routerLink="/reports/inventory-services-usage"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>استخدام الخدمات</span>
+        </a>
+        <a
+          routerLink="/reports/zero-orders"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>الطلبات الصفرية</span>
+        </a>
+      </div>
+
+      <div
+        class="list-group-item report-group"
+        [class.open]="isReportGroupOpen('cash')"
+        (click)="toggleReportGroup('cash', $event)">
+        <span>تقارير الخزينة</span>
+        <fa-icon class="chevron" [icon]="isReportGroupOpen('cash') ? faChevronDown : faChevronLeft"></fa-icon>
+      </div>
+      <div *ngIf="isReportGroupOpen('cash')" class="report-group-links">
+        <a
+          routerLink="/reports/cash-treasury"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>لوحة الخزائن</span>
+        </a>
+        <a
+          routerLink="/reports/cash-book"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>كشف حساب الخزنة</span>
+        </a>
+        <a
+          routerLink="/reports/cash-reconcile"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>مطابقة الرصيد</span>
+        </a>
+        <a
+          routerLink="/reports/cash-movement-summary"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>ملخص حركة الخزنة</span>
+        </a>
+        <a
+          routerLink="/reports/cash-flow"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>التدفق اليومي والشهري</span>
+        </a>
+        <a
+          routerLink="/reports/cash-by-document"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="list-group-item list-group-item-action">
+          <span>الحركات حسب المستند</span>
+        </a>
+      </div>
     </div>
 
   </div>

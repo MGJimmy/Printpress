@@ -284,6 +284,40 @@
   border: none !important;
 }
 
+.reports-parent .chevron,
+.report-group .chevron {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.report-group {
+  background: rgba(255, 255, 255, 0.08) !important;
+  font-weight: 600;
+}
+
+.report-group.open {
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+.report-group-links {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding-right: 4px;
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.report-group-links .list-group-item {
+  padding: 7px 10px;
+  font-size: 0.92rem;
+}
+
+#sidebar-wrapper.toggled .chevron,
+#sidebar-wrapper.toggled .report-group,
+#sidebar-wrapper.toggled .report-group-links {
+  display: none;
+}
+
 .list-group-item span {
   flex: 1;
   overflow: hidden;
