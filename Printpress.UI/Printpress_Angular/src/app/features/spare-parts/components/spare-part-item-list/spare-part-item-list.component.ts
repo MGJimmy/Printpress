@@ -27,6 +27,8 @@ export class SparePartItemListComponent implements OnInit {
     { headerName: 'الاسم', column: 'name' },
     { headerName: 'عبوات/كرتونة', column: 'packsPerCarton' },
     { headerName: 'وحدات/عبوة', column: 'unitsPerPack' },
+    { headerName: 'دخول', column: 'totalInQuantity' },
+    { headerName: 'صرف', column: 'totalOutQuantity' },
     { headerName: 'الكمية في المخزون', column: 'stockQuantity' }
   ];
 

@@ -31,13 +31,26 @@ public class PurchaseInvoiceCreateDtoValidator : AbstractValidator<PurchaseInvoi
 
         RuleFor(x => x.Lines)
             .NotEmpty()
-            .WithMessage(ResponseMessage.Required(nameof(PurchaseInvoiceCreateDto.Lines)))
+            .WithMessage(ResponseMessage.Required(nameof(PurchaseInvoiceCreateDto.Lines)));
+
+        RuleFor(x => x.Lines)
             .MustAsync(async (lines, cancellation) =>
             {
                 var itemIds = lines.Select(l => l.InventoryItemId).Distinct().ToList();
                 return await inventoryItemRepository.AllExistAsync(itemIds, cancellation);
             })
-            .WithMessage("One or more selected inventory items do not exist in our inventory."); ;
+            .WithMessage("صنف أو أكثر من أصناف المخزون غير موجود")
+            .When(x => x.Lines is { Count: > 0 });
+
+        RuleFor(x => x.Lines)
+            .MustAsync(async (lines, cancellation) =>
+            {
+                var itemIds = lines.Select(l => l.InventoryItemId).Distinct().ToList();
+                var items = await inventoryItemRepository.FilterAsync(i => itemIds.Contains(i.Id));
+                return items.All(i => i.IsActive);
+            })
+            .WithMessage("لا يمكن إدخال صنف غير نشط إلى المخزن")
+            .When(x => x.Lines is { Count: > 0 });
 
         RuleForEach(x => x.Lines)
             .SetValidator(new PurchaseInvoiceLineCreateDtoValidator());

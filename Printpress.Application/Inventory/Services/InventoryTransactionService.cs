@@ -84,6 +84,9 @@ internal sealed class InventoryTransactionService(
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.InventoryItemId));
 
+        if (!item.IsActive)
+            throw new ValidationExeption("لا يمكن صرف صنف غير نشط من المخزن");
+
         var stockQuantity = InventoryCalculatorDS.CalculateStockQuantity(item.InventoryTransactions);
 
 

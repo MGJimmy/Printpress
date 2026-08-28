@@ -36,6 +36,7 @@ import { TransactionType } from '../../models/transaction-type.enum';
 import { SalaryType } from '../../models/salary-type.enum';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
+import { OrderRoutingService } from '../../../order/services/order-routing.service';
 
 @Component({
   selector: 'app-worker-details',
@@ -94,6 +95,7 @@ export class WorkerDetailsComponent implements OnInit {
     { column: 'productionDate', headerName: 'التاريخ' },
     { column: 'serviceCategoryName', headerName: 'فئة الخدمة' },
     { column: 'orderName', headerName: 'الطلبية' },
+    { column: 'clientName', headerName: 'العميل' },
     { column: 'groupName', headerName: 'المجموعة' },
     { column: 'itemName', headerName: 'العنصر' },
     { column: 'quantity', headerName: 'الكمية' },
@@ -146,7 +148,8 @@ export class WorkerDetailsComponent implements OnInit {
     private alertService: AlertService,
     private invTransactionService: InventoryTransactionService,
     private inventoryService: InventoryService,
-    private reportService: InventoryServicesUsageReportService
+    private reportService: InventoryServicesUsageReportService,
+    private orderRoutingService: OrderRoutingService
   ) {
     this.transactionForm = this.fb.group({
       payrollPeriodId: this.fb.control('', Validators.required),
@@ -200,7 +203,12 @@ export class WorkerDetailsComponent implements OnInit {
 
     this.workerService.getWorkerProduction(id, fromStr, toStr, pageSize, pageNumber).subscribe({
       next: (res) => {
-        this.workerProductions = res.data.items;
+        this.workerProductions = (res.data.items ?? []).map(p => ({
+          ...p,
+          productionDate: p.productionDate ? new Date(p.productionDate).toLocaleDateString('ar-EG') : '—',
+          clientName: p.clientName || '—',
+          orderName: p.orderName || '—'
+        }));
         this.ProdTotalCount = res.data.totalCount;
       },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل بيانات سجل الانتاج'); }
@@ -266,7 +274,7 @@ export class WorkerDetailsComponent implements OnInit {
   // Filter Methods
   onFilterProductions(): void {
     if (!this.worker) return;
-    this.loadWorker(this.worker.id, this.productionDateFrom, this.productionDateTo);
+    this.loadWorkerProductions(this.worker.id, this.invPageSize, this.invPageNumber, this.productionDateFrom, this.productionDateTo);
   }
 
   resetProductionFilter(): void {
@@ -274,7 +282,7 @@ export class WorkerDetailsComponent implements OnInit {
     this.productionDateTo = null;
 
     if (!this.worker) return;
-    this.loadWorker(this.worker.id, this.productionDateFrom, this.productionDateTo);
+    this.loadWorkerProductions(this.worker.id, this.invPageSize, this.invPageNumber, this.productionDateFrom, this.productionDateTo);
   }
 
   applyInvFilter(): void {
@@ -298,6 +306,11 @@ export class WorkerDetailsComponent implements OnInit {
 
 
   // Events Section
+
+  onProductionOrderClicked(row: WorkerProductionDto): void {
+    if (!row.orderId) return;
+    this.router.navigate([this.orderRoutingService.getOrderViewRoute(row.orderId)]);
+  }
 
   onPageProductionChanged(event: PageChangedModel): void {
     this.loadWorkerProductions(this.workerId, 

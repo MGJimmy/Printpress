@@ -7,5 +7,7 @@ public record SparePartItemDto
     public int? PacksPerCarton { get; init; }
     public int? UnitsPerPack { get; init; }
     public int StockQuantity { get; init; }
+    public int TotalInQuantity { get; init; }
+    public int TotalOutQuantity { get; init; }
     public bool HasTransactions { get; init; }
 }

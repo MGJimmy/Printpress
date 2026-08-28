@@ -1,7 +1,7 @@
-using System.Xml.Linq;
 using AutoMapper;
 using FluentValidation;
 using Printpress.Domain;
+using Printpress.Domain.Entities.Inventory.DomainServices;
 
 namespace Printpress.Application;
 
@@ -72,14 +72,29 @@ internal sealed class InventoryItemService(
 
     public async Task DeactivateAsync(Guid id, string userId)
     {
-        var item = await _unitOfWork.InventoryItemRepository.FindAsync(id);
+        var item = await _unitOfWork.InventoryItemRepository.FindByIdWithTransactions(id);
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
 
         if (!item.IsActive)
-        {
-            throw new ValidationException("العنصر غير نشط بالفعل");
-        }
+            throw new ValidationExeption("العنصر غير نشط بالفعل");
+
+        var stockQuantity = InventoryCalculatorDS.CalculateStockQuantity(item.InventoryTransactions ?? []);
+        if (stockQuantity > 0)
+            throw new ValidationExeption("لا يمكن تعطيل الصنف لوجود كمية في المخزن");
+
+        var stillProcessed = await _unitOfWork.OrderRepository.AnyAsync(o =>
+            (o.Status == OrderStatusEnum.New || o.Status == OrderStatusEnum.InProgress)
+            && (
+                o.SellingItems.Any(si => si.InventoryItemId == id)
+                || o.Services.Any(os => !os.IsDeleted && os.Service.InventoryItemId == id)
+                || o.OrderGroups.Any(g =>
+                    !g.IsDeleted
+                    && (g.Status == GroupStatusEnum.New || g.Status == GroupStatusEnum.InProgress)
+                    && g.OrderGroupServices.Any(ogs => !ogs.IsDeleted && ogs.Service.InventoryItemId == id))));
+
+        if (stillProcessed)
+            throw new ValidationExeption("لا يمكن تعطيل الصنف لارتباطه بطلبات قيد التنفيذ");
 
         item.IsActive = false;
         _unitOfWork.InventoryItemRepository.Update(item);
@@ -102,9 +117,7 @@ internal sealed class InventoryItemService(
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(id));
 
         if (item.IsActive)
-        {
-            throw new ValidationException("العنصر نشط بالفعل");
-        }
+            throw new ValidationExeption("العنصر نشط بالفعل");
 
         item.IsActive = true;
         _unitOfWork.InventoryItemRepository.Update(item);

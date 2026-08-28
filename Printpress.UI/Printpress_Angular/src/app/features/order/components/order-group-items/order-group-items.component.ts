@@ -20,6 +20,7 @@ import {
 } from '../../models/execution/execution.dto';
 import { isStatus, normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
+import { OrderRoutingService } from '../../services/order-routing.service';
 
 @Component({
   selector: 'app-order-group-items',
@@ -52,7 +53,8 @@ export class OrderGroupItemsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private executionService: ItemServiceExecutionService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private orderRoutingService: OrderRoutingService
   ) {}
 
   ngOnInit(): void {
@@ -114,6 +116,10 @@ export class OrderGroupItemsComponent implements OnInit {
   }
 
   onBack(): void {
+    if (this.groupData?.orderId) {
+      this.router.navigate([this.orderRoutingService.getOrderViewRoute(this.groupData.orderId)]);
+      return;
+    }
     this.router.navigate(['/orderlist']);
   }
 

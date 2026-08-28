@@ -199,6 +199,8 @@
           [isShowEditButton]="false"
           [isShowDeleteButton]="false"
           [showViewButton]="false"
+          [linkColumnName]="'orderName'"
+          (linkColumnClicked)="onProductionOrderClicked($event)"
           (pageChanged)="onPageProductionChanged($event)">
         </app-table-template>
       </div>

@@ -57,7 +57,13 @@ namespace Printpress.Infrastructure
                         .Where(t => t.InventoryItemId == i.Id)
                         .Sum(t => t.InventoryTransactionType == InventoryTransactionType.In
                             ? t.Quantity
-                            : -t.Quantity)
+                            : -t.Quantity),
+                    TotalInQuantity = Context.InventoryTransaction
+                        .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType == InventoryTransactionType.In)
+                        .Sum(t => (int?)t.Quantity) ?? 0,
+                    TotalOutQuantity = Context.InventoryTransaction
+                        .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType != InventoryTransactionType.In)
+                        .Sum(t => (int?)t.Quantity) ?? 0
                 })
                 .ToListAsync();
         }

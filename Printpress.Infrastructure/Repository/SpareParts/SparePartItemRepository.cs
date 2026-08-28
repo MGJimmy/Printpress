@@ -22,7 +22,13 @@ internal class SparePartItemRepository : GenericRepository<SparePartInventoryIte
                     .Where(t => t.InventoryItemId == i.Id)
                     .Sum(t => t.InventoryTransactionType == SparePartInventoryTransactionType.In
                         ? t.Quantity
-                        : -t.Quantity)
+                        : -t.Quantity),
+                TotalInQuantity = Context.SparePartInventoryTransaction
+                    .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType == SparePartInventoryTransactionType.In)
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                TotalOutQuantity = Context.SparePartInventoryTransaction
+                    .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType != SparePartInventoryTransactionType.In)
+                    .Sum(t => (int?)t.Quantity) ?? 0
             })
             .SelectPage(paging);
 
@@ -50,7 +56,13 @@ internal class SparePartItemRepository : GenericRepository<SparePartInventoryIte
                     .Where(t => t.InventoryItemId == i.Id)
                     .Sum(t => t.InventoryTransactionType == SparePartInventoryTransactionType.In
                         ? t.Quantity
-                        : -t.Quantity)
+                        : -t.Quantity),
+                TotalInQuantity = Context.SparePartInventoryTransaction
+                    .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType == SparePartInventoryTransactionType.In)
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                TotalOutQuantity = Context.SparePartInventoryTransaction
+                    .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType != SparePartInventoryTransactionType.In)
+                    .Sum(t => (int?)t.Quantity) ?? 0
             })
             .ToListAsync();
     }
@@ -70,7 +82,13 @@ internal class SparePartItemRepository : GenericRepository<SparePartInventoryIte
                     .Where(t => t.InventoryItemId == i.Id)
                     .Sum(t => t.InventoryTransactionType == SparePartInventoryTransactionType.In
                         ? t.Quantity
-                        : -t.Quantity)
+                        : -t.Quantity),
+                TotalInQuantity = Context.SparePartInventoryTransaction
+                    .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType == SparePartInventoryTransactionType.In)
+                    .Sum(t => (int?)t.Quantity) ?? 0,
+                TotalOutQuantity = Context.SparePartInventoryTransaction
+                    .Where(t => t.InventoryItemId == i.Id && t.InventoryTransactionType != SparePartInventoryTransactionType.In)
+                    .Sum(t => (int?)t.Quantity) ?? 0
             })
             .FirstOrDefaultAsync();
     }

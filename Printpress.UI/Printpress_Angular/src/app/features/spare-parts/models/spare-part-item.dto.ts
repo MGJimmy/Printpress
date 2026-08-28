@@ -4,5 +4,7 @@ export interface SparePartItemDto {
   packsPerCarton: number | null;
   unitsPerPack: number | null;
   stockQuantity: number;
+  totalInQuantity: number;
+  totalOutQuantity: number;
   hasTransactions: boolean;
 }

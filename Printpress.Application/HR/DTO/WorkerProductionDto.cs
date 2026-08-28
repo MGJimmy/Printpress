@@ -7,7 +7,9 @@ public class WorkerProductionDto
     public string ServiceCategoryName { get; set; }
     public string ItemName { get; set; }
     public string GroupName { get; set; }
+    public Guid? OrderId { get; set; }
     public string OrderName { get; set; }
+    public string ClientName { get; set; }
     public int Quantity { get; set; }
     public string Notes { get; set; }
 }

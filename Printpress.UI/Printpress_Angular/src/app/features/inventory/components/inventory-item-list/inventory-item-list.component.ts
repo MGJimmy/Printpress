@@ -33,6 +33,8 @@ export class InventoryItemListComponent implements OnInit {
     { headerName: 'وحدات/عبوة', column: 'unitsPerPack' },
     { headerName: 'نسبة الفاقد الشراء %', column: 'expectedPurchaseLossPercent' },
     { headerName: 'نسبة الهالك الإنتاج %', column: 'expectedProductionWastePercent' },
+    { headerName: 'دخول', column: 'totalInQuantity' },
+    { headerName: 'صرف', column: 'totalOutQuantity' },
     { headerName: 'الكمية في المخزون', column: 'stockQuantity' },
     { headerName: 'الحالة', column: 'isActive', translationPrefix: 'inventory.inventoryItemActiveStatus' }
   ]; 
@@ -98,7 +100,7 @@ export class InventoryItemListComponent implements OnInit {
           this.loadItems(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUMBER);
         },
         error: (err: any) => {
-          const msg = err?.error?.message ?? 'حدث خطأ أثناء إضافة الحركة';
+          const msg = err?.error?.errors?.[0] || 'حدث خطأ أثناء تعطيل العنصر';
           this.alertService.showError(msg);
         }
       });
@@ -113,7 +115,7 @@ export class InventoryItemListComponent implements OnInit {
           this.loadItems(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUMBER);
         },
         error: (err: any) => {
-          const msg = err?.error?.message ?? 'حدث خطأ أثناء إضافة الحركة';
+          const msg = err?.error?.errors?.[0] || 'حدث خطأ أثناء تنشيط العنصر';
           this.alertService.showError(msg);
         }
       });

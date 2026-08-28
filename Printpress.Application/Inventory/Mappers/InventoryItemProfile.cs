@@ -9,8 +9,12 @@ public class InventoryItemProfile : Profile
     public InventoryItemProfile()
     {
         CreateMap<InventoryItem, InventoryItemDto>()
-                        .ForMember(dest => dest.StockQuantity, 
-                            opt => opt.MapFrom(src => InventoryCalculatorDS.CalculateStockQuantity(src.InventoryTransactions)));
+                        .ForMember(dest => dest.StockQuantity,
+                            opt => opt.MapFrom(src => InventoryCalculatorDS.CalculateStockQuantity(src.InventoryTransactions)))
+                        .ForMember(dest => dest.TotalInQuantity,
+                            opt => opt.MapFrom(src => InventoryCalculatorDS.CalculateInQuantity(src.InventoryTransactions)))
+                        .ForMember(dest => dest.TotalOutQuantity,
+                            opt => opt.MapFrom(src => InventoryCalculatorDS.CalculateOutQuantity(src.InventoryTransactions)));
 
         CreateMap<InventoryItemAddDto, InventoryItem>()
             .ForMember(

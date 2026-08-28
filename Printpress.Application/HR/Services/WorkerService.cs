@@ -82,7 +82,8 @@ internal sealed class WorkerService(
                 sorting,
                 nameof(ItemServiceExecution.ServiceCategory),
                 $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}",
-                $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}.{nameof(OrderGroup.Order)}");
+                $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}.{nameof(OrderGroup.Order)}",
+                $"{nameof(ItemServiceExecution.OrderItem)}.{nameof(OrderItem.OrderGroup)}.{nameof(OrderGroup.Order)}.{nameof(Order.Client)}");
 
         var productions = productionPageList.Items
             .Select(MapProductionToDto)
@@ -231,7 +232,9 @@ internal sealed class WorkerService(
         Id = p.Id,
         ProductionDate = p.ExecutionDate,
         ServiceCategoryName = p.ServiceCategory?.Name ?? string.Empty,
+        OrderId = p.OrderItem?.OrderGroup?.OrderId,
         OrderName = p.OrderItem?.OrderGroup?.Order?.Name ?? string.Empty,
+        ClientName = p.OrderItem?.OrderGroup?.Order?.Client?.Name ?? string.Empty,
         GroupName = p.OrderItem?.OrderGroup?.Name ?? string.Empty,
         ItemName = p.OrderItem?.Name ?? string.Empty,
         Quantity = p.Quantity,

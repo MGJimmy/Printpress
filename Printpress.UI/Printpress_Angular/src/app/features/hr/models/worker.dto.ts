@@ -49,7 +49,9 @@ export interface WorkerProductionDto {
   serviceCategoryName: string;
   itemName: string;
   groupName: string;
+  orderId?: string;
   orderName: string;
+  clientName: string;
   quantity: number;
   notes: string;
 }

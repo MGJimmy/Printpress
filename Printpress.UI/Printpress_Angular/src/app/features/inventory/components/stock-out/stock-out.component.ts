@@ -82,7 +82,7 @@ export class StockOutComponent implements OnInit {
   ngOnInit(): void {
     this.inventoryService.getAllForSelection().subscribe({
       next: (response) => {
-        this.inventoryItems = response.data ?? [];
+        this.inventoryItems = (response.data ?? []).filter(item => item.isActive);
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');

@@ -51,6 +51,7 @@ internal sealed class ItemServiceExecutionService(
         return new OrderGroupItemsResponseDto
         {
             GroupId = group.Id,
+            OrderId = group.OrderId,
             GroupName = group.Name,
             GroupStatus = group.Status.ToString(),
             ExecutionType = group.ExecutionType.ToString(),
@@ -407,6 +408,7 @@ internal sealed class ItemServiceExecutionService(
         OrderGroup group, List<ServiceCategory> serviceCategories) => new()
     {
         GroupId = group.Id,
+        OrderId = group.OrderId,
         GroupName = group.Name,
         GroupStatus = group.Status.ToString(),
         ExecutionType = group.ExecutionType.ToString(),

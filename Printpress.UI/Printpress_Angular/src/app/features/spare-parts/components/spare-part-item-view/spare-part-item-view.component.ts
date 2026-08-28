@@ -46,6 +46,8 @@ export class SparePartItemViewComponent implements OnInit {
     name: FormControl<string>;
     packsPerCarton: FormControl<string>;
     unitsPerPack: FormControl<string>;
+    totalInQuantity: FormControl<number>;
+    totalOutQuantity: FormControl<number>;
     stockQuantity: FormControl<number>;
   }>;
 
@@ -79,6 +81,8 @@ export class SparePartItemViewComponent implements OnInit {
       name: this.fb.control({ value: '', disabled: true }),
       packsPerCarton: this.fb.control({ value: '', disabled: true }),
       unitsPerPack: this.fb.control({ value: '', disabled: true }),
+      totalInQuantity: this.fb.control({ value: 0, disabled: true }),
+      totalOutQuantity: this.fb.control({ value: 0, disabled: true }),
       stockQuantity: this.fb.control({ value: 0, disabled: true })
     });
   }
@@ -97,6 +101,8 @@ export class SparePartItemViewComponent implements OnInit {
           name: this.item.name,
           packsPerCarton: this.item.packsPerCarton?.toString() ?? '-',
           unitsPerPack: this.item.unitsPerPack?.toString() ?? '-',
+          totalInQuantity: this.item.totalInQuantity,
+          totalOutQuantity: this.item.totalOutQuantity,
           stockQuantity: this.item.stockQuantity
         });
       },
