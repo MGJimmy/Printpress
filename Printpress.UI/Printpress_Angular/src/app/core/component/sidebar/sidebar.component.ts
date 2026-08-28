@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnDestroy, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -42,9 +42,16 @@ import { TranslationService } from '../../services/translation.service';
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   @Output() toggle = new EventEmitter<boolean>();
+  @ViewChild('sidebarRoot') sidebarRoot?: ElementRef<HTMLElement>;
+
+  readonly collapsedWidth = 80;
+  readonly minWidth = 220;
+  readonly storageKey = 'printpress.sidebarWidth';
 
   userRoleEnum = UserRoleEnum;
-  toggled: boolean = false;
+  toggled = false;
+  width = 300;
+  resizing = false;
 
   faBars = faBars;
   faTimes = faTimes;
@@ -76,12 +83,71 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.width = this.readStoredWidth();
     this.syncExpandedFromUrl();
     this.subscriptions.add(
       this.router.events
         .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
         .subscribe(() => this.syncExpandedFromUrl())
     );
+  }
+
+  onResizeStart(event: PointerEvent): void {
+    if (this.toggled || window.innerWidth <= 768) {
+      return;
+    }
+    event.preventDefault();
+    this.resizing = true;
+    document.body.classList.add('sidebar-resizing');
+    (event.target as HTMLElement).setPointerCapture?.(event.pointerId);
+  }
+
+  @HostListener('document:pointermove', ['$event'])
+  onPointerMove(event: PointerEvent): void {
+    if (!this.resizing) {
+      return;
+    }
+    const el = this.sidebarRoot?.nativeElement;
+    if (!el) {
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    const rtl = document.documentElement.dir === 'rtl';
+    const next = rtl ? rect.right - event.clientX : event.clientX - rect.left;
+    this.width = this.clampWidth(next);
+  }
+
+  @HostListener('document:pointerup')
+  @HostListener('document:pointercancel')
+  onPointerEnd(): void {
+    if (!this.resizing) {
+      return;
+    }
+    this.resizing = false;
+    document.body.classList.remove('sidebar-resizing');
+    this.persistWidth();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (!this.toggled) {
+      this.width = this.clampWidth(this.width);
+    }
+  }
+
+  private clampWidth(value: number): number {
+    const max = Math.min(560, Math.floor(window.innerWidth * 0.55));
+    return Math.min(max, Math.max(this.minWidth, Math.round(value)));
+  }
+
+  private readStoredWidth(): number {
+    const raw = localStorage.getItem(this.storageKey);
+    const parsed = raw ? Number(raw) : NaN;
+    return Number.isFinite(parsed) ? this.clampWidth(parsed) : 300;
+  }
+
+  private persistWidth(): void {
+    localStorage.setItem(this.storageKey, String(this.width));
   }
 
   toggleSidebar(): void {
@@ -153,6 +219,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    document.body.classList.remove('sidebar-resizing');
     this.subscriptions.unsubscribe();
   }
 }

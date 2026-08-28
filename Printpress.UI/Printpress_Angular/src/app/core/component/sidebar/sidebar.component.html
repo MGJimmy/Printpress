@@ -1,4 +1,11 @@
-<div id="sidebar-wrapper" [class.toggled]="toggled" [attr.aria-expanded]="toggled">
+<div
+  id="sidebar-wrapper"
+  #sidebarRoot
+  [class.toggled]="toggled"
+  [class.resizing]="resizing"
+  [style.width.px]="toggled ? collapsedWidth : width"
+  [attr.aria-expanded]="toggled">
+  <div class="sidebar-inner">
 <div class="sidebar-header">
   <div class="sidebar-heading">القائمة</div>
   
@@ -8,6 +15,7 @@
 
   
 </div>
+  <div class="sidebar-menu-scroll">
   <div class="list-group list-group-flush sidebar-menu">
 
     <a
@@ -235,6 +243,7 @@
     </div>
 
   </div>
+  </div>
 
   <div class="lang-section">
     <button
@@ -252,6 +261,14 @@
       <span>تسجيل الخروج</span>
     </button>
   </div>
+  </div>
 
-
+  <div
+    *ngIf="!toggled"
+    class="sidebar-resize-handle"
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="تغيير عرض القائمة"
+    (pointerdown)="onResizeStart($event)">
+  </div>
 </div>

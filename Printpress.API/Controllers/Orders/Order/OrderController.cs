@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Printpress.Domain;
 
 namespace Printpress.API;
 
@@ -8,9 +9,25 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
 {
     [HttpGet]
     [Route("getOrderSummaryList")]
-    public async Task<IActionResult> GetOrderSummaryList(int pageNumber, int pageSize)
+    public async Task<IActionResult> GetOrderSummaryList(
+        int pageNumber,
+        int pageSize,
+        [FromQuery] string search = null,
+        [FromQuery] Guid? clientId = null,
+        [FromQuery] OrderStatusEnum? status = null,
+        [FromQuery] bool? isZeroOrder = null,
+        [FromQuery] DateOnly? dateFrom = null,
+        [FromQuery] DateOnly? dateTo = null)
     {
-        var result = await _IOrderService.GetOrderSummaryListAsync(pageNumber, pageSize);
+        var result = await _IOrderService.GetOrderSummaryListAsync(
+            pageNumber,
+            pageSize,
+            search,
+            clientId,
+            status,
+            isZeroOrder,
+            UtcDateTime.StartOfDay(dateFrom),
+            UtcDateTime.ExclusiveEnd(dateTo));
         return Ok(result);
     }
 

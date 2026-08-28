@@ -4,14 +4,28 @@ namespace Printpress.Application;
 
 internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMapper _OrderMapper, IGuidGenerator _guidGenerator, ILocalizationService _loc) : IOrderAggregateService
 {
-    public async Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize)
+    public async Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(
+        int pageNumber,
+        int pageSize,
+        string search,
+        Guid? clientId,
+        OrderStatusEnum? status,
+        bool? isZeroOrder,
+        DateTime? dateFrom,
+        DateTime? dateToExclusive)
     {
-        string[] includes = { nameof(Order.Client) };
+        var term = string.IsNullOrWhiteSpace(search) ? null : search.Trim();
 
-        var orders = await _IUnitOfWork.OrderRepository.AllAsync(
+        var orders = await _IUnitOfWork.OrderRepository.FilterAsync(
             new Paging(pageNumber, pageSize),
-            new Sorting(nameof(Order.Id), SortingDirection.DESC),
-            includes
+            o => (term == null || o.Name.Contains(term) || o.Client.Name.Contains(term))
+                && (clientId == null || o.ClientId == clientId)
+                && (status == null || o.Status == status)
+                && (isZeroOrder == null || o.IsZeroOrder == isZeroOrder)
+                && (dateFrom == null || o.CreatedAt >= dateFrom)
+                && (dateToExclusive == null || o.CreatedAt < dateToExclusive),
+            new Sorting(nameof(Order.CreatedAt), SortingDirection.DESC),
+            nameof(Order.Client)
         );
 
         return _OrderMapper.MapToOrderSummeryDto(orders);

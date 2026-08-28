@@ -1,110 +1,165 @@
-<div class="container mt-5 mb-5 pb-5 rtl">
-  <!-- Header Section -->
-  <div class="page-header mb-4">
-    <h1 class="text-center text-primary border-bottom pb-3">قائمة الطلبات</h1>
-  </div>
+<div class="order-list" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>assignment</mat-icon>
+    </div>
+    <div>
+      <h1>قائمة الطلبات</h1>
+      <p>ابحث بالاسم أو العميل، وصفِّ حسب الحالة والتاريخ والطلبات الصفرية</p>
+    </div>
+    <div class="hero-actions" *appHasRole="userRoleEnum.admin">
+      <button mat-flat-button type="button" (click)="onAddOrder()">
+        <mat-icon>add</mat-icon>
+        إضافة طلبية
+      </button>
+    </div>
+  </header>
 
-  <!-- Main Content -->
-  <mat-card class="shadow-sm">
-    <mat-card-content>
-      <!-- Toolbar Section -->
-      <div *appHasRole="userRoleEnum.admin" 
-           [ngClass]="{'d-flex': true, 'justify-content-between': true, 'align-items-center': true, 'mb-4': true}"
-      class="toolbar d-flex justify-content-between align-items-center mb-4">
-        <button mat-raised-button color="primary" (click)="onAddOrder()">
-          <mat-icon>add</mat-icon>
-          إضافة طلبيه جديد
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية الطلبات</span>
+    </div>
+    <form [formGroup]="filterForm">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>بحث</mat-label>
+          <input matInput formControlName="search" placeholder="اسم الطلبية أو العميل" (keydown.enter)="onSearch()" />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <app-search-select
+          formControlName="clientId"
+          [items]="clientItems"
+          label="العميل"
+          placeholder="ابحث عن عميل">
+        </app-search-select>
+
+        <mat-form-field appearance="outline">
+          <mat-label>الحالة</mat-label>
+          <mat-select formControlName="status">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>نوع الطلب</mat-label>
+          <mat-select formControlName="isZeroOrder">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option [value]="true">صفري</mat-option>
+            <mat-option [value]="false">عادي</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="dateTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button" (click)="onSearch()" [disabled]="isLoading">
+          <mat-icon>search</mat-icon>
+          بحث
+        </button>
+        <button mat-stroked-button type="button" (click)="onReset()" [disabled]="isLoading">
+          <mat-icon>restart_alt</mat-icon>
+          إعادة تعيين
         </button>
       </div>
-
-      <!-- Table Section -->
-      <div class="table-responsive gradient-table">
-        <table mat-table [dataSource]="dataSource" class="w-100">
-          <!-- Order Name Column -->
-          <ng-container matColumnDef="orderName">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">ألاسم</th>
-            <td mat-cell *matCellDef="let element">      
-              <a (click)="onViewOrder(element.id)" class="order-link text-primary cursor-pointer">{{element.orderName}}</a>
-              <span *ngIf="element.isZeroOrder" class="badge bg-warning text-dark ms-2">صفري</span>
-            </td>
-          </ng-container>
-
-          <!-- Client Name Column -->
-          <ng-container matColumnDef="clientName">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">اسم العميل</th>
-            <td mat-cell *matCellDef="let element">{{element.clientName}}</td>
-          </ng-container>
-
-          <!-- Total Amount Column -->
-          <ng-container matColumnDef="totalAmount">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">الاجمالي</th>
-            <td mat-cell *matCellDef="let element">{{element.totalAmount | number:'1.2-2'}} جنيه</td>
-          </ng-container>
-
-          <!-- Paid Amount Column -->
-          <ng-container matColumnDef="paidAmount">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">المدفوع</th>
-            <td mat-cell *matCellDef="let element">{{element.paidAmount | number:'1.2-2'}} جنيه</td>
-          </ng-container>
-
-          <!-- Order Status Column -->
-          <ng-container matColumnDef="orderStatus">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">حالة الطلبيه</th>
-            <td mat-cell *matCellDef="let element">
-              <span class="badge" [ngClass]="getStatusBadgeClass(element.orderStatus)">{{getStatusText(element.orderStatus)}}</span>
-            </td>
-          </ng-container>
-
-          <!-- Created At Column -->
-          <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">تاريخ ألانشاء</th>
-            <td mat-cell *matCellDef="let element">
-              {{element.createdAt | date: 'yyyy-MM-dd'}}
-            </td>
-          </ng-container>
-
-          <!-- Actions Column -->
-          <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">أجراء</th>
-            <td mat-cell *matCellDef="let element">
-              <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions menu">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="generateInvoice_Click(element.id)">
-                  <mat-icon>receipt</mat-icon>
-                  <span>إصدار فاتورة</span>
-                </button>
-                
-                <div *appHasRole="userRoleEnum.admin" >
-                  <button *ngIf="!isStatus(element.orderStatus, OrderStatus.Delivered)" mat-menu-item (click)="onEditOrder(element.id)">
-                    <mat-icon>edit</mat-icon>
-                    <span>تعديل</span>
-                  </button>
-                  <button *ngIf="canDeleteOrder(element.orderStatus)" mat-menu-item (click)="onDeleteOrder(element.id)">
-                    <mat-icon>delete</mat-icon>
-                    <span>حذف</span>
-                  </button>
-                </div>
-              </mat-menu>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-light"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="mt-4">
-        <app-shared-pagination class="ltr" [totalItems]="totalCount" (onPageChange)="onPageChange($event)">
-        </app-shared-pagination>
-      </div>
-    </mat-card-content>
+    </form>
   </mat-card>
-</div>
 
-<!-- Order Add/Update Modal -->
-<div>
-  <app-order-add-update *ngIf="isEditMode"></app-order-add-update>
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>table_chart</mat-icon>
+      <span>الطلبات</span>
+      <span class="count">{{ totalCount }}</span>
+    </div>
+
+    <div class="table-wrap" *ngIf="dataSource.data.length; else emptyOrders">
+      <table mat-table [dataSource]="dataSource" class="orders-table">
+        <ng-container matColumnDef="orderName">
+          <th mat-header-cell *matHeaderCellDef>الاسم</th>
+          <td mat-cell *matCellDef="let element">
+            <a (click)="onViewOrder(element.id)" class="order-link">{{ element.orderName }}</a>
+            <span *ngIf="element.isZeroOrder" class="zero-badge">صفري</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="clientName">
+          <th mat-header-cell *matHeaderCellDef>اسم العميل</th>
+          <td mat-cell *matCellDef="let element">{{ element.clientName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalAmount">
+          <th mat-header-cell *matHeaderCellDef>الإجمالي</th>
+          <td mat-cell *matCellDef="let element">{{ element.totalAmount | number:'1.2-2' }} جنيه</td>
+        </ng-container>
+
+        <ng-container matColumnDef="paidAmount">
+          <th mat-header-cell *matHeaderCellDef>المدفوع</th>
+          <td mat-cell *matCellDef="let element">{{ element.paidAmount | number:'1.2-2' }} جنيه</td>
+        </ng-container>
+
+        <ng-container matColumnDef="orderStatus">
+          <th mat-header-cell *matHeaderCellDef>حالة الطلبية</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="badge" [ngClass]="getStatusBadgeClass(element.orderStatus)">{{ getStatusText(element.orderStatus) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>تاريخ الإنشاء</th>
+          <td mat-cell *matCellDef="let element">{{ element.createdAt | date: 'yyyy-MM-dd' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>إجراء</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="قائمة الإجراءات">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="generateInvoice_Click(element.id)">
+                <mat-icon>receipt</mat-icon>
+                <span>إصدار فاتورة</span>
+              </button>
+              <div *appHasRole="userRoleEnum.admin">
+                <button *ngIf="!isStatus(element.orderStatus, OrderStatus.Delivered)" mat-menu-item (click)="onEditOrder(element.id)">
+                  <mat-icon>edit</mat-icon>
+                  <span>تعديل</span>
+                </button>
+                <button *ngIf="canDeleteOrder(element.orderStatus)" mat-menu-item (click)="onDeleteOrder(element.id)">
+                  <mat-icon>delete</mat-icon>
+                  <span>حذف</span>
+                </button>
+              </div>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <ng-template #emptyOrders>
+      <p class="empty">{{ isLoading ? 'جاري التحميل...' : 'لا توجد طلبات مطابقة للتصفية' }}</p>
+    </ng-template>
+
+    <div class="pager" *ngIf="totalCount > 0">
+      <app-shared-pagination class="ltr" [totalItems]="totalCount" (onPageChange)="onPageChange($event)">
+      </app-shared-pagination>
+    </div>
+  </mat-card>
 </div>

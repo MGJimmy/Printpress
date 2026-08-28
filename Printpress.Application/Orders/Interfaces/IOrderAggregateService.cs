@@ -1,8 +1,18 @@
-﻿namespace Printpress.Application;
+﻿using Printpress.Domain;
+
+namespace Printpress.Application;
 
 public interface IOrderAggregateService
 {
-    Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(int pageNumber, int pageSize);
+    Task<PagedList<OrderSummaryDto>> GetOrderSummaryListAsync(
+        int pageNumber,
+        int pageSize,
+        string search,
+        Guid? clientId,
+        OrderStatusEnum? status,
+        bool? isZeroOrder,
+        DateTime? dateFrom,
+        DateTime? dateToExclusive);
 
     Task InsertOrder(OrderUpsertDto order, string userId);
 

@@ -25,11 +25,30 @@ export class OrderService {
 
   public getOrdersSummaryList(
     pageSize: number,
-    pageNumber: number
+    pageNumber: number,
+    filters?: {
+      search?: string;
+      clientId?: string;
+      status?: number;
+      isZeroOrder?: boolean;
+      dateFrom?: string;
+      dateTo?: string;
+    }
   ): Observable<ApiPagingResponseDto<OrderSummaryDto>> {
+    const params: { [param: string]: string | number | boolean } = {
+      pageSize,
+      pageNumber
+    };
+    if (filters?.search) params['search'] = filters.search;
+    if (filters?.clientId) params['clientId'] = filters.clientId;
+    if (filters?.status != null) params['status'] = filters.status;
+    if (filters?.isZeroOrder != null) params['isZeroOrder'] = filters.isZeroOrder;
+    if (filters?.dateFrom) params['dateFrom'] = filters.dateFrom;
+    if (filters?.dateTo) params['dateTo'] = filters.dateTo;
+
     return this.httpService.get<ApiPagingResponseDto<OrderSummaryDto>>(
       ApiUrlResource.OrderAPI.getordersSummaryList,
-      { pageSize: pageSize, pageNumber: pageNumber }
+      params
     );
   }
 

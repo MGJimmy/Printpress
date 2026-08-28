@@ -47,4 +47,9 @@ input{
     color: white;
     font-weight: 500;
   }
+
+body.sidebar-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
   
