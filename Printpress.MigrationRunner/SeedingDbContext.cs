@@ -266,7 +266,7 @@ internal sealed class SeedingDbContext
     {
         var categories = new[]
         {
-            new ServiceCategory { Id = G(101), Code = "Printing",  Name = "طباعة",  RequireInventoryItem = false },
+            new ServiceCategory { Id = G(101), Code = "Printing",  Name = "طباعة",  RequireInventoryItem = true, InventoryItemCategoryId = (int)InventoryItemCategoryEnum.Paper },
             new ServiceCategory { Id = G(102), Code = "Stapling",  Name = "تدبيس",  RequireInventoryItem = false },
             new ServiceCategory { Id = G(103), Code = "Clueing",   Name = "بشر",    RequireInventoryItem = false },
             new ServiceCategory { Id = G(104), Code = "Cutting",   Name = "قص",     RequireInventoryItem = false },
