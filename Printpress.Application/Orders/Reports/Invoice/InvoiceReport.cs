@@ -244,8 +244,9 @@ public class InvoiceReport : IDocument
 
             AddText("المدفوع  :", 40, true);
             AddText(totalPaid.ToString());
-            AddText("الباقي  :", 40, true);
-            AddText((_model.TotalPrice - totalPaid).ToString());
+            var remaining = (_model.TotalPrice ?? 0) - totalPaid;
+            AddText(remaining >= 0 ? "الباقي  :" : "عربون / رصيد  :", 40, true);
+            AddText((remaining >= 0 ? remaining : -remaining).ToString());
         });
 
     }

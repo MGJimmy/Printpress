@@ -62,6 +62,19 @@ export class TransactionComponent implements OnInit {
   protected clientName: string;
   protected orderName: string;
 
+  get balance(): number {
+    const order = this.orderSharedDataService.getOrderObject_copy();
+    return (order.totalPrice || 0) - (order.totalPaid || 0);
+  }
+
+  get hasCredit(): boolean {
+    return this.balance < 0;
+  }
+
+  get credit(): number {
+    return Math.abs(this.balance);
+  }
+
   constructor(@Inject(MAT_DIALOG_DATA) public inputData: { orderId: string },
     private orderTransactionService: OrderTransactionService,
     private alertService: AlertService,

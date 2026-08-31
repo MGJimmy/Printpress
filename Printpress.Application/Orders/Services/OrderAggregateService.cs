@@ -128,7 +128,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         decimal totalOrderPrice = 0;
 
-        foreach (var group in order.OrderGroups.NotDeleted())
+        foreach (var group in (order.OrderGroups ?? []).NotDeleted())
         {
             await SetGroupItemPrices(group, order.Services);
 

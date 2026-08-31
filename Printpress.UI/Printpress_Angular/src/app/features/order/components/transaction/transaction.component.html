@@ -10,9 +10,11 @@
   <mat-card-content class="d-flex flex-column">
     <!-- Client Information Section -->
     <div class="header mb-4">
-      <div class="client-info d-flex justify-content-around">
+      <div class="client-info d-flex justify-content-around flex-wrap gap-2">
         <p class="mb-0"><strong>اسم العميل:</strong> {{clientName}}</p>
         <p class="mb-0"><strong>اسم الطلبية:</strong> {{orderName}}</p>
+        <p class="mb-0" *ngIf="!hasCredit"><strong>الباقي:</strong> {{ balance | number:'1.2-2' }} جنيه</p>
+        <p class="mb-0 text-primary" *ngIf="hasCredit"><strong>عربون / رصيد:</strong> {{ credit | number:'1.2-2' }} جنيه</p>
       </div>
     </div>
 

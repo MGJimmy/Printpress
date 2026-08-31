@@ -108,7 +108,10 @@
 
         <ng-container matColumnDef="paidAmount">
           <th mat-header-cell *matHeaderCellDef>المدفوع</th>
-          <td mat-cell *matCellDef="let element">{{ element.paidAmount | number:'1.2-2' }} جنيه</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.paidAmount | number:'1.2-2' }} جنيه
+            <span *ngIf="(element.paidAmount || 0) > (element.totalAmount || 0)" class="credit-badge">عربون</span>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="orderStatus">

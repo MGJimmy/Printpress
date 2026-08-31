@@ -45,11 +45,12 @@
                     </mat-card>
                 </div>
                 <div class="col-md-4">
-                    <mat-card class="bg-warning text-dark">
+                    <mat-card [class]="hasOrderCredit ? 'bg-info text-white' : 'bg-warning text-dark'">
                         <mat-card-content>
                             <div class="d-flex align-items-center">
                                 <mat-icon class="me-2">account_balance_wallet</mat-icon>
-                                <span>الباقي: {{((orderGetDto.totalPrice || 0) - (orderGetDto.totalPaid || 0)) | number:'1.2-2'}} جنيه</span>
+                                <span *ngIf="!hasOrderCredit">الباقي: {{ orderBalance | number:'1.2-2' }} جنيه</span>
+                                <span *ngIf="hasOrderCredit">عربون / رصيد: {{ orderCredit | number:'1.2-2' }} جنيه</span>
                             </div>
                         </mat-card-content>
                     </mat-card>

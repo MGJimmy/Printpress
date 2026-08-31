@@ -71,13 +71,9 @@ internal sealed class OrderTransactionService(
 
     private void ValidatePayloadAmountComparedToOrder(Order order, OrderTransactionAddDto payload)
     {
-        if (EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Payment &&
-            payload.Amount > (order.TotalPrice - order.TotalPaid))
-        {
-            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.PaymentExceedsRemaining));
-        }
+        // Payment may exceed current total (deposit / عربون for groups not added yet).
         if (EnumHelper.MapStringToEnum<OrderTransactionType>(payload.TransactionType) == OrderTransactionType.Refund &&
-            payload.Amount > order.TotalPaid)
+            payload.Amount > order.TotalPaid.GetValueOrDefault())
         {
             throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.RefundExceedsPaid));
         }

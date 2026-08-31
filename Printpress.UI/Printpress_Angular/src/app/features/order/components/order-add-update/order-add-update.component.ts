@@ -64,6 +64,18 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     return status === 'InProgress' ? 'bg-warning text-dark' : `${statusBadgeClass(status)} text-white`;
   }
 
+  public get orderBalance(): number {
+    return (this.orderGetDto?.totalPrice || 0) - (this.orderGetDto?.totalPaid || 0);
+  }
+
+  public get hasOrderCredit(): boolean {
+    return this.orderBalance < 0;
+  }
+
+  public get orderCredit(): number {
+    return Math.abs(this.orderBalance);
+  }
+
   protected groupStatusLabel(status?: string | number): string {
     const normalized = normalizeStatus(status);
     return this.groupStatusLabels[normalized] || normalized;
@@ -233,6 +245,13 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const order = this.OrderSharedService.getOrderObject_copy();
+    const hasGroups = (order.orderGroups ?? []).length > 0;
+    if (this.componentMode.isaddMode && !hasGroups) {
+      this.persistOrder([], false);
+      return;
+    }
+
     const dialogRef = this.dialog.open(OrderServicePricesComponent, {
       data: { orderSharedService: this.OrderSharedService },
       width: '1000px'
@@ -240,48 +259,42 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result: { services: OrderServicesGetDTO[]; isZeroOrder: boolean } | undefined) => {
       if (result?.services) {
-        this.OrderSharedService.setOrderServices(result.services);
-        this.OrderSharedService.setIsZeroOrder(result.isZeroOrder);
-        if (result.isZeroOrder) {
-          this.OrderSharedService.zeroSellingItemPrices();
-        }
-        this.OrderSharedService.updateOrderObjectState();
-        
-        const orderDTO = this.OrderSharedService.getOrderObject_copy(true);
-        const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
-
-        let upsertObservable = orderDTO.objectState == ObjectStateEnum.added || orderDTO.objectState == ObjectStateEnum.temp ?
-          this.orderService.insertOrder(orderUpsertDTO) :
-          this.orderService.updateOrder(orderUpsertDTO);
-
-          upsertObservable.subscribe({
-            next: (response) => {
-              this.OrderSharedService.onOrderSaved();
-              this.alertService.showSuccess(this._t.t('orders.order_saved'));
-              this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
-            },
-            error: (error) => {
-              this.alertService.showError(this._t.t('orders.error_saving_order'));
-            }
-          });
-          
+        this.persistOrder(result.services, result.isZeroOrder);
       }
     });
-    
+  }
+
+  private persistOrder(services: OrderServicesGetDTO[], isZeroOrder: boolean): void {
+    this.OrderSharedService.setOrderServices(services);
+    this.OrderSharedService.setIsZeroOrder(isZeroOrder);
+    if (isZeroOrder) {
+      this.OrderSharedService.zeroSellingItemPrices();
+    }
+    this.OrderSharedService.updateOrderObjectState();
+
+    const orderDTO = this.OrderSharedService.getOrderObject_copy(true);
+    const orderUpsertDTO = mapOrderGetToUpsert(orderDTO);
+
+    let upsertObservable = orderDTO.objectState == ObjectStateEnum.added || orderDTO.objectState == ObjectStateEnum.temp ?
+      this.orderService.insertOrder(orderUpsertDTO) :
+      this.orderService.updateOrder(orderUpsertDTO);
+
+    upsertObservable.subscribe({
+      next: () => {
+        this.OrderSharedService.onOrderSaved();
+        this.alertService.showSuccess(this._t.t('orders.order_saved'));
+        this.router.navigate([this.orderRoutingService.getOrderListRoute()]);
+      },
+      error: () => {
+        this.alertService.showError(this._t.t('orders.error_saving_order'));
+      }
+    });
   }
 
 
 
   private validateOrderData(): boolean {
-
-
-    debugger;
     const order= this.OrderSharedService.getOrderObject_copy()
-    const emptyGroupsList = order.orderGroups.length == 0;
-    if (emptyGroupsList) {
-      this.alertService.showError(this._t.t('orders.groups_required'));
-      return false;
-    }
     if(!order.name){
       this.alertService.showError(this._t.t('orders.order_name_required'))
       return false;
