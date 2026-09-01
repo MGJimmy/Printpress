@@ -22,6 +22,11 @@ public class InventoryPurchaseInvoiceListItemDto
     public decimal TotalAmount { get; set; }
     public string AttachmentFilePath { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool IsVoided { get; set; }
+    public string VoidReason { get; set; }
+    public DateTime? VoidedAt { get; set; }
+    public string VoidedBy { get; set; }
+    public string VoidedByName { get; set; }
     public List<InventoryPurchaseInvoiceLineDto> Lines { get; set; } = [];
 }
 

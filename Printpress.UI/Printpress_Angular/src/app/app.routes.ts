@@ -163,6 +163,14 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'stock-in/invoices/:id',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/inventory-stock-in-invoice-details/inventory-stock-in-invoice-details.component'
+              ).then((m) => m.InventoryStockInInvoiceDetailsComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'transactions',
             loadComponent: () =>
               import(
@@ -218,6 +226,13 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'stock-in/invoices/:id',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-parts-stock-in-invoice-details/spare-parts-stock-in-invoice-details.component')
+                .then(m => m.SparePartsStockInInvoiceDetailsComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'stock-out',
             loadComponent: () =>
               import('./features/spare-parts/components/spare-parts-stock-out/spare-parts-stock-out.component')
@@ -229,6 +244,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./features/spare-parts/components/spare-parts-stock-out-invoices/spare-parts-stock-out-invoices.component')
                 .then(m => m.SparePartsStockOutInvoicesComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'stock-out/invoices/:id',
+            loadComponent: () =>
+              import('./features/spare-parts/components/spare-parts-stock-out-invoice-details/spare-parts-stock-out-invoice-details.component')
+                .then(m => m.SparePartsStockOutInvoiceDetailsComponent),
             canActivate: [authGuard],
           }
         ]

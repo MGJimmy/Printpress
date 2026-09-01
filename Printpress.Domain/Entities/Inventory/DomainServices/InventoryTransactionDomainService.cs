@@ -31,5 +31,22 @@ namespace Printpress.Domain
                 return transaction;
             }).ToList();
         }
+
+        public List<InventoryTransaction> CreatePurchaseVoidTransactions(List<PurchaseInvoiceLine> purchaseInvoiceLines, string invoiceNumber)
+        {
+            return purchaseInvoiceLines.Select(x =>
+            {
+                var transaction = new InventoryTransaction(
+                    x.InventoryItemId,
+                    InventoryTransactionType.Out,
+                    (int)x.Quantity,
+                    InventoryTransactionReferenceType.Purchase,
+                    x.Id,
+                    $"إلغاء فاتورة شراء {invoiceNumber}"
+                );
+                transaction.Id = _guidGenerator.NewGuid();
+                return transaction;
+            }).ToList();
+        }
     }
 }

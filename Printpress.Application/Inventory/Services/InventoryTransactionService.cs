@@ -184,7 +184,7 @@ internal sealed class InventoryTransactionService(
             InventoryTransactionReferenceType.Purchase when purchaseLines.TryGetValue(transaction.ReferenceId, out var line)
                 => (
                     $"فاتورة شراء: {line.PurchaseInvoice?.InvoiceNumber ?? "—"}",
-                    $"/inventory/stock-in/invoices?invoiceId={line.PurchaseInvoiceId}"),
+                    $"/inventory/stock-in/invoices/{line.PurchaseInvoiceId}"),
             InventoryTransactionReferenceType.Purchase
                 => ("فاتورة شراء", ""),
             InventoryTransactionReferenceType.Order

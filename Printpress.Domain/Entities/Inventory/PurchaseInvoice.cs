@@ -15,6 +15,10 @@ namespace Printpress.Domain
         public string SupplierName { get; private set; }
         public decimal TotalAmount { get; private set; }
         public string AttachmentFilePath { get; private set; }
+        public bool IsVoided { get; private set; }
+        public string VoidReason { get; private set; }
+        public DateTime? VoidedAt { get; private set; }
+        public string VoidedBy { get; private set; }
 
         public virtual IReadOnlyCollection<PurchaseInvoiceLine> PurchaseInvoiceLines
                 => _purchaseInvoiceLines.AsReadOnly();
@@ -52,6 +56,17 @@ namespace Printpress.Domain
             };
             _purchaseInvoiceLines.Add(line);
             TotalAmount += lineTotal;
+        }
+
+        public void MarkAsVoided(string reason, string userId)
+        {
+            if (IsVoided)
+                throw new BusinessExceptions(LocalizationKeys.Invoices.AlreadyVoided);
+
+            IsVoided = true;
+            VoidReason = reason;
+            VoidedAt = DateTime.UtcNow;
+            VoidedBy = userId;
         }
     }
 }

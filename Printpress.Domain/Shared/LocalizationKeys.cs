@@ -75,4 +75,13 @@ public static class LocalizationKeys
         public const string TransactionNotFound = "cashAccounts.transaction_not_found";
         public const string InvalidDateRange = "cashAccounts.invalid_date_range";
     }
+
+    public static class Invoices
+    {
+        public const string AlreadyVoided = "invoices.already_voided";
+        public const string InsufficientStockToVoid = "invoices.insufficient_stock_to_void";
+        public const string NotFound = "invoices.not_found";
+        public const string ReasonRequired = "invoices.reason_required";
+        public const string Reason = "invoices.reason";
+    }
 }

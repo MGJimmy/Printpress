@@ -125,7 +125,7 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
                 => new CashReferenceLink
                 {
                     Label = $"فاتورة مخزن: {inv.InvoiceNumber}",
-                    Route = $"/inventory/stock-in/invoices?invoiceId={inv.Id}"
+                    Route = $"/inventory/stock-in/invoices/{inv.Id}"
                 },
             CashTransactionReferenceType.PurchaseInventoryInvoice
                 => new CashReferenceLink { Label = "فاتورة مشتريات مخزن" },
@@ -134,7 +134,7 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
                 => new CashReferenceLink
                 {
                     Label = $"شراء قطع: {inv.InvoiceNumber}",
-                    Route = $"/spare-parts/stock-in/invoices?invoiceId={inv.Id}"
+                    Route = $"/spare-parts/stock-in/invoices/{inv.Id}"
                 },
             CashTransactionReferenceType.PurchaseSparePartInvoice
                 => new CashReferenceLink { Label = "فاتورة شراء قطع غيار" },
@@ -143,7 +143,7 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
                 => new CashReferenceLink
                 {
                     Label = $"بيع قطع: {inv.InvoiceNumber} — {inv.ClientName}",
-                    Route = $"/spare-parts/stock-out/invoices?invoiceId={inv.Id}"
+                    Route = $"/spare-parts/stock-out/invoices/{inv.Id}"
                 },
             CashTransactionReferenceType.SellingSparePartInvoice
                 => new CashReferenceLink { Label = "فاتورة بيع قطع غيار" },

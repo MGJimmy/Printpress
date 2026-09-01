@@ -27,5 +27,10 @@
     "cashAccounts.field_from_account": "Source account",
     "cashAccounts.field_to_account": "Destination account",
     "cashAccounts.transaction_not_found": "Cash transaction not found",
-    "cashAccounts.invalid_date_range": "The start date must be on or before the end date"
+    "cashAccounts.invalid_date_range": "The start date must be on or before the end date",
+    "invoices.already_voided": "This invoice is already voided",
+    "invoices.insufficient_stock_to_void": "Cannot void the invoice because remaining stock of '{0}' is insufficient",
+    "invoices.not_found": "Invoice not found",
+    "invoices.reason_required": "Void reason is required",
+    "invoices.reason": "Void reason"
 }

@@ -4,7 +4,7 @@ import { HttpService } from '../../../core/services/http.service';
 import { ApiUrlResource } from '../../../core/resources/api-urls.resource';
 import { PurchaseInvoiceCreateDto } from '../models/purchase-invoice-create.dto';
 import { ApiResponseDto } from '../../../core/models/api-response.dto';
-import { InventoryPurchaseInvoiceListDto } from '../models/inventory-document-list.dto';
+import { InventoryPurchaseInvoiceListDto, InventoryPurchaseInvoiceListItemDto } from '../models/inventory-document-list.dto';
 
 @Injectable({ providedIn: 'root' })
 export class PurchaseInvoiceService {
@@ -21,19 +21,33 @@ export class PurchaseInvoiceService {
   }
 
   getAll(
+    pageNumber: number,
+    pageSize: number,
     categoryId?: number | null,
     itemId?: string | null,
     dateFrom?: string,
     dateTo?: string,
+    isVoided?: boolean | null,
   ): Observable<ApiResponseDto<InventoryPurchaseInvoiceListDto>> {
-    const params: Record<string, string | number> = {};
+    const params: Record<string, string | number | boolean> = { pageNumber, pageSize };
     if (categoryId != null) params['categoryId'] = categoryId;
     if (itemId) params['itemId'] = itemId;
     if (dateFrom) params['dateFrom'] = dateFrom;
     if (dateTo) params['dateTo'] = dateTo;
+    if (isVoided != null) params['isVoided'] = isVoided;
     return this.httpService.get<ApiResponseDto<InventoryPurchaseInvoiceListDto>>(
       ApiUrlResource.PurchaseInvoiceAPI.getAll,
       params,
     );
+  }
+
+  getById(id: string): Observable<ApiResponseDto<InventoryPurchaseInvoiceListItemDto>> {
+    return this.httpService.get<ApiResponseDto<InventoryPurchaseInvoiceListItemDto>>(
+      ApiUrlResource.PurchaseInvoiceAPI.getById(id),
+    );
+  }
+
+  void(id: string, reason?: string): Observable<ApiResponseDto<unknown>> {
+    return this.httpService.post<ApiResponseDto<unknown>>(ApiUrlResource.PurchaseInvoiceAPI.void(id), { reason: reason ?? '' });
   }
 }

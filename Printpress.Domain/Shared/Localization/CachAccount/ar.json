@@ -27,5 +27,10 @@
     "cashAccounts.field_from_account": "الخزينة المحوَّل منها",
     "cashAccounts.field_to_account": "الخزينة المحوَّل إليها",
     "cashAccounts.transaction_not_found": "الحركة المالية غير موجودة",
-    "cashAccounts.invalid_date_range": "تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له"
+    "cashAccounts.invalid_date_range": "تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له",
+    "invoices.already_voided": "هذه الفاتورة ملغاة مسبقاً",
+    "invoices.insufficient_stock_to_void": "لا يمكن إلغاء الفاتورة لأن الكمية المتبقية من '{0}' غير كافية",
+    "invoices.not_found": "الفاتورة غير موجودة",
+    "invoices.reason_required": "سبب الإلغاء مطلوب",
+    "invoices.reason": "سبب الإلغاء"
 }

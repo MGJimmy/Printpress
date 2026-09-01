@@ -6,6 +6,7 @@ internal sealed class SparePartPurchaseInvoiceService(
     IUnitOfWork _unitOfWork,
     IGuidGenerator _guidGenerator,
     ILocalizationService _loc,
+    IUserDisplayNameService _userDisplayNameService,
     CashAccountDomainService _cashAccountDomainService) : ISparePartPurchaseInvoiceService
 {
     public async Task CreateAsync(SparePartPurchaseInvoiceCreateDto payload, string userId)
@@ -38,45 +39,115 @@ internal sealed class SparePartPurchaseInvoiceService(
     }
 
     public async Task<SparePartPurchaseInvoiceListDto> GetAllAsync(
-        Guid? itemId, DateTime? dateFrom, DateTime? dateToExclusive)
+        Guid? itemId,
+        DateTime? dateFrom,
+        DateTime? dateToExclusive,
+        int pageNumber,
+        int pageSize,
+        bool? isVoided)
     {
-        if (dateFrom is not null && dateToExclusive is not null && dateFrom >= dateToExclusive)
-            throw new ValidationExeption("تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له");
+        InvoiceVoidHelper.EnsureDateRange(dateFrom, dateToExclusive, _loc);
 
-        var invoices = (await _unitOfWork.SparePartPurchaseInvoiceRepository.FilterAsync(
-                i => (dateFrom == null || i.InvoiceDate >= dateFrom)
-                    && (dateToExclusive == null || i.InvoiceDate < dateToExclusive)
-                    && (itemId == null || i.PurchaseInvoiceLines.Any(l => l.InventoryItemId == itemId)),
-                nameof(SparePartPurchaseInvoice.PurchaseInvoiceLines),
-                $"{nameof(SparePartPurchaseInvoice.PurchaseInvoiceLines)}.{nameof(SparePartPurchaseInvoiceLine.InventoryItem)}"))
-            .OrderByDescending(i => i.InvoiceDate)
-            .ThenByDescending(i => i.CreatedAt)
-            .ToList();
+        var paging = new Paging(pageNumber, pageSize);
+        var sorting = new Sorting(nameof(SparePartPurchaseInvoice.InvoiceDate), SortingDirection.DESC);
 
-        var items = invoices.Select(invoice => new SparePartPurchaseInvoiceListItemDto
-        {
-            Id = invoice.Id,
-            InvoiceNumber = invoice.InvoiceNumber,
-            InvoiceDate = invoice.InvoiceDate,
-            SupplierName = invoice.SupplierName,
-            TotalAmount = invoice.TotalAmount,
-            AttachmentFilePath = invoice.AttachmentFilePath,
-            CreatedAt = invoice.CreatedAt,
-            Lines = invoice.PurchaseInvoiceLines
-                .OrderBy(l => l.InventoryItem?.Name)
-                .Select(MapLine)
-                .ToList()
-        }).ToList();
+        var paged = await _unitOfWork.SparePartPurchaseInvoiceRepository.FilterAsync(
+            paging,
+            i => (dateFrom == null || i.InvoiceDate >= dateFrom)
+                && (dateToExclusive == null || i.InvoiceDate < dateToExclusive)
+                && (itemId == null || i.PurchaseInvoiceLines.Any(l => l.InventoryItemId == itemId))
+                && (isVoided == null || i.IsVoided == isVoided),
+            sorting);
+
+        var items = paged.Items.Select(MapHeader).ToList();
 
         return new SparePartPurchaseInvoiceListDto
         {
             Invoices = items,
-            InvoiceCount = items.Count,
-            LineCount = items.Sum(i => i.Lines.Count),
-            TotalQuantity = items.SelectMany(i => i.Lines).Sum(l => l.Quantity),
-            TotalAmount = items.Sum(i => i.TotalAmount)
+            InvoiceCount = paged.TotalCount,
+            LineCount = 0,
+            TotalQuantity = 0,
+            TotalAmount = items.Where(i => !i.IsVoided).Sum(i => i.TotalAmount)
         };
     }
+
+    public async Task<SparePartPurchaseInvoiceListItemDto> GetByIdAsync(Guid id)
+    {
+        var invoice = await _unitOfWork.SparePartPurchaseInvoiceRepository.FirstOrDefaultAsync(
+                i => i.Id == id,
+                true,
+                nameof(SparePartPurchaseInvoice.PurchaseInvoiceLines),
+                $"{nameof(SparePartPurchaseInvoice.PurchaseInvoiceLines)}.{nameof(SparePartPurchaseInvoiceLine.InventoryItem)}")
+            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.NotFound));
+
+        var dto = MapHeader(invoice);
+        dto.VoidedByName = await InvoiceVoidHelper.ResolveUserNameAsync(_userDisplayNameService, invoice.VoidedBy);
+        dto.Lines = invoice.PurchaseInvoiceLines
+            .OrderBy(l => l.InventoryItem?.Name)
+            .Select(MapLine)
+            .ToList();
+        return dto;
+    }
+
+    public async Task VoidAsync(Guid id, string reason, string userId)
+    {
+        reason = InvoiceVoidHelper.RequireReason(reason, _loc);
+
+        var invoice = await _unitOfWork.SparePartPurchaseInvoiceRepository.FirstOrDefaultAsync(
+                i => i.Id == id,
+                true,
+                nameof(SparePartPurchaseInvoice.PurchaseInvoiceLines),
+                $"{nameof(SparePartPurchaseInvoice.PurchaseInvoiceLines)}.{nameof(SparePartPurchaseInvoiceLine.InventoryItem)}")
+            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.NotFound));
+
+        if (invoice.IsVoided)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.AlreadyVoided));
+
+        foreach (var group in invoice.PurchaseInvoiceLines.GroupBy(l => l.InventoryItemId))
+        {
+            var item = await _unitOfWork.SparePartItemRepository.FindByIdWithStockQuantityAsync(group.Key)
+                ?? throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(group.Key));
+            var qty = (int)group.Sum(l => l.Quantity);
+            if (item.StockQuantity < qty)
+                throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.InsufficientStockToVoid, item.Name));
+        }
+
+        var reversals = invoice.PurchaseInvoiceLines.Select(line => new SparePartInventoryTransaction(
+            line.InventoryItemId,
+            SparePartInventoryTransactionType.Out,
+            (int)line.Quantity,
+            $"إلغاء فاتورة شراء {invoice.InvoiceNumber}")
+        { Id = _guidGenerator.NewGuid() }).ToList();
+
+        await _unitOfWork.SparePartTransactionRepository.AddRange(reversals);
+
+        await InvoiceVoidHelper.VoidLinkedCashAsync(
+            _unitOfWork,
+            _cashAccountDomainService,
+            _loc,
+            CashTransactionReferenceType.PurchaseSparePartInvoice,
+            invoice.Id,
+            reason);
+
+        invoice.MarkAsVoided(reason, userId);
+        _unitOfWork.SparePartPurchaseInvoiceRepository.Update(invoice);
+        await _unitOfWork.SaveChangesAsync(userId);
+    }
+
+    private static SparePartPurchaseInvoiceListItemDto MapHeader(SparePartPurchaseInvoice invoice) => new()
+    {
+        Id = invoice.Id,
+        InvoiceNumber = invoice.InvoiceNumber,
+        InvoiceDate = invoice.InvoiceDate,
+        SupplierName = invoice.SupplierName,
+        TotalAmount = invoice.TotalAmount,
+        AttachmentFilePath = invoice.AttachmentFilePath,
+        CreatedAt = invoice.CreatedAt,
+        IsVoided = invoice.IsVoided,
+        VoidReason = invoice.VoidReason,
+        VoidedAt = invoice.VoidedAt,
+        VoidedBy = invoice.VoidedBy
+    };
 
     private static SparePartInvoiceLineDto MapLine(SparePartPurchaseInvoiceLine line) => new()
     {

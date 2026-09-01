@@ -21,6 +21,11 @@ public class SparePartPurchaseInvoiceListItemDto
     public decimal TotalAmount { get; set; }
     public string AttachmentFilePath { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool IsVoided { get; set; }
+    public string VoidReason { get; set; }
+    public DateTime? VoidedAt { get; set; }
+    public string VoidedBy { get; set; }
+    public string VoidedByName { get; set; }
     public List<SparePartInvoiceLineDto> Lines { get; set; } = [];
 }
 
@@ -41,6 +46,11 @@ public class SparePartSellingInvoiceListItemDto
     public string ClientName { get; set; }
     public decimal TotalAmount { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool IsVoided { get; set; }
+    public string VoidReason { get; set; }
+    public DateTime? VoidedAt { get; set; }
+    public string VoidedBy { get; set; }
+    public string VoidedByName { get; set; }
     public List<SparePartInvoiceLineDto> Lines { get; set; } = [];
 }
 

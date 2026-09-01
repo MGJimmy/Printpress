@@ -5,7 +5,7 @@
     </div>
     <div>
       <h1>فواتير إدخال المخزن</h1>
-      <p>كل فواتير الشراء الواردة للمخزن مع أسطرها والمرفق إن وُجد</p>
+      <p>عرض فواتير الشراء في جدول مع فتح التفاصيل وإلغاء الفاتورة</p>
     </div>
     <div class="hero-actions">
       <button mat-stroked-button type="button" (click)="goItems()">
@@ -52,6 +52,14 @@
           <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
           <mat-datepicker #pickerTo></mat-datepicker>
         </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>الحالة</mat-label>
+          <mat-select formControlName="isVoided">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option [value]="false">سارية</mat-option>
+            <mat-option [value]="true">ملغاة</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
       <div class="actions">
         <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoading">
@@ -66,112 +74,67 @@
     </form>
   </mat-card>
 
-  <div class="loading" *ngIf="isLoading && !report">
+  <div class="loading" *ngIf="isLoading && invoices.length === 0">
     <mat-spinner diameter="42"></mat-spinner>
   </div>
 
-  <ng-container *ngIf="report">
-    <section class="kpis">
-      <article class="kpi kpi-invoices">
-        <span class="kpi-label">عدد الفواتير</span>
-        <strong>{{ report.invoiceCount | number }}</strong>
-      </article>
-      <article class="kpi kpi-lines">
-        <span class="kpi-label">عدد الأسطر</span>
-        <strong>{{ report.lineCount | number }}</strong>
-      </article>
-      <article class="kpi kpi-qty">
-        <span class="kpi-label">إجمالي الكمية</span>
-        <strong>{{ report.totalQuantity | number:'1.0-2' }}</strong>
-      </article>
-      <article class="kpi kpi-amount">
-        <span class="kpi-label">إجمالي المبلغ</span>
-        <strong>{{ report.totalAmount | number:'1.2-2' }}</strong>
-      </article>
-    </section>
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>table_chart</mat-icon>
+      <span>الفواتير</span>
+      <span class="count">{{ invoiceCount }}</span>
+    </div>
 
-    <p class="empty" *ngIf="report.invoices.length === 0">لا توجد فواتير إدخال في الفترة المحددة</p>
+    <div class="table-wrap" *ngIf="invoices.length; else emptyInvoices">
+      <table mat-table [dataSource]="invoices" class="invoices-table">
+        <ng-container matColumnDef="invoiceNumber">
+          <th mat-header-cell *matHeaderCellDef>رقم الفاتورة</th>
+          <td mat-cell *matCellDef="let row">{{ row.invoiceNumber }}</td>
+        </ng-container>
+        <ng-container matColumnDef="invoiceDate">
+          <th mat-header-cell *matHeaderCellDef>تاريخ الفاتورة</th>
+          <td mat-cell *matCellDef="let row">{{ row.invoiceDate | date:'yyyy-MM-dd' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="supplierName">
+          <th mat-header-cell *matHeaderCellDef>المورد</th>
+          <td mat-cell *matCellDef="let row">{{ row.supplierName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="totalAmount">
+          <th mat-header-cell *matHeaderCellDef>الإجمالي</th>
+          <td mat-cell *matCellDef="let row" class="amt">{{ row.totalAmount | number:'1.2-2' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>الحالة</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="void-badge" *ngIf="row.isVoided">ملغاة</span>
+            <span *ngIf="!row.isVoided">سارية</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>تاريخ التسجيل</th>
+          <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>إجراء</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-stroked-button type="button" (click)="viewInvoice(row.id)">
+              <mat-icon>visibility</mat-icon>
+              عرض
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.row-voided]="row.isVoided"></tr>
+      </table>
+    </div>
 
-    <mat-card
-      class="invoice-card"
-      *ngFor="let invoice of report.invoices"
-      [class.focused]="invoice.id === focusedInvoiceId">
-      <div class="invoice-head">
-        <div>
-          <span class="meta-label">رقم الفاتورة</span>
-          <span class="meta-value">{{ invoice.invoiceNumber }}</span>
-        </div>
-        <div>
-          <span class="meta-label">تاريخ الفاتورة</span>
-          <span class="meta-value">{{ invoice.invoiceDate | date:'yyyy-MM-dd' }}</span>
-        </div>
-        <div>
-          <span class="meta-label">المورد</span>
-          <span class="meta-value">{{ invoice.supplierName }}</span>
-        </div>
-        <div>
-          <span class="meta-label">إجمالي الفاتورة</span>
-          <span class="meta-value total">{{ invoice.totalAmount | number:'1.2-2' }}</span>
-        </div>
-        <div>
-          <span class="meta-label">تاريخ التسجيل</span>
-          <span class="meta-value">{{ invoice.createdAt | date:'yyyy-MM-dd HH:mm' }}</span>
-        </div>
-        <div>
-          <span class="meta-label">المرفق</span>
-          <a *ngIf="invoice.attachmentFilePath" href="javascript:void(0)" class="attach-link" (click)="openAttachment(invoice.attachmentFilePath)">فتح المرفق</a>
-          <span *ngIf="!invoice.attachmentFilePath" class="meta-value">—</span>
-        </div>
-      </div>
+    <ng-template #emptyInvoices>
+      <p class="empty">{{ isLoading ? 'جاري التحميل...' : 'لا توجد فواتير إدخال في الفترة المحددة' }}</p>
+    </ng-template>
 
-      <div class="table-wrap">
-        <table mat-table [dataSource]="invoice.lines" class="lines-table">
-          <ng-container matColumnDef="itemName">
-            <th mat-header-cell *matHeaderCellDef>العنصر</th>
-            <td mat-cell *matCellDef="let line">
-              <a class="item-link" [routerLink]="['/inventory/items/view', line.itemId]">{{ line.itemName }}</a>
-            </td>
-            <td mat-footer-cell *matFooterCellDef><strong>الإجمالي</strong></td>
-          </ng-container>
-          <ng-container matColumnDef="categoryName">
-            <th mat-header-cell *matHeaderCellDef>التصنيف</th>
-            <td mat-cell *matCellDef="let line">{{ line.categoryName }}</td>
-            <td mat-footer-cell *matFooterCellDef></td>
-          </ng-container>
-          <ng-container matColumnDef="packsPerCarton">
-            <th mat-header-cell *matHeaderCellDef>عبوات/كرتونة</th>
-            <td mat-cell *matCellDef="let line">{{ line.packsPerCarton ?? '—' }}</td>
-            <td mat-footer-cell *matFooterCellDef></td>
-          </ng-container>
-          <ng-container matColumnDef="unitsPerPack">
-            <th mat-header-cell *matHeaderCellDef>وحدات/عبوة</th>
-            <td mat-cell *matCellDef="let line">{{ line.unitsPerPack ?? '—' }}</td>
-            <td mat-footer-cell *matFooterCellDef></td>
-          </ng-container>
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>الكمية</th>
-            <td mat-cell *matCellDef="let line" class="amt">{{ line.quantity | number:'1.0-2' }}</td>
-            <td mat-footer-cell *matFooterCellDef>
-              <strong>{{ lineQtyTotal(invoice.lines) | number:'1.0-2' }}</strong>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="unitPrice">
-            <th mat-header-cell *matHeaderCellDef>سعر الوحدة</th>
-            <td mat-cell *matCellDef="let line">{{ line.unitPrice | number:'1.2-2' }}</td>
-            <td mat-footer-cell *matFooterCellDef></td>
-          </ng-container>
-          <ng-container matColumnDef="lineTotal">
-            <th mat-header-cell *matHeaderCellDef>إجمالي السطر</th>
-            <td mat-cell *matCellDef="let line" class="amt">{{ line.lineTotal | number:'1.2-2' }}</td>
-            <td mat-footer-cell *matFooterCellDef>
-              <strong>{{ invoice.totalAmount | number:'1.2-2' }}</strong>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="lineColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: lineColumns"></tr>
-          <tr mat-footer-row *matFooterRowDef="lineColumns"></tr>
-        </table>
-      </div>
-    </mat-card>
-  </ng-container>
+    <div class="pager" *ngIf="invoiceCount > 0">
+      <app-shared-pagination class="ltr" [totalItems]="invoiceCount" (onPageChange)="onPageChange($event)">
+      </app-shared-pagination>
+    </div>
+  </mat-card>
 </div>

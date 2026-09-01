@@ -79,6 +79,16 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.AttachmentFilePath)
                 .IsRequired()
                 .HasMaxLength(500);
+
+            entity.Property(x => x.IsVoided)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(x => x.VoidReason)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.VoidedBy)
+                .HasMaxLength(100);
         }
 
         private static void Configure(this EntityTypeBuilder<PurchaseInvoiceLine> entity)

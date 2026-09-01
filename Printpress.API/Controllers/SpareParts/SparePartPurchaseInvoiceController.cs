@@ -15,13 +15,30 @@ public class SparePartPurchaseInvoiceController(ISparePartPurchaseInvoiceService
 
     [HttpGet("getAll")]
     public async Task<IActionResult> GetAll(
-        [FromQuery] Guid? itemId,
-        [FromQuery] DateOnly? dateFrom,
-        [FromQuery] DateOnly? dateTo)
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] Guid? itemId = null,
+        [FromQuery] DateOnly? dateFrom = null,
+        [FromQuery] DateOnly? dateTo = null,
+        [FromQuery] bool? isVoided = null)
     {
         DateTime? from = UtcDateTime.StartOfDay(dateFrom);
         DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
-        var result = await _service.GetAllAsync(itemId, from, toExclusive);
+        var result = await _service.GetAllAsync(itemId, from, toExclusive, pageNumber, pageSize, isVoided);
         return Ok(result);
+    }
+
+    [HttpGet("getById/{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var result = await _service.GetByIdAsync(id);
+        return Ok(result);
+    }
+
+    [HttpPost("void/{id}")]
+    public async Task<IActionResult> Void(Guid id, [FromBody] VoidInvoiceDto payload)
+    {
+        await _service.VoidAsync(id, payload?.Reason, UserId);
+        return Ok();
     }
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogModel } from '../../core/models/confirm-dialog.model';
 import { ConfirmDialogComponent } from '../../core/component/confirm-dialog/confirm-dialog.component';
+import { PromptDialogModel } from '../../core/models/prompt-dialog.model';
+import { PromptDialogComponent } from '../../core/component/prompt-dialog/prompt-dialog.component';
 import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
@@ -17,6 +19,15 @@ export class DialogService {
       disableClose: true, // Prevent closing by clicking outside,
       ariaLabel: data?.title || 'Confirmation Dialog',
     }).afterClosed(); // Emits the result (true/false)
+  }
+
+  promptDialog(data: PromptDialogModel): Observable<string | null> {
+    return this.dialog.open(PromptDialogComponent, {
+      width: '460px',
+      data,
+      disableClose: true,
+      ariaLabel: data?.title || 'Prompt Dialog',
+    }).afterClosed();
   }
 
   public async confirmOnBackButton(): Promise<boolean>{

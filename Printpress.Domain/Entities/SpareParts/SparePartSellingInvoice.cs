@@ -14,8 +14,16 @@ namespace Printpress.Domain
         public string ClientName { get; private set; }
         public DateTime InvoiceDate { get; private set; }
         public decimal TotalAmount { get; private set; }
+        public bool IsVoided { get; private set; }
+        public string VoidReason { get; private set; }
+        public DateTime? VoidedAt { get; private set; }
+        public string VoidedBy { get; private set; }
 
         public IReadOnlyCollection<SparePartSellingInvoiceLine> SparePartSellingInvoiceLines => _sparePartSellingInvoiceLines.AsReadOnly();
+
+        private SparePartSellingInvoice()
+        {
+        }
 
         public SparePartSellingInvoice(
             int invoiceNumber,
@@ -47,6 +55,17 @@ namespace Printpress.Domain
             };
             _sparePartSellingInvoiceLines.Add(line);
             TotalAmount += lineTotalCalculated;
+        }
+
+        public void MarkAsVoided(string reason, string userId)
+        {
+            if (IsVoided)
+                throw new BusinessExceptions(LocalizationKeys.Invoices.AlreadyVoided);
+
+            IsVoided = true;
+            VoidReason = reason;
+            VoidedAt = DateTime.UtcNow;
+            VoidedBy = userId;
         }
     }
 }

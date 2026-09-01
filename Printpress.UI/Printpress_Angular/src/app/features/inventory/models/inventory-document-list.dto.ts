@@ -18,6 +18,11 @@ export interface InventoryPurchaseInvoiceListItemDto {
   totalAmount: number;
   attachmentFilePath: string;
   createdAt: string;
+  isVoided: boolean;
+  voidReason?: string | null;
+  voidedAt?: string | null;
+  voidedBy?: string | null;
+  voidedByName?: string | null;
   lines: InventoryPurchaseInvoiceLineDto[];
 }
 

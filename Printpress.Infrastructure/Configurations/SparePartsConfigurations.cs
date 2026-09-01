@@ -63,6 +63,16 @@ namespace Printpress.Infrastructure
             entity.HasMany(x => x.PurchaseInvoiceLines)
                 .WithOne(x => x.PurchaseInvoice)
                 .HasForeignKey(x => x.PurchaseInvoiceId);
+
+            entity.Property(x => x.IsVoided)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(x => x.VoidReason)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.VoidedBy)
+                .HasMaxLength(100);
         }
 
         private static void Configure(this EntityTypeBuilder<SparePartPurchaseInvoiceLine> entity)
@@ -90,6 +100,16 @@ namespace Printpress.Infrastructure
             entity.HasMany(x => x.SparePartSellingInvoiceLines)
                 .WithOne(x => x.SellingInvoice)
                 .HasForeignKey(x => x.SellingInvoiceId);
+
+            entity.Property(x => x.IsVoided)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(x => x.VoidReason)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.VoidedBy)
+                .HasMaxLength(100);
         }
 
         private static void Configure(this EntityTypeBuilder<SparePartSellingInvoiceLine> entity)

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,20 +12,21 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PageEvent } from '@angular/material/paginator';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
-import { ConfigurationService } from '../../../../core/services/configuration.service';
 import { SparePartPurchaseInvoiceService } from '../../services/spare-part-purchase-invoice.service';
 import { SparePartService } from '../../services/spare-part.service';
 import { SparePartItemDto } from '../../models/spare-part-item.dto';
-import { SparePartPurchaseInvoiceListDto } from '../../models/spare-part-invoice-list.dto';
+import { SparePartPurchaseInvoiceListItemDto } from '../../models/spare-part-invoice-list.dto';
+import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 
 @Component({
   selector: 'app-spare-parts-stock-in-invoices',
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -37,6 +38,7 @@ import { SparePartPurchaseInvoiceListDto } from '../../models/spare-part-invoice
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    SharedPaginationComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './spare-parts-stock-in-invoices.component.html',
@@ -44,23 +46,26 @@ import { SparePartPurchaseInvoiceListDto } from '../../models/spare-part-invoice
 })
 export class SparePartsStockInInvoicesComponent implements OnInit {
   items: SparePartItemDto[] = [];
-  report: SparePartPurchaseInvoiceListDto | null = null;
+  invoices: SparePartPurchaseInvoiceListItemDto[] = [];
+  invoiceCount = 0;
   isLoading = false;
-  focusedInvoiceId: string | null = null;
-  lineColumns = ['itemName', 'packsPerCarton', 'unitsPerPack', 'quantity', 'unitPrice', 'lineTotal'];
+  displayedColumns = ['invoiceNumber', 'invoiceDate', 'supplierName', 'totalAmount', 'status', 'createdAt', 'action'];
 
   filterForm: FormGroup<{
     itemId: FormControl<string>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
+    isVoided: FormControl<boolean | null>;
   }>;
+
+  private pageNumber = DEFAULT_PAGE_NUMBER;
+  private pageSize = DEFAULT_PAGE_SIZE;
 
   constructor(
     private fb: NonNullableFormBuilder,
     private invoiceService: SparePartPurchaseInvoiceService,
     private sparePartService: SparePartService,
     private alertService: AlertService,
-    private config: ConfigurationService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
@@ -68,11 +73,17 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
       itemId: this.fb.control(''),
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
+      isVoided: this.fb.control<boolean | null>(null),
     });
   }
 
   ngOnInit(): void {
-    this.focusedInvoiceId = this.route.snapshot.queryParamMap.get('invoiceId');
+    const focusedId = this.route.snapshot.queryParamMap.get('invoiceId');
+    if (focusedId) {
+      this.router.navigate(['/spare-parts/stock-in/invoices', focusedId], { replaceUrl: true });
+      return;
+    }
+
     this.sparePartService.getAllForSelection().subscribe({
       next: (res) => { this.items = res.data ?? []; },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل قطع الغيار'); },
@@ -81,28 +92,8 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
   }
 
   search(): void {
-    const v = this.filterForm.getRawValue();
-    const from = this.asDate(v.dateFrom);
-    const to = this.asDate(v.dateTo);
-    if (from && to && from > to) {
-      this.alertService.showError('تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له');
-      return;
-    }
-
-    this.isLoading = true;
-    this.invoiceService.getAll(
-      v.itemId || undefined,
-      from ? this.toIsoDate(from) : undefined,
-      to ? this.toIsoDate(to) : undefined,
-    ).pipe(
-      finalize(() => { this.isLoading = false; }),
-    ).subscribe({
-      next: (res) => {
-        this.report = res.data;
-        this.scrollToFocused();
-      },
-      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل فواتير الإدخال'); },
-    });
+    this.pageNumber = DEFAULT_PAGE_NUMBER;
+    this.load();
   }
 
   reset(): void {
@@ -110,14 +101,19 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
       itemId: '',
       dateFrom: null,
       dateTo: null,
+      isVoided: null,
     });
     this.search();
   }
 
-  openAttachment(path: string | null | undefined): void {
-    if (!path) return;
-    const base = this.config.getConfiguration().apiUrl;
-    window.open(`${base}${path}`, '_blank');
+  onPageChange(event: PageEvent): void {
+    this.pageSize = event.pageSize;
+    this.pageNumber = event.pageIndex + 1;
+    this.load();
+  }
+
+  viewInvoice(id: string): void {
+    this.router.navigate(['/spare-parts/stock-in/invoices', id]);
   }
 
   goCreate(): void {
@@ -128,14 +124,31 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
     this.router.navigate(['/spare-parts/items']);
   }
 
-  lineQtyTotal(lines: { quantity: number }[]): number {
-    return lines.reduce((sum, line) => sum + (line.quantity || 0), 0);
-  }
+  private load(): void {
+    const v = this.filterForm.getRawValue();
+    const from = this.asDate(v.dateFrom);
+    const to = this.asDate(v.dateTo);
+    if (from && to && from > to) {
+      this.alertService.showError('تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له');
+      return;
+    }
 
-  private scrollToFocused(): void {
-    if (!this.focusedInvoiceId) return;
-    setTimeout(() => {
-      document.querySelector('.invoice-card.focused')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    this.isLoading = true;
+    this.invoiceService.getAll(
+      this.pageNumber,
+      this.pageSize,
+      v.itemId || undefined,
+      from ? this.toIsoDate(from) : undefined,
+      to ? this.toIsoDate(to) : undefined,
+      v.isVoided,
+    ).pipe(
+      finalize(() => { this.isLoading = false; }),
+    ).subscribe({
+      next: (res) => {
+        this.invoices = res.data?.invoices ?? [];
+        this.invoiceCount = res.data?.invoiceCount ?? 0;
+      },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل فواتير الإدخال'); },
     });
   }
 

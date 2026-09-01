@@ -1,0 +1,30 @@
+<div class="header">
+  <h2 mat-dialog-title id="dialog-title">{{ data.title || 'تأكيد' }}</h2>
+  <button mat-icon-button type="button" (click)="cancel()" aria-label="Close" title="Close dialog">
+    <fa-icon [icon]="faXmark"></fa-icon>
+  </button>
+</div>
+
+<mat-dialog-content id="dialog-content">
+  <p>{{ data.message }}</p>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ data.fieldLabel }}</mat-label>
+    <textarea
+      matInput
+      rows="4"
+      [formControl]="reasonControl"
+      [maxlength]="maxLength"></textarea>
+    <mat-hint align="end">{{ reasonControl.value.length }}/{{ maxLength }}</mat-hint>
+    <mat-error *ngIf="reasonControl.hasError('required')">{{ data.fieldLabel }} مطلوب</mat-error>
+    <mat-error *ngIf="reasonControl.hasError('maxlength')">الحد الأقصى {{ maxLength }} حرف</mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button type="button" color="warn" (click)="cancel()">
+    {{ data.cancelText || 'إلغاء' }}
+  </button>
+  <button mat-raised-button type="button" color="primary" (click)="confirm()" [disabled]="reasonControl.invalid">
+    {{ data.confirmText || 'تأكيد' }}
+  </button>
+</mat-dialog-actions>

@@ -103,6 +103,8 @@ export class ApiUrlResource {
   public static readonly PurchaseInvoiceAPI = {
     add: ApiUrlResource.PurchaseInvoice_URL + '/add',
     getAll: ApiUrlResource.PurchaseInvoice_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.PurchaseInvoice_URL}/getById/${id}`,
+    void: (id: string) => `${ApiUrlResource.PurchaseInvoice_URL}/void/${id}`,
   };
 
   private static SparePart_URL = '/api/SparePart';
@@ -124,12 +126,16 @@ export class ApiUrlResource {
   public static readonly SparePartPurchaseInvoiceAPI = {
     add: ApiUrlResource.SparePartPurchaseInvoice_URL + '/add',
     getAll: ApiUrlResource.SparePartPurchaseInvoice_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.SparePartPurchaseInvoice_URL}/getById/${id}`,
+    void: (id: string) => `${ApiUrlResource.SparePartPurchaseInvoice_URL}/void/${id}`,
   };
 
   private static SparePartSellingInvoice_URL = '/api/SparePartSellingInvoice';
   public static readonly SparePartSellingInvoiceAPI = {
     add: ApiUrlResource.SparePartSellingInvoice_URL + '/add',
     getAll: ApiUrlResource.SparePartSellingInvoice_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.SparePartSellingInvoice_URL}/getById/${id}`,
+    void: (id: string) => `${ApiUrlResource.SparePartSellingInvoice_URL}/void/${id}`,
   };
 
   private static PayrollPeriod_URL = '/api/PayrollPeriod';

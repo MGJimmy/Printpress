@@ -17,6 +17,7 @@ public static class IServiceCollectionExtensions
         services.AddCros(configuration);
         services.AddAuthorization(configuration);
         services.AddUserServices(configuration);
+        services.AddScoped<IUserDisplayNameService, UserDisplayNameService>();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
       
     }

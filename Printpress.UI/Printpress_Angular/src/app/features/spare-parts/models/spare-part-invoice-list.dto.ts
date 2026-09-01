@@ -17,6 +17,11 @@ export interface SparePartPurchaseInvoiceListItemDto {
   totalAmount: number;
   attachmentFilePath: string;
   createdAt: string;
+  isVoided: boolean;
+  voidReason?: string | null;
+  voidedAt?: string | null;
+  voidedBy?: string | null;
+  voidedByName?: string | null;
   lines: SparePartInvoiceLineDto[];
 }
 
@@ -35,6 +40,11 @@ export interface SparePartSellingInvoiceListItemDto {
   clientName: string;
   totalAmount: number;
   createdAt: string;
+  isVoided: boolean;
+  voidReason?: string | null;
+  voidedAt?: string | null;
+  voidedBy?: string | null;
+  voidedByName?: string | null;
   lines: SparePartInvoiceLineDto[];
 }
 

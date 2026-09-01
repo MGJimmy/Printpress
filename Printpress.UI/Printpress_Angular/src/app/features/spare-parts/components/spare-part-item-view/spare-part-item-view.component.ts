@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,23 +8,25 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
-import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
-import { PageChangedModel } from '../../../../shared/models/page-changed.model';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PageEvent } from '@angular/material/paginator';
+import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { SparePartService } from '../../services/spare-part.service';
 import { SparePartTransactionService } from '../../services/spare-part-transaction.service';
 import { SparePartItemDto } from '../../models/spare-part-item.dto';
 import { SparePartTransactionDto } from '../../models/spare-part-transaction.dto';
+import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 
 @Component({
   selector: 'app-spare-part-item-view',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -34,40 +36,31 @@ import { SparePartTransactionDto } from '../../models/spare-part-transaction.dto
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    TableTemplateComponent
+    MatTableModule,
+    MatProgressSpinnerModule,
+    SharedPaginationComponent,
   ],
-  templateUrl: './spare-part-item-view.component.html'
+  providers: [provideNativeDateAdapter()],
+  templateUrl: './spare-part-item-view.component.html',
+  styleUrl: './spare-part-item-view.component.scss',
 })
 export class SparePartItemViewComponent implements OnInit {
-
   item: SparePartItemDto | null = null;
-
-  form: FormGroup<{
-    name: FormControl<string>;
-    packsPerCarton: FormControl<string>;
-    unitsPerPack: FormControl<string>;
-    totalInQuantity: FormControl<number>;
-    totalOutQuantity: FormControl<number>;
-    stockQuantity: FormControl<number>;
-  }>;
-
   transactions: SparePartTransactionDto[] = [];
   totalTransactionsCount = 0;
-  currentPage = 1;
-  pageSize = 10;
+  isLoadingItem = false;
+  isLoadingTx = false;
+  displayedColumns = ['createdAt', 'type', 'quantity', 'notes'];
 
-  filterDateFrom: Date | null = null;
-  filterDateTo: Date | null = null;
-  filterTransactionType: string = '';
-
-  columnDefs: TableColDefinitionModel[] = [
-    { headerName: 'نوع الحركة', column: 'inventoryTransactionType' },
-    { headerName: 'الكمية', column: 'quantity' },
-    { headerName: 'ملاحظات', column: 'notes' },
-    { headerName: 'التاريخ', column: 'createdAt' }
-  ];
+  filterForm: FormGroup<{
+    dateFrom: FormControl<Date | null>;
+    dateTo: FormControl<Date | null>;
+    transactionType: FormControl<string>;
+  }>;
 
   private itemId!: string;
+  private pageNumber = DEFAULT_PAGE_NUMBER;
+  private pageSize = DEFAULT_PAGE_SIZE;
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -75,15 +68,12 @@ export class SparePartItemViewComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private sparePartService: SparePartService,
-    private sparePartTransactionService: SparePartTransactionService
+    private sparePartTransactionService: SparePartTransactionService,
   ) {
-    this.form = this.fb.group({
-      name: this.fb.control({ value: '', disabled: true }),
-      packsPerCarton: this.fb.control({ value: '', disabled: true }),
-      unitsPerPack: this.fb.control({ value: '', disabled: true }),
-      totalInQuantity: this.fb.control({ value: 0, disabled: true }),
-      totalOutQuantity: this.fb.control({ value: 0, disabled: true }),
-      stockQuantity: this.fb.control({ value: 0, disabled: true })
+    this.filterForm = this.fb.group({
+      dateFrom: this.fb.control<Date | null>(null),
+      dateTo: this.fb.control<Date | null>(null),
+      transactionType: this.fb.control(''),
     });
   }
 
@@ -93,60 +83,107 @@ export class SparePartItemViewComponent implements OnInit {
     this.loadTransactions();
   }
 
-  private loadItem(): void {
-    this.sparePartService.getById(this.itemId).subscribe({
-      next: (response) => {
-        this.item = response.data;
-        this.form.patchValue({
-          name: this.item.name,
-          packsPerCarton: this.item.packsPerCarton?.toString() ?? '-',
-          unitsPerPack: this.item.unitsPerPack?.toString() ?? '-',
-          totalInQuantity: this.item.totalInQuantity,
-          totalOutQuantity: this.item.totalOutQuantity,
-          stockQuantity: this.item.stockQuantity
-        });
-      },
-      error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل بيانات قطعة الغيار');
-      }
-    });
-  }
-
-  private loadTransactions(): void {
-    const dateFrom = this.filterDateFrom ? this.filterDateFrom.toISOString().split('T')[0] : undefined;
-    const dateTo = this.filterDateTo ? this.filterDateTo.toISOString().split('T')[0] : undefined;
-    const type = this.filterTransactionType || undefined;
-    this.sparePartTransactionService.getByItemId(this.itemId, this.currentPage, this.pageSize, dateFrom, dateTo, type).subscribe({
-      next: (response) => {
-        this.transactions = response.data.items as SparePartTransactionDto[];
-        this.totalTransactionsCount = response.data.totalCount;
-      },
-      error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل حركات قطع الغيار');
-      }
-    });
-  }
-
-  applyFilter(): void {
-    this.currentPage = 1;
+  search(): void {
+    this.pageNumber = DEFAULT_PAGE_NUMBER;
     this.loadTransactions();
   }
 
-  resetFilter(): void {
-    this.filterDateFrom = null;
-    this.filterDateTo = null;
-    this.filterTransactionType = '';
-    this.currentPage = 1;
-    this.loadTransactions();
+  reset(): void {
+    this.filterForm.reset({
+      dateFrom: null,
+      dateTo: null,
+      transactionType: '',
+    });
+    this.search();
   }
 
-  onPageChanged(event: PageChangedModel): void {
-    this.currentPage = event.currentPage;
+  onPageChange(event: PageEvent): void {
     this.pageSize = event.pageSize;
+    this.pageNumber = event.pageIndex + 1;
     this.loadTransactions();
   }
 
   onBack(): void {
     this.router.navigate(['/spare-parts/items']);
+  }
+
+  onEdit(): void {
+    this.router.navigate(['/spare-parts/items/edit', this.itemId]);
+  }
+
+  goStockIn(): void {
+    this.router.navigate(['/spare-parts/stock-in']);
+  }
+
+  goStockOut(): void {
+    this.router.navigate(['/spare-parts/stock-out']);
+  }
+
+  typeLabel(type: string): string {
+    if (type === 'In') return 'إدخال';
+    if (type === 'Out') return 'صرف';
+    if (type === 'Adjustment') return 'تسوية';
+    return type;
+  }
+
+  typeClass(type: string): string {
+    if (type === 'In') return 'badge-in';
+    if (type === 'Out') return 'badge-out';
+    return 'badge-adj';
+  }
+
+  qtyClass(type: string): string {
+    return type === 'Out' ? 'amt-out' : 'amt-in';
+  }
+
+  private loadItem(): void {
+    this.isLoadingItem = true;
+    this.sparePartService.getById(this.itemId).pipe(
+      finalize(() => { this.isLoadingItem = false; }),
+    ).subscribe({
+      next: (response) => { this.item = response.data; },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل بيانات قطعة الغيار'); },
+    });
+  }
+
+  private loadTransactions(): void {
+    const v = this.filterForm.getRawValue();
+    const from = this.asDate(v.dateFrom);
+    const to = this.asDate(v.dateTo);
+    if (from && to && from > to) {
+      this.alertService.showError('تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له');
+      return;
+    }
+
+    this.isLoadingTx = true;
+    this.sparePartTransactionService.getByItemId(
+      this.itemId,
+      this.pageNumber,
+      this.pageSize,
+      from ? this.toIsoDate(from) : undefined,
+      to ? this.toIsoDate(to) : undefined,
+      v.transactionType || undefined,
+    ).pipe(
+      finalize(() => { this.isLoadingTx = false; }),
+    ).subscribe({
+      next: (response) => {
+        this.transactions = response.data.items as SparePartTransactionDto[];
+        this.totalTransactionsCount = response.data.totalCount;
+      },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل حركات قطع الغيار'); },
+    });
+  }
+
+  private asDate(value: Date | null): Date | null {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  private toIsoDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 }
