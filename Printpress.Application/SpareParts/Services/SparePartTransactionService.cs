@@ -1,3 +1,4 @@
+using AutoMapper;
 using Printpress.Domain;
 
 namespace Printpress.Application;

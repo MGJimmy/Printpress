@@ -32,5 +32,9 @@
     "invoices.insufficient_stock_to_void": "لا يمكن إلغاء الفاتورة لأن الكمية المتبقية من '{0}' غير كافية",
     "invoices.not_found": "الفاتورة غير موجودة",
     "invoices.reason_required": "سبب الإلغاء مطلوب",
-    "invoices.reason": "سبب الإلغاء"
+    "invoices.reason": "سبب الإلغاء",
+    "invoices.payment_exceeds_remaining": "مبلغ الدفع لا يمكن أن يتجاوز الباقي على الفاتورة",
+    "invoices.payment_amount_invalid": "يجب أن يكون مبلغ الدفع أكبر من صفر",
+    "invoices.already_received": "أصناف هذه الفاتورة دخلت المخزن مسبقاً",
+    "invoices.already_fully_paid": "هذه الفاتورة مسددة بالكامل"
 }

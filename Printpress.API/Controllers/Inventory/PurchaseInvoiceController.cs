@@ -21,11 +21,14 @@ public class PurchaseInvoiceController(IPurchaseInvoiceService _purchaseInvoiceS
         [FromQuery] Guid? itemId = null,
         [FromQuery] DateOnly? dateFrom = null,
         [FromQuery] DateOnly? dateTo = null,
-        [FromQuery] bool? isVoided = null)
+        [FromQuery] bool? isVoided = null,
+        [FromQuery] bool? hasRemaining = null,
+        [FromQuery] bool? isGoodsReceived = null)
     {
         DateTime? from = UtcDateTime.StartOfDay(dateFrom);
         DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
-        var result = await _purchaseInvoiceService.GetAllAsync(categoryId, itemId, from, toExclusive, pageNumber, pageSize, isVoided);
+        var result = await _purchaseInvoiceService.GetAllAsync(
+            categoryId, itemId, from, toExclusive, pageNumber, pageSize, isVoided, hasRemaining, isGoodsReceived);
         return Ok(result);
     }
 
@@ -34,6 +37,20 @@ public class PurchaseInvoiceController(IPurchaseInvoiceService _purchaseInvoiceS
     {
         var result = await _purchaseInvoiceService.GetByIdAsync(id);
         return Ok(result);
+    }
+
+    [HttpPost("pay/{id}")]
+    public async Task<IActionResult> Pay(Guid id, [FromBody] InvoicePayDto payload)
+    {
+        await _purchaseInvoiceService.PayAsync(id, payload ?? new InvoicePayDto(), UserId);
+        return Ok();
+    }
+
+    [HttpPost("receive/{id}")]
+    public async Task<IActionResult> Receive(Guid id)
+    {
+        await _purchaseInvoiceService.ReceiveGoodsAsync(id, UserId);
+        return Ok();
     }
 
     [HttpPost("void/{id}")]

@@ -50,8 +50,6 @@
           </div>
         </div>
 
-      </form>
-
       <!-- Invoice Lines -->
       <div class="mt-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -75,6 +73,39 @@
           لا توجد أسطر مضافة. اضغط "إضافة سطر" لإضافة عنصر.
         </p>
       </div>
+
+      <div class="settlement mt-4" *ngIf="lines.length > 0">
+        <h5 class="mb-3">الدفع واستلام المخزن</h5>
+        <p class="mb-2"><strong>إجمالي الفاتورة:</strong> {{ invoiceTotal | number:'1.2-2' }} جنيه</p>
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <button mat-stroked-button type="button" (click)="payFull()">دفع كامل</button>
+          <button mat-stroked-button type="button" (click)="payNone()">بدون دفعة الآن</button>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>المبلغ المدفوع الآن</mat-label>
+              <input matInput type="number" min="0" formControlName="paidNow" (input)="markPaidTouched()" />
+            </mat-form-field>
+          </div>
+        </div>
+        <p class="mb-3" [class.text-danger]="remainingNow > 0">
+          الباقي على المورد: {{ remainingNow | number:'1.2-2' }} جنيه
+        </p>
+        <div>
+          <label class="d-block mb-1">دخلت الأصناف المخزن الآن؟</label>
+          <mat-radio-group formControlName="receiveNow">
+            <mat-radio-button [value]="true">نعم، دخلت المخزن</mat-radio-button>
+            <mat-radio-button [value]="false">لا، ستصل لاحقاً</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <p class="text-muted small mt-2">
+          سيخرج من الخزينة {{ form.controls.paidNow.value | number:'1.2-2' }} —
+          الباقي {{ remainingNow | number:'1.2-2' }} —
+          المخزن: {{ form.controls.receiveNow.value ? 'دخول الآن' : 'بانتظار الاستلام' }}
+        </p>
+      </div>
+      </form>
 
     </mat-card-content>
 

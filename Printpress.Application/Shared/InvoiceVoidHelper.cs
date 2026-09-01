@@ -35,24 +35,26 @@ internal static class InvoiceVoidHelper
         Guid invoiceId,
         string reason)
     {
-        var original = await unitOfWork.CashTransactionRepository.FirstOrDefaultAsync(
+        var originalList = (await unitOfWork.CashTransactionRepository.FilterAsync(
             t => t.ReferenceType == referenceType
                  && t.ReferenceId == invoiceId
                  && !t.IsVoided
-                 && t.ReversesTransactionId == null)
-            ?? throw new ValidationExeption(loc.Get(LocalizationKeys.CashAccounts.TransactionNotFound));
+                 && t.ReversesTransactionId == null)).ToList();
 
-        var account = await unitOfWork.CashAccountRepository.FindAsync(original.CashAccountId)
-            ?? throw new ValidationExeption(loc.Get(LocalizationKeys.CashAccounts.NotFound));
+        foreach (var original in originalList)
+        {
+            var account = await unitOfWork.CashAccountRepository.FindAsync(original.CashAccountId)
+                ?? throw new ValidationExeption(loc.Get(LocalizationKeys.CashAccounts.NotFound));
 
-        var description = loc.Get(LocalizationKeys.CashAccounts.VoidDescription, original.Description ?? string.Empty);
-        if (!string.IsNullOrWhiteSpace(reason))
-            description = $"{description} ({reason})";
-        if (description.Length > 500)
-            description = description[..500];
+            var description = loc.Get(LocalizationKeys.CashAccounts.VoidDescription, original.Description ?? string.Empty);
+            if (!string.IsNullOrWhiteSpace(reason))
+                description = $"{description} ({reason})";
+            if (description.Length > 500)
+                description = description[..500];
 
-        cashAccountDomainService.Void(account, original, description, DateTime.UtcNow);
-        unitOfWork.CashTransactionRepository.Update(original);
-        unitOfWork.CashAccountRepository.Update(account);
+            cashAccountDomainService.Void(account, original, description, DateTime.UtcNow);
+            unitOfWork.CashTransactionRepository.Update(original);
+            unitOfWork.CashAccountRepository.Update(account);
+        }
     }
 }

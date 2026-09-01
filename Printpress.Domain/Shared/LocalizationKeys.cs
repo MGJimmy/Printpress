@@ -83,5 +83,9 @@ public static class LocalizationKeys
         public const string NotFound = "invoices.not_found";
         public const string ReasonRequired = "invoices.reason_required";
         public const string Reason = "invoices.reason";
+        public const string PaymentExceedsRemaining = "invoices.payment_exceeds_remaining";
+        public const string PaymentAmountInvalid = "invoices.payment_amount_invalid";
+        public const string AlreadyReceived = "invoices.already_received";
+        public const string AlreadyFullyPaid = "invoices.already_fully_paid";
     }
 }

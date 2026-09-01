@@ -53,6 +53,22 @@
             <mat-option [value]="true">ملغاة</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>الدفع</mat-label>
+          <mat-select formControlName="hasRemaining">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option [value]="true">عليها باقي</mat-option>
+            <mat-option [value]="false">مسددة</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>المخزن</mat-label>
+          <mat-select formControlName="isGoodsReceived">
+            <mat-option [value]="null">الكل</mat-option>
+            <mat-option [value]="false">لم تدخل</mat-option>
+            <mat-option [value]="true">دخلت</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
       <div class="actions">
         <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoading">
@@ -96,11 +112,26 @@
           <th mat-header-cell *matHeaderCellDef>الإجمالي</th>
           <td mat-cell *matCellDef="let row" class="amt">{{ row.totalAmount | number:'1.2-2' }}</td>
         </ng-container>
+        <ng-container matColumnDef="paidAmount">
+          <th mat-header-cell *matHeaderCellDef>المدفوع</th>
+          <td mat-cell *matCellDef="let row" class="amt">{{ row.paidAmount | number:'1.2-2' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="remainingAmount">
+          <th mat-header-cell *matHeaderCellDef>الباقي</th>
+          <td mat-cell *matCellDef="let row" class="amt" [class.amt-out]="!row.isVoided && row.remainingAmount > 0">
+            {{ row.remainingAmount | number:'1.2-2' }}
+          </td>
+        </ng-container>
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>الحالة</th>
           <td mat-cell *matCellDef="let row">
             <span class="void-badge" *ngIf="row.isVoided">ملغاة</span>
-            <span *ngIf="!row.isVoided">سارية</span>
+            <ng-container *ngIf="!row.isVoided">
+              <span class="due-badge" *ngIf="row.remainingAmount > 0">آجل</span>
+              <span class="paid-badge" *ngIf="row.remainingAmount <= 0">مسددة</span>
+              <span class="pending-badge" *ngIf="!row.isGoodsReceived">لم تدخل</span>
+              <span class="received-badge" *ngIf="row.isGoodsReceived">دخلت المخزن</span>
+            </ng-container>
           </td>
         </ng-container>
         <ng-container matColumnDef="createdAt">

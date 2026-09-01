@@ -64,6 +64,14 @@ namespace Printpress.Infrastructure
                 .WithOne(x => x.PurchaseInvoice)
                 .HasForeignKey(x => x.PurchaseInvoiceId);
 
+            entity.Property(x => x.PaidAmount)
+                .IsRequired()
+                .HasDefaultValue(0m);
+
+            entity.Property(x => x.IsGoodsReceived)
+                .IsRequired()
+                .HasDefaultValue(true);
+
             entity.Property(x => x.IsVoided)
                 .IsRequired()
                 .HasDefaultValue(false);

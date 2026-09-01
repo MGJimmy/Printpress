@@ -242,14 +242,42 @@
   opacity: 0.7;
 }
 
-.void-badge {
+.void-badge,
+.due-badge,
+.paid-badge,
+.pending-badge,
+.received-badge {
   display: inline-block;
-  background: #ffebee;
-  color: #c62828;
   border-radius: 999px;
   padding: 0.1rem 0.55rem;
   font-size: 0.8rem;
   font-weight: 700;
+  margin: 0.1rem;
+}
+
+.void-badge { background: #ffebee; color: #c62828; }
+.due-badge { background: #fff3e0; color: #e65100; }
+.paid-badge { background: #e8f5e9; color: #2e7d32; }
+.pending-badge { background: #e3f2fd; color: #1565c0; }
+.received-badge { background: #f3e5f5; color: #6a1b9a; }
+
+.settlement-card {
+  margin: 0 0.6rem 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid #e0e6ed;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.pay-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.pay-row mat-form-field {
+  flex: 1 1 180px;
 }
 
 .pager {

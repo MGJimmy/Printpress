@@ -80,6 +80,14 @@ namespace Printpress.Infrastructure
                 .IsRequired()
                 .HasMaxLength(500);
 
+            entity.Property(x => x.PaidAmount)
+                .IsRequired()
+                .HasDefaultValue(0m);
+
+            entity.Property(x => x.IsGoodsReceived)
+                .IsRequired()
+                .HasDefaultValue(true);
+
             entity.Property(x => x.IsVoided)
                 .IsRequired()
                 .HasDefaultValue(false);

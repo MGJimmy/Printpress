@@ -32,5 +32,9 @@
     "invoices.insufficient_stock_to_void": "Cannot void the invoice because remaining stock of '{0}' is insufficient",
     "invoices.not_found": "Invoice not found",
     "invoices.reason_required": "Void reason is required",
-    "invoices.reason": "Void reason"
+    "invoices.reason": "Void reason",
+    "invoices.payment_exceeds_remaining": "Payment cannot exceed the remaining invoice amount",
+    "invoices.payment_amount_invalid": "Payment amount must be greater than zero",
+    "invoices.already_received": "Goods for this invoice are already in stock",
+    "invoices.already_fully_paid": "This invoice is already fully paid"
 }

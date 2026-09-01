@@ -29,15 +29,33 @@ internal sealed class PurchaseInvoiceService(
             entity.AddLine(_guidGenerator.NewGuid(), line.InventoryItemId, line.Quantity, line.UnitPrice);
         });
 
-        var saved = await _unitOfWork.PurchaseInvoiceRepository.AddAsync(entity);
+        var paidNow = InvoiceSettlementHelper.ResolvePaidNow(payload.PaidNow, entity.TotalAmount, _loc);
+        var receiveNow = payload.ReceiveNow ?? true;
+        entity.SetInitialSettlement(paidNow, receiveNow);
 
+        var saved = await _unitOfWork.PurchaseInvoiceRepository.AddAsync(entity);
         await _unitOfWork.SaveChangesAsync(userId);
 
-         List<InventoryTransaction> inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(entity.PurchaseInvoiceLines.ToList());
+        if (receiveNow)
+        {
+            var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(entity.PurchaseInvoiceLines.ToList());
+            await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
+        }
 
-        await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
-
-        await AddCashAccountTransaction(entity);
+        await InvoiceSettlementHelper.AddCashOutAsync(
+            _unitOfWork,
+            _cashAccountDomainService,
+            _loc,
+            CashAccountType.Main,
+            CashTransactionReferenceType.PurchaseInventoryInvoice,
+            entity.Id,
+            paidNow,
+            InvoiceSettlementHelper.BuildPaymentDescription(
+                _loc,
+                LocalizationKeys.CashAccounts.PurchaseInvoiceDescription,
+                entity.InvoiceNumber,
+                null),
+            entity.InvoiceDate);
 
         await _unitOfWork.SaveChangesAsync(userId);
 
@@ -51,7 +69,9 @@ internal sealed class PurchaseInvoiceService(
         DateTime? dateToExclusive,
         int pageNumber,
         int pageSize,
-        bool? isVoided)
+        bool? isVoided,
+        bool? hasRemaining,
+        bool? isGoodsReceived)
     {
         InvoiceVoidHelper.EnsureDateRange(dateFrom, dateToExclusive, _loc);
 
@@ -64,7 +84,11 @@ internal sealed class PurchaseInvoiceService(
                 && (dateToExclusive == null || i.InvoiceDate < dateToExclusive)
                 && (itemId == null || i.PurchaseInvoiceLines.Any(l => l.InventoryItemId == itemId))
                 && (categoryId == null || i.PurchaseInvoiceLines.Any(l => l.InventoryItem.InventoryItemCategoryId == categoryId))
-                && (isVoided == null || i.IsVoided == isVoided),
+                && (isVoided == null || i.IsVoided == isVoided)
+                && (hasRemaining == null || (hasRemaining.Value
+                    ? !i.IsVoided && i.PaidAmount < i.TotalAmount
+                    : i.IsVoided || i.PaidAmount >= i.TotalAmount))
+                && (isGoodsReceived == null || i.IsGoodsReceived == isGoodsReceived),
             sorting);
 
         var items = paged.Items.Select(MapHeader).ToList();
@@ -91,6 +115,10 @@ internal sealed class PurchaseInvoiceService(
 
         var dto = MapHeader(invoice);
         dto.VoidedByName = await InvoiceVoidHelper.ResolveUserNameAsync(_userDisplayNameService, invoice.VoidedBy);
+        dto.Payments = await InvoiceSettlementHelper.GetPaymentsAsync(
+            _unitOfWork,
+            CashTransactionReferenceType.PurchaseInventoryInvoice,
+            invoice.Id);
         dto.Lines = invoice.PurchaseInvoiceLines
             .OrderBy(l => l.InventoryItem?.Name)
             .Select(MapLine)
@@ -98,34 +126,74 @@ internal sealed class PurchaseInvoiceService(
         return dto;
     }
 
+    public async Task PayAsync(Guid id, InvoicePayDto payload, string userId)
+    {
+        var invoice = await LoadInvoiceAsync(id);
+        if (invoice.IsVoided)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.AlreadyVoided));
+        if (invoice.PaidAmount >= invoice.TotalAmount)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.AlreadyFullyPaid));
+        if (payload is null || payload.Amount <= 0)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.PaymentAmountInvalid));
+
+        invoice.ApplyPayment(payload.Amount);
+        await InvoiceSettlementHelper.AddCashOutAsync(
+            _unitOfWork,
+            _cashAccountDomainService,
+            _loc,
+            CashAccountType.Main,
+            CashTransactionReferenceType.PurchaseInventoryInvoice,
+            invoice.Id,
+            payload.Amount,
+            InvoiceSettlementHelper.BuildPaymentDescription(
+                _loc,
+                LocalizationKeys.CashAccounts.PurchaseInvoiceDescription,
+                invoice.InvoiceNumber,
+                payload.Note),
+            DateTime.UtcNow);
+
+        _unitOfWork.PurchaseInvoiceRepository.Update(invoice);
+        await _unitOfWork.SaveChangesAsync(userId);
+    }
+
+    public async Task ReceiveGoodsAsync(Guid id, string userId)
+    {
+        var invoice = await LoadInvoiceAsync(id);
+        invoice.ReceiveGoods();
+
+        var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(invoice.PurchaseInvoiceLines.ToList());
+        await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
+
+        _unitOfWork.PurchaseInvoiceRepository.Update(invoice);
+        await _unitOfWork.SaveChangesAsync(userId);
+    }
+
     public async Task VoidAsync(Guid id, string reason, string userId)
     {
         reason = InvoiceVoidHelper.RequireReason(reason, _loc);
 
-        var invoice = await _unitOfWork.PurchaseInvoiceRepository.FirstOrDefaultAsync(
-                i => i.Id == id,
-                true,
-                nameof(PurchaseInvoice.PurchaseInvoiceLines),
-                $"{nameof(PurchaseInvoice.PurchaseInvoiceLines)}.{nameof(PurchaseInvoiceLine.InventoryItem)}")
-            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.NotFound));
+        var invoice = await LoadInvoiceAsync(id);
 
         if (invoice.IsVoided)
             throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.AlreadyVoided));
 
-        foreach (var group in invoice.PurchaseInvoiceLines.GroupBy(l => l.InventoryItemId))
+        if (invoice.IsGoodsReceived)
         {
-            var item = await _unitOfWork.InventoryItemRepository.FindByIdWithTransactions(group.Key)
-                ?? throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(group.Key));
-            var stock = InventoryCalculatorDS.CalculateStockQuantity(item.InventoryTransactions);
-            var qty = (int)group.Sum(l => l.Quantity);
-            if (stock < qty)
-                throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.InsufficientStockToVoid, item.Name));
-        }
+            foreach (var group in invoice.PurchaseInvoiceLines.GroupBy(l => l.InventoryItemId))
+            {
+                var item = await _unitOfWork.InventoryItemRepository.FindByIdWithTransactions(group.Key)
+                    ?? throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(group.Key));
+                var stock = InventoryCalculatorDS.CalculateStockQuantity(item.InventoryTransactions);
+                var qty = (int)group.Sum(l => l.Quantity);
+                if (stock < qty)
+                    throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.InsufficientStockToVoid, item.Name));
+            }
 
-        var reversals = _inventoryTransactionService.CreatePurchaseVoidTransactions(
-            invoice.PurchaseInvoiceLines.ToList(),
-            invoice.InvoiceNumber);
-        await _unitOfWork.InventoryTransactionRepository.AddRange(reversals);
+            var reversals = _inventoryTransactionService.CreatePurchaseVoidTransactions(
+                invoice.PurchaseInvoiceLines.ToList(),
+                invoice.InvoiceNumber);
+            await _unitOfWork.InventoryTransactionRepository.AddRange(reversals);
+        }
 
         await InvoiceVoidHelper.VoidLinkedCashAsync(
             _unitOfWork,
@@ -140,6 +208,16 @@ internal sealed class PurchaseInvoiceService(
         await _unitOfWork.SaveChangesAsync(userId);
     }
 
+    private async Task<PurchaseInvoice> LoadInvoiceAsync(Guid id)
+    {
+        return await _unitOfWork.PurchaseInvoiceRepository.FirstOrDefaultAsync(
+                i => i.Id == id,
+                true,
+                nameof(PurchaseInvoice.PurchaseInvoiceLines),
+                $"{nameof(PurchaseInvoice.PurchaseInvoiceLines)}.{nameof(PurchaseInvoiceLine.InventoryItem)}")
+            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.Invoices.NotFound));
+    }
+
     private static InventoryPurchaseInvoiceListItemDto MapHeader(PurchaseInvoice invoice) => new()
     {
         Id = invoice.Id,
@@ -147,6 +225,9 @@ internal sealed class PurchaseInvoiceService(
         InvoiceDate = invoice.InvoiceDate,
         SupplierName = invoice.SupplierName,
         TotalAmount = invoice.TotalAmount,
+        PaidAmount = invoice.PaidAmount,
+        RemainingAmount = invoice.IsVoided ? 0 : invoice.TotalAmount - invoice.PaidAmount,
+        IsGoodsReceived = invoice.IsGoodsReceived,
         AttachmentFilePath = invoice.AttachmentFilePath,
         CreatedAt = invoice.CreatedAt,
         IsVoided = invoice.IsVoided,
@@ -167,23 +248,4 @@ internal sealed class PurchaseInvoiceService(
         UnitPrice = line.UnitPrice,
         LineTotal = line.LineTotal
     };
-
-    private async Task AddCashAccountTransaction(PurchaseInvoice purchaseInvoice)
-    {
-        var cashAccount = await _unitOfWork.CashAccountRepository.FirstOrDefaultAsync(x => x.Type == CashAccountType.Main)
-            ?? throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.NotFound));
-
-        _cashAccountDomainService.AddCashAccountTransaction(
-            cashAccount,
-            CashTransactionType.Out,
-            CashTransactionCategory.Purchases,
-            CashTransactionReferenceType.PurchaseInventoryInvoice,
-            purchaseInvoice.Id,
-            purchaseInvoice.TotalAmount,
-            _loc.Get(LocalizationKeys.CashAccounts.PurchaseInvoiceDescription, purchaseInvoice.InvoiceNumber),
-            purchaseInvoice.InvoiceDate
-        );
-
-        _unitOfWork.CashAccountRepository.Update(cashAccount);
-    }
 }

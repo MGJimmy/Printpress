@@ -49,13 +49,15 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
   invoices: SparePartPurchaseInvoiceListItemDto[] = [];
   invoiceCount = 0;
   isLoading = false;
-  displayedColumns = ['invoiceNumber', 'invoiceDate', 'supplierName', 'totalAmount', 'status', 'createdAt', 'action'];
+  displayedColumns = ['invoiceNumber', 'invoiceDate', 'supplierName', 'totalAmount', 'paidAmount', 'remainingAmount', 'status', 'createdAt', 'action'];
 
   filterForm: FormGroup<{
     itemId: FormControl<string>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
     isVoided: FormControl<boolean | null>;
+    hasRemaining: FormControl<boolean | null>;
+    isGoodsReceived: FormControl<boolean | null>;
   }>;
 
   private pageNumber = DEFAULT_PAGE_NUMBER;
@@ -74,6 +76,8 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
       isVoided: this.fb.control<boolean | null>(null),
+      hasRemaining: this.fb.control<boolean | null>(null),
+      isGoodsReceived: this.fb.control<boolean | null>(null),
     });
   }
 
@@ -102,6 +106,8 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
       dateFrom: null,
       dateTo: null,
       isVoided: null,
+      hasRemaining: null,
+      isGoodsReceived: null,
     });
     this.search();
   }
@@ -141,6 +147,8 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
       from ? this.toIsoDate(from) : undefined,
       to ? this.toIsoDate(to) : undefined,
       v.isVoided,
+      v.hasRemaining,
+      v.isGoodsReceived,
     ).pipe(
       finalize(() => { this.isLoading = false; }),
     ).subscribe({

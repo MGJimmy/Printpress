@@ -9,5 +9,7 @@ export interface PurchaseInvoiceCreateDto {
   invoiceDate: string;
   supplierName: string;
   attachmentFilePath: string;
+  paidNow: number;
+  receiveNow: boolean;
   lines: PurchaseInvoiceLineCreateDto[];
 }

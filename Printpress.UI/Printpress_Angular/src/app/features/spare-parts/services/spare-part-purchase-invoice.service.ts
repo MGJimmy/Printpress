@@ -27,12 +27,16 @@ export class SparePartPurchaseInvoiceService {
     dateFrom?: string,
     dateTo?: string,
     isVoided?: boolean | null,
+    hasRemaining?: boolean | null,
+    isGoodsReceived?: boolean | null,
   ): Observable<ApiResponseDto<SparePartPurchaseInvoiceListDto>> {
     const params: Record<string, string | number | boolean> = { pageNumber, pageSize };
     if (itemId) params['itemId'] = itemId;
     if (dateFrom) params['dateFrom'] = dateFrom;
     if (dateTo) params['dateTo'] = dateTo;
     if (isVoided != null) params['isVoided'] = isVoided;
+    if (hasRemaining != null) params['hasRemaining'] = hasRemaining;
+    if (isGoodsReceived != null) params['isGoodsReceived'] = isGoodsReceived;
     return this.httpService.get<ApiResponseDto<SparePartPurchaseInvoiceListDto>>(
       ApiUrlResource.SparePartPurchaseInvoiceAPI.getAll,
       params,
@@ -43,6 +47,17 @@ export class SparePartPurchaseInvoiceService {
     return this.httpService.get<ApiResponseDto<SparePartPurchaseInvoiceListItemDto>>(
       ApiUrlResource.SparePartPurchaseInvoiceAPI.getById(id),
     );
+  }
+
+  pay(id: string, amount: number, note?: string): Observable<ApiResponseDto<unknown>> {
+    return this.httpService.post<ApiResponseDto<unknown>>(ApiUrlResource.SparePartPurchaseInvoiceAPI.pay(id), {
+      amount,
+      note: note ?? '',
+    });
+  }
+
+  receive(id: string): Observable<ApiResponseDto<unknown>> {
+    return this.httpService.post<ApiResponseDto<unknown>>(ApiUrlResource.SparePartPurchaseInvoiceAPI.receive(id), {});
   }
 
   void(id: string, reason?: string): Observable<ApiResponseDto<unknown>> {

@@ -104,6 +104,8 @@ export class ApiUrlResource {
     add: ApiUrlResource.PurchaseInvoice_URL + '/add',
     getAll: ApiUrlResource.PurchaseInvoice_URL + '/getAll',
     getById: (id: string) => `${ApiUrlResource.PurchaseInvoice_URL}/getById/${id}`,
+    pay: (id: string) => `${ApiUrlResource.PurchaseInvoice_URL}/pay/${id}`,
+    receive: (id: string) => `${ApiUrlResource.PurchaseInvoice_URL}/receive/${id}`,
     void: (id: string) => `${ApiUrlResource.PurchaseInvoice_URL}/void/${id}`,
   };
 
@@ -127,6 +129,8 @@ export class ApiUrlResource {
     add: ApiUrlResource.SparePartPurchaseInvoice_URL + '/add',
     getAll: ApiUrlResource.SparePartPurchaseInvoice_URL + '/getAll',
     getById: (id: string) => `${ApiUrlResource.SparePartPurchaseInvoice_URL}/getById/${id}`,
+    pay: (id: string) => `${ApiUrlResource.SparePartPurchaseInvoice_URL}/pay/${id}`,
+    receive: (id: string) => `${ApiUrlResource.SparePartPurchaseInvoice_URL}/receive/${id}`,
     void: (id: string) => `${ApiUrlResource.SparePartPurchaseInvoice_URL}/void/${id}`,
   };
 

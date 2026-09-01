@@ -9,8 +9,8 @@ public class SparePartPurchaseInvoiceController(ISparePartPurchaseInvoiceService
     [HttpPost("add")]
     public async Task<IActionResult> Add(SparePartPurchaseInvoiceCreateDto payload)
     {
-        await _service.CreateAsync(payload, UserId);
-        return Ok();
+        var id = await _service.CreateAsync(payload, UserId);
+        return Ok(id);
     }
 
     [HttpGet("getAll")]
@@ -20,11 +20,13 @@ public class SparePartPurchaseInvoiceController(ISparePartPurchaseInvoiceService
         [FromQuery] Guid? itemId = null,
         [FromQuery] DateOnly? dateFrom = null,
         [FromQuery] DateOnly? dateTo = null,
-        [FromQuery] bool? isVoided = null)
+        [FromQuery] bool? isVoided = null,
+        [FromQuery] bool? hasRemaining = null,
+        [FromQuery] bool? isGoodsReceived = null)
     {
         DateTime? from = UtcDateTime.StartOfDay(dateFrom);
         DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
-        var result = await _service.GetAllAsync(itemId, from, toExclusive, pageNumber, pageSize, isVoided);
+        var result = await _service.GetAllAsync(itemId, from, toExclusive, pageNumber, pageSize, isVoided, hasRemaining, isGoodsReceived);
         return Ok(result);
     }
 
@@ -33,6 +35,20 @@ public class SparePartPurchaseInvoiceController(ISparePartPurchaseInvoiceService
     {
         var result = await _service.GetByIdAsync(id);
         return Ok(result);
+    }
+
+    [HttpPost("pay/{id}")]
+    public async Task<IActionResult> Pay(Guid id, [FromBody] InvoicePayDto payload)
+    {
+        await _service.PayAsync(id, payload ?? new InvoicePayDto(), UserId);
+        return Ok();
+    }
+
+    [HttpPost("receive/{id}")]
+    public async Task<IActionResult> Receive(Guid id)
+    {
+        await _service.ReceiveGoodsAsync(id, UserId);
+        return Ok();
     }
 
     [HttpPost("void/{id}")]

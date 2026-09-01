@@ -19,6 +19,9 @@ public class SparePartPurchaseInvoiceListItemDto
     public DateTime InvoiceDate { get; set; }
     public string SupplierName { get; set; }
     public decimal TotalAmount { get; set; }
+    public decimal PaidAmount { get; set; }
+    public decimal RemainingAmount { get; set; }
+    public bool IsGoodsReceived { get; set; }
     public string AttachmentFilePath { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsVoided { get; set; }
@@ -26,6 +29,7 @@ public class SparePartPurchaseInvoiceListItemDto
     public DateTime? VoidedAt { get; set; }
     public string VoidedBy { get; set; }
     public string VoidedByName { get; set; }
+    public List<InvoicePaymentDto> Payments { get; set; } = [];
     public List<SparePartInvoiceLineDto> Lines { get; set; } = [];
 }
 

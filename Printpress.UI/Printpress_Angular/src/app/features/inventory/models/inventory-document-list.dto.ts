@@ -10,12 +10,23 @@ export interface InventoryPurchaseInvoiceLineDto {
   lineTotal: number;
 }
 
+export interface InvoicePaymentDto {
+  id: string;
+  amount: number;
+  transactionDate: string;
+  description: string;
+  isVoided: boolean;
+}
+
 export interface InventoryPurchaseInvoiceListItemDto {
   id: string;
   invoiceNumber: string;
   invoiceDate: string;
   supplierName: string;
   totalAmount: number;
+  paidAmount: number;
+  remainingAmount: number;
+  isGoodsReceived: boolean;
   attachmentFilePath: string;
   createdAt: string;
   isVoided: boolean;
@@ -23,6 +34,7 @@ export interface InventoryPurchaseInvoiceListItemDto {
   voidedAt?: string | null;
   voidedBy?: string | null;
   voidedByName?: string | null;
+  payments: InvoicePaymentDto[];
   lines: InventoryPurchaseInvoiceLineDto[];
 }
 

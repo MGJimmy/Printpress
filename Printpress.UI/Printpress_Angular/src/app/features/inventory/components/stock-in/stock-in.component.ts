@@ -9,6 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
@@ -42,6 +43,7 @@ interface InvoiceLineViewModel {
     MatNativeDateModule,
     MatCardModule,
     MatIconModule,
+    MatRadioModule,
     TableTemplateComponent
   ],
   templateUrl: './stock-in.component.html',
@@ -55,6 +57,8 @@ export class StockInComponent implements OnInit {
     invoiceNumber: FormControl<string>;
     invoiceDate: FormControl<Date | null>;
     supplierName: FormControl<string>;
+    paidNow: FormControl<number>;
+    receiveNow: FormControl<boolean>;
   }>;
 
   lines: InvoiceLineViewModel[] = [];
@@ -69,6 +73,15 @@ export class StockInComponent implements OnInit {
 
   private inventoryItems: InventoryItemSelectionDto[] = [];
   private isSaving = false;
+  private paidTouched = false;
+
+  get invoiceTotal(): number {
+    return this.lines.reduce((sum, line) => sum + (line.lineTotal || 0), 0);
+  }
+
+  get remainingNow(): number {
+    return Math.max(0, this.invoiceTotal - (this.form.controls.paidNow.value || 0));
+  }
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -81,7 +94,9 @@ export class StockInComponent implements OnInit {
     this.form = this.fb.group({
       invoiceNumber: this.fb.control('', Validators.required),
       invoiceDate: new FormControl<Date | null>(null, Validators.required),
-      supplierName: this.fb.control('', Validators.required)
+      supplierName: this.fb.control('', Validators.required),
+      paidNow: this.fb.control(0, [Validators.required, Validators.min(0)]),
+      receiveNow: this.fb.control(true),
     });
   }
 
@@ -126,12 +141,34 @@ export class StockInComponent implements OnInit {
           unitPrice: result.unitPrice,
           lineTotal: result.lineTotal
         }];
+        this.syncPaidNow();
       }
     });
   }
 
   onDeleteLine(lineId: string): void {
     this.lines = this.lines.filter(x => x.id !== lineId);
+    this.syncPaidNow();
+  }
+
+  markPaidTouched(): void {
+    this.paidTouched = true;
+  }
+
+  payFull(): void {
+    this.paidTouched = true;
+    this.form.controls.paidNow.setValue(this.invoiceTotal);
+  }
+
+  payNone(): void {
+    this.paidTouched = true;
+    this.form.controls.paidNow.setValue(0);
+  }
+
+  private syncPaidNow(): void {
+    if (!this.paidTouched) {
+      this.form.controls.paidNow.setValue(this.invoiceTotal);
+    }
   }
 
   async onSave(): Promise<void> {
@@ -160,11 +197,19 @@ export class StockInComponent implements OnInit {
       }
 
       const formValue = this.form.getRawValue();
+      const paidNow = formValue.paidNow ?? 0;
+      if (paidNow > this.invoiceTotal) {
+        this.alertService.showError('المبلغ المدفوع لا يمكن أن يتجاوز إجمالي الفاتورة');
+        return;
+      }
+
       const dto: PurchaseInvoiceCreateDto = {
         invoiceNumber: formValue.invoiceNumber,
         invoiceDate: formValue.invoiceDate?.toISOString() || '',
         supplierName: formValue.supplierName,
         attachmentFilePath,
+        paidNow,
+        receiveNow: formValue.receiveNow,
         lines: this.lines.map(l => ({
           inventoryItemId: l.inventoryItemId,
           quantity: l.quantity,
@@ -172,10 +217,11 @@ export class StockInComponent implements OnInit {
         }))
       };
 
-      await firstValueFrom(this.purchaseInvoiceService.createInvoice(dto));
+      const response = await firstValueFrom(this.purchaseInvoiceService.createInvoice(dto));
 
       this.alertService.showSuccess('تم حفظ الفاتورة بنجاح');
-      this.router.navigate(['/inventory/items']);
+      const id = response?.data?.id;
+      this.router.navigate(id ? ['/inventory/stock-in/invoices', id] : ['/inventory/stock-in/invoices']);
     } catch {
       this.alertService.showError('حدث خطأ أثناء حفظ الفاتورة');
     } finally {
