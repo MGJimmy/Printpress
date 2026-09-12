@@ -10,7 +10,7 @@ namespace Printpress.Domain
     {
         private readonly List<SparePartPurchaseInvoiceLine> _purchaseInvoiceLines = new();
 
-        public string InvoiceNumber { get; private set; }
+        public int InvoiceNumber { get; private set; }
         public DateTime InvoiceDate { get; private set; }
         public string SupplierName { get; private set; }
         public decimal TotalAmount { get; private set; }
@@ -31,18 +31,15 @@ namespace Printpress.Domain
         }
 
         public SparePartPurchaseInvoice(
-            string invoiceNumber, 
             DateTime invoiceDate, 
             string suplierName, 
             string attachmentFilePath
             )
         {
             Id = Guid.NewGuid();
-            InvoiceNumber = invoiceNumber;
             InvoiceDate = invoiceDate;
             SupplierName = suplierName;
             AttachmentFilePath = attachmentFilePath;
-
         }
 
         public void AddLine(Guid lineId, Guid inventoryItemId, decimal quantity, decimal unitPrice)

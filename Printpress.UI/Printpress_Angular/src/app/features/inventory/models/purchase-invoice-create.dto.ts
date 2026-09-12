@@ -5,7 +5,6 @@ export interface PurchaseInvoiceLineCreateDto {
 }
 
 export interface PurchaseInvoiceCreateDto {
-  invoiceNumber: string;
   invoiceDate: string;
   supplierName: string;
   attachmentFilePath: string;

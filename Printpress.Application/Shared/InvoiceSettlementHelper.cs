@@ -14,7 +14,7 @@ internal static class InvoiceSettlementHelper
         return paid;
     }
 
-    public static string BuildPaymentDescription(ILocalizationService loc, string descriptionKey, string invoiceNumber, string note)
+    public static string BuildPaymentDescription(ILocalizationService loc, string descriptionKey, int invoiceNumber, string note)
     {
         var description = loc.Get(descriptionKey, invoiceNumber);
         var trimmedNote = note?.Trim();

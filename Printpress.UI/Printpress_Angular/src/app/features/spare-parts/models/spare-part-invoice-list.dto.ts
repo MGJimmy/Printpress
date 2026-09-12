@@ -19,7 +19,7 @@ export interface InvoicePaymentDto {
 
 export interface SparePartPurchaseInvoiceListItemDto {
   id: string;
-  invoiceNumber: string;
+  invoiceNumber: number;
   invoiceDate: string;
   supplierName: string;
   totalAmount: number;

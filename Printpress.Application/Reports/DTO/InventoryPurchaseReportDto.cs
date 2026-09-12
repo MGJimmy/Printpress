@@ -3,7 +3,7 @@ namespace Printpress.Application;
 public class InventoryPurchaseLineRowDto
 {
     public Guid InvoiceId { get; set; }
-    public string InvoiceNumber { get; set; }
+    public int InvoiceNumber { get; set; }
     public DateTime InvoiceDate { get; set; }
     public string SupplierName { get; set; }
     public Guid ItemId { get; set; }

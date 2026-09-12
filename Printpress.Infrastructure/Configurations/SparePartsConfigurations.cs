@@ -8,14 +8,16 @@ namespace Printpress.Infrastructure
     {
         private const string Schema = "SpareParts";
         private const string SellingInvoiceNumberSequence = "SparePartSellingInvoiceNumber";
+        private const string PurchaseInvoiceNumberSequence = "SparePartPurchaseInvoiceNumber";
 
         public static void ConfigureSpareParts(this ModelBuilder modelBuilder)
         {
             modelBuilder.HasSequence<int>(SellingInvoiceNumberSequence, Schema).StartsAt(1).IncrementsBy(1);
+            modelBuilder.HasSequence<int>(PurchaseInvoiceNumberSequence, Schema).StartsAt(1).IncrementsBy(1);
 
             modelBuilder.Entity<SparePartInventoryItem>().Configure();
             modelBuilder.Entity<SparePartInventoryTransaction>().Configure();
-            modelBuilder.Entity<SparePartPurchaseInvoice>().Configure();
+            modelBuilder.Entity<SparePartPurchaseInvoice>().Configure(Schema, PurchaseInvoiceNumberSequence);
             modelBuilder.Entity<SparePartPurchaseInvoiceLine>().Configure();
             modelBuilder.Entity<SparePartSellingInvoice>().Configure(Schema, SellingInvoiceNumberSequence);
             modelBuilder.Entity<SparePartSellingInvoiceLine>().Configure();
@@ -44,14 +46,14 @@ namespace Printpress.Infrastructure
                 .HasMaxLength(500);
         }
 
-        private static void Configure(this EntityTypeBuilder<SparePartPurchaseInvoice> entity)
+        private static void Configure(this EntityTypeBuilder<SparePartPurchaseInvoice> entity, string schema, string sequenceName)
         {
             entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity.Property(x => x.InvoiceNumber)
-                .IsRequired()
-                .HasMaxLength(100);
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql($"nextval('\"{schema}\".\"{sequenceName}\"')");
 
             entity.Property(x => x.SupplierName)
                 .IsRequired()

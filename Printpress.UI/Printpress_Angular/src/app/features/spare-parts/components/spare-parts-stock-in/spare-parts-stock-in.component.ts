@@ -52,7 +52,6 @@ export class SparePartsStockInComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   form: FormGroup<{
-    invoiceNumber: FormControl<string>;
     invoiceDate: FormControl<Date | null>;
     supplierName: FormControl<string>;
     paidNow: FormControl<number>;
@@ -90,7 +89,6 @@ export class SparePartsStockInComponent implements OnInit {
     private purchaseInvoiceService: SparePartPurchaseInvoiceService
   ) {
     this.form = this.fb.group({
-      invoiceNumber: this.fb.control('', Validators.required),
       invoiceDate: new FormControl<Date | null>(null, Validators.required),
       supplierName: this.fb.control('', Validators.required),
       paidNow: this.fb.control(0, [Validators.required, Validators.min(0)]),
@@ -189,7 +187,6 @@ export class SparePartsStockInComponent implements OnInit {
       }
 
       const dto: SparePartPurchaseInvoiceCreateDto = {
-        invoiceNumber: formValue.invoiceNumber,
         invoiceDate: formValue.invoiceDate?.toISOString() || '',
         supplierName: formValue.supplierName,
         attachmentFilePath,

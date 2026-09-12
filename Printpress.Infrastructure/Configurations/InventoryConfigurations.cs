@@ -8,12 +8,16 @@ namespace Printpress.Infrastructure
     {
         private const string Schema = "Inventory";
 
+        private const string PurchaseInvoiceNumberSequence = "PurchaseInvoiceNumber";
+
         public static void ConfigureInventory(this ModelBuilder modelBuilder)
         {
+            modelBuilder.HasSequence<int>(PurchaseInvoiceNumberSequence, Schema).StartsAt(1).IncrementsBy(1);
+
             modelBuilder.Entity<InventoryItem>().Configure();
             modelBuilder.Entity<InventoryTransaction>().Configure();
             modelBuilder.Entity<InventoryItemCategory_LKP>().Configure();
-            modelBuilder.Entity<PurchaseInvoice>().Configure();
+            modelBuilder.Entity<PurchaseInvoice>().Configure(Schema, PurchaseInvoiceNumberSequence);
             modelBuilder.Entity<PurchaseInvoiceLine>().Configure();
         }
 
@@ -63,14 +67,14 @@ namespace Printpress.Infrastructure
                 .HasMaxLength(200);
         }
 
-        private static void Configure(this EntityTypeBuilder<PurchaseInvoice> entity)
+        private static void Configure(this EntityTypeBuilder<PurchaseInvoice> entity, string schema, string sequenceName)
         {
             entity.Property(x => x.Id).ValueGeneratedNever();
             entity.SetSchemaTable(Schema);
 
             entity.Property(x => x.InvoiceNumber)
-                .IsRequired()
-                .HasMaxLength(100);
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql($"nextval('\"{schema}\".\"{sequenceName}\"')");
 
             entity.Property(x => x.SupplierName)
                 .IsRequired()

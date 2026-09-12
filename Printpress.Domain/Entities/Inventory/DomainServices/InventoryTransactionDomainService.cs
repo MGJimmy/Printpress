@@ -32,7 +32,7 @@ namespace Printpress.Domain
             }).ToList();
         }
 
-        public List<InventoryTransaction> CreatePurchaseVoidTransactions(List<PurchaseInvoiceLine> purchaseInvoiceLines, string invoiceNumber)
+        public List<InventoryTransaction> CreatePurchaseVoidTransactions(List<PurchaseInvoiceLine> purchaseInvoiceLines, int invoiceNumber)
         {
             return purchaseInvoiceLines.Select(x =>
             {

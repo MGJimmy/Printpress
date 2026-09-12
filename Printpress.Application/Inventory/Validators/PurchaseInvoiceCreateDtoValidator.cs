@@ -8,12 +8,6 @@ public class PurchaseInvoiceCreateDtoValidator : AbstractValidator<PurchaseInvoi
 
     public PurchaseInvoiceCreateDtoValidator(IInventoryItemRepository inventoryItemRepository)
     {
-        RuleFor(x => x.InvoiceNumber)
-            .NotEmpty()
-            .WithMessage(ResponseMessage.Required(nameof(PurchaseInvoiceCreateDto.InvoiceNumber)))
-            .MaximumLength(100)
-            .WithMessage(ResponseMessage.MaxLength(nameof(PurchaseInvoiceCreateDto.InvoiceNumber), 100));
-
         RuleFor(x => x.SupplierName)
             .NotEmpty()
             .WithMessage(ResponseMessage.Required(nameof(PurchaseInvoiceCreateDto.SupplierName)))

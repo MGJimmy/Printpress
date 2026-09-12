@@ -3,7 +3,7 @@ namespace Printpress.Application;
 public record PurchaseInvoiceDto
 {
     public Guid Id { get; init; }
-    public string InvoiceNumber { get; init; }
+    public int InvoiceNumber { get; init; }
     public DateTime InvoiceDate { get; init; }
     public string SupplierName { get; init; }
     public decimal TotalAmount { get; init; }

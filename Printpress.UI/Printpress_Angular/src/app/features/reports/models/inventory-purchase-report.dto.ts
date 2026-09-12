@@ -1,6 +1,6 @@
 export interface InventoryPurchaseLineRowDto {
   invoiceId: string;
-  invoiceNumber: string;
+  invoiceNumber: number;
   invoiceDate: string;
   supplierName: string;
   itemId: string;

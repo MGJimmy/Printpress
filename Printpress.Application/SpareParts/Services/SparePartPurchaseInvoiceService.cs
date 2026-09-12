@@ -12,7 +12,6 @@ internal sealed class SparePartPurchaseInvoiceService(
     public async Task<Guid> CreateAsync(SparePartPurchaseInvoiceCreateDto payload, string userId)
     {
         var invoice = new SparePartPurchaseInvoice(
-            payload.InvoiceNumber,
             UtcDateTime.AsUtc(payload.InvoiceDate),
             payload.SupplierName,
             payload.AttachmentFilePath ?? string.Empty);

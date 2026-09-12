@@ -15,7 +15,7 @@ public class SparePartInvoiceLineDto
 public class SparePartPurchaseInvoiceListItemDto
 {
     public Guid Id { get; set; }
-    public string InvoiceNumber { get; set; }
+    public int InvoiceNumber { get; set; }
     public DateTime InvoiceDate { get; set; }
     public string SupplierName { get; set; }
     public decimal TotalAmount { get; set; }

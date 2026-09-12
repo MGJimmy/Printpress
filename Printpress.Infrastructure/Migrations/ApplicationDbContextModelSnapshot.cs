@@ -23,6 +23,8 @@ namespace Printpress.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.HasSequence<int>("PurchaseInvoiceNumber", "Inventory");
+            modelBuilder.HasSequence<int>("SparePartPurchaseInvoiceNumber", "SpareParts");
             modelBuilder.HasSequence<int>("SparePartSellingInvoiceNumber", "SpareParts");
 
             modelBuilder.Entity("Printpress.Domain.CashAccount", b =>
@@ -747,10 +749,10 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<int>("InvoiceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("nextval('\"Inventory\".\"PurchaseInvoiceNumber\"')");
 
                     b.Property<bool>("IsGoodsReceived")
                         .ValueGeneratedOnAdd()
@@ -1010,10 +1012,10 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<int>("InvoiceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("nextval('\"SpareParts\".\"SparePartPurchaseInvoiceNumber\"')");
 
                     b.Property<bool>("IsGoodsReceived")
                         .ValueGeneratedOnAdd()
