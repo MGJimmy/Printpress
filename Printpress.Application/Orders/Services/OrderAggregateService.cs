@@ -322,6 +322,29 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             .ToHashSet();
     }
 
+    private HashSet<Guid> GetExecutedServiceCategoryIds(IEnumerable<Guid> itemIds)
+    {
+        var ids = itemIds.ToList();
+        if (ids.Count == 0)
+            return [];
+
+        return _IUnitOfWork.WorkerProductionRepository
+            .Filter(e => ids.Contains(e.OrderItemId), track: false)
+            .Select(e => e.ServiceCategoryId)
+            .ToHashSet();
+    }
+
+    private Dictionary<Guid, Guid> GetServiceCategoryMap(IEnumerable<Guid> serviceIds)
+    {
+        var ids = serviceIds.Distinct().ToList();
+        if (ids.Count == 0)
+            return [];
+
+        return _IUnitOfWork.ServiceRepository
+            .Filter(s => ids.Contains(s.Id), track: false)
+            .ToDictionary(s => s.Id, s => s.ServiceCategoryId);
+    }
+
     private HashSet<Guid> GetExecutedItemIds(Order order)
     {
         var groupIds = (order.OrderGroups ?? []).Where(g => !g.IsDeleted).Select(g => g.Id);
@@ -330,9 +353,23 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
     private void ApplyItemExecutionFlags(OrderDto orderDto, Order order)
     {
-        var executedItemIds = GetExecutedItemIds(order);
+        var itemIds = GetActiveItemIds((order.OrderGroups ?? []).Where(g => !g.IsDeleted).Select(g => g.Id));
+        var productions = itemIds.Count == 0
+            ? []
+            : _IUnitOfWork.WorkerProductionRepository
+                .Filter(e => itemIds.Contains(e.OrderItemId), track: false)
+                .ToList();
+
+        var executedItemIds = productions.Select(e => e.OrderItemId).ToHashSet();
         foreach (var group in orderDto.OrderGroups ?? [])
         {
+            var groupItemIds = (group.Items ?? []).Select(i => i.Id).ToHashSet();
+            group.ExecutedServiceCategoryIds = productions
+                .Where(e => groupItemIds.Contains(e.OrderItemId))
+                .Select(e => e.ServiceCategoryId)
+                .Distinct()
+                .ToList();
+
             foreach (var item in group.Items ?? [])
                 item.HasExecutions = executedItemIds.Contains(item.Id);
         }
@@ -380,11 +417,15 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
                 continue;
             }
 
-            if (incomingGroup.ObjectState != TrackingState.Deleted
-                && (groupHasExecutions || groupIsClosed)
-                && GroupServicesOrTypeChanged(persistedGroup, incomingGroup))
+            if (incomingGroup.ObjectState != TrackingState.Deleted)
             {
-                ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotChangeServicesAfterExecution));
+                if (groupIsClosed && GroupServicesOrTypeChanged(persistedGroup, incomingGroup))
+                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotChangeServicesAfterExecution));
+
+                if (!groupIsClosed
+                    && groupHasExecutions
+                    && UsedGroupServicesOrTypeChanged(persistedGroup, incomingGroup, groupItemIds))
+                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotChangeServicesAfterExecution));
             }
 
             foreach (var incomingItem in incomingItems)
@@ -430,6 +471,39 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             .ToList();
 
         return !persistedServiceKeys.SequenceEqual(incomingServiceKeys);
+    }
+
+    private bool UsedGroupServicesOrTypeChanged(OrderGroup persisted, OrderGroupUpsertDTO incoming, IEnumerable<Guid> groupItemIds)
+    {
+        if (persisted.ExecutionType != incoming.ExecutionType)
+            return true;
+
+        var executedCategories = GetExecutedServiceCategoryIds(groupItemIds);
+        if (executedCategories.Count == 0)
+            return false;
+
+        var incomingKeys = (incoming.OrderGroupServices ?? [])
+            .Where(s => s.ObjectState != TrackingState.Deleted)
+            .Select(s => (s.ServiceId, s.IsCover))
+            .ToHashSet();
+
+        var persistedServices = (persisted.OrderGroupServices ?? [])
+            .Where(s => !s.IsDeleted)
+            .ToList();
+
+        var categoryByServiceId = GetServiceCategoryMap(persistedServices.Select(s => s.ServiceId));
+
+        foreach (var service in persistedServices)
+        {
+            if (incomingKeys.Contains((service.ServiceId, service.IsCover)))
+                continue;
+
+            if (categoryByServiceId.TryGetValue(service.ServiceId, out var categoryId)
+                && executedCategories.Contains(categoryId))
+                return true;
+        }
+
+        return false;
     }
 
     private static bool IsItemStructurallyChanged(OrderItem persisted, ItemUpsertDTO incoming)

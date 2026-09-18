@@ -178,11 +178,7 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected get areServicesLocked(): boolean {
-    if (this.isGroupClosed) {
-      return true;
-    }
-
-    return this.groupItems.some(item => this.isItemLocked(item));
+    return this.isGroupClosed;
   }
 
   protected isItemLocked(item: ItemGetDto): boolean {

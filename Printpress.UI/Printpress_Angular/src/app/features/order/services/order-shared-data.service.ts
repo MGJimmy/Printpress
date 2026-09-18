@@ -166,6 +166,7 @@ export class OrderSharedDataService {
       isHasPrintingService: false,
       isHasSellingService: false,
       isHasStaplingService: false,
+      executedServiceCategoryIds: [],
       orderGroupServices: [],
       items: [],
       objectState: ObjectStateEnum.temp

@@ -18,6 +18,7 @@ export interface OrderGroupGetDto extends IObjectState {
     isHasPrintingService: boolean;
     isHasSellingService: boolean;
     isHasStaplingService: boolean;
+    executedServiceCategoryIds?: string[];
 
     orderGroupServices: OrderGroupServiceGetDto[];
     items: ItemGetDto[];

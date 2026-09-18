@@ -4,7 +4,7 @@
     <div class="row mb-3">
       <div class="col-12">
         <label class="form-label fw-bold">نوع التنفيذ:</label>
-        <mat-radio-group [(ngModel)]="executionType" (change)="onExecutionTypeChange($event.value)" [disabled]="servicesLocked" class="d-flex gap-4 mt-1">
+        <mat-radio-group [(ngModel)]="executionType" (change)="onExecutionTypeChange($event.value)" [disabled]="executionTypeLocked" class="d-flex gap-4 mt-1">
           <mat-radio-button *ngFor="let t of executionTypes" [value]="t">
             {{ executionTypeLabels[t] }}
           </mat-radio-button>
