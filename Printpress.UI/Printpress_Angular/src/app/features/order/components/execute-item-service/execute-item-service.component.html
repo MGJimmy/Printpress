@@ -145,6 +145,7 @@
                 <mat-form-field appearance="fill" class="w-100">
                   <input matInput type="number" formControlName="quantity" min="1">
                   <mat-error>يجب أن تكون أكبر من 0</mat-error>
+                  <mat-hint *ngIf="exceedsRemaining" class="text-danger">تتجاوز المتبقي</mat-hint>
                 </mat-form-field>
               </div>
               <div class="col-3">
@@ -162,9 +163,12 @@
         </div>
 
         <!-- Action Buttons -->
+        <div class="text-danger small mb-2" *ngIf="exceedsRemaining">
+          الكمية المطلوبة ({{ totalRequested }}) تتجاوز المتبقي ({{ remaining }})
+        </div>
         <div class="d-flex gap-2 mt-3">
           <button mat-raised-button color="primary" type="button"
-                  (click)="onSave()" [disabled]="isSaving">
+                  (click)="onSave()" [disabled]="!canSave">
             <mat-icon>save</mat-icon>
             {{ isSaving ? 'جاري الحفظ...' : 'حفظ' }}
           </button>

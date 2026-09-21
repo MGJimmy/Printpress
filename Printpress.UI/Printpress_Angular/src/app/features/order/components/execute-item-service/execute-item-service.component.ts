@@ -23,6 +23,7 @@ import {
 import { normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-execute-item-service',
@@ -113,6 +114,24 @@ export class ExecuteItemServiceComponent implements OnInit {
     return this.selectedService.total - this.selectedService.executed;
   }
 
+  get totalRequested(): number {
+    return this.workerRows.controls.reduce((sum, row) => {
+      const qty = Number(row.get('quantity')?.value);
+      return sum + (Number.isFinite(qty) && qty > 0 ? qty : 0);
+    }, 0);
+  }
+
+  get exceedsRemaining(): boolean {
+    return this.selectedService != null && this.totalRequested > this.remaining;
+  }
+
+  get canSave(): boolean {
+    return this.form.valid
+      && this.workerRows.length > 0
+      && !this.exceedsRemaining
+      && !this.isSaving;
+  }
+
   createWorkerRow() {
     return this.fb.group({
       workerId: this.fb.control<string>('', Validators.required),
@@ -143,6 +162,9 @@ export class ExecuteItemServiceComponent implements OnInit {
       this.alertService.showError(this._t.t('orders.worker_required'));
       return;
     }
+    if (this.exceedsRemaining) {
+      return;
+    }
 
     const val = this.form.getRawValue();
     const payload: ExecuteServiceRequestDto = {
@@ -154,13 +176,14 @@ export class ExecuteItemServiceComponent implements OnInit {
     };
 
     this.isSaving = true;
-    this.executionService.execute(payload).subscribe({
+    this.executionService.execute(payload).pipe(
+      finalize(() => { this.isSaving = false; })
+    ).subscribe({
       next: () => {
         this.alertService.showSuccess(this._t.t('orders.execution_saved'));
         this.router.navigate([`/order/groups/${this.groupId}/items`]);
       },
       error: (err) => {
-        this.isSaving = false;
         const msg = err?.error?.message || this._t.t('orders.error_executing');
         this.alertService.showError(msg);
       }
