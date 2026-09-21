@@ -515,16 +515,14 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         var persistedServiceKeys = (persisted.OrderGroupServices ?? [])
             .Where(s => !s.IsDeleted)
             .Select(s => (s.ServiceId, s.IsCover))
-            .OrderBy(s => s.ServiceId)
-            .ToList();
+            .ToHashSet();
 
         var incomingServiceKeys = (incoming.OrderGroupServices ?? [])
             .Where(s => s.ObjectState != TrackingState.Deleted)
             .Select(s => (s.ServiceId, s.IsCover))
-            .OrderBy(s => s.ServiceId)
-            .ToList();
+            .ToHashSet();
 
-        return !persistedServiceKeys.SequenceEqual(incomingServiceKeys);
+        return !persistedServiceKeys.SetEquals(incomingServiceKeys);
     }
 
     // True when a persisted service was removed or swapped (ServiceId / IsCover)
