@@ -168,8 +168,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
             foreach (var printingGroupService in printingGroupServices)
             {
-                var catalogService = currentGroupServices.First(s => s.Id == printingGroupService.ServiceId);
-                var servicePrice = GetservicePrice(catalogService);
+                var servicePrice = GetServicePrice(printingGroupService.ServiceId, printingGroupService.IsCover);
 
                 if (printingGroupService.IsCover)
                     itemPrice += servicePrice;
@@ -179,17 +178,17 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
             if (staplingService != null)
             {
-                itemPrice += GetservicePrice(staplingService);
+                itemPrice += GetServicePrice(staplingService.Id, false);
             }
 
             if (cluingService != null)
             {
-                itemPrice += GetservicePrice(cluingService);
+                itemPrice += GetServicePrice(cluingService.Id, false);
             }
 
             if (cuttingService != null)
             {
-                itemPrice += GetservicePrice(cuttingService);
+                itemPrice += GetServicePrice(cuttingService.Id, false);
             }
 
             item.Price = itemPrice;
@@ -197,9 +196,11 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             // update unchanged status to modified to update database with new calcuated item price
             item.ObjectState = item.ObjectState == TrackingState.Unchanged ? TrackingState.Modified : item.ObjectState;
 
-            decimal GetservicePrice(Service service)
+            decimal GetServicePrice(Guid serviceId, bool isCover)
             {
-                return orderService.NotDeleted().First(x => service.Id == x.ServiceId).Price.GetValueOrDefault();
+                return orderService.NotDeleted()
+                    .First(x => x.ServiceId == serviceId && x.IsCover == isCover)
+                    .Price.GetValueOrDefault();
             }
         }
     }

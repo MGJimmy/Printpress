@@ -565,11 +565,20 @@ export class OrderSharedDataService {
     return this.orderObject.orderServices = orderServices;
   }
 
-  public addOrderServicesDistinct(orderService: OrderServicesGetDTO) {
-    if (!this.orderObject.orderServices.find(x => x.serviceId == orderService.serviceId)) {
-      this.orderObject.orderServices.push(orderService);
-    }
+private isSameService(a: OrderServicesGetDTO, b: OrderServicesGetDTO): boolean {
+  return a.serviceId === b.serviceId
+    && (a.isCover === true) === (b.isCover === true);
+}
+
+public addOrderServicesDistinct(orderService: OrderServicesGetDTO) {
+  const alreadyExists = this.orderObject.orderServices.some(
+    existing => this.isSameService(existing, orderService)
+  );
+
+  if (!alreadyExists) {
+    this.orderObject.orderServices.push(orderService);
   }
+}
 
 
   //=======================

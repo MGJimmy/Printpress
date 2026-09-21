@@ -64,6 +64,7 @@ function mapOrderServiceGetToUpsert(serviceGet: OrderServicesGetDTO): OrderServi
         id: serviceGet.id,
         serviceId: serviceGet.serviceId,
         price: serviceGet.price,
+        isCover: serviceGet.isCover === true,
         objectState: serviceGet.objectState 
     };
 }

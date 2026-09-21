@@ -6,6 +6,7 @@ namespace Printpress.Domain
         public Guid OrderId { get; set; }
         public Guid ServiceId { get; set; }
         public decimal? Price { get; set; }
+        public bool IsCover { get; set; }
         public bool IsDeleted { get; set; }
 
 

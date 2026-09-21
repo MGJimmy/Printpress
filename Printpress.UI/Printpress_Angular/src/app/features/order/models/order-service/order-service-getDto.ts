@@ -6,4 +6,5 @@ export interface OrderServicesGetDTO extends IObjectState{
     // orderId: string;
     serviceId: string;
     price: number;
+    isCover?: boolean;
 }

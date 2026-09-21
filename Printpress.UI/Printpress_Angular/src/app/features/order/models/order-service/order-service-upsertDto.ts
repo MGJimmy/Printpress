@@ -5,4 +5,5 @@ export interface OrderServicesUpsertDTO extends IObjectState{
     id: string;
     serviceId: string;
     price: number;
+    isCover?: boolean;
 }

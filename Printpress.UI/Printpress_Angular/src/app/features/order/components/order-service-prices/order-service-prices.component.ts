@@ -29,6 +29,7 @@ export class OrderServicePricesComponent implements OnInit {
     {
       id: string,
       serviceId: string,
+      isCover: boolean,
       name: string,
       price: number,
       objectState: ObjectStateEnum,
@@ -64,8 +65,9 @@ export class OrderServicePricesComponent implements OnInit {
     for (let i = 0; i < this.existingServices.length; i++) {
       const orderService = this.existingServices[i];
       const serviceId = orderService.serviceId;
+      const isCover = orderService.isCover === true;
 
-      if (this._tempServicesList.find(x => x.serviceId == serviceId)) {
+      if (this.hasPriceRow(serviceId, isCover)) {
         continue;
       }
 
@@ -74,12 +76,13 @@ export class OrderServicePricesComponent implements OnInit {
       if (service.serviceCategoryCode === ServiceCategoryEnum.Selling) {
         continue;
       }
-      const groupService = allOrderGroupServices.find(x => x.serviceId == serviceId);
+      const groupService = allOrderGroupServices.find(x => x.serviceId == serviceId && x.isCover === true === isCover);
 
       this._tempServicesList.push({
         id: orderService.id,
         serviceId: service.id,
-        name: groupService?.isCover ? `غلاف ${service.name}` : service.name,
+        isCover,
+        name: isCover ? `غلاف ${service.name}` : service.name,
         price: orderService.price,
         objectState: orderService.objectState,
         isNew: orderService.objectState == ObjectStateEnum.temp || orderService.objectState == ObjectStateEnum.added,
@@ -92,11 +95,11 @@ export class OrderServicePricesComponent implements OnInit {
     let allOrderGroupServices = this._orderSharedService.getAllOrderGroupsServices_copy();
 
     for (let i = 0; i < allOrderGroupServices.length; i++) {
-      const serviceId = allOrderGroupServices[i].serviceId;
+      const groupService = allOrderGroupServices[i];
+      const serviceId = groupService.serviceId;
+      const isCover = groupService.isCover === true;
 
-      if (
-        this._tempServicesList.find(x => x.serviceId == serviceId) ||
-        this.existingServices.find(x => x.serviceId == serviceId)) {
+      if (this.hasPriceRow(serviceId, isCover) || this.hasExistingPrice(serviceId, isCover)) {
         continue;
       }
 
@@ -106,17 +109,25 @@ export class OrderServicePricesComponent implements OnInit {
         continue;
       }
 
-      const groupService = allOrderGroupServices[i];
       this._tempServicesList.push({
         id: this._orderSharedService.generateEmptyId(),
         serviceId: service.id,
-        name: groupService?.isCover ? `غلاف ${service.name}` : service.name,
+        isCover,
+        name: isCover ? `غلاف ${service.name}` : service.name,
         price: service.price,
         objectState: ObjectStateEnum.temp,
         isNew: true,
         isDeleted: false
       });
     }
+  }
+
+  private hasPriceRow(serviceId: string, isCover: boolean): boolean {
+    return this._tempServicesList.some(x => x.serviceId == serviceId && x.isCover === isCover);
+  }
+
+  private hasExistingPrice(serviceId: string, isCover: boolean): boolean {
+    return this.existingServices.some(x => x.serviceId == serviceId && x.isCover === true === isCover);
   }
 
   protected onPriceChange(): void {
@@ -158,6 +169,7 @@ export class OrderServicePricesComponent implements OnInit {
       return {
         id: x.id,
         serviceId: x.serviceId,
+        isCover: x.isCover,
         price: isZeroOrder ? 0 : x.price,
         objectState: objectState
       };

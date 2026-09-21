@@ -159,7 +159,9 @@ public class InvoiceReport : IDocument
 
               foreach (var orderService in orderServices)
               {
-                  var displayName = GetServiceDisplayName(orderService.ServiceId, orderService.Service.Name);
+                  var displayName = orderService.IsCover
+                      ? $"غلاف {orderService.Service.Name}"
+                      : orderService.Service.Name;
                   table.Cell().Element(CellStyle).Text(displayName).AlignCenter();
                   table.Cell().Element(CellStyle).Text(orderService.Price.ToString()).AlignCenter();
               }
@@ -410,15 +412,6 @@ public class InvoiceReport : IDocument
     {
         var name = groupService.Service?.Name ?? string.Empty;
         return groupService.IsCover ? $"غلاف {name}" : name;
-    }
-
-    private string GetServiceDisplayName(Guid serviceId, string serviceName)
-    {
-        var isCover = _model.OrderGroups?
-            .SelectMany(g => g.OrderGroupServices ?? [])
-            .Any(gs => gs.ServiceId == serviceId && gs.IsCover) == true;
-
-        return isCover ? $"غلاف {serviceName}" : serviceName;
     }
 }
 
