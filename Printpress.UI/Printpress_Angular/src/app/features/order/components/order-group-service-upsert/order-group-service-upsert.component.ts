@@ -52,8 +52,7 @@ export interface ServiceCat_interface {
 export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   columnDefs: TableColDefinitionModel[] = [
-    { headerName: 'مسلسل', column: 'id' },
-    { headerName: 'الخدمة', column: 'name' }
+     { headerName: 'الخدمة', column: 'name' }
   ];
 
   tableData: ServiceGetDto[] | null = null;
@@ -168,13 +167,17 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.serviceService.getServices(groupServices.map(x => x.serviceId)).subscribe(services =>{
-      this.tableData = services.map(service => {
-        const groupService = groupServices.find(gs => gs.serviceId === service.id);
+    this.serviceService.getServices(groupServices.map(x => x.serviceId)).subscribe(services => {
+      this.tableData = groupServices.map(groupService => {
+        const service = services.find(s => s.id === groupService.serviceId);
+        const name = service?.name ?? groupService.serviceName ?? '';
         return {
           ...service,
-          name: groupService?.isCover ? `غلاف ${service.name}` : service.name
-        };
+          id: groupService.id,
+          serviceId: groupService.serviceId,
+          isCover: groupService.isCover === true,
+          name: groupService.isCover ? `غلاف ${name}` : name
+        } as ServiceGetDto;
       });
     });
   }
@@ -208,7 +211,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     const groupServices = this.orderSharedDataService.getOrderGroupServices_copy(this.groupId);
     return groupServices.some(gs => {
       const service = this.allServices.find(s => s.id === gs.serviceId)
-        ?? this.tableData?.find(s => s.id === gs.serviceId);
+        ?? this.tableData?.find(s => (s as { serviceId?: string }).serviceId === gs.serviceId);
       return service?.serviceCategoryCode === ServiceCategoryEnum.Printing && gs.isCover !== true;
     });
   }
@@ -262,12 +265,12 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.alertService.showSuccess(this._t.t('orders.service_added'));
   }
 
-  protected onDeleteServiceCat(serviceId: string): void {
+  protected onDeleteServiceCat(groupServiceId: string): void {
     if (this.servicesLocked) {
       this.alertService.showError(this._t.t('orders.cannot_change_services_after_execution'));
       return;
     }
-    if (this.isServiceCategoryExecuted(serviceId)) {
+    if (this.isServiceCategoryExecuted(groupServiceId)) {
       this.alertService.showError(this._t.t('orders.cannot_change_services_after_execution'));
       return;
     }
@@ -281,7 +284,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
     const dialogSub = this.dialogService.confirmDialog(dialogData).subscribe((confirmed) => {
       if (confirmed) {
-        this.orderSharedDataService.deleteGroupService(this.groupId, serviceId);
+        this.orderSharedDataService.deleteGroupService(this.groupId, groupServiceId);
         this.fillPageData();
         this.alertService.showSuccess(this._t.t('orders.service_deleted'));
       }
@@ -290,13 +293,12 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.subscriptions.add(dialogSub);
   }
 
-  private isServiceCategoryExecuted(serviceId: string): boolean {
+  private isServiceCategoryExecuted(groupServiceId: string): boolean {
     if (this.executedServiceCategoryIds.size === 0) {
       return false;
     }
 
-    const service = this.tableData?.find(row => row.id === serviceId)
-      ?? this.allServices.find(row => row.id === serviceId);
+    const service = this.tableData?.find(row => row.id === groupServiceId);
     const categoryId = service?.serviceCategoryId;
     if (!categoryId) {
       return false;

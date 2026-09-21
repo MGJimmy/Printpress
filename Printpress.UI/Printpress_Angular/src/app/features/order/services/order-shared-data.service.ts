@@ -477,11 +477,12 @@ export class OrderSharedDataService {
     return this.filterDeletedObjectArray(orderGroupsServices);
   }
 
-  private getOrderGroupService(orderGroupId: string, serviceId: string): OrderGroupServiceGetDto {
+  private getOrderGroupService(orderGroupId: string, groupServiceId: string): OrderGroupServiceGetDto {
     let orderGroup = this.getOrderGroup(orderGroupId);
 
-    let orderGroupService = orderGroup.orderGroupServices.filter(x => x.objectState !== ObjectStateEnum.deleted)
-      .find(x => x.serviceId === serviceId);
+    let orderGroupService = orderGroup.orderGroupServices
+      .filter(x => x.objectState !== ObjectStateEnum.deleted)
+      .find(x => x.id === groupServiceId);
 
     if (orderGroupService === undefined) {
       throw new Error('Order group service not found');
@@ -493,7 +494,12 @@ export class OrderSharedDataService {
   public addOrderGroupService(orderGroupId: string, service: ServiceGetDto, isCover: boolean = false): void {
     let orderGroup: OrderGroupGetDto = this.getOrderGroup(orderGroupId);
 
-    if (orderGroup.orderGroupServices.find(x => x.serviceId == service.id)) {
+    const alreadyExists = orderGroup.orderGroupServices.some(x =>
+      x.objectState !== ObjectStateEnum.deleted
+      && x.serviceId === service.id
+      && x.isCover === isCover);
+
+    if (alreadyExists) {
       return;
     }
 
@@ -514,12 +520,12 @@ export class OrderSharedDataService {
   }
 
 
-  public deleteGroupService(groupId: string, serviceId: string) {
+  public deleteGroupService(groupId: string, groupServiceId: string) {
 
-    let groupService = this.getOrderGroupService(groupId, serviceId);
+    let groupService = this.getOrderGroupService(groupId, groupServiceId);
 
     if (groupService.objectState === ObjectStateEnum.temp || groupService.objectState === ObjectStateEnum.added) {
-      this.hardDeleteGroupService(groupId, serviceId);
+      this.hardDeleteGroupService(groupId, groupServiceId);
     }
     else {
       groupService.objectState = ObjectStateEnum.deleted;
@@ -528,9 +534,9 @@ export class OrderSharedDataService {
     this.updateGroupFlagsOnServicesCategories(groupId);
   }
 
-  private hardDeleteGroupService(groupId: string, serviceId: string) {
+  private hardDeleteGroupService(groupId: string, groupServiceId: string) {
     const group = this.getOrderGroup(groupId);
-    const index = group.orderGroupServices.findIndex(x => x.serviceId === serviceId);
+    const index = group.orderGroupServices.findIndex(x => x.id === groupServiceId);
     if (index !== -1) {
       group.orderGroupServices.splice(index, 1);
     }

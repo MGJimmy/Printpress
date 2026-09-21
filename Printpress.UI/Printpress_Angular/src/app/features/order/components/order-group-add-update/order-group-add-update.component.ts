@@ -202,6 +202,9 @@ export class OrderGroupAddUpdateComponent implements OnInit {
     let dialogRef = this.dialog.open(OrderGroupServiceUpsertComponent, {
       data: { groupId: this.groupId, deleteGroupOnCancel },
       width: '1000px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'group-services-dialog',
       disableClose: true,
       injector: this.injector
     });

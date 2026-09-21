@@ -52,4 +52,10 @@ body.sidebar-resizing {
   cursor: col-resize;
   user-select: none;
 }
+
+.group-services-dialog .mat-mdc-dialog-container,
+.group-services-dialog .mat-mdc-dialog-surface {
+  max-height: 90vh;
+  overflow: auto;
+}
   

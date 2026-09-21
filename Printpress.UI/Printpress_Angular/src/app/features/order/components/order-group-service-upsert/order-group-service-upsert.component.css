@@ -16,3 +16,20 @@ mat-card-title{
   justify-content: center;
   align-items: center;
 }
+
+:host {
+  display: block;
+  max-height: 90vh;
+}
+
+.customer-list-container div.services{
+  display: flex;
+  /* gap: 1rem; */
+  flex-direction: column;
+}
+
+.flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
