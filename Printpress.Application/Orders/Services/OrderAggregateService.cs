@@ -378,80 +378,133 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     private void ValidateOrderMutations(Order persisted, OrderUpsertDto incoming, HashSet<Guid> executedItemIds)
     {
         if (persisted.Status == OrderStatusEnum.Delivered)
-            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderAlreadyDelivered));
+            Reject(LocalizationKeys.Orders.OrderAlreadyDelivered);
 
-        var persistedGroups = (persisted.OrderGroups ?? []).Where(g => !g.IsDeleted).ToDictionary(g => g.Id);
-        var incomingGroups = incoming.OrderGroups ?? [];
-        var incomingById = incomingGroups.ToDictionary(g => g.Id);
+        var incomingById = (incoming.OrderGroups ?? []).ToDictionary(g => g.Id);
 
-        foreach (var persistedGroup in persistedGroups.Values)
+        foreach (var persistedGroup in (persisted.OrderGroups ?? []).Where(g => !g.IsDeleted))
         {
             incomingById.TryGetValue(persistedGroup.Id, out var incomingGroup);
-            var isGroupDeleted = incomingGroup is null || incomingGroup.ObjectState == TrackingState.Deleted;
-
-            var groupItemIds = GetActiveItemIds([persistedGroup.Id]);
-            var persistedItems = (persistedGroup.Items ?? []).Where(i => !i.IsDeleted).ToList();
-            if (persistedItems.Count == 0 && groupItemIds.Count > 0)
-            {
-                persistedItems = _IUnitOfWork.OrderItemRepository
-                    .Filter(i => i.OrderGroupId == persistedGroup.Id && !i.IsDeleted, track: false)
-                    .ToList();
-            }
-
-            var incomingItems = incomingGroup?.Items ?? [];
-            var groupHasExecutions = groupItemIds.Any(id => executedItemIds.Contains(id))
-                || GetExecutedItemIds(groupItemIds).Count > 0;
-            var groupIsClosed = persistedGroup.Status is GroupStatusEnum.Completed or GroupStatusEnum.Delivered;
-
-            if (isGroupDeleted)
-            {
-                if (groupIsClosed)
-                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotDeleteCompletedGroup));
-
-                if (groupHasExecutions)
-                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotDeleteGroupWithExecutions));
-
-                if (groupItemIds.Count > 0)
-                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotDeleteHasChildren));
-
-                continue;
-            }
-
-            if (incomingGroup.ObjectState != TrackingState.Deleted)
-            {
-                if (groupIsClosed && GroupServicesOrTypeChanged(persistedGroup, incomingGroup))
-                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotChangeServicesAfterExecution));
-
-                if (!groupIsClosed
-                    && groupHasExecutions
-                    && UsedGroupServicesOrTypeChanged(persistedGroup, incomingGroup, groupItemIds))
-                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotChangeServicesAfterExecution));
-            }
-
-            foreach (var incomingItem in incomingItems)
-            {
-                if (!persistedItems.Any(i => i.Id == incomingItem.Id))
-                {
-                    if (incomingItem.ObjectState == TrackingState.Added && groupIsClosed)
-                        ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotAddItemToClosedGroup));
-                    continue;
-                }
-
-                var persistedItem = persistedItems.First(i => i.Id == incomingItem.Id);
-                var itemLocked = persistedItem.OrderItemStatus == OrderItemStatus.Completed
-                    || executedItemIds.Contains(persistedItem.Id);
-
-                if (!itemLocked)
-                    continue;
-
-                if (incomingItem.ObjectState == TrackingState.Deleted)
-                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotDeleteExecutedItem));
-
-                if (IsItemStructurallyChanged(persistedItem, incomingItem))
-                    ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotEditExecutedItem));
-            }
+            ValidateGroupMutation(persistedGroup, incomingGroup, executedItemIds);
         }
     }
+
+    private void ValidateGroupMutation(
+        OrderGroup persistedGroup,
+        OrderGroupUpsertDTO incomingGroup,
+        HashSet<Guid> executedItemIds)
+    {
+        var groupItemIds = GetActiveItemIds([persistedGroup.Id]);
+        var groupIsClosed = IsGroupClosed(persistedGroup);
+        var groupHasExecutions = GroupHasExecutions(groupItemIds, executedItemIds);
+
+        if (incomingGroup is null || incomingGroup.ObjectState == TrackingState.Deleted)
+        {
+            EnsureGroupCanBeDeleted(groupIsClosed, groupHasExecutions, groupItemIds.Count);
+            return;
+        }
+
+        EnsureGroupServicesCanChange(
+            persistedGroup,
+            incomingGroup,
+            groupIsClosed,
+            groupHasExecutions,
+            groupItemIds);
+
+        EnsureGroupItemsCanChange(
+            LoadPersistedGroupItems(persistedGroup, groupItemIds),
+            incomingGroup.Items ?? [],
+            groupIsClosed,
+            executedItemIds);
+    }
+
+    private static bool IsGroupClosed(OrderGroup group)
+        => group.Status is GroupStatusEnum.Completed or GroupStatusEnum.Delivered;
+
+    private bool GroupHasExecutions(List<Guid> groupItemIds, HashSet<Guid> executedItemIds)
+        => groupItemIds.Any(executedItemIds.Contains)
+            || GetExecutedItemIds(groupItemIds).Count > 0;
+
+    private void EnsureGroupCanBeDeleted(bool groupIsClosed, bool groupHasExecutions, int itemCount)
+    {
+        if (groupIsClosed)
+            Reject(LocalizationKeys.Orders.CannotDeleteCompletedGroup);
+
+        if (groupHasExecutions)
+            Reject(LocalizationKeys.Orders.CannotDeleteGroupWithExecutions);
+
+        if (itemCount > 0)
+            Reject(LocalizationKeys.Orders.CannotDeleteHasChildren);
+    }
+
+    private void EnsureGroupServicesCanChange(
+        OrderGroup persistedGroup,
+        OrderGroupUpsertDTO incomingGroup,
+        bool groupIsClosed,
+        bool groupHasExecutions,
+        List<Guid> groupItemIds)
+    {
+        if (groupIsClosed && GroupServicesOrTypeChanged(persistedGroup, incomingGroup))
+            Reject(LocalizationKeys.Orders.CannotChangeServicesAfterExecution);
+
+        // After production: lock execution type, and block remove/swap of services already executed.
+        // Adding unused services is still allowed.
+        if (!groupIsClosed && groupHasExecutions
+            && (persistedGroup.ExecutionType != incomingGroup.ExecutionType
+                || HasRemovedExecutedGroupService(persistedGroup, incomingGroup, groupItemIds)))
+            Reject(LocalizationKeys.Orders.CannotChangeServicesAfterExecution);
+    }
+
+    private List<OrderItem> LoadPersistedGroupItems(OrderGroup persistedGroup, List<Guid> groupItemIds)
+    {
+        var items = (persistedGroup.Items ?? []).Where(i => !i.IsDeleted).ToList();
+        if (items.Count > 0 || groupItemIds.Count == 0)
+            return items;
+
+        return _IUnitOfWork.OrderItemRepository
+            .Filter(i => i.OrderGroupId == persistedGroup.Id && !i.IsDeleted, track: false)
+            .ToList();
+    }
+
+    private void EnsureGroupItemsCanChange(
+        List<OrderItem> persistedItems,
+        IEnumerable<ItemUpsertDTO> incomingItems,
+        bool groupIsClosed,
+        HashSet<Guid> executedItemIds)
+    {
+        foreach (var incomingItem in incomingItems)
+            ValidateItemMutation(persistedItems, incomingItem, groupIsClosed, executedItemIds);
+    }
+
+    private void ValidateItemMutation(
+        List<OrderItem> persistedItems,
+        ItemUpsertDTO incomingItem,
+        bool groupIsClosed,
+        HashSet<Guid> executedItemIds)
+    {
+        var persistedItem = persistedItems.FirstOrDefault(i => i.Id == incomingItem.Id);
+        if (persistedItem is null)
+        {
+            if (incomingItem.ObjectState == TrackingState.Added && groupIsClosed)
+                Reject(LocalizationKeys.Orders.CannotAddItemToClosedGroup);
+            return;
+        }
+
+        var itemLocked = persistedItem.OrderItemStatus == OrderItemStatus.Completed
+            || executedItemIds.Contains(persistedItem.Id);
+
+        if (!itemLocked)
+            return;
+
+        if (incomingItem.ObjectState == TrackingState.Deleted)
+            Reject(LocalizationKeys.Orders.CannotDeleteExecutedItem);
+
+        if (IsItemStructurallyChanged(persistedItem, incomingItem))
+            Reject(LocalizationKeys.Orders.CannotEditExecutedItem);
+    }
+
+    private void Reject(string localizationKey)
+        => ValidationExeption.FireValidationException(_loc.Get(localizationKey));
 
     private static bool GroupServicesOrTypeChanged(OrderGroup persisted, OrderGroupUpsertDTO incoming)
     {
@@ -473,19 +526,18 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         return !persistedServiceKeys.SequenceEqual(incomingServiceKeys);
     }
 
-    private bool UsedGroupServicesOrTypeChanged(OrderGroup persisted, OrderGroupUpsertDTO incoming, IEnumerable<Guid> groupItemIds)
+    // True when a persisted service was removed or swapped (ServiceId / IsCover)
+    // and that service's category already has production on this group.
+    private bool HasRemovedExecutedGroupService(
+        OrderGroup persisted,
+        OrderGroupUpsertDTO incoming,
+        IEnumerable<Guid> groupItemIds)
     {
-        if (persisted.ExecutionType != incoming.ExecutionType)
-            return true;
-
         var executedCategories = GetExecutedServiceCategoryIds(groupItemIds);
         if (executedCategories.Count == 0)
             return false;
 
-        var incomingKeys = (incoming.OrderGroupServices ?? [])
-            .Where(s => s.ObjectState != TrackingState.Deleted)
-            .Select(s => (s.ServiceId, s.IsCover))
-            .ToHashSet();
+        var incomingKeys = ActiveIncomingServiceKeys(incoming);
 
         var persistedServices = (persisted.OrderGroupServices ?? [])
             .Where(s => !s.IsDeleted)
@@ -493,17 +545,19 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         var categoryByServiceId = GetServiceCategoryMap(persistedServices.Select(s => s.ServiceId));
 
-        foreach (var service in persistedServices)
-        {
-            if (incomingKeys.Contains((service.ServiceId, service.IsCover)))
-                continue;
+        // Missing from incoming = deleted or replaced. Only those with production are blocked.
+        return persistedServices.Any(service =>
+            !incomingKeys.Contains((service.ServiceId, service.IsCover))
+            && categoryByServiceId.TryGetValue(service.ServiceId, out var categoryId)
+            && executedCategories.Contains(categoryId));
+    }
 
-            if (categoryByServiceId.TryGetValue(service.ServiceId, out var categoryId)
-                && executedCategories.Contains(categoryId))
-                return true;
-        }
-
-        return false;
+    private static HashSet<(Guid ServiceId, bool IsCover)> ActiveIncomingServiceKeys(OrderGroupUpsertDTO incoming)
+    {
+        return (incoming.OrderGroupServices ?? [])
+            .Where(s => s.ObjectState != TrackingState.Deleted)
+            .Select(s => (s.ServiceId, s.IsCover))
+            .ToHashSet();
     }
 
     private static bool IsItemStructurallyChanged(OrderItem persisted, ItemUpsertDTO incoming)
