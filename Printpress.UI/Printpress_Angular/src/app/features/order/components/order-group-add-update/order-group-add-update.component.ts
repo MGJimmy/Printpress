@@ -178,7 +178,8 @@ export class OrderGroupAddUpdateComponent implements OnInit {
   }
 
   protected get areServicesLocked(): boolean {
-    return this.isGroupClosed;
+    return this.isGroupClosed
+      || this.groupItems.some(item => isStatus(item.status, 'InProgress', 'Completed'));
   }
 
   protected isItemLocked(item: ItemGetDto): boolean {

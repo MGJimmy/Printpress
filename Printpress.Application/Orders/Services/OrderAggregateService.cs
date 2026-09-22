@@ -323,29 +323,6 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             .ToHashSet();
     }
 
-    private HashSet<Guid> GetExecutedServiceCategoryIds(IEnumerable<Guid> itemIds)
-    {
-        var ids = itemIds.ToList();
-        if (ids.Count == 0)
-            return [];
-
-        return _IUnitOfWork.WorkerProductionRepository
-            .Filter(e => ids.Contains(e.OrderItemId), track: false)
-            .Select(e => e.ServiceCategoryId)
-            .ToHashSet();
-    }
-
-    private Dictionary<Guid, Guid> GetServiceCategoryMap(IEnumerable<Guid> serviceIds)
-    {
-        var ids = serviceIds.Distinct().ToList();
-        if (ids.Count == 0)
-            return [];
-
-        return _IUnitOfWork.ServiceRepository
-            .Filter(s => ids.Contains(s.Id), track: false)
-            .ToDictionary(s => s.Id, s => s.ServiceCategoryId);
-    }
-
     private HashSet<Guid> GetExecutedItemIds(Order order)
     {
         var groupIds = (order.OrderGroups ?? []).Where(g => !g.IsDeleted).Select(g => g.Id);
@@ -397,7 +374,9 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     {
         var groupItemIds = GetActiveItemIds([persistedGroup.Id]);
         var groupIsClosed = IsGroupClosed(persistedGroup);
+        var persistedItems = LoadPersistedGroupItems(persistedGroup, groupItemIds);
         var groupHasExecutions = GroupHasExecutions(groupItemIds, executedItemIds);
+        var groupHasStartedItems = GroupHasStartedItems(persistedItems);
 
         if (incomingGroup is null || incomingGroup.ObjectState == TrackingState.Deleted)
         {
@@ -409,11 +388,10 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             persistedGroup,
             incomingGroup,
             groupIsClosed,
-            groupHasExecutions,
-            groupItemIds);
+            groupHasStartedItems);
 
         EnsureGroupItemsCanChange(
-            LoadPersistedGroupItems(persistedGroup, groupItemIds),
+            persistedItems,
             incomingGroup.Items ?? [],
             groupIsClosed,
             executedItemIds);
@@ -421,6 +399,9 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
     private static bool IsGroupClosed(OrderGroup group)
         => group.Status is GroupStatusEnum.Completed or GroupStatusEnum.Delivered;
+
+    private static bool GroupHasStartedItems(IEnumerable<OrderItem> items)
+        => items.Any(i => i.OrderItemStatus != OrderItemStatus.New);
 
     private bool GroupHasExecutions(List<Guid> groupItemIds, HashSet<Guid> executedItemIds)
         => groupItemIds.Any(executedItemIds.Contains)
@@ -442,17 +423,9 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         OrderGroup persistedGroup,
         OrderGroupUpsertDTO incomingGroup,
         bool groupIsClosed,
-        bool groupHasExecutions,
-        List<Guid> groupItemIds)
+        bool groupHasStartedItems)
     {
-        if (groupIsClosed && GroupServicesOrTypeChanged(persistedGroup, incomingGroup))
-            Reject(LocalizationKeys.Orders.CannotChangeServicesAfterExecution);
-
-        // After production: lock execution type, and block remove/swap of services already executed.
-        // Adding unused services is still allowed.
-        if (!groupIsClosed && groupHasExecutions
-            && (persistedGroup.ExecutionType != incomingGroup.ExecutionType
-                || HasRemovedExecutedGroupService(persistedGroup, incomingGroup, groupItemIds)))
+        if ((groupIsClosed || groupHasStartedItems) && GroupServicesOrTypeChanged(persistedGroup, incomingGroup))
             Reject(LocalizationKeys.Orders.CannotChangeServicesAfterExecution);
     }
 
@@ -523,40 +496,6 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             .ToHashSet();
 
         return !persistedServiceKeys.SetEquals(incomingServiceKeys);
-    }
-
-    // True when a persisted service was removed or swapped (ServiceId / IsCover)
-    // and that service's category already has production on this group.
-    private bool HasRemovedExecutedGroupService(
-        OrderGroup persisted,
-        OrderGroupUpsertDTO incoming,
-        IEnumerable<Guid> groupItemIds)
-    {
-        var executedCategories = GetExecutedServiceCategoryIds(groupItemIds);
-        if (executedCategories.Count == 0)
-            return false;
-
-        var incomingKeys = ActiveIncomingServiceKeys(incoming);
-
-        var persistedServices = (persisted.OrderGroupServices ?? [])
-            .Where(s => !s.IsDeleted)
-            .ToList();
-
-        var categoryByServiceId = GetServiceCategoryMap(persistedServices.Select(s => s.ServiceId));
-
-        // Missing from incoming = deleted or replaced. Only those with production are blocked.
-        return persistedServices.Any(service =>
-            !incomingKeys.Contains((service.ServiceId, service.IsCover))
-            && categoryByServiceId.TryGetValue(service.ServiceId, out var categoryId)
-            && executedCategories.Contains(categoryId));
-    }
-
-    private static HashSet<(Guid ServiceId, bool IsCover)> ActiveIncomingServiceKeys(OrderGroupUpsertDTO incoming)
-    {
-        return (incoming.OrderGroupServices ?? [])
-            .Where(s => s.ObjectState != TrackingState.Deleted)
-            .Select(s => (s.ServiceId, s.IsCover))
-            .ToHashSet();
     }
 
     private static bool IsItemStructurallyChanged(OrderItem persisted, ItemUpsertDTO incoming)

@@ -76,7 +76,6 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   groupId: string = '';
   servicesLocked = false;
   executionTypeLocked = false;
-  private executedServiceCategoryIds = new Set<string>();
 
   executionType: string = 'Internal';
   executionTypes = ['Internal', 'External_WithOurMaterials', 'External_Full'];
@@ -106,13 +105,10 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
     const group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
     this.executionType = group.executionType ?? 'Internal';
-    this.servicesLocked = isStatus(group.status, 'Completed', 'Delivered') || !!group.deliveryDate;
-    this.executedServiceCategoryIds = new Set(
-      (group.executedServiceCategoryIds ?? []).map(id => String(id).toLowerCase())
-    );
-    const hasExecutions = this.executedServiceCategoryIds.size > 0
-      || (group.items ?? []).some(item => item.hasExecutions === true || isStatus(item.status, 'Completed'));
-    this.executionTypeLocked = this.servicesLocked || hasExecutions;
+    this.servicesLocked = isStatus(group.status, 'Completed', 'Delivered')
+      || !!group.deliveryDate
+      || (group.items ?? []).some(item => isStatus(item.status, 'InProgress', 'Completed'));
+    this.executionTypeLocked = this.servicesLocked;
 
     this.fetchServices();
     this.fillPageData()
@@ -270,10 +266,6 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
       this.alertService.showError(this._t.t('orders.cannot_change_services_after_execution'));
       return;
     }
-    if (this.isServiceCategoryExecuted(groupServiceId)) {
-      this.alertService.showError(this._t.t('orders.cannot_change_services_after_execution'));
-      return;
-    }
 
     const dialogData: ConfirmDialogModel = {
       title: this._t.t('orders.confirm_delete'),
@@ -291,20 +283,6 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(dialogSub);
-  }
-
-  private isServiceCategoryExecuted(groupServiceId: string): boolean {
-    if (this.executedServiceCategoryIds.size === 0) {
-      return false;
-    }
-
-    const service = this.tableData?.find(row => row.id === groupServiceId);
-    const categoryId = service?.serviceCategoryId;
-    if (!categoryId) {
-      return false;
-    }
-
-    return this.executedServiceCategoryIds.has(String(categoryId).toLowerCase());
   }
 
   onExecutionTypeChange(type: string): void {
