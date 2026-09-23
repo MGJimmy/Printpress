@@ -1,10 +1,19 @@
-<div class="container mt-1 rtl">
-    <!-- Header Section -->
-    <div class="text-center mb-5 border-bottom pb-3 text-primary">
-        <h1 *ngIf="componentMode.isEditMode">تعديل طلبية</h1>
-        <h1 *ngIf="componentMode.isaddMode">إضافة طلبية</h1>
-        <span *ngIf="orderGetDto?.isZeroOrder" class="badge bg-warning text-dark fs-6">طلب صفري</span>
-    </div>
+<div class="page-shell" dir="rtl">
+    <header class="hero">
+        <div class="hero-icon">
+            <mat-icon>assignment</mat-icon>
+        </div>
+        <div>
+            <h1 *ngIf="componentMode.isEditMode">تعديل طلبية</h1>
+            <h1 *ngIf="componentMode.isaddMode">إضافة طلبية</h1>
+            <h1 *ngIf="componentMode.isViewMode">عرض الطلبية</h1>
+            <p *ngIf="orderGetDto?.isZeroOrder">طلب صفري</p>
+        </div>
+        <button mat-stroked-button type="button" class="hero-back" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            رجوع
+        </button>
+    </header>
 
     <!-- Order Summary Section -->
     <mat-expansion-panel *ngIf="!componentMode.isaddMode" class="mb-5" [expanded]="true">
@@ -13,83 +22,38 @@
                 ملخص الطلبية
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <mat-card-content>
-            <!-- Financial Transactions Button -->
-            <div *ngIf="componentMode.isViewMode" class="row d-flex justify-content-around mb-3">
-                <button class="col-3 m-2" mat-raised-button color="primary" (click)="manageTransactions_Click()">
-                    <mat-icon class="me-1">payments</mat-icon>
-                    التحويلات المالية
-                </button>
-            </div>
-
-            <!-- Order Details -->
-            <div class="row g-3 mb-2">
-                <div class="col-md-4">
-                    <mat-card class="bg-primary text-white">
-                        <mat-card-content>
-                            <div class="d-flex align-items-center">
-                                <mat-icon class="me-2">attach_money</mat-icon>
-                                <span>الاجمالي: {{(orderGetDto.totalPrice || 0) | number:'1.2-2'}} جنيه</span>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-md-4">
-                    <mat-card class="bg-success text-white">
-                        <mat-card-content>
-                            <div class="d-flex align-items-center">
-                                <mat-icon class="me-2">payments</mat-icon>
-                                <span>المدفوع: {{(orderGetDto.totalPaid || 0)| number:'1.2-2'}} جنيه</span>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-md-4">
-                    <mat-card [class]="hasOrderCredit ? 'bg-info text-white' : 'bg-warning text-dark'">
-                        <mat-card-content>
-                            <div class="d-flex align-items-center">
-                                <mat-icon class="me-2">account_balance_wallet</mat-icon>
-                                <span *ngIf="!hasOrderCredit">الباقي: {{ orderBalance | number:'1.2-2' }} جنيه</span>
-                                <span *ngIf="hasOrderCredit">عربون / رصيد: {{ orderCredit | number:'1.2-2' }} جنيه</span>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-            </div>
-
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <mat-card class="bg-info text-white">
-                        <mat-card-content>
-                            <div class="d-flex align-items-center">
-                                <mat-icon class="me-2">shopping_cart</mat-icon>
-                                <span>اسم الطلبية: {{orderGetDto.name}}</span>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-md-4">
-                    <mat-card class="bg-secondary text-white">
-                        <mat-card-content>
-                            <div class="d-flex align-items-center">
-                                <mat-icon class="me-2">person</mat-icon>
-                                <span>اسم العميل: {{orderGetDto.clientName}}</span>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-md-4">
-                    <mat-card [ngClass]="orderStatusCardClass">
-                        <mat-card-content>
-                            <div class="d-flex align-items-center">
-                                <mat-icon class="me-2">pending_actions</mat-icon>
-                                <span>حالة الطلبية: {{ orderStatusLabel }}</span>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-            </div>
-        </mat-card-content>
+        <section class="kpis" *ngIf="!componentMode.isaddMode && orderGetDto">
+            <article class="kpi kpi-qty">
+                <span class="kpi-label">الاجمالي</span>
+                <strong>{{(orderGetDto.totalPrice || 0) | number:'1.2-2'}} جنيه</strong>
+            </article>
+            <article class="kpi kpi-in">
+                <span class="kpi-label">المدفوع</span>
+                <strong>{{(orderGetDto.totalPaid || 0)| number:'1.2-2'}} جنيه</strong>
+            </article>
+            <article class="kpi" [class.kpi-stock]="hasOrderCredit" [class.kpi-warn]="!hasOrderCredit">
+                <span class="kpi-label">{{ hasOrderCredit ? 'عربون / رصيد' : 'الباقي' }}</span>
+                <strong>{{ (hasOrderCredit ? orderCredit : orderBalance) | number:'1.2-2' }} جنيه</strong>
+            </article>
+            <article class="kpi kpi-teal">
+                <span class="kpi-label">اسم الطلبية</span>
+                <strong>{{orderGetDto.name}}</strong>
+            </article>
+            <article class="kpi kpi-qty">
+                <span class="kpi-label">اسم العميل</span>
+                <strong>{{orderGetDto.clientName}}</strong>
+            </article>
+            <article class="kpi kpi-stock">
+                <span class="kpi-label">حالة الطلبية</span>
+                <strong>{{ orderStatusLabel }}</strong>
+            </article>
+        </section>
+        <div *ngIf="componentMode.isViewMode" class="actions" style="padding-top:0">
+            <button mat-raised-button color="primary" (click)="manageTransactions_Click()">
+                <mat-icon>payments</mat-icon>
+                التحويلات المالية
+            </button>
+        </div>
     </mat-expansion-panel>
 
     <!-- Form Section -->
@@ -297,18 +261,15 @@
 
 
     <!-- Action Buttons -->
-    <div class="d-flex justify-content-start mt-4 mb-3">
+    <div class="actions">
         <button *ngIf="!componentMode.isViewMode" 
-                class="mx-3" 
                 mat-raised-button 
                 color="primary"
                 (click)="saveOrder_Click()">
             حفظ
         </button>
-        <button mat-raised-button 
-                color="primary" 
-                (click)="goBack()">
-            <i class="material-icons">arrow_back</i>
+        <button mat-stroked-button type="button" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
             رجوع
         </button>
     </div>

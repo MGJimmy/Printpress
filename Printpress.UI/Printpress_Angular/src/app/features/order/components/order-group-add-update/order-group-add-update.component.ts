@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { PageEvent } from '@angular/material/paginator';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { CommonModule } from '@angular/common';
@@ -27,7 +28,7 @@ import { isStatus, normalizeStatus, statusBadgeClass, statusI18nKey } from '../.
 @Component({
   selector: 'app-order-group-add-update',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, SharedPaginationComponent,
+  imports: [ReactiveFormsModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, MatCardModule, SharedPaginationComponent,
     CommonModule, MatDialogModule],
   templateUrl: './order-group-add-update.component.html',
   styleUrl: './order-group-add-update.component.css'

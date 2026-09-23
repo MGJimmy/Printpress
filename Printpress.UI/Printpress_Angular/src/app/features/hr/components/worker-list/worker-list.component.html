@@ -1,16 +1,27 @@
-<div class="container mt-4" dir="rtl">
-  <mat-card>
-    <mat-card-header>
-      <div class="w-100 d-flex justify-content-between align-items-center">
-        <mat-card-title>قائمة العمال</mat-card-title>
-        <button mat-raised-button color="primary" (click)="onAdd()">
-          <mat-icon>add</mat-icon>
-          إضافة عامل
-        </button>
-      </div>
-    </mat-card-header>
+<div class="page-shell" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>badge</mat-icon>
+    </div>
+    <div>
+      <h1>قائمة العمال</h1>
+      <p>بيانات العمال وحالة النشاط ونوع الراتب</p>
+    </div>
+    <div class="hero-actions">
+      <button mat-flat-button type="button" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        إضافة عامل
+      </button>
+    </div>
+  </header>
 
-    <mat-card-content class="mt-3">
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>table_chart</mat-icon>
+      <span>العمال</span>
+      <span class="count">{{ workersTotalCount }}</span>
+    </div>
+    <div class="table-wrap">
       <app-table-template
         [columnDefs]="columnDefs"
         [originalSource]="workers"
@@ -23,9 +34,8 @@
         (viewClicked)="onView($event)"
         (deactivateClicked)="onDeactivate($event)"
         (activateClicked)="onActivate($event)"
-        (pageChanged)="onPageChange($event)"
-        >
+        (pageChanged)="onPageChange($event)">
       </app-table-template>
-    </mat-card-content>
+    </div>
   </mat-card>
 </div>

@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryTransactionService } from '../../services/inventory-transaction.service';
@@ -34,6 +35,7 @@ function maxStockValidator(getMax: () => number) {
     MatInputModule,
     MatSelectModule,
     MatCardModule,
+    MatIconModule,
     SearchSelectComponent,
   ],
   templateUrl: './stock-out.component.html',

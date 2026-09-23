@@ -1,8 +1,17 @@
-<div class="container mt-4 mb-5 rtl" *ngIf="worker">
-
-  <div class="page-header mb-4">
-    <h2 class="text-center text-primary border-bottom pb-3">{{ worker.name }}</h2>
-  </div>
+<div class="page-shell" dir="rtl" *ngIf="worker">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>badge</mat-icon>
+    </div>
+    <div>
+      <h1>{{ worker.name }}</h1>
+      <p>{{ worker.isActive ? 'نشط' : 'غير نشط' }}</p>
+    </div>
+    <button mat-stroked-button type="button" class="hero-back" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+      رجوع
+    </button>
+  </header>
 
   <!-- Worker Info Card -->
   <mat-card class="shadow-sm mb-3">

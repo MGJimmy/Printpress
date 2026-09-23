@@ -5,6 +5,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
 import { ItemGetDto } from '../../models/item/item-get.Dto';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,6 +30,8 @@ import { isStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/st
     MatFormFieldModule,
     MatButtonModule,
     MatSelectModule,
+    MatIconModule,
+    MatCardModule,
     ReactiveFormsModule
   ],
   templateUrl: './item-add-update.component.html',

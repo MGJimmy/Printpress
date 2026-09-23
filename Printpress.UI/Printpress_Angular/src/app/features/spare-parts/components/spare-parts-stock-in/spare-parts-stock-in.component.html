@@ -1,8 +1,18 @@
-<div class="container mt-4" dir="rtl">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>إضافة فاتورة شراء قطع الغيار (وارد مخزن)</mat-card-title>
-    </mat-card-header>
+<div class="page-shell" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>add_shopping_cart</mat-icon>
+    </div>
+    <div>
+      <h1>إضافة فاتورة شراء قطع الغيار</h1>
+      <p>وارد مخزن قطع الغيار</p>
+    </div>
+  </header>
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>receipt_long</mat-icon>
+      <span>بيانات الفاتورة</span>
+    </div>
 
     <mat-card-content>
       <form [formGroup]="form" class="mt-3">

@@ -1,82 +1,60 @@
-<div class="container my-3">
+<div class="page-shell" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>widgets</mat-icon>
+    </div>
+    <div>
+      <h1>{{ isEditMode ? 'تعديل عنصر' : 'إضافة عنصر' }}</h1>
+      <p *ngIf="isEditMode && item?.status">{{ itemStatusLabel }}</p>
+    </div>
+    <button mat-stroked-button type="button" class="hero-back" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+      رجوع
+    </button>
+  </header>
 
-  <form [formGroup]="itemForm" (submit)="onSave()">
-
-    <h3 class="text-center">
-      {{ isEditMode ? 'تعديل عنصر' : 'إضافة عنصر' }}
-      <span *ngIf="isEditMode && item?.status" class="badge fs-6 ms-2" [ngClass]="itemStatusBadgeClass">{{ itemStatusLabel }}</span>
-    </h3>
-
-    <div class="row g-3">
-      <!-- Item Name -->
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>edit_note</mat-icon>
+      <span>بيانات العنصر</span>
+    </div>
+    <form [formGroup]="itemForm" (submit)="onSave()">
+      <div class="filters">
+        <mat-form-field appearance="outline">
           <mat-label>اسم العنصر</mat-label>
           <input matInput formControlName="name" placeholder="اسم العنصر" />
         </mat-form-field>
-      </div>
-
-      <!-- Quantity -->
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline">
           <mat-label>الكمية</mat-label>
           <input matInput type="number" formControlName="quantity" placeholder="الكمية" min="1" />
-          <mat-error *ngIf="itemForm.get('quantity')?.hasError('required')">
-            الكمية مطلوبة
-          </mat-error>
-          <mat-error *ngIf="itemForm.get('quantity')?.hasError('min')">
-            الكمية يجب أن تكون أكبر من صفر
-          </mat-error>
+          <mat-error *ngIf="itemForm.get('quantity')?.hasError('required')">الكمية مطلوبة</mat-error>
+          <mat-error *ngIf="itemForm.get('quantity')?.hasError('min')">الكمية يجب أن تكون أكبر من صفر</mat-error>
         </mat-form-field>
-      </div>
-
-      <!-- Price (Conditional) -->
-      <div class="col-md-6" *ngIf="group.isHasSellingService">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" *ngIf="group.isHasSellingService">
           <mat-label>سعر العنصر</mat-label>
           <input matInput type="number" formControlName="price" placeholder="سعر العنصر" min="1" />
-          <mat-error *ngIf="itemForm.get('price')?.hasError('required')">
-            السعر مطلوب
-          </mat-error>
-          <mat-error *ngIf="itemForm.get('price')?.hasError('min')">
-            السعر يجب أن يكون أكبر من صفر
-          </mat-error>
+          <mat-error *ngIf="itemForm.get('price')?.hasError('required')">السعر مطلوب</mat-error>
+          <mat-error *ngIf="itemForm.get('price')?.hasError('min')">السعر يجب أن يكون أكبر من صفر</mat-error>
         </mat-form-field>
-      </div>
-
-      <!-- Pages (Conditional) -->
-      <div class="col-md-6" *ngIf="group.isHasPrintingService">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" *ngIf="group.isHasPrintingService">
           <mat-label>عدد الصفحات</mat-label>
           <input matInput type="number" formControlName="numberOfPages" placeholder="عدد الصفحات" min="1"/>
-          <mat-error *ngIf="itemForm.get('numberOfPages')?.hasError('required')">
-           عدد الصفحات مطلوبة
-          </mat-error>
-          <mat-error *ngIf="itemForm.get('numberOfPages')?.hasError('min')">
-            عدد الصفحات يجب أن تكون أكبر من صفر
-          </mat-error>
+          <mat-error *ngIf="itemForm.get('numberOfPages')?.hasError('required')">عدد الصفحات مطلوبة</mat-error>
+          <mat-error *ngIf="itemForm.get('numberOfPages')?.hasError('min')">عدد الصفحات يجب أن تكون أكبر من صفر</mat-error>
         </mat-form-field>
-      </div>
-
-      <!-- Faces -->
-      <div class="col-md-6" *ngIf="group.isHasPrintingService">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" *ngIf="group.isHasPrintingService">
           <mat-label>اوجة الطباعة</mat-label>
           <mat-select formControlName="numberOfPrintingFaces">
             <mat-option [value]="1">وجه</mat-option>
             <mat-option [value]="2">وجهين</mat-option>
           </mat-select>
-          <mat-error *ngIf="itemForm.get('numberOfPrintingFaces')?.hasError('required')">
-          اوجة الطباعة مطلوبة
-           </mat-error>
+          <mat-error *ngIf="itemForm.get('numberOfPrintingFaces')?.hasError('required')">اوجة الطباعة مطلوبة</mat-error>
         </mat-form-field>
       </div>
-    </div>
-
-    <!-- Save Button -->
-    <div class="text-center mt-3">
-      <button type="submit" [disabled]="itemForm.invalid" mat-raised-button color="primary">حفظ</button>
-      <button type="button" (click)="onBack()" mat-button class="mx-2">رجوع</button>
-    </div>
-  </form>
+      <div class="actions">
+        <button type="submit" [disabled]="itemForm.invalid" mat-raised-button color="primary">حفظ</button>
+        <button type="button" (click)="onBack()" mat-stroked-button>رجوع</button>
+      </div>
+    </form>
+  </mat-card>
 </div>

@@ -1,36 +1,40 @@
-<div class="container mt-4 mb-5 rtl">
+<div class="page-shell" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>payments</mat-icon>
+    </div>
+    <div>
+      <h1>دورات الرواتب</h1>
+      <p>فترات صرف الرواتب وإغلاق الدورة</p>
+    </div>
+    <div class="hero-actions">
+      <button mat-flat-button type="button" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        إضافة دورة رواتب
+      </button>
+    </div>
+  </header>
 
-  <div class="page-header mb-4">
-    <h2 class="text-center text-primary border-bottom pb-3">دورات الرواتب</h2>
-  </div>
-
-  <mat-card class="shadow-sm">
-    <mat-card-content>
-
-      <div class="d-flex justify-content-end mb-3">
-        <button mat-raised-button color="primary" (click)="onAdd()">
-          <mat-icon>add</mat-icon>
-          إضافة دورة رواتب
-        </button>
-      </div>
-
-      <div *ngIf="rows.length > 0; else noData">
-        <app-table-template
-          [originalSource]="rows"
-          [columnDefs]="colDefs"
-          [totalItemsCount]="periodsTotalCount"
-          [showViewButton]="true"
-          [isShowEditButton]="false"
-          [isShowDeleteButton]="false"
-          (viewClicked)="onViewDetails($event)"
-          (pageChanged)="onPageChange($event)">
-        </app-table-template>
-      </div>
-
-      <ng-template #noData>
-        <div class="text-center text-muted mt-4">لا توجد دورات رواتب</div>
-      </ng-template>
-
-    </mat-card-content>
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>table_chart</mat-icon>
+      <span>الدورات</span>
+      <span class="count">{{ periodsTotalCount }}</span>
+    </div>
+    <div class="table-wrap" *ngIf="rows.length > 0; else noData">
+      <app-table-template
+        [originalSource]="rows"
+        [columnDefs]="colDefs"
+        [totalItemsCount]="periodsTotalCount"
+        [showViewButton]="true"
+        [isShowEditButton]="false"
+        [isShowDeleteButton]="false"
+        (viewClicked)="onViewDetails($event)"
+        (pageChanged)="onPageChange($event)">
+      </app-table-template>
+    </div>
+    <ng-template #noData>
+      <p class="empty">لا توجد دورات رواتب</p>
+    </ng-template>
   </mat-card>
 </div>

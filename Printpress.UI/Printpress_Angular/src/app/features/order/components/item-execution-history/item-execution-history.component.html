@@ -1,39 +1,35 @@
-<div class="container mt-4 mb-5 rtl" *ngIf="history; else loadingTemplate">
+<div class="page-shell" dir="rtl" *ngIf="history; else loadingTemplate">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>history</mat-icon>
+    </div>
+    <div>
+      <h1>{{ history.itemName }}</h1>
+      <p>{{ history.groupName }}</p>
+    </div>
+    <button mat-stroked-button type="button" class="hero-back" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+      رجوع
+    </button>
+  </header>
 
-  <!-- Page Header -->
-  <div class="page-header mb-4">
-    <h2 class="text-center text-primary border-bottom pb-3">{{ history.itemName }}</h2>
-  </div>
+  <section class="kpis">
+    <article class="kpi kpi-qty">
+      <span class="kpi-label">الكمية</span>
+      <strong>{{ history.quantity }}</strong>
+    </article>
+    <article class="kpi kpi-stock">
+      <span class="kpi-label">الحالة</span>
+      <strong>{{ itemStatusLabel(history.status) }}</strong>
+    </article>
+  </section>
 
-  <mat-card class="shadow-sm mb-3">
-    <mat-card-content>
-
-      <!-- Toolbar -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="d-flex align-items-center gap-3 flex-wrap">
-          <div>
-            <span class="text-muted">المجموعة: </span>
-            <strong>{{ history.groupName }}</strong>
-          </div>
-          <div>
-            <span class="text-muted">الكمية: </span>
-            <strong>{{ history.quantity }}</strong>
-          </div>
-          <div>
-            <span class="text-muted">الحالة: </span>
-            <span class="badge" [ngClass]="getStatusBadgeClass(history.status)">
-              {{ itemStatusLabel(history.status) }}
-            </span>
-          </div>
-        </div>
-        <button mat-raised-button color="primary" (click)="onBack()">
-          <mat-icon>arrow_back</mat-icon>
-          رجوع
-        </button>
-      </div>
-
-      <!-- Service Progress Table -->
-      <h6 class="text-muted mb-2">تقدم الخدمات</h6>
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>table_chart</mat-icon>
+      <span>تقدم الخدمات</span>
+    </div>
+    <div class="table-wrap">
       <app-table-template
         [originalSource]="flatProgress"
         [columnDefs]="progressColDefs"
@@ -42,37 +38,31 @@
         [isShowDeleteButton]="false"
         [showViewButton]="false">
       </app-table-template>
-
-    </mat-card-content>
+    </div>
   </mat-card>
 
-  <!-- Execution Records Table -->
-  <mat-card class="shadow-sm">
-    <mat-card-content>
-      <h6 class="text-muted mb-2">
-        سجل التنفيذ
-        <span class="badge bg-secondary ms-2">{{ history.executionRecords.length }}</span>
-      </h6>
-
-      <div *ngIf="flatRecords.length > 0; else noRecords">
-        <app-table-template
-          [originalSource]="flatRecords"
-          [columnDefs]="recordColDefs"
-          [totalItemsCount]="flatRecords.length"
-          [isShowEditButton]="false"
-          [isShowDeleteButton]="false"
-          [showViewButton]="false">
-        </app-table-template>
-      </div>
-
-      <ng-template #noRecords>
-        <div class="text-center my-4 text-muted">لا توجد سجلات تنفيذ بعد</div>
-      </ng-template>
-    </mat-card-content>
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>receipt_long</mat-icon>
+      <span>سجل التنفيذ</span>
+      <span class="count">{{ history.executionRecords.length }}</span>
+    </div>
+    <div class="table-wrap" *ngIf="flatRecords.length > 0; else noRecords">
+      <app-table-template
+        [originalSource]="flatRecords"
+        [columnDefs]="recordColDefs"
+        [totalItemsCount]="flatRecords.length"
+        [isShowEditButton]="false"
+        [isShowDeleteButton]="false"
+        [showViewButton]="false">
+      </app-table-template>
+    </div>
+    <ng-template #noRecords>
+      <p class="empty">لا توجد سجلات تنفيذ بعد</p>
+    </ng-template>
   </mat-card>
-
 </div>
 
 <ng-template #loadingTemplate>
-  <div class="container mt-4 text-center text-muted rtl">جاري التحميل...</div>
+  <div class="page-shell empty" dir="rtl">جاري التحميل...</div>
 </ng-template>

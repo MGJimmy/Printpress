@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { CashAccountDto } from '../../models/cash-account.dto';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -14,7 +15,7 @@ import { TableTemplateComponent } from '../../../../shared/components/table-temp
 @Component({
   selector: 'app-cash-account-list',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, TableTemplateComponent, MatDialogModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, TableTemplateComponent, MatDialogModule],
   templateUrl: './cash-account-list.component.html',
 })
 export class CashAccountListComponent implements OnInit {

@@ -6,6 +6,7 @@ import { ServiceUpsertComponent } from '../service-upsert/service-upsert.compone
 import { AlertService } from '../../../../core/services/alert.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
@@ -17,6 +18,7 @@ import { finalize } from 'rxjs';
   imports: [
     MatButtonModule,
     MatCardModule,
+    MatIconModule,
     CommonModule,
     TableTemplateComponent
   ],

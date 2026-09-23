@@ -1,8 +1,13 @@
-<div class="container mt-4 mb-5 rtl" *ngIf="period">
-
-  <div class="page-header mb-4">
-    <h2 class="text-center text-primary border-bottom pb-3">{{ period.name }}</h2>
-  </div>
+<div class="page-shell" dir="rtl" *ngIf="period">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>event</mat-icon>
+    </div>
+    <div>
+      <h1>{{ period.name }}</h1>
+      <p>{{ period.isClosed ? 'مغلقة' : 'مفتوحة' }}</p>
+    </div>
+  </header>
 
   <!-- Period Info Card -->
   <mat-card class="shadow-sm mb-3">
