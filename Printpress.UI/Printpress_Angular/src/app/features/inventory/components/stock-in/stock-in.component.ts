@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,9 +15,7 @@ import { firstValueFrom } from 'rxjs';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { AlertService } from '../../../../core/services/alert.service';
-import { InventoryService } from '../../services/inventory.service';
 import { PurchaseInvoiceService } from '../../services/purchase-invoice.service';
-import { InventoryItemSelectionDto } from '../../models/inventory-item-selection.dto';
 import { PurchaseInvoiceCreateDto } from '../../models/purchase-invoice-create.dto';
 import { AddInvoiceLineDialogComponent, AddInvoiceLineDialogResult } from '../add-invoice-line-dialog/add-invoice-line-dialog.component';
 
@@ -49,7 +47,7 @@ interface InvoiceLineViewModel {
   templateUrl: './stock-in.component.html',
   styleUrl: './stock-in.component.css'
 })
-export class StockInComponent implements OnInit {
+export class StockInComponent {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -70,7 +68,6 @@ export class StockInComponent implements OnInit {
     { headerName: 'الإجمالي', column: 'lineTotal' }
   ];
 
-  private inventoryItems: InventoryItemSelectionDto[] = [];
   private isSaving = false;
   private paidTouched = false;
 
@@ -87,7 +84,6 @@ export class StockInComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private alertService: AlertService,
-    private inventoryService: InventoryService,
     private purchaseInvoiceService: PurchaseInvoiceService
   ) {
     this.form = this.fb.group({
@@ -95,21 +91,6 @@ export class StockInComponent implements OnInit {
       supplierName: this.fb.control('', Validators.required),
       paidNow: this.fb.control(0, [Validators.required, Validators.min(0)]),
       receiveNow: this.fb.control(true),
-    });
-  }
-
-  ngOnInit(): void {
-    this.loadInventoryItems();
-  }
-
-  private loadInventoryItems(): void {
-    this.inventoryService.getAllForSelection().subscribe({
-      next: (response) => {
-        this.inventoryItems = (response.data ?? []).filter(item => item.isActive);
-      },
-      error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');
-      }
     });
   }
 
@@ -125,8 +106,7 @@ export class StockInComponent implements OnInit {
   onAddLine(): void {
     const dialogRef = this.dialog.open(AddInvoiceLineDialogComponent, {
       width: '500px',
-      disableClose: true,
-      data: { inventoryItems: this.inventoryItems }
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((result: AddInvoiceLineDialogResult | undefined) => {

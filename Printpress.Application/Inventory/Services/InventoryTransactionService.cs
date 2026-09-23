@@ -16,10 +16,10 @@ internal sealed class InventoryTransactionService(
         var result = _unitOfWork.InventoryTransactionRepository
             .Filter(paging,
                 x => x.InventoryItemId == itemId
-                    && (!dateFrom.HasValue || x.CreatedAt >= dateFrom.Value)
-                    && (!dateTo.HasValue || x.CreatedAt <= dateTo.Value.AddDays(1))
+                    && (!dateFrom.HasValue || x.OccurredAt >= dateFrom.Value)
+                    && (!dateTo.HasValue || x.OccurredAt <= dateTo.Value.AddDays(1))
                     && (string.IsNullOrEmpty(transactionType) || x.InventoryTransactionType.ToString() == transactionType),
-                null,
+                new Sorting(nameof(InventoryTransaction.OccurredAt), SortingDirection.DESC),
                 nameof(InventoryTransaction.Worker));
 
         return Task.FromResult(new PagedList<InventoryTransactionDto>
@@ -53,13 +53,14 @@ internal sealed class InventoryTransactionService(
             query = query.Where(x => x.InventoryItem != null && x.InventoryItem.InventoryItemCategoryId == inventoryItemCategoryId.Value);
 
         if (dateFrom.HasValue)
-            query = query.Where(x => x.CreatedAt >= dateFrom.Value);
+            query = query.Where(x => x.OccurredAt >= dateFrom.Value);
 
         if (dateTo.HasValue)
-            query = query.Where(x => x.CreatedAt <= dateTo.Value.AddDays(1));
+            query = query.Where(x => x.OccurredAt <= dateTo.Value.AddDays(1));
 
         var totalCount = query.Count();
         var items = query
+            .OrderByDescending(x => x.OccurredAt)
             .Skip((paging.PageNumber - 1) * paging.PageSize)
             .Take(paging.PageSize)
             .Select(item => _mapper.Map<InventoryTransactionDto>(item))
@@ -99,7 +100,8 @@ internal sealed class InventoryTransactionService(
             payload.Quantity,
             InventoryTransactionReferenceType.StockAdjustment,
             _guidGenerator.NewGuid(),
-            payload.Notes ?? string.Empty);
+            payload.Notes ?? string.Empty,
+            UtcDateTime.AsUtc(payload.OccurredAt));
         transaction.Id = _guidGenerator.NewGuid();
         transaction.WorkerId = payload.WorkerId;
 
@@ -119,8 +121,8 @@ internal sealed class InventoryTransactionService(
             throw new ValidationExeption("تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له");
 
         var transactions = (await _unitOfWork.InventoryTransactionRepository.FilterAsync(
-                t => (dateFrom == null || t.CreatedAt >= dateFrom)
-                    && (dateToExclusive == null || t.CreatedAt < dateToExclusive)
+                t => (dateFrom == null || t.OccurredAt >= dateFrom)
+                    && (dateToExclusive == null || t.OccurredAt < dateToExclusive)
                     && (itemId == null || t.InventoryItemId == itemId)
                     && (categoryId == null || t.InventoryItem.InventoryItemCategoryId == categoryId)
                     && (workerId == null || t.WorkerId == workerId)
@@ -128,7 +130,7 @@ internal sealed class InventoryTransactionService(
                 nameof(InventoryTransaction.InventoryItem),
                 $"{nameof(InventoryTransaction.InventoryItem)}.{nameof(InventoryItem.InventoryItemCategory_LKP)}",
                 nameof(InventoryTransaction.Worker)))
-            .OrderByDescending(t => t.CreatedAt)
+            .OrderByDescending(t => t.OccurredAt)
             .ToList();
 
         var purchaseLineIds = transactions
@@ -150,7 +152,7 @@ internal sealed class InventoryTransactionService(
             return new InventoryTransactionListRowDto
             {
                 Id = t.Id,
-                CreatedAt = t.CreatedAt,
+                OccurredAt = t.OccurredAt,
                 ItemId = t.InventoryItemId,
                 ItemName = t.InventoryItem?.Name ?? "—",
                 CategoryName = t.InventoryItem?.InventoryItemCategory_LKP?.Name ?? "—",

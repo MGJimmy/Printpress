@@ -8,7 +8,7 @@ namespace Printpress.Domain
 {
     public interface IInventoryTransactionDomainService
     {
-        List<InventoryTransaction> CreateInventoryTransaction(List<PurchaseInvoiceLine> purchaseInvoiceLines);
-        List<InventoryTransaction> CreatePurchaseVoidTransactions(List<PurchaseInvoiceLine> purchaseInvoiceLines, int invoiceNumber);
+        List<InventoryTransaction> CreateInventoryTransaction(List<PurchaseInvoiceLine> purchaseInvoiceLines, DateTime occurredAt);
+        List<InventoryTransaction> CreatePurchaseVoidTransactions(List<PurchaseInvoiceLine> purchaseInvoiceLines, int invoiceNumber, DateTime occurredAt);
     }
 }

@@ -1,0 +1,13 @@
+.category-item-fields {
+  display: contents;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.category-item-fields.full-width {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}

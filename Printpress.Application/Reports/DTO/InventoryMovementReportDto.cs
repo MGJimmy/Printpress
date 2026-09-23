@@ -30,7 +30,7 @@ public class InventoryMovementReportDto
 public class InventoryMovementTxProjection
 {
     public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime OccurredAt { get; set; }
     public InventoryTransactionType Type { get; set; }
     public int Quantity { get; set; }
     public InventoryTransactionReferenceType ReferenceType { get; set; }

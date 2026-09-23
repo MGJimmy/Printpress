@@ -14,6 +14,10 @@ public class StockOutCreateDtoValidator : AbstractValidator<StockOutCreateDto>
             .GreaterThan(0)
             .WithMessage(ResponseMessage.MustBePositive(nameof(StockOutCreateDto.Quantity)));
 
+        RuleFor(x => x.OccurredAt)
+            .NotEmpty()
+            .WithMessage(ResponseMessage.Required(nameof(StockOutCreateDto.OccurredAt)));
+
         RuleFor(x => x.Notes)
             .MaximumLength(500)
             .WithMessage(ResponseMessage.MaxLength(nameof(StockOutCreateDto.Notes), 500))

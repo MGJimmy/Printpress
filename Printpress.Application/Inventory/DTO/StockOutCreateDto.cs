@@ -6,4 +6,5 @@ public class StockOutCreateDto
     public int Quantity { get; set; }
     public string Notes { get; set; }
     public Guid? WorkerId { get; set; }
+    public DateTime OccurredAt { get; set; }
 }

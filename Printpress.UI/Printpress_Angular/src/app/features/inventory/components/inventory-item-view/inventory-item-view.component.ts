@@ -72,7 +72,7 @@ export class InventoryItemViewComponent implements OnInit {
     { headerName: 'نوع المرجع', column: 'referenceType' },
     { headerName: 'العامل', column: 'workerName' },
     { headerName: 'ملاحظات', column: 'notes' },
-    { headerName: 'التاريخ', column: 'createdAt' }
+    { headerName: 'التاريخ', column: 'occurredAt' }
   ];
 
   private itemId!: string;

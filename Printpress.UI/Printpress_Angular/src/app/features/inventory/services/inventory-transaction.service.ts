@@ -11,6 +11,7 @@ export interface StockOutDto {
   quantity: number;
   notes: string;
   workerId?: string;
+  occurredAt: string;
 }
 
 @Injectable({ providedIn: 'root' })

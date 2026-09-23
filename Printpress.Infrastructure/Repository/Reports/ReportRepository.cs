@@ -423,13 +423,13 @@ internal class ReportRepository : IReportRepository
                 && (categoryId == null || t.InventoryItem.InventoryItemCategoryId == categoryId)
                 && (inventoryItemId == null || t.InventoryItemId == inventoryItemId)
                 && (workerId == null || t.WorkerId == workerId)
-                && (dateFrom == null || t.CreatedAt >= dateFrom)
-                && (dateToExclusive == null || t.CreatedAt < dateToExclusive))
-            .OrderByDescending(t => t.CreatedAt)
+                && (dateFrom == null || t.OccurredAt >= dateFrom)
+                && (dateToExclusive == null || t.OccurredAt < dateToExclusive))
+            .OrderByDescending(t => t.OccurredAt)
             .Select(t => new InventoryStockOutRowDto
             {
                 Id = t.Id,
-                MovementDate = t.CreatedAt,
+                MovementDate = t.OccurredAt,
                 ItemId = t.InventoryItemId,
                 ItemName = t.InventoryItem.Name,
                 CategoryName = t.InventoryItem.InventoryItemCategory_LKP.Name,
@@ -445,12 +445,12 @@ internal class ReportRepository : IReportRepository
     {
         return await _context.InventoryTransaction
             .Where(t => t.InventoryItemId == inventoryItemId)
-            .OrderBy(t => t.CreatedAt)
+            .OrderBy(t => t.OccurredAt)
             .ThenBy(t => t.Id)
             .Select(t => new InventoryMovementTxProjection
             {
                 Id = t.Id,
-                CreatedAt = t.CreatedAt,
+                OccurredAt = t.OccurredAt,
                 Type = t.InventoryTransactionType,
                 Quantity = t.Quantity,
                 ReferenceType = t.ReferenceType,

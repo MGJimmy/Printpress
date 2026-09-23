@@ -6,7 +6,7 @@ namespace Printpress.Application;
 public class InventoryTransactionListRowDto
 {
     public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime OccurredAt { get; set; }
     public Guid ItemId { get; set; }
     public string ItemName { get; set; }
     public string CategoryName { get; set; }

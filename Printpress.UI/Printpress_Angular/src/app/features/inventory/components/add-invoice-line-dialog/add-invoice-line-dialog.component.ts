@@ -1,16 +1,13 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFormBuilder } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { InventoryItemSelectionDto } from '../../models/inventory-item-selection.dto';
-
-export interface AddInvoiceLineDialogData {
-  inventoryItems: InventoryItemSelectionDto[];
-}
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { InventoryItemDto } from '../../models/inventory-item.dto';
+import { InventoryCategoryItemSelectComponent } from '../inventory-category-item-select/inventory-category-item-select.component';
 
 export interface AddInvoiceLineDialogResult {
   inventoryItemId: string;
@@ -30,11 +27,18 @@ export interface AddInvoiceLineDialogResult {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDialogModule
+    MatDialogModule,
+    InventoryCategoryItemSelectComponent
   ],
-  templateUrl: './add-invoice-line-dialog.component.html'
+  templateUrl: './add-invoice-line-dialog.component.html',
+  styles: [`
+    .dialog-form { display: flex; flex-direction: column; }
+    .full-width { width: 100%; }
+  `]
 })
 export class AddInvoiceLineDialogComponent {
+  selectedItem: InventoryItemDto | null = null;
+
   form: FormGroup<{
     inventoryItemId: FormControl<string>;
     quantity: FormControl<number>;
@@ -43,8 +47,7 @@ export class AddInvoiceLineDialogComponent {
 
   constructor(
     private fb: NonNullableFormBuilder,
-    public dialogRef: MatDialogRef<AddInvoiceLineDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AddInvoiceLineDialogData
+    public dialogRef: MatDialogRef<AddInvoiceLineDialogComponent>
   ) {
     this.form = this.fb.group({
       inventoryItemId: this.fb.control('', Validators.required),
@@ -53,18 +56,20 @@ export class AddInvoiceLineDialogComponent {
     });
   }
 
+  onSelectedItem(item: InventoryItemDto | null): void {
+    this.selectedItem = item;
+  }
+
   onConfirm(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.selectedItem) {
       this.form.markAllAsTouched();
       return;
     }
 
     const { inventoryItemId, quantity, unitPrice } = this.form.getRawValue();
-    const item = this.data.inventoryItems.find(x => x.id === inventoryItemId)!;
-
     const result: AddInvoiceLineDialogResult = {
       inventoryItemId,
-      inventoryItemName: item.name,
+      inventoryItemName: this.selectedItem.name,
       quantity,
       unitPrice,
       lineTotal: quantity * unitPrice

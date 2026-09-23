@@ -48,7 +48,7 @@ export interface InventoryPurchaseInvoiceListDto {
 
 export interface InventoryTransactionListRowDto {
   id: string;
-  createdAt: string;
+  occurredAt: string;
   itemId: string;
   itemName: string;
   categoryName: string;

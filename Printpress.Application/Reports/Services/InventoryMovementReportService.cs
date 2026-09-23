@@ -16,13 +16,13 @@ internal sealed class InventoryMovementReportService(IUnitOfWork unitOfWork) : I
         var transactions = await unitOfWork.ReportRepository.GetInventoryMovementsAsync(inventoryItemId);
 
         var opening = transactions
-            .Where(t => dateFrom != null && t.CreatedAt < dateFrom)
+            .Where(t => dateFrom != null && t.OccurredAt < dateFrom)
             .Sum(SignedQuantity);
 
         var period = transactions
-            .Where(t => (dateFrom == null || t.CreatedAt >= dateFrom)
-                && (dateToExclusive == null || t.CreatedAt < dateToExclusive))
-            .OrderBy(t => t.CreatedAt)
+            .Where(t => (dateFrom == null || t.OccurredAt >= dateFrom)
+                && (dateToExclusive == null || t.OccurredAt < dateToExclusive))
+            .OrderBy(t => t.OccurredAt)
             .ThenBy(t => t.Id)
             .ToList();
 
@@ -36,7 +36,7 @@ internal sealed class InventoryMovementReportService(IUnitOfWork unitOfWork) : I
             lines.Add(new InventoryMovementLineDto
             {
                 Id = t.Id,
-                MovementDate = t.CreatedAt,
+                MovementDate = t.OccurredAt,
                 Type = TypeLabel(t.Type),
                 InQuantity = inQty,
                 OutQuantity = outQty,

@@ -112,7 +112,7 @@ export class WorkerDetailsComponent implements OnInit {
     },
     { column: 'quantity', headerName: 'الكمية' },
     { column: 'notes', headerName: 'ملاحظات' },
-    { column: 'createdAt', headerName: 'التاريخ' }
+    { column: 'occurredAt', headerName: 'التاريخ' }
   ];
 
 

@@ -52,7 +52,7 @@ export class InventoryTransactionsComponent implements OnInit {
   workers: WorkerDto[] = [];
   report: InventoryTransactionListDto | null = null;
   isLoading = false;
-  columns = ['createdAt', 'type', 'itemName', 'categoryName', 'quantity', 'reference', 'workerName', 'notes'];
+  columns = ['occurredAt', 'type', 'itemName', 'categoryName', 'quantity', 'reference', 'workerName', 'notes'];
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;

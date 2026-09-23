@@ -38,7 +38,8 @@ internal sealed class PurchaseInvoiceService(
 
         if (receiveNow)
         {
-            var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(entity.PurchaseInvoiceLines.ToList());
+            var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(
+                entity.PurchaseInvoiceLines.ToList(), DateTime.UtcNow);
             await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
         }
 
@@ -161,7 +162,8 @@ internal sealed class PurchaseInvoiceService(
         var invoice = await LoadInvoiceAsync(id);
         invoice.ReceiveGoods();
 
-        var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(invoice.PurchaseInvoiceLines.ToList());
+        var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(
+            invoice.PurchaseInvoiceLines.ToList(), DateTime.UtcNow);
         await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
 
         _unitOfWork.PurchaseInvoiceRepository.Update(invoice);
@@ -191,7 +193,8 @@ internal sealed class PurchaseInvoiceService(
 
             var reversals = _inventoryTransactionService.CreatePurchaseVoidTransactions(
                 invoice.PurchaseInvoiceLines.ToList(),
-                invoice.InvoiceNumber);
+                invoice.InvoiceNumber,
+                DateTime.UtcNow);
             await _unitOfWork.InventoryTransactionRepository.AddRange(reversals);
         }
 

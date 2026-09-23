@@ -18,6 +18,7 @@ namespace Printpress.Domain
 
         public Guid? WorkerId { get; set; }
         public virtual Worker? Worker { get; set; }
+        public DateTime OccurredAt { get; private set; }
 
         private InventoryTransaction()
         {
@@ -30,7 +31,8 @@ namespace Printpress.Domain
         int quantity,
         InventoryTransactionReferenceType referenceType,
         Guid referenceId,
-        string notes)
+        string notes,
+        DateTime occurredAt)
         {
             InventoryItemId = inventoryItemId;
             InventoryTransactionType = type;
@@ -38,6 +40,7 @@ namespace Printpress.Domain
             ReferenceType = referenceType;
             ReferenceId = referenceId;
             Notes = notes;
+            OccurredAt = occurredAt;
         }
 
     }

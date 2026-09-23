@@ -48,6 +48,9 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.Notes)
                 .HasMaxLength(500);
 
+            entity.Property(x => x.OccurredAt)
+                .IsRequired();
+
             entity.HasOne(x => x.InventoryItem)
                 .WithMany(i => i.InventoryTransactions)
                 .HasForeignKey(x => x.InventoryItemId);

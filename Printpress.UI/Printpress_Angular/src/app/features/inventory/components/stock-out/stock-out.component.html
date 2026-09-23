@@ -32,14 +32,17 @@
     </div>
     <form [formGroup]="form">
       <div class="filters">
+        <app-inventory-category-item-select
+          [itemControl]="form.controls.inventoryItemId"
+          (selectedItemChange)="onSelectedItem($event)">
+        </app-inventory-category-item-select>
+
         <mat-form-field appearance="outline">
-          <mat-label>الصنف</mat-label>
-          <mat-select formControlName="inventoryItemId">
-            <mat-option *ngFor="let item of inventoryItems" [value]="item.id">
-              {{ item.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.inventoryItemId.hasError('required')">يجب اختيار الصنف</mat-error>
+          <mat-label>تاريخ الصرف</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="occurredAt" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="form.controls.occurredAt.hasError('required')">يجب إدخال تاريخ الصرف</mat-error>
         </mat-form-field>
 
         <app-search-select
@@ -64,7 +67,7 @@
         </mat-form-field>
       </div>
       <div class="actions">
-        <button mat-raised-button color="warn" type="button" [disabled]="form.invalid" (click)="onSave()">صرف</button>
+        <button mat-raised-button color="warn" type="button" [disabled]="form.invalid || !selectedItem || isSaving" (click)="onSave()">صرف</button>
         <button mat-stroked-button type="button" (click)="onCancel()">إلغاء</button>
       </div>
     </form>

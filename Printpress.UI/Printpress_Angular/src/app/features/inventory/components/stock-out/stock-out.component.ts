@@ -8,13 +8,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
-import { InventoryService } from '../../services/inventory.service';
 import { InventoryTransactionService } from '../../services/inventory-transaction.service';
-import { InventoryItemSelectionDto } from '../../models/inventory-item-selection.dto';
+import { InventoryItemDto } from '../../models/inventory-item.dto';
 import { WorkerService } from '../../../hr/services/worker.service';
 import { WorkerDto } from '../../../hr/models/worker.dto';
 import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
+import { InventoryCategoryItemSelectComponent } from '../inventory-category-item-select/inventory-category-item-select.component';
 
 function maxStockValidator(getMax: () => number) {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -36,18 +39,22 @@ function maxStockValidator(getMax: () => number) {
     MatSelectModule,
     MatCardModule,
     MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     SearchSelectComponent,
+    InventoryCategoryItemSelectComponent,
   ],
   templateUrl: './stock-out.component.html',
 })
 export class StockOutComponent implements OnInit {
-  inventoryItems: InventoryItemSelectionDto[] = [];
-  selectedItem: InventoryItemSelectionDto | null = null;
+  selectedItem: InventoryItemDto | null = null;
   workers: WorkerDto[] = [];
   workerItems: SearchSelectItem[] = [];
+  isSaving = false;
 
   form: FormGroup<{
     inventoryItemId: FormControl<string>;
+    occurredAt: FormControl<Date>;
     quantity: FormControl<number | null>;
     notes: FormControl<string>;
     workerId: FormControl<string | null>;
@@ -63,12 +70,12 @@ export class StockOutComponent implements OnInit {
     private fb: NonNullableFormBuilder,
     private router: Router,
     private alertService: AlertService,
-    private inventoryService: InventoryService,
     private inventoryTransactionService: InventoryTransactionService,
     private workerService: WorkerService
   ) {
     this.form = this.fb.group({
       inventoryItemId: this.fb.control('', Validators.required),
+      occurredAt: this.fb.control(new Date(), Validators.required),
       quantity: new FormControl<number | null>(null, {
         validators: [
           Validators.required,
@@ -82,15 +89,6 @@ export class StockOutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.inventoryService.getAllForSelection().subscribe({
-      next: (response) => {
-        this.inventoryItems = (response.data ?? []).filter(item => item.isActive);
-      },
-      error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');
-      }
-    });
-
     this.workerService.getActive().subscribe({
       next: res => {
         this.workers = res.data;
@@ -98,25 +96,33 @@ export class StockOutComponent implements OnInit {
       }
     });
 
-    this.form.controls.inventoryItemId.valueChanges.subscribe(id => {
-      this.selectedItem = this.inventoryItems.find(i => i.id === id) ?? null;
+    this.form.controls.inventoryItemId.valueChanges.subscribe(() => {
       this.form.controls.quantity.updateValueAndValidity();
     });
   }
 
+  onSelectedItem(item: InventoryItemDto | null): void {
+    this.selectedItem = item;
+    this.form.controls.quantity.updateValueAndValidity();
+  }
+
   onSave(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.selectedItem || this.isSaving) {
       this.form.markAllAsTouched();
       return;
     }
 
     const raw = this.form.getRawValue();
+    this.isSaving = true;
     this.inventoryTransactionService.stockOut({
       inventoryItemId: raw.inventoryItemId,
       quantity: raw.quantity!,
       notes: raw.notes,
-      workerId: raw.workerId ?? undefined
-    }).subscribe({
+      workerId: raw.workerId ?? undefined,
+      occurredAt: (raw.occurredAt as Date).toISOString()
+    }).pipe(
+      finalize(() => { this.isSaving = false; })
+    ).subscribe({
       next: () => {
         this.alertService.showSuccess('تم صرف الكمية من المخزن بنجاح');
         this.router.navigate(['/inventory/items']);
