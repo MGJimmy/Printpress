@@ -1,189 +1,161 @@
-<div class="container mt-4 mb-5 rtl" *ngIf="itemSummary; else loadingTemplate">
+<div class="exec-page" dir="rtl" *ngIf="itemSummary; else loadingTemplate">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>play_circle</mat-icon>
+    </div>
+    <div>
+      <h1>تنفيذ خدمة</h1>
+      <p>{{ itemSummary.itemName }}</p>
+    </div>
+    <button mat-stroked-button type="button" class="hero-back" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+      رجوع
+    </button>
+  </header>
 
-  <!-- Page Header -->
-  <div class="page-header mb-4">
-    <h2 class="text-center text-primary border-bottom pb-3">تنفيذ خدمة: {{ itemSummary.itemName }}</h2>
-  </div>
+  <section class="kpis">
+    <article class="kpi kpi-qty">
+      <span class="kpi-label">كمية العنصر</span>
+      <strong>{{ itemSummary.quantity }}</strong>
+    </article>
+    <article class="kpi kpi-status">
+      <span class="kpi-label">حالة العنصر</span>
+      <strong>{{ itemStatusLabel(itemSummary.status) }}</strong>
+    </article>
+    <article class="kpi kpi-remain">
+      <span class="kpi-label">المتبقي للتنفيذ</span>
+      <strong>{{ selectedService ? remaining : '—' }}</strong>
+      <small>{{ selectedService?.serviceCategoryName || 'اختر خدمة' }}</small>
+    </article>
+  </section>
 
-  <!-- Info + Progress Card -->
-  <mat-card class="shadow-sm mb-3">
-    <mat-card-content>
-
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="d-flex gap-3 flex-wrap">
-          <div><span class="text-muted">الكمية: </span><strong>{{ itemSummary.quantity }}</strong></div>
-          <div>
-            <span class="text-muted">الحالة: </span>
-            <span class="badge" [ngClass]="itemStatusBadgeClass(itemSummary.status)">
-              {{ itemStatusLabel(itemSummary.status) }}
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>table_chart</mat-icon>
+      <span>تقدم الخدمات</span>
+      <span class="count">{{ itemSummary.serviceProgresses.length }}</span>
+    </div>
+    <div class="table-wrap">
+      <table mat-table [dataSource]="itemSummary.serviceProgresses" class="cash-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>الخدمة</th>
+          <td mat-cell *matCellDef="let svc">{{ svc.serviceCategoryName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="progress">
+          <th mat-header-cell *matHeaderCellDef>المنجز / الإجمالي</th>
+          <td mat-cell *matCellDef="let svc">
+            <span [class.amt-in]="svc.isCompleted" [class.amt-balance]="!svc.isCompleted">
+              {{ svc.executed }} / {{ svc.total }}
             </span>
-          </div>
-        </div>
-        <button mat-raised-button color="primary" (click)="onBack()">
-          <mat-icon>arrow_back</mat-icon>
-          رجوع
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="remaining">
+          <th mat-header-cell *matHeaderCellDef>المتبقي</th>
+          <td mat-cell *matCellDef="let svc" [class.amt-out]="!svc.isCompleted && svc.total - svc.executed === 0">
+            {{ svc.total - svc.executed }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>الحالة</th>
+          <td mat-cell *matCellDef="let svc">
+            <span class="badge" [class.badge-on]="svc.isCompleted" [class.badge-off]="!svc.isCompleted">
+              {{ svc.isCompleted ? 'مكتمل' : 'غير مكتمل' }}
+            </span>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="progressColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: progressColumns;"></tr>
+      </table>
+    </div>
+  </mat-card>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>edit_note</mat-icon>
+      <span>بيانات التنفيذ</span>
+    </div>
+
+    <form [formGroup]="form">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>الخدمة</mat-label>
+          <mat-select formControlName="serviceCategoryId"
+                      (selectionChange)="onServiceSelect($event.value)">
+            <mat-option *ngFor="let svc of itemSummary.serviceProgresses"
+                        [value]="svc.serviceCategoryId"
+                        [disabled]="svc.isCompleted">
+              {{ svc.serviceCategoryName }}{{ svc.isCompleted ? ' (مكتمل)' : '' }}
+            </mat-option>
+          </mat-select>
+          <mat-error>الخدمة مطلوبة</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>تاريخ التنفيذ</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="executionDate">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error>التاريخ مطلوب</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="notes-field">
+          <mat-label>ملاحظات</mat-label>
+          <textarea matInput formControlName="notes" rows="1"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="panel-title workers-title">
+        <mat-icon>groups</mat-icon>
+        <span>العمال</span>
+        <span class="count">{{ workerRows.length }}</span>
+        <button mat-stroked-button type="button" (click)="addWorkerRow()">
+          <mat-icon>person_add</mat-icon>
+          إضافة عامل
         </button>
       </div>
 
-      <!-- Service Progress Table -->
-      <h6 class="text-muted mb-2">تقدم الخدمات</h6>
-      <div class="table-responsive gradient-table custom-table">
-        <table mat-table [dataSource]="itemSummary.serviceProgresses" class="w-100">
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">الخدمة</th>
-            <td mat-cell *matCellDef="let svc">{{ svc.serviceCategoryName }}</td>
-          </ng-container>
-          <ng-container matColumnDef="progress">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">المنجز / الإجمالي</th>
-            <td mat-cell *matCellDef="let svc">
-              <span [ngClass]="svc.isCompleted ? 'text-success fw-bold' : 'text-warning fw-semibold'">
-                {{ svc.executed }} / {{ svc.total }}
-                <mat-icon *ngIf="svc.isCompleted" style="font-size:16px;vertical-align:middle">check_circle</mat-icon>
-              </span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="remaining">
-            <th mat-header-cell *matHeaderCellDef class="fw-bold">المتبقي</th>
-            <td mat-cell *matCellDef="let svc">
-              <span [class.text-danger]="!svc.isCompleted && svc.total - svc.executed === 0"
-                    [class.text-success]="svc.isCompleted">
-                {{ svc.total - svc.executed }}
-              </span>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="['name','progress','remaining']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['name','progress','remaining'];"></tr>
-        </table>
+      <div class="worker-list" *ngIf="workerRows.length > 0">
+        <div *ngFor="let row of workerRows.controls; let i = index"
+             [formGroup]="$any(row)"
+             class="worker-row">
+          <app-search-select
+            formControlName="workerId"
+            [items]="workerItems"
+            label="العامل"
+            [required]="true">
+          </app-search-select>
+          <mat-form-field appearance="outline">
+            <mat-label>الكمية</mat-label>
+            <input matInput type="number" formControlName="quantity" min="1">
+            <mat-error>يجب أن تكون أكبر من 0</mat-error>
+          </mat-form-field>
+          <button mat-icon-button color="warn" type="button" (click)="removeWorkerRow(i)" aria-label="حذف العامل">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       </div>
 
-    </mat-card-content>
+      <p class="empty" *ngIf="workerRows.length === 0">أضف عاملاً واحداً على الأقل</p>
+
+      <p class="exceeded" *ngIf="exceedsRemaining">
+        الكمية المطلوبة ({{ totalRequested }}) تتجاوز المتبقي ({{ remaining }})
+      </p>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button"
+                (click)="onSave()" [disabled]="!canSave">
+          <mat-icon>save</mat-icon>
+          {{ isSaving ? 'جاري الحفظ...' : 'حفظ' }}
+        </button>
+        <button mat-stroked-button type="button" (click)="onBack()">
+          <mat-icon>close</mat-icon>
+          إلغاء
+        </button>
+      </div>
+    </form>
   </mat-card>
-
-  <!-- Execution Form Card -->
-  <mat-card class="shadow-sm">
-    <mat-card-content>
-      <h6 class="text-muted mb-3">بيانات التنفيذ</h6>
-
-      <form [formGroup]="form">
-
-        <!-- Service + Date row -->
-        <div class="row g-3 mb-3">
-          <div class="col-md-5">
-            <mat-form-field appearance="fill" class="w-100">
-              <mat-label>الخدمة</mat-label>
-              <mat-select formControlName="serviceCategoryId"
-                          (selectionChange)="onServiceSelect($event.value)">
-                <mat-option *ngFor="let svc of itemSummary.serviceProgresses"
-                            [value]="svc.serviceCategoryId"
-                            [disabled]="svc.isCompleted">
-                  {{ svc.serviceCategoryName }}
-                  <span *ngIf="svc.isCompleted"> (مكتمل)</span>
-                  <span *ngIf="!svc.isCompleted"> — متبقي: {{ svc.total - svc.executed }}</span>
-                </mat-option>
-              </mat-select>
-              <mat-error>الخدمة مطلوبة</mat-error>
-            </mat-form-field>
-          </div>
-
-          <div class="col-md-3" *ngIf="selectedService">
-            <div class="p-2 border-start border-primary rounded h-100 d-flex flex-column justify-content-center">
-              <small class="text-muted">المتبقي للتنفيذ</small>
-              <strong [class.text-success]="remaining > 0" [class.text-danger]="remaining <= 0">
-                {{ remaining }} وحدة
-              </strong>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <mat-form-field appearance="fill" class="w-100">
-              <mat-label>تاريخ التنفيذ</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="executionDate">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-              <mat-error>التاريخ مطلوب</mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-
-        <div class="row g-3 mb-4">
-          <div class="col-md-6">
-            <mat-form-field appearance="fill" class="w-100">
-              <mat-label>ملاحظات</mat-label>
-              <textarea matInput formControlName="notes" rows="2"></textarea>
-            </mat-form-field>
-          </div>
-        </div>
-
-        <!-- Worker Rows -->
-        <div class="mb-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="mb-0 text-muted">العمال</h6>
-            <button mat-raised-button color="primary" type="button" (click)="addWorkerRow()">
-              <mat-icon>person_add</mat-icon>
-              إضافة عامل
-            </button>
-          </div>
-
-          <div *ngIf="workerRows.length > 0">
-            <div class="row g-2 mb-1 fw-bold text-muted small px-2">
-              <div class="col-5">العامل</div>
-              <div class="col-4">الكمية</div>
-              <div class="col-3"></div>
-            </div>
-            <div *ngFor="let row of workerRows.controls; let i = index"
-                 [formGroup]="$any(row)"
-                 class="row g-2 align-items-center mb-2 px-2 py-1 border-bottom">
-              <div class="col-5">
-                <mat-form-field appearance="fill" class="w-100">
-                  <mat-select formControlName="workerId">
-                    <mat-option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</mat-option>
-                  </mat-select>
-                  <mat-error>مطلوب</mat-error>
-                </mat-form-field>
-              </div>
-              <div class="col-4">
-                <mat-form-field appearance="fill" class="w-100">
-                  <input matInput type="number" formControlName="quantity" min="1">
-                  <mat-error>يجب أن تكون أكبر من 0</mat-error>
-                  <mat-hint *ngIf="exceedsRemaining" class="text-danger">تتجاوز المتبقي</mat-hint>
-                </mat-form-field>
-              </div>
-              <div class="col-3">
-                <button mat-icon-button color="warn" type="button" (click)="removeWorkerRow(i)"
-                        [disabled]="workerRows.length === 1">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div *ngIf="workerRows.length === 0" class="text-center text-muted py-3 border rounded">
-            أضف عاملاً واحداً على الأقل
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="text-danger small mb-2" *ngIf="exceedsRemaining">
-          الكمية المطلوبة ({{ totalRequested }}) تتجاوز المتبقي ({{ remaining }})
-        </div>
-        <div class="d-flex gap-2 mt-3">
-          <button mat-raised-button color="primary" type="button"
-                  (click)="onSave()" [disabled]="!canSave">
-            <mat-icon>save</mat-icon>
-            {{ isSaving ? 'جاري الحفظ...' : 'حفظ' }}
-          </button>
-          <button mat-raised-button color="warn" type="button" (click)="onBack()">
-            <mat-icon>cancel</mat-icon>
-            إلغاء
-          </button>
-        </div>
-
-      </form>
-    </mat-card-content>
-  </mat-card>
-
 </div>
 
 <ng-template #loadingTemplate>
-  <div class="container mt-4 text-center text-muted rtl">جاري التحميل...</div>
+  <div class="exec-page loading" dir="rtl">جاري التحميل...</div>
 </ng-template>

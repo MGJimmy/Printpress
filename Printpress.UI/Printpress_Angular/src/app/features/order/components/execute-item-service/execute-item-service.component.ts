@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, NonNullableFormBuilder, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,16 +10,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTableModule } from '@angular/material/table';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { ItemServiceExecutionService } from '../../services/item-service-execution.service';
 import { WorkerService } from '../../../hr/services/worker.service';
-import { WorkerDto } from '../../../hr/models/worker.dto';
 import {
   ItemExecutionSummaryDto,
   ServiceProgressDto,
   ExecuteServiceRequestDto,
   ItemStatusLabels
 } from '../../models/execution/execution.dto';
-import { normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
+import { normalizeStatus } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { finalize } from 'rxjs';
@@ -32,24 +32,27 @@ import { finalize } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatSelectModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatTableModule,
+    SearchSelectComponent
   ],
-  templateUrl: './execute-item-service.component.html'
+  templateUrl: './execute-item-service.component.html',
+  styleUrl: './execute-item-service.component.scss'
 })
 export class ExecuteItemServiceComponent implements OnInit {
   itemId!: string;
   groupId!: string;
   itemSummary: ItemExecutionSummaryDto | null = null;
-  workers: WorkerDto[] = [];
+  workerItems: SearchSelectItem[] = [];
   selectedService: ServiceProgressDto | null = null;
   isSaving = false;
+  progressColumns = ['name', 'progress', 'remaining', 'status'];
 
   form = this.fb.group({
     serviceCategoryId: this.fb.control<string>('', Validators.required),
@@ -65,10 +68,6 @@ export class ExecuteItemServiceComponent implements OnInit {
   protected itemStatusLabel(status?: string): string {
     const normalized = normalizeStatus(status);
     return ItemStatusLabels[normalized] || normalized;
-  }
-
-  protected itemStatusBadgeClass(status?: string): string {
-    return statusBadgeClass(status);
   }
 
   constructor(
@@ -97,7 +96,9 @@ export class ExecuteItemServiceComponent implements OnInit {
 
     this.workerService.getActive().subscribe({
       next: (res) => {
-        this.workers = res.data.filter(w => w.isActive);
+        this.workerItems = res.data
+          .filter(w => w.isActive)
+          .map(w => ({ id: w.id, name: w.name }));
       },
       error: () => this.alertService.showError(this._t.t('orders.error_loading_workers'))
     });
@@ -145,12 +146,6 @@ export class ExecuteItemServiceComponent implements OnInit {
 
   removeWorkerRow(index: number): void {
     this.workerRows.removeAt(index);
-  }
-
-  getServiceStatusClass(svc: ServiceProgressDto): string {
-    if (svc.isCompleted) return 'text-success';
-    if (svc.executed > 0) return 'text-warning';
-    return 'text-muted';
   }
 
   onSave(): void {
