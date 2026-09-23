@@ -19,6 +19,12 @@
       <mat-icon>filter_list</mat-icon>
       <span>العناصر</span>
       <span class="count" *ngIf="groupData">{{ filteredItems.length }} / {{ groupData.items.length }}</span>
+      <button mat-raised-button color="primary" type="button"
+              (click)="onBatchExecuteGroup()"
+              [disabled]="!canBatchExecuteGroup">
+        <mat-icon>playlist_play</mat-icon>
+        {{ _t.t('orders.batch_execute') }}
+      </button>
     </div>
     <div class="filters">
       <mat-form-field appearance="outline">
@@ -79,6 +85,12 @@
                       [disabled]="isStatus(item.status, 'Completed')">
                 <mat-icon [style.color]="!isStatus(item.status, 'Completed') ? '#1976d2' : ''">play_circle</mat-icon>
                 <span>{{ isStatus(item.status, 'Completed') ? 'مكتمل' : 'تنفيذ' }}</span>
+              </button>
+              <button mat-menu-item
+                      (click)="onBatchExecuteItem(item)"
+                      [disabled]="!canBatchExecuteItem(item)">
+                <mat-icon [style.color]="!isStatus(item.status, 'Completed') ? '#00695c' : ''">playlist_play</mat-icon>
+                <span>{{ _t.t('orders.batch_execute') }}</span>
               </button>
             </mat-menu>
           </td>

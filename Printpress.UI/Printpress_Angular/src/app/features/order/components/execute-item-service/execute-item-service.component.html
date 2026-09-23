@@ -73,6 +73,10 @@
     <div class="panel-title">
       <mat-icon>edit_note</mat-icon>
       <span>بيانات التنفيذ</span>
+      <button mat-stroked-button type="button" (click)="onBatchExecute()" [disabled]="!canBatchExecute">
+        <mat-icon>playlist_play</mat-icon>
+        {{ _t.t('orders.batch_execute') }}
+      </button>
     </div>
 
     <form [formGroup]="form">

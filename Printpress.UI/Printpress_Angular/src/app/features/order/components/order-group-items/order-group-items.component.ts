@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ItemServiceExecutionService } from '../../services/item-service-execution.service';
 import {
   OrderGroupItemsResponseDto,
@@ -21,6 +22,8 @@ import {
 import { isStatus, normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
+import { ExecuteBatchDialogComponent, BatchServiceOption } from '../execute-batch-dialog/execute-batch-dialog.component';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-order-group-items',
@@ -35,7 +38,8 @@ import { OrderRoutingService } from '../../services/order-routing.service';
     MatSelectModule,
     MatFormFieldModule,
     MatBadgeModule,
-    MatMenuModule
+    MatMenuModule,
+    MatDialogModule
   ],
   templateUrl: './order-group-items.component.html'
 })
@@ -54,7 +58,9 @@ export class OrderGroupItemsComponent implements OnInit {
     private router: Router,
     private executionService: ItemServiceExecutionService,
     private alertService: AlertService,
-    private orderRoutingService: OrderRoutingService
+    private orderRoutingService: OrderRoutingService,
+    private dialog: MatDialog,
+    protected _t: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -99,6 +105,73 @@ export class OrderGroupItemsComponent implements OnInit {
 
   onExecuteItem(itemId: string): void {
     this.router.navigate([`/order/groups/${this.groupId}/items/${itemId}/execute`]);
+  }
+
+  get canBatchExecuteGroup(): boolean {
+    return !!this.groupData
+      && !isStatus(this.groupData.groupStatus, 'Delivered')
+      && this.groupData.items.some(i => !isStatus(i.status, 'Completed'))
+      && this.groupBatchServices.length > 0;
+  }
+
+  get groupBatchServices(): BatchServiceOption[] {
+    if (!this.groupData) return [];
+    const incomplete = this.groupData.items.filter(i => !isStatus(i.status, 'Completed'));
+    return this.groupData.groupServices
+      .map(svc => {
+        const remaining = incomplete.reduce((max, item) => {
+          const p = this.getServiceProgress(item, svc.serviceCategoryId);
+          const left = p ? p.total - p.executed : item.quantity;
+          return Math.max(max, left);
+        }, 0);
+        return {
+          serviceCategoryId: svc.serviceCategoryId,
+          serviceCategoryName: svc.serviceCategoryName,
+          remaining
+        };
+      })
+      .filter(s => s.remaining > 0);
+  }
+
+  onBatchExecuteGroup(): void {
+    if (!this.canBatchExecuteGroup || !this.groupData) return;
+    this.openBatchDialog({
+      mode: 'group',
+      groupId: this.groupData.groupId,
+      services: this.groupBatchServices
+    });
+  }
+
+  onBatchExecuteItem(item: ItemWithServiceProgressDto): void {
+    if (!this.canBatchExecuteItem(item)) return;
+    this.openBatchDialog({
+      mode: 'item',
+      orderItemId: item.id,
+      services: this.itemBatchServices(item)
+    });
+  }
+
+  canBatchExecuteItem(item: ItemWithServiceProgressDto): boolean {
+    return !isStatus(item.status, 'Completed') && this.itemBatchServices(item).length > 0;
+  }
+
+  private itemBatchServices(item: ItemWithServiceProgressDto): BatchServiceOption[] {
+    return item.serviceProgresses
+      .filter(s => !s.isCompleted)
+      .map(s => ({
+        serviceCategoryId: s.serviceCategoryId,
+        serviceCategoryName: s.serviceCategoryName,
+        remaining: s.total - s.executed
+      }));
+  }
+
+  private openBatchDialog(data: { mode: 'item' | 'group'; groupId?: string; orderItemId?: string; services: BatchServiceOption[] }): void {
+    this.dialog.open(ExecuteBatchDialogComponent, {
+      data,
+      width: '480px'
+    }).afterClosed().subscribe(saved => {
+      if (saved) this.loadGroupItems();
+    });
   }
 
   onViewItem(itemId: string): void {

@@ -39,6 +39,8 @@
   "orders.cannot_add_item_to_closed_group": "لا يمكن إضافة عناصر لمجموعة مكتملة أو تم تسليمها",
   "orders.group_not_completed_for_delivery": "لا يمكن تسليم المجموعة قبل اكتمالها",
   "orders.cannot_execute_delivered": "لا يمكن تنفيذ أو إكمال عنصر في مجموعة أو طلبية تم تسليمها",
+  "orders.batch_empty_selection": "يجب اختيار خدمة واحدة على الأقل",
+  "orders.batch_nothing_to_execute": "لا توجد كميات متبقية للتنفيذ",
   "orders.cannot_delete_order_with_work": "لا يمكن حذف طلبية مكتملة أو بدأ تنفيذها",
   "orders.service_delete_has_items": "لا يمكن حذف خدمة، المجموعة تحتوي على عناصر مضافة",
   "orders.services_empty": "لا يمكن حفظ مجموعة بخدمات فارغة",

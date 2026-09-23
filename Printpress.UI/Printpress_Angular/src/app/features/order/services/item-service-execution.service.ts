@@ -7,7 +7,9 @@ import {
   OrderGroupItemsResponseDto,
   ItemExecutionSummaryDto,
   ItemExecutionHistoryDto,
-  ExecuteServiceRequestDto
+  ExecuteServiceRequestDto,
+  ExecuteItemBatchRequestDto,
+  ExecuteGroupBatchRequestDto
 } from '../models/execution/execution.dto';
 
 @Injectable({ providedIn: 'root' })
@@ -34,5 +36,13 @@ export class ItemServiceExecutionService {
 
   execute(payload: ExecuteServiceRequestDto): Observable<any> {
     return this.httpService.post<any>(ApiUrlResource.ItemServiceExecutionAPI.execute, payload);
+  }
+
+  executeItemBatch(payload: ExecuteItemBatchRequestDto): Observable<any> {
+    return this.httpService.post<any>(ApiUrlResource.ItemServiceExecutionAPI.executeItemBatch, payload);
+  }
+
+  executeGroupBatch(payload: ExecuteGroupBatchRequestDto): Observable<any> {
+    return this.httpService.post<any>(ApiUrlResource.ItemServiceExecutionAPI.executeGroupBatch, payload);
   }
 }

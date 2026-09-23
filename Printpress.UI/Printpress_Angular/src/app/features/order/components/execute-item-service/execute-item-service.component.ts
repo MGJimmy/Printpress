@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { ItemServiceExecutionService } from '../../services/item-service-execution.service';
 import { WorkerService } from '../../../hr/services/worker.service';
@@ -20,10 +21,11 @@ import {
   ExecuteServiceRequestDto,
   ItemStatusLabels
 } from '../../models/execution/execution.dto';
-import { normalizeStatus } from '../../models/enums/status-display';
+import { isStatus, normalizeStatus } from '../../models/enums/status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { finalize } from 'rxjs';
+import { ExecuteBatchDialogComponent, BatchServiceOption } from '../execute-batch-dialog/execute-batch-dialog.component';
 
 @Component({
   selector: 'app-execute-item-service',
@@ -40,7 +42,8 @@ import { finalize } from 'rxjs';
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
-    SearchSelectComponent
+    SearchSelectComponent,
+    MatDialogModule
   ],
   templateUrl: './execute-item-service.component.html',
   styleUrl: './execute-item-service.component.scss'
@@ -77,7 +80,8 @@ export class ExecuteItemServiceComponent implements OnInit {
     private executionService: ItemServiceExecutionService,
     private workerService: WorkerService,
     private alertService: AlertService,
-    private _t: TranslationService
+    protected _t: TranslationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -131,6 +135,37 @@ export class ExecuteItemServiceComponent implements OnInit {
       && this.workerRows.length > 0
       && !this.exceedsRemaining
       && !this.isSaving;
+  }
+
+  get canBatchExecute(): boolean {
+    return !!this.itemSummary
+      && !isStatus(this.itemSummary.status, 'Completed')
+      && this.itemBatchServices.length > 0
+      && !this.isSaving;
+  }
+
+  get itemBatchServices(): BatchServiceOption[] {
+    return (this.itemSummary?.serviceProgresses ?? [])
+      .filter(s => !s.isCompleted)
+      .map(s => ({
+        serviceCategoryId: s.serviceCategoryId,
+        serviceCategoryName: s.serviceCategoryName,
+        remaining: s.total - s.executed
+      }));
+  }
+
+  onBatchExecute(): void {
+    if (!this.canBatchExecute || !this.itemSummary) return;
+    this.dialog.open(ExecuteBatchDialogComponent, {
+      data: {
+        mode: 'item',
+        orderItemId: this.itemSummary.itemId,
+        services: this.itemBatchServices
+      },
+      width: '480px'
+    }).afterClosed().subscribe(saved => {
+      if (saved) this.loadData();
+    });
   }
 
   createWorkerRow() {

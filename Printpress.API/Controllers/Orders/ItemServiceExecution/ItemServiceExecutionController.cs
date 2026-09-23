@@ -34,4 +34,18 @@ public class ItemServiceExecutionController(IItemServiceExecutionService _servic
         await _service.ExecuteAsync(payload, UserId);
         return Ok();
     }
+
+    [HttpPost("execute-item-batch")]
+    public async Task<IActionResult> ExecuteItemBatch([FromBody] ExecuteItemBatchRequestDto payload)
+    {
+        await _service.ExecuteItemBatchAsync(payload, UserId);
+        return Ok();
+    }
+
+    [HttpPost("execute-group-batch")]
+    public async Task<IActionResult> ExecuteGroupBatch([FromBody] ExecuteGroupBatchRequestDto payload)
+    {
+        await _service.ExecuteGroupBatchAsync(payload, UserId);
+        return Ok();
+    }
 }

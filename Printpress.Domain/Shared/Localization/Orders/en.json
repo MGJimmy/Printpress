@@ -39,6 +39,8 @@
   "orders.cannot_add_item_to_closed_group": "Cannot add items to a completed or delivered group",
   "orders.group_not_completed_for_delivery": "Cannot deliver a group before it is completed",
   "orders.cannot_execute_delivered": "Cannot execute or complete an item on a delivered group or order",
+  "orders.batch_empty_selection": "Select at least one service",
+  "orders.batch_nothing_to_execute": "Nothing left to execute",
   "orders.cannot_delete_order_with_work": "Cannot delete an order that is completed or has started execution",
   "orders.service_delete_has_items": "Cannot delete service. Group has added items",
   "orders.services_empty": "Cannot save group with empty services",

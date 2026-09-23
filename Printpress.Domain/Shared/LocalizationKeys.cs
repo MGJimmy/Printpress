@@ -41,6 +41,9 @@ public static class LocalizationKeys
         public const string GroupNotCompletedForDelivery = "orders.group_not_completed_for_delivery";
         public const string CannotExecuteDelivered = "orders.cannot_execute_delivered";
         public const string CannotDeleteOrderWithWork = "orders.cannot_delete_order_with_work";
+        public const string WorkerRequired = "orders.worker_required";
+        public const string BatchEmptySelection = "orders.batch_empty_selection";
+        public const string BatchNothingToExecute = "orders.batch_nothing_to_execute";
     }
 
     public static class CashAccounts

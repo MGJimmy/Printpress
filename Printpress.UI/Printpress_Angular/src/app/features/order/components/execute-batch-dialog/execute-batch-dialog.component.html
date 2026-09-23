@@ -1,0 +1,41 @@
+<h2 mat-dialog-title>{{ _t.t('orders.batch_execute') }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="batch-form" dir="rtl">
+    <app-search-select
+      formControlName="workerId"
+      [items]="workerItems"
+      [label]="_t.t('orders.col_worker')"
+      [required]="true">
+    </app-search-select>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ _t.t('orders.col_service') }}</mat-label>
+      <mat-select formControlName="serviceCategoryIds" multiple>
+        <mat-option *ngFor="let svc of data.services" [value]="svc.serviceCategoryId">
+          {{ svc.serviceCategoryName }} ({{ svc.remaining }})
+        </mat-option>
+      </mat-select>
+      <mat-error>{{ _t.t('orders.batch_empty_selection') }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ _t.t('orders.col_execution_date') }}</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="executionDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ _t.t('orders.col_notes') }}</mat-label>
+      <textarea matInput formControlName="notes" rows="2"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="onCancel()">{{ _t.t('shared.cancel') }}</button>
+  <button mat-raised-button color="primary" type="button" (click)="onSave()" [disabled]="!canSave">
+    {{ isSaving ? _t.t('shared.loading') : _t.t('shared.save') }}
+  </button>
+</mat-dialog-actions>

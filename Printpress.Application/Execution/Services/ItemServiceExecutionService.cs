@@ -171,63 +171,217 @@ internal sealed class ItemServiceExecutionService(
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.OrderItemId));
 
         var group = item.OrderGroup ?? await _unitOfWork.OrderGroupRepository.FindAsync(item.OrderGroupId);
-        if (group is not null)
-        {
-            if (group.Status == GroupStatusEnum.Delivered)
-                throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
-
-            var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
-            if (order?.Status == OrderStatusEnum.Delivered)
-                throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
-        }
+        await EnsureNotDeliveredAsync(group);
 
         if (item.OrderItemStatus == OrderItemStatus.Completed)
             throw new ValidationExeption("العنصر مكتمل بالفعل ولا يمكن تنفيذ خدمات عليه");
 
-        // Validate total new execution doesn't exceed item quantity
         var alreadyExecuted = _unitOfWork.WorkerProductionRepository
             .Filter(e => e.OrderItemId == payload.OrderItemId && e.ServiceCategoryId == payload.ServiceCategoryId)
             .Sum(e => e.Quantity);
 
         var newExecutionTotal = payload.Workers.Sum(w => w.Quantity);
+        var remaining = RemainingQuantity(item.Quantity, alreadyExecuted);
 
-        if (alreadyExecuted + newExecutionTotal > item.Quantity)
+        if (newExecutionTotal > remaining)
             throw new ValidationExeption(
-                $"الكمية المطلوب تنفيذها ({newExecutionTotal}) تتجاوز الكمية المتبقية ({item.Quantity - alreadyExecuted})");
+                $"الكمية المطلوب تنفيذها ({newExecutionTotal}) تتجاوز الكمية المتبقية ({remaining})");
 
-        // Create execution records per worker
-        var executionRecords = payload.Workers.Select(w => new ItemServiceExecution
+        var executionDate = UtcDateTime.AsUtc(payload.ExecutionDate);
+        var executionRecords = payload.Workers.Select(w => CreateExecution(
+            payload.OrderItemId,
+            payload.ServiceCategoryId,
+            w.WorkerId,
+            w.Quantity,
+            executionDate,
+            payload.Notes)).ToList();
+
+        await PersistExecutionsAsync(executionRecords, [item], userId);
+    }
+
+    public async Task ExecuteItemBatchAsync(ExecuteItemBatchRequestDto payload, string userId)
+    {
+        var serviceIds = GetBatchServiceIds(payload);
+
+        var item = _unitOfWork.OrderItemRepository
+            .FirstOrDefault(i => i.Id == payload.OrderItemId, nameof(OrderItem.OrderGroup));
+
+        if (item is null)
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.OrderItemId));
+
+        if (item.OrderItemStatus == OrderItemStatus.Completed)
+            throw new ValidationExeption("العنصر مكتمل بالفعل ولا يمكن تنفيذ خدمات عليه");
+
+        var group = item.OrderGroup ?? await _unitOfWork.OrderGroupRepository.FindAsync(item.OrderGroupId);
+        await ExecuteRemainingBatchAsync(group, [item], serviceIds, payload, userId);
+    }
+
+    public async Task ExecuteGroupBatchAsync(ExecuteGroupBatchRequestDto payload, string userId)
+    {
+        var serviceIds = GetBatchServiceIds(payload);
+
+        var group = await _unitOfWork.OrderGroupRepository.FindAsync(payload.GroupId);
+        if (group is null)
+            throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.GroupId));
+
+        var items = _unitOfWork.OrderItemRepository
+            .Filter(i => i.OrderGroupId == payload.GroupId && i.OrderItemStatus != OrderItemStatus.Completed)
+            .ToList();
+
+        await ExecuteRemainingBatchAsync(group, items, serviceIds, payload, userId);
+    }
+
+    // ── Private Methods ──────────────────────────────────────────────────────
+
+    private HashSet<Guid> GetBatchServiceIds(ExecuteBatchRequestDto payload)
+    {
+        if (payload.WorkerId == Guid.Empty)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.WorkerRequired));
+
+        var serviceIds = (payload.ServiceCategoryIds ?? []).Where(id => id != Guid.Empty).ToHashSet();
+        if (serviceIds.Count == 0)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.BatchEmptySelection));
+
+        return serviceIds;
+    }
+
+    private async Task ExecuteRemainingBatchAsync(
+        OrderGroup? group,
+        IReadOnlyList<OrderItem> items,
+        HashSet<Guid> serviceIds,
+        ExecuteBatchRequestDto payload,
+        string userId)
+    {
+        await EnsureNotDeliveredAsync(group);
+
+        if (group is not null)
+            EnsureServicesBelongToGroup(group.Id, serviceIds);
+
+        if (!items.Any())
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.BatchNothingToExecute));
+
+        var itemIds = items.Select(i => i.Id).ToList();
+        var executions = _unitOfWork.WorkerProductionRepository
+            .Filter(e => itemIds.Contains(e.OrderItemId))
+            .ToList();
+
+        var records = BuildRemainingRecords(
+            items,
+            serviceIds,
+            executions,
+            payload.WorkerId,
+            UtcDateTime.AsUtc(payload.ExecutionDate),
+            payload.Notes);
+
+        if (records.Count == 0)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.BatchNothingToExecute));
+
+        var affectedItems = items.Where(i => records.Any(r => r.OrderItemId == i.Id)).ToList();
+        await PersistExecutionsAsync(records, affectedItems, userId);
+    }
+
+    private async Task PersistExecutionsAsync(
+        List<ItemServiceExecution> records,
+        IReadOnlyList<OrderItem> affectedItems,
+        string userId)
+    {
+        await _unitOfWork.WorkerProductionRepository.AddRange(records);
+
+        var anyNewlyStarted = false;
+        foreach (var item in affectedItems)
         {
-            Id = _guidGenerator.NewGuid(),
-            OrderItemId = payload.OrderItemId,
-            ServiceCategoryId = payload.ServiceCategoryId,
-            WorkerId = w.WorkerId,
-            Quantity = w.Quantity,
-            ExecutionDate = UtcDateTime.AsUtc(payload.ExecutionDate),
-            Notes = payload.Notes
-        }).ToList();
+            if (item.OrderItemStatus != OrderItemStatus.New)
+                continue;
 
-        await _unitOfWork.WorkerProductionRepository.AddRange(executionRecords);
-
-        // Update item/group/order status to InProgress if first execution
-        bool wasNew = item.OrderItemStatus == OrderItemStatus.New;
-        if (wasNew)
-        {
             item.OrderItemStatus = OrderItemStatus.InProgress;
             _unitOfWork.OrderItemRepository.Update(item);
+            anyNewlyStarted = true;
         }
 
         await _unitOfWork.SaveChangesAsync(userId);
 
-        // Set group and order to InProgress if they were New
-        if (wasNew)
-            await SetGroupAndOrderInProgressAsync(item.OrderGroupId, userId);
+        if (anyNewlyStarted)
+            await SetGroupAndOrderInProgressAsync(affectedItems[0].OrderGroupId, userId);
 
-        // Check completion chain (re-read for fresh data)
-        await UpdateCompletionStatusAsync(item, userId);
+        await UpdateCompletionStatusAsync(affectedItems, userId);
     }
 
-    // ── Private Methods ──────────────────────────────────────────────────────
+    private List<ItemServiceExecution> BuildRemainingRecords(
+        IReadOnlyList<OrderItem> items,
+        HashSet<Guid> serviceIds,
+        IReadOnlyList<ItemServiceExecution> executions,
+        Guid workerId,
+        DateTime executionDate,
+        string notes)
+    {
+        var records = new List<ItemServiceExecution>();
+        foreach (var item in items)
+        {
+            foreach (var serviceId in serviceIds)
+            {
+                var remaining = RemainingQuantity(item.Quantity, AlreadyExecuted(executions, item.Id, serviceId));
+                if (remaining <= 0)
+                    continue;
+
+                records.Add(CreateExecution(item.Id, serviceId, workerId, remaining, executionDate, notes));
+            }
+        }
+
+        return records;
+    }
+
+    private ItemServiceExecution CreateExecution(
+        Guid orderItemId,
+        Guid serviceCategoryId,
+        Guid workerId,
+        int quantity,
+        DateTime executionDate,
+        string notes) => new()
+    {
+        Id = _guidGenerator.NewGuid(),
+        OrderItemId = orderItemId,
+        ServiceCategoryId = serviceCategoryId,
+        WorkerId = workerId,
+        Quantity = quantity,
+        ExecutionDate = executionDate,
+        Notes = notes
+    };
+
+    private async Task EnsureNotDeliveredAsync(OrderGroup? group)
+    {
+        if (group is null)
+            return;
+
+        if (group.Status == GroupStatusEnum.Delivered)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+
+        var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
+        if (order?.Status == OrderStatusEnum.Delivered)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+    }
+
+    private void EnsureServicesBelongToGroup(Guid groupId, HashSet<Guid> serviceIds)
+    {
+        var groupServiceIds = _unitOfWork.OrderGroupServiceRepository
+            .Filter(gs => gs.OrderGroupId == groupId, nameof(OrderGroupService.Service))
+            .Select(gs => gs.Service.ServiceCategoryId)
+            .ToHashSet();
+
+        if (!serviceIds.IsSubsetOf(groupServiceIds))
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ServiceNotFound));
+    }
+
+    private static int AlreadyExecuted(
+        IEnumerable<ItemServiceExecution> executions,
+        Guid orderItemId,
+        Guid serviceCategoryId) =>
+        executions
+            .Where(e => e.OrderItemId == orderItemId && e.ServiceCategoryId == serviceCategoryId)
+            .Sum(e => e.Quantity);
+
+    private static int RemainingQuantity(int itemQuantity, int alreadyExecuted) =>
+        itemQuantity - alreadyExecuted;
+
 
     private async Task SetGroupAndOrderInProgressAsync(Guid groupId, string userId)
     {
@@ -256,14 +410,20 @@ internal sealed class ItemServiceExecutionService(
         }
     }
 
-    private async Task UpdateCompletionStatusAsync(OrderItem item, string userId)
+    private async Task UpdateCompletionStatusAsync(IReadOnlyList<OrderItem> items, string userId)
     {
-        bool itemIsNowComplete = await CheckAndUpdateItemStatusAsync(item, userId);
+        if (items.Count == 0)
+            return;
 
-        if (itemIsNowComplete)
+        var anyComplete = false;
+        foreach (var item in items)
         {
-            await CheckAndUpdateGroupStatusAsync(item.OrderGroupId, userId);
+            if (await CheckAndUpdateItemStatusAsync(item, userId))
+                anyComplete = true;
         }
+
+        if (anyComplete)
+            await CheckAndUpdateGroupStatusAsync(items[0].OrderGroupId, userId);
     }
 
     private async Task<bool> CheckAndUpdateItemStatusAsync(OrderItem item, string userId)

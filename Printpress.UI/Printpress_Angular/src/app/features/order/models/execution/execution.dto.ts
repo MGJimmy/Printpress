@@ -65,6 +65,21 @@ export interface ExecuteServiceRequestDto {
   workers: WorkerExecutionRowDto[];
 }
 
+export interface ExecuteBatchRequestDto {
+  workerId: string;
+  serviceCategoryIds: string[];
+  executionDate: string;
+  notes: string;
+}
+
+export interface ExecuteItemBatchRequestDto extends ExecuteBatchRequestDto {
+  orderItemId: string;
+}
+
+export interface ExecuteGroupBatchRequestDto extends ExecuteBatchRequestDto {
+  groupId: string;
+}
+
 export const ItemStatusLabels: Record<string, string> = {
   New: 'جديد',
   InProgress: 'قيد التنفيذ',

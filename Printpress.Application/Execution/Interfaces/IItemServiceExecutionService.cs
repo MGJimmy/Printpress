@@ -6,4 +6,6 @@ public interface IItemServiceExecutionService
     Task<ItemExecutionSummaryDto> GetItemExecutionSummaryAsync(Guid itemId);
     Task<ItemExecutionHistoryDto> GetItemExecutionHistoryAsync(Guid itemId);
     Task ExecuteAsync(ExecuteServiceRequestDto payload, string userId);
+    Task ExecuteItemBatchAsync(ExecuteItemBatchRequestDto payload, string userId);
+    Task ExecuteGroupBatchAsync(ExecuteGroupBatchRequestDto payload, string userId);
 }
