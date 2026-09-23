@@ -27,8 +27,8 @@
       <div class="col-md-6" *ngIf="showOrderSelector">
         <app-search-select
           formControlName="orderId"
-          [items]="externalOrderItems"
-          label="الطلب (تنفيذ خارجي)"
+          [items]="undeliveredOrderItems"
+          label="الطلب"
           [required]="true">
         </app-search-select>
       </div>

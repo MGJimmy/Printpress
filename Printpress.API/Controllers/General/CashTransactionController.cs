@@ -47,10 +47,10 @@ public class CashTransactionController(ICashTransactionService _cashTransactionS
         return Ok();
     }
 
-    [HttpGet("external-orders")]
-    public async Task<IActionResult> GetExternalOrders()
+    [HttpGet("undelivered-orders")]
+    public async Task<IActionResult> GetUndeliveredOrders()
     {
-        var result = await _cashTransactionService.GetExternalOrdersAsync();
+        var result = await _cashTransactionService.GetUndeliveredOrdersAsync();
         return Ok(result);
     }
 }

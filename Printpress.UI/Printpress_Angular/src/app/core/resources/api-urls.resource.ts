@@ -180,7 +180,7 @@ export class ApiUrlResource {
     add: ApiUrlResource.CashTransaction_URL + '/add',
     void: (id: string) => `${ApiUrlResource.CashTransaction_URL}/void/${id}`,
     transfer: ApiUrlResource.CashTransaction_URL + '/transfer',
-    externalOrders: ApiUrlResource.CashTransaction_URL + '/external-orders',
+    undeliveredOrders: ApiUrlResource.CashTransaction_URL + '/undelivered-orders',
   };
 
   private static Reports_URL = '/api/Reports';

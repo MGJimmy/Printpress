@@ -16,5 +16,5 @@ public interface ICashTransactionService
 
     Task TransferAsync(TransferCashTransactionDto payload, string userId);
 
-    Task<List<ExternalOrderDto>> GetExternalOrdersAsync();
+    Task<List<OrderLookupDto>> GetUndeliveredOrdersAsync();
 }

@@ -146,13 +146,13 @@ internal sealed class CashTransactionService(
         await _unitOfWork.SaveChangesAsync(userId);
     }
 
-    public async Task<List<ExternalOrderDto>> GetExternalOrdersAsync()
+    public async Task<List<OrderLookupDto>> GetUndeliveredOrdersAsync()
     {
         var orders = _unitOfWork.OrderRepository.Filter(
             o => o.Status != OrderStatusEnum.Delivered && !o.IsDeleted);
 
         return orders
-            .Select(o => new ExternalOrderDto
+            .Select(o => new OrderLookupDto
             {
                 OrderId = o.Id,
                 OrderName = o.Name

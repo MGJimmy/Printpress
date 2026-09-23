@@ -10,7 +10,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CashTransactionService } from '../../services/cash-transaction.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { ExternalOrderDto } from '../../models/cash-transaction.dto';
+import { OrderLookupDto } from '../../models/cash-transaction.dto';
 import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 export interface AddCashTransactionDialogData {
@@ -62,8 +62,8 @@ export class AddCashTransactionDialogComponent implements OnInit {
   ];
 
   filteredCategories: { value: string; label: string }[] = [];
-  externalOrders: ExternalOrderDto[] = [];
-  externalOrderItems: SearchSelectItem[] = [];
+  undeliveredOrders: OrderLookupDto[] = [];
+  undeliveredOrderItems: SearchSelectItem[] = [];
   showOrderSelector = false;
   isSubmitting = false;
 
@@ -94,8 +94,8 @@ export class AddCashTransactionDialogComponent implements OnInit {
 
     this.form.controls.category.valueChanges.subscribe((category) => {
       this.showOrderSelector = category === 'ExternalServices';
-      if (this.showOrderSelector && this.externalOrders.length === 0) {
-        this.loadExternalOrders();
+      if (this.showOrderSelector && this.undeliveredOrders.length === 0) {
+        this.loadUndeliveredOrders();
       }
       if (!this.showOrderSelector) {
         this.form.controls.orderId.setValue('');
@@ -103,17 +103,17 @@ export class AddCashTransactionDialogComponent implements OnInit {
     });
   }
 
-  private loadExternalOrders(): void {
-    this.cashTransactionService.getExternalOrders().subscribe({
+  private loadUndeliveredOrders(): void {
+    this.cashTransactionService.getUndeliveredOrders().subscribe({
       next: (response) => {
-        this.externalOrders = response.data;
-        this.externalOrderItems = this.externalOrders.map(o => ({
+        this.undeliveredOrders = response.data;
+        this.undeliveredOrderItems = this.undeliveredOrders.map(o => ({
           id: o.orderId,
           name: o.orderName
         }));
       },
       error: () => {
-        this.alertService.showError('حدث خطأ أثناء تحميل الطلبات الخارجية');
+        this.alertService.showError('حدث خطأ أثناء تحميل الطلبات');
       }
     });
   }

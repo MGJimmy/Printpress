@@ -17,7 +17,7 @@ export interface CashTransactionDto {
   referenceRoute?: string | null;
 }
 
-export interface ExternalOrderDto {
+export interface OrderLookupDto {
   orderId: string;
   orderName: string;
 }
