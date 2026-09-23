@@ -18,7 +18,10 @@ export interface InventoryCategoryOption {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule],
   templateUrl: './inventory-category-item-select.component.html',
-  styleUrl: './inventory-category-item-select.component.scss'
+  styleUrl: './inventory-category-item-select.component.scss',
+  host: {
+    '[class.full-width]': 'fullWidth'
+  }
 })
 export class InventoryCategoryItemSelectComponent implements OnInit, OnDestroy {
   @Input({ required: true }) itemControl!: FormControl<string>;

@@ -25,13 +25,13 @@
     </article>
   </section>
 
-  <mat-card class="panel">
+  <mat-card class="panel filter-panel">
     <div class="panel-title">
       <mat-icon>edit_note</mat-icon>
       <span>بيانات الصرف</span>
     </div>
     <form [formGroup]="form">
-      <div class="filters">
+      <div class="filters stock-out-fields">
         <app-inventory-category-item-select
           [itemControl]="form.controls.inventoryItemId"
           (selectedItemChange)="onSelectedItem($event)">

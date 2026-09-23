@@ -1,13 +1,14 @@
-.category-item-fields {
+:host {
   display: contents;
 }
 
-.full-width {
+:host.full-width {
+  display: flex;
+  flex-direction: column;
   width: 100%;
 }
 
-.category-item-fields.full-width {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+:host.full-width mat-form-field,
+mat-form-field {
+  width: 100%;
 }

@@ -145,7 +145,8 @@
 }
 
 .page-shell .filters mat-form-field,
-.page-shell .filters app-search-select {
+.page-shell .filters app-search-select,
+.page-shell .filters app-inventory-category-item-select {
   width: 100%;
 }
 

@@ -34,6 +34,7 @@ export interface AddInvoiceLineDialogResult {
   styles: [`
     .dialog-form { display: flex; flex-direction: column; }
     .full-width { width: 100%; }
+    app-inventory-category-item-select { width: 100%; }
   `]
 })
 export class AddInvoiceLineDialogComponent {

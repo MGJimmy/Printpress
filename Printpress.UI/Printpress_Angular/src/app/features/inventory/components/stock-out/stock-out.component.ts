@@ -45,6 +45,7 @@ function maxStockValidator(getMax: () => number) {
     InventoryCategoryItemSelectComponent,
   ],
   templateUrl: './stock-out.component.html',
+  styleUrl: './stock-out.component.scss'
 })
 export class StockOutComponent implements OnInit {
   selectedItem: InventoryItemDto | null = null;
