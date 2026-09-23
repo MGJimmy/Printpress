@@ -11,7 +11,6 @@ export interface OrderGroupGetDto extends IObjectState {
     deliveredTo?: string;
     deliveryNotes?: string;
     status?:string;
-    executionType?: string;
     orderId: string;
     deliveryName?: string
     receiverName?: string

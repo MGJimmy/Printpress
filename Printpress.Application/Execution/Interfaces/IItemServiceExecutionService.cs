@@ -6,5 +6,4 @@ public interface IItemServiceExecutionService
     Task<ItemExecutionSummaryDto> GetItemExecutionSummaryAsync(Guid itemId);
     Task<ItemExecutionHistoryDto> GetItemExecutionHistoryAsync(Guid itemId);
     Task ExecuteAsync(ExecuteServiceRequestDto payload, string userId);
-    Task CompleteItemAsync(Guid itemId, string userId);
 }

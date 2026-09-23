@@ -53,7 +53,7 @@
     "cannot_delete_group_with_executions": "Cannot delete a group that has executed items",
     "cannot_edit_executed_item": "Cannot edit an item that has any executed service",
     "cannot_delete_executed_item": "Cannot delete an item that has any executed service",
-    "cannot_change_services_after_execution": "Cannot change group services or execution type after execution has started",
+    "cannot_change_services_after_execution": "Cannot change group services after execution has started",
     "cannot_add_item_to_closed_group": "Cannot add items to a completed or delivered group",
     "group_not_completed_for_delivery": "Cannot deliver a group before it is completed",
     "cannot_execute_delivered": "Cannot execute or complete an item on a delivered group or order",

@@ -21,7 +21,6 @@ import { OrderSharedDataService } from '../../services/order-shared-data.service
 import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { isStatus } from '../../models/enums/status-display';
-import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export interface ServiceCat_interface {
@@ -42,7 +41,6 @@ export interface ServiceCat_interface {
     CommonModule,
     MatDialogModule,
     ServiceCategoryArabicPipe,
-    MatRadioModule,
     MatCheckboxModule
   ],
   templateUrl: './order-group-service-upsert.component.html',
@@ -75,15 +73,6 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
   groupId: string = '';
   servicesLocked = false;
-  executionTypeLocked = false;
-
-  executionType: string = 'Internal';
-  executionTypes = ['Internal', 'External_WithOurMaterials', 'External_Full'];
-  executionTypeLabels: Record<string, string> = {
-    Internal: 'داخلي',
-    External_WithOurMaterials: 'خارجي (بموادنا)',
-    External_Full: 'خارجي (كامل)'
-  };
 
   get isPrintingCategorySelected(): boolean {
     return this.selectedCategory === ServiceCategoryEnum.Printing;
@@ -104,11 +93,9 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.groupId = this.inputData.groupId;
 
     const group = this.orderSharedDataService.getOrderGroup_Copy(this.groupId);
-    this.executionType = group.executionType ?? 'Internal';
     this.servicesLocked = isStatus(group.status, 'Completed', 'Delivered')
       || !!group.deliveryDate
       || (group.items ?? []).some(item => isStatus(item.status, 'InProgress', 'Completed'));
-    this.executionTypeLocked = this.servicesLocked;
 
     this.fetchServices();
     this.fillPageData()
@@ -283,14 +270,6 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(dialogSub);
-  }
-
-  onExecutionTypeChange(type: string): void {
-    if (this.executionTypeLocked) {
-      return;
-    }
-    this.executionType = type;
-    this.orderSharedDataService.updateGroupExecutionType(this.groupId, type);
   }
 
   onCancel(): void {

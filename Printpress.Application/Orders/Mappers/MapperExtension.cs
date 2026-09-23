@@ -40,7 +40,6 @@ namespace Printpress.Application
                 DeliveryNotes =OrderGroup.DeliveryNotes,
                 OrderId = OrderGroup.OrderId,
                 Status = OrderGroup.Status,
-                ExecutionType = OrderGroup.ExecutionType,
                 OrderGroupServices = OrderGroup.OrderGroupServices.MapAsList(MapToGroupServiceDTO),
                 Items = OrderGroup.Items.MapAsList(MapToItemDTO),
                 ObjectState = TrackingState.Unchanged

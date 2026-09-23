@@ -35,8 +35,4 @@ export class ItemServiceExecutionService {
   execute(payload: ExecuteServiceRequestDto): Observable<any> {
     return this.httpService.post<any>(ApiUrlResource.ItemServiceExecutionAPI.execute, payload);
   }
-
-  completeItem(itemId: string): Observable<any> {
-    return this.httpService.post<any>(`${ApiUrlResource.ItemServiceExecutionAPI.completeItem}/${itemId}`, {});
-  }
 }

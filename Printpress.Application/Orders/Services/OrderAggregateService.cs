@@ -425,7 +425,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         bool groupIsClosed,
         bool groupHasStartedItems)
     {
-        if ((groupIsClosed || groupHasStartedItems) && GroupServicesOrTypeChanged(persistedGroup, incomingGroup))
+        if ((groupIsClosed || groupHasStartedItems) && GroupServicesChanged(persistedGroup, incomingGroup))
             Reject(LocalizationKeys.Orders.CannotChangeServicesAfterExecution);
     }
 
@@ -480,11 +480,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     private void Reject(string localizationKey)
         => ValidationExeption.FireValidationException(_loc.Get(localizationKey));
 
-    private static bool GroupServicesOrTypeChanged(OrderGroup persisted, OrderGroupUpsertDTO incoming)
+    private static bool GroupServicesChanged(OrderGroup persisted, OrderGroupUpsertDTO incoming)
     {
-        if (persisted.ExecutionType != incoming.ExecutionType)
-            return true;
-
         var persistedServiceKeys = (persisted.OrderGroupServices ?? [])
             .Where(s => !s.IsDeleted)
             .Select(s => (s.ServiceId, s.IsCover))

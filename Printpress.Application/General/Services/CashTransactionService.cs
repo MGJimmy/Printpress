@@ -148,20 +148,16 @@ internal sealed class CashTransactionService(
 
     public async Task<List<ExternalOrderDto>> GetExternalOrdersAsync()
     {
-        var groups = _unitOfWork.OrderGroupRepository.Filter(
-            g => (g.ExecutionType == GroupExecutionType.External_WithOurMaterials
-                  || g.ExecutionType == GroupExecutionType.External_Full)
-                 && g.Order.Status != OrderStatusEnum.Delivered
-                 && !g.IsDeleted,
-            "Order");
+        var orders = _unitOfWork.OrderRepository.Filter(
+            o => o.Status != OrderStatusEnum.Delivered && !o.IsDeleted);
 
-        return groups
-            .DistinctBy(g => g.OrderId)
-            .Select(g => new ExternalOrderDto
+        return orders
+            .Select(o => new ExternalOrderDto
             {
-                OrderId = g.OrderId,
-                OrderName = g.Order.Name
-            }).ToList();
+                OrderId = o.Id,
+                OrderName = o.Name
+            })
+            .ToList();
     }
 
     private async Task VoidTransferPairAsync(Guid transferId, CashTransaction clicked, string reason)

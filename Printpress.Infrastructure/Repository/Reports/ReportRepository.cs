@@ -70,7 +70,6 @@ internal class ReportRepository : IReportRepository
 
         var candidates = orders
             .SelectMany(o => o.OrderGroups ?? [])
-            .Where(og => og.ExecutionType != GroupExecutionType.External_Full)
             .SelectMany(og => (og.OrderGroupServices ?? [])
                 .Where(os => serviceIds.Contains(os.ServiceId) && os.Service != null)
                 .SelectMany(os => (og.Items ?? [])
@@ -246,7 +245,7 @@ internal class ReportRepository : IReportRepository
         var groupIds = serviceGroupPairs.Select(p => p.OrderGroupId).Distinct().ToList();
 
         var rawItems = await _context.Item
-            .Where(i => groupIds.Contains(i.OrderGroupId) && !i.IsDeleted && i.OrderGroup.ExecutionType != GroupExecutionType.External_Full)
+            .Where(i => groupIds.Contains(i.OrderGroupId) && !i.IsDeleted)
             .Select(i => new
             {
                 i.Id,

@@ -53,7 +53,7 @@
     "cannot_delete_group_with_executions": "لا يمكن حذف مجموعة تم تنفيذ أي عنصر فيها",
     "cannot_edit_executed_item": "لا يمكن تعديل عنصر تم تنفيذ أي خدمة عليه",
     "cannot_delete_executed_item": "لا يمكن حذف عنصر تم تنفيذ أي خدمة عليه",
-    "cannot_change_services_after_execution": "لا يمكن تغيير خدمات المجموعة أو نوع التنفيذ بعد بدء التنفيذ",
+    "cannot_change_services_after_execution": "لا يمكن تغيير خدمات المجموعة بعد بدء التنفيذ",
     "cannot_add_item_to_closed_group": "لا يمكن إضافة عناصر لمجموعة مكتملة أو تم تسليمها",
     "group_not_completed_for_delivery": "لا يمكن تسليم المجموعة قبل اكتمالها",
     "cannot_execute_delivered": "لا يمكن تنفيذ أو إكمال عنصر في مجموعة أو طلبية تم تسليمها",

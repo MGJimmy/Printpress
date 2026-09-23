@@ -10,7 +10,6 @@ namespace Printpress.Domain
         public string ReceiverName { get; set; }
         public string DeliveryNotes { get; set; }
         public GroupStatusEnum Status { get; set; }
-        public GroupExecutionType ExecutionType { get; set; }
 
         public bool IsDeleted { get; set; }
 

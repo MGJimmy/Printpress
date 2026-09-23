@@ -32,7 +32,6 @@ function mapOrderGroupGetToUpsert(groupGet: OrderGroupGetDto): OrderGroupUpsertD
     return {
         id: groupGet.id,
         name: groupGet.name,
-        executionType: groupGet.executionType ?? 'Internal',
         objectState: groupGet.objectState, // Keep object state
         orderGroupServices: groupGet.orderGroupServices.map(mapOrderGroupServiceGetToUpsert),
         items: groupGet.items.map(mapItemGetToUpsert)
