@@ -64,11 +64,12 @@ export class InventoryItemViewComponent implements OnInit {
   filterTransactionType: string = '';
 
   columnDefs: TableColDefinitionModel[] = [
-    { headerName: 'نوع الحركة', 
+    { headerName: 'نوع الحركة',
       column: 'inventoryTransactionType',
-      translationPrefix: 'inventory.enum.inventoryTransactionType' 
+      translationPrefix: 'inventory.enum.inventoryTransactionType',
+      toneFrom: 'inventoryTransactionType'
     },
-    { headerName: 'الكمية', column: 'quantity' },
+    { headerName: 'الكمية', column: 'quantity', toneFrom: 'inventoryTransactionType' },
     { headerName: 'نوع المرجع', column: 'referenceType' },
     { headerName: 'العامل', column: 'workerName' },
     { headerName: 'ملاحظات', column: 'notes' },

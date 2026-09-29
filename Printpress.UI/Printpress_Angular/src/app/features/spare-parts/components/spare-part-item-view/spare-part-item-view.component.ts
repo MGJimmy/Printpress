@@ -133,7 +133,9 @@ export class SparePartItemViewComponent implements OnInit {
   }
 
   qtyClass(type: string): string {
-    return type === 'Out' ? 'amt-out' : 'amt-in';
+    if (type === 'In') return 'cell-in';
+    if (type === 'Out') return 'cell-out';
+    return '';
   }
 
   private loadItem(): void {

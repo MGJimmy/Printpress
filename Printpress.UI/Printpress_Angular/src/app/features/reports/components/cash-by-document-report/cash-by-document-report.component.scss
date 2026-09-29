@@ -21,8 +21,8 @@
 :host ::ng-deep .cash-table .mat-mdc-header-row { background: var(--color-primary); }
 :host ::ng-deep .cash-table .mat-mdc-header-cell { color: var(--color-primary) !important; font-weight: 700; white-space: nowrap; }
 :host ::ng-deep .cash-table .mat-mdc-cell, :host ::ng-deep .cash-table .mat-mdc-header-cell { text-align: center; padding: 0.6rem 0.5rem; }
-.amt-in { color: #2e7d32; font-weight: 700; }
-.amt-out { color: #c62828; font-weight: 700; }
+.amt-in { color: var(--color-in); font-weight: 700; }
+.amt-out { color: var(--color-out); font-weight: 700; }
 .amt-balance { color: #1565c0; font-weight: 800; }
 .ref-link { color: var(--color-primary); font-weight: 700; text-decoration: none; }
 .ref-link:hover { text-decoration: underline; }

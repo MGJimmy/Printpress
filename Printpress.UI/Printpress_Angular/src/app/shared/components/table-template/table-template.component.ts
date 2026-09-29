@@ -104,6 +104,21 @@ export class TableTemplateComponent implements OnInit {
 
   }
 
+  toneClass(column: string, element: any): string {
+    const toneFrom = this.columnDefs.find(c => c.column === column)?.toneFrom;
+    if (!toneFrom || !element) {
+      return '';
+    }
+    const value = element[toneFrom];
+    if (value === 'In') {
+      return 'cell-in';
+    }
+    if (value === 'Out') {
+      return 'cell-out';
+    }
+    return '';
+  }
+
   onPageChangeClick(event: PageEvent): void {
     let pageChangedModel: PageChangedModel = {
       currentPage: event.pageIndex + 1,

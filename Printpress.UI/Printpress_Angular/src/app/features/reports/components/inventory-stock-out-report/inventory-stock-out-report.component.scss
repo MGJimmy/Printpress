@@ -139,7 +139,7 @@
 :host ::ng-deep .cash-table .mat-mdc-footer-row { background: #fff5f5; font-weight: 700; }
 :host ::ng-deep .cash-table a { color: #c62828; font-weight: 700; text-decoration: none; }
 
-.amt-out { color: #c62828; font-weight: 700; }
+.amt-out { color: var(--color-out); font-weight: 700; }
 .notes { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .empty { text-align: center; color: #78909c; padding: 1.5rem 0 1rem; }

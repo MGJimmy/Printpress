@@ -336,15 +336,18 @@
   justify-content: flex-start;
 }
 
-/* Hover */
+/* Hover: brass on the dark sidebar, ink text so the label stays readable */
 .reports-children .list-group-item:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--color-accent) !important;
+  color: var(--color-primary) !important;
   border-radius: 6px;
 }
 
 /* Active child */
-.reports-children .active-link {
-  background-color: rgba(255, 255, 255, 0.2) !important;
+.reports-children .active-link,
+.reports-children .active-link:hover {
+  background-color: var(--color-tertiary) !important;
+  color: var(--color-primary) !important;
   border: none !important;
 }
 

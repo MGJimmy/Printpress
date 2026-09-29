@@ -165,8 +165,8 @@
   background: var(--color-secondary);
 }
 
-.amt-in { color: #2e7d32; font-weight: 700; }
-.amt-out { color: #c62828; font-weight: 700; }
+.amt-in { color: var(--color-in); font-weight: 700; }
+.amt-out { color: var(--color-out); font-weight: 700; }
 
 .badge-in,
 .badge-out,
@@ -178,8 +178,8 @@
   font-weight: 700;
 }
 
-.badge-in { background: #e8f5e9; color: #2e7d32; }
-.badge-out { background: #ffebee; color: #c62828; }
+.badge-in { background: var(--color-in-soft); color: var(--color-in); }
+.badge-out { background: var(--color-out-soft); color: var(--color-out); }
 .badge-adj { background: var(--color-tertiary); color: var(--color-accent); }
 
 .empty {

@@ -157,7 +157,7 @@
 :host ::ng-deep .cash-table .mat-mdc-footer-row { background: var(--color-tertiary); font-weight: 700; }
 :host ::ng-deep .cash-table a { color: #2e7d32; font-weight: 700; text-decoration: none; }
 
-.amt-in { color: #2e7d32; font-weight: 700; }
+.amt-in { color: var(--color-in); font-weight: 700; }
 .amt-balance { color: #1565c0; font-weight: 800; }
 
 .empty { text-align: center; color: #78909c; padding: 1.5rem 0 1rem; }

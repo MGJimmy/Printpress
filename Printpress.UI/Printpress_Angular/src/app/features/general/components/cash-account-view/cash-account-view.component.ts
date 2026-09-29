@@ -89,10 +89,10 @@ export class CashAccountViewComponent implements OnInit {
 
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'الحالة', column: 'status' },
-    { headerName: 'نوع الحركة', column: 'type' },
+    { headerName: 'نوع الحركة', column: 'type', toneFrom: 'movementTone' },
     { headerName: 'الفئة', column: 'category' },
     { headerName: 'المرجع', column: 'referenceLabel' },
-    { headerName: 'المبلغ', column: 'amount' },
+    { headerName: 'المبلغ', column: 'amount', toneFrom: 'movementTone' },
     { headerName: 'الوصف', column: 'description' },
     { headerName: 'تاريخ الحركة', column: 'transactionDate' },
   ];
@@ -154,6 +154,7 @@ export class CashAccountViewComponent implements OnInit {
       next: (response) => {
         this.transactions = (response.data.items as CashTransactionDto[]).map((t) => ({
           ...t,
+          movementTone: t.type,
           type: this.toTypeLabel(t.type),
           category: this.toCategoryLabel(t.category),
           status: t.isVoided ? 'ملغاة' : t.reversesTransactionId ? 'عكس' : 'عادية',

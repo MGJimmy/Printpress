@@ -202,7 +202,7 @@
 :host ::ng-deep .lines-table .mat-mdc-footer-row { background: var(--color-secondary); font-weight: 700; }
 
 .amt { font-weight: 700; }
-.amt-out { color: #c62828; font-weight: 700; }
+.amt-out { color: var(--color-out); font-weight: 700; }
 .empty { text-align: center; color: #78909c; padding: 1.5rem 0 1rem; }
 .loading { display: flex; justify-content: center; padding: 2.5rem 0; }
 

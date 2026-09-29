@@ -20,6 +20,11 @@
   --table-btn-delete: #c62828;
   --table-btn-secondary: var(--color-accent);
   --table-btn-secondary-text: var(--color-primary);
+
+  --color-in: #2e7d32;
+  --color-in-soft: #E3F4E8;
+  --color-out: #c62828;
+  --color-out-soft: #FBEAEA;
 }
 
 html,
@@ -155,5 +160,61 @@ th.mat-header-cell {
 
 .mat-mdc-row:hover {
   background-color: var(--table-hover) !important;
+}
+
+.amt-in,
+td.mat-mdc-cell.cell-in,
+td.mat-cell.cell-in {
+  color: var(--color-in) !important;
+  font-weight: 700;
+}
+
+.amt-out,
+td.mat-mdc-cell.cell-out,
+td.mat-cell.cell-out {
+  color: var(--color-out) !important;
+  font-weight: 700;
+}
+
+td.mat-mdc-cell.cell-in,
+td.mat-cell.cell-in,
+.mat-mdc-row:hover td.mat-mdc-cell.cell-in,
+.mat-mdc-row:hover td.mat-cell.cell-in,
+.badge-in {
+  background-color: var(--color-in-soft) !important;
+  color: var(--color-in) !important;
+}
+
+td.mat-mdc-cell.cell-out,
+td.mat-cell.cell-out,
+.mat-mdc-row:hover td.mat-mdc-cell.cell-out,
+.mat-mdc-row:hover td.mat-cell.cell-out,
+.badge-out {
+  background-color: var(--color-out-soft) !important;
+  color: var(--color-out) !important;
+}
+
+.field-in .mat-mdc-text-field-wrapper,
+.field-in .mdc-text-field--outlined {
+  background: var(--color-in-soft);
+}
+
+.field-out .mat-mdc-text-field-wrapper,
+.field-out .mdc-text-field--outlined {
+  background: var(--color-out-soft);
+}
+
+.field-in input,
+.field-in .mat-mdc-input-element {
+  color: var(--color-in) !important;
+  -webkit-text-fill-color: var(--color-in) !important;
+  font-weight: 700;
+}
+
+.field-out input,
+.field-out .mat-mdc-input-element {
+  color: var(--color-out) !important;
+  -webkit-text-fill-color: var(--color-out) !important;
+  font-weight: 700;
 }
   

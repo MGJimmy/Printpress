@@ -13,6 +13,7 @@ export interface CashTransactionDto {
   reversesTransactionId: string | null;
   canVoid: boolean;
   status?: string;
+  movementTone?: string;
   referenceLabel?: string | null;
   referenceRoute?: string | null;
 }

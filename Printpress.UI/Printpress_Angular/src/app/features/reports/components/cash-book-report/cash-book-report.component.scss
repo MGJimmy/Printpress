@@ -187,8 +187,8 @@
   background: var(--color-tertiary);
 }
 
-.amt-in { color: #2e7d32; font-weight: 700; }
-.amt-out { color: #c62828; font-weight: 700; }
+.amt-in { color: var(--color-in); font-weight: 700; }
+.amt-out { color: var(--color-out); font-weight: 700; }
 .amt-balance { color: #1565c0; font-weight: 800; }
 
 .ref-link {

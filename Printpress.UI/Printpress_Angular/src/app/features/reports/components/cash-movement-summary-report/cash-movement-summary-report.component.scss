@@ -35,8 +35,8 @@
 :host ::ng-deep .cash-table .mat-mdc-cell, :host ::ng-deep .cash-table .mat-mdc-header-cell { text-align: center; padding: 0.65rem 0.5rem; }
 :host ::ng-deep .cash-table .mat-mdc-row:hover { background: var(--color-tertiary); }
 
-.amt-in { color: #2e7d32; font-weight: 700; }
-.amt-out { color: #c62828; font-weight: 700; }
+.amt-in { color: var(--color-in); font-weight: 700; }
+.amt-out { color: var(--color-out); font-weight: 700; }
 .amt-balance { color: #1565c0; font-weight: 800; }
 .empty { text-align: center; color: #78909c; padding: 1.2rem; }
 .loading { display: flex; justify-content: center; padding: 2.5rem 0; }
