@@ -33,9 +33,11 @@ public class GlobalExceptionMiddleWare : IExceptionHandler
         }
 
 
-        if (exception is BusinessExceptions)
+        if (exception is BusinessExceptions businessException)
         {
-            string exceptionLocalizedMessage = _localization.Get(exception.Message);
+            string exceptionLocalizedMessage = businessException.Args.Length > 0
+                ? _localization.Get(businessException.ErrorLocalizationKey, businessException.Args)
+                : _localization.Get(businessException.ErrorLocalizationKey);
 
             var response = new Response(ResponseStatus.ValidationFailure, ResponseMessage.ValidationFailure, error: exceptionLocalizedMessage);
 

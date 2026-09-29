@@ -158,11 +158,19 @@ internal sealed class ItemServiceExecutionService(
 
     public async Task ExecuteAsync(ExecuteServiceRequestDto payload, string userId)
     {
-        if (payload.Workers == null || !payload.Workers.Any())
-            throw new ValidationExeption("يجب إضافة عامل واحد على الأقل");
+        if (payload?.Workers == null || !payload.Workers.Any())
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.WorkerRequired));
+
+        if (payload.Workers.Any(w => w.WorkerId == Guid.Empty))
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.WorkerRequired));
+
+        if (payload.ServiceCategoryId == Guid.Empty)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ServiceNotFound));
 
         if (payload.Workers.Any(w => w.Quantity <= 0))
-            throw new ValidationExeption("كمية التنفيذ يجب أن تكون أكبر من صفر");
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ExecutionQuantityMustBePositive));
+
+        await EnsureWorkersExistAsync(payload.Workers.Select(w => w.WorkerId));
 
         var item = _unitOfWork.OrderItemRepository
             .FirstOrDefault(i => i.Id == payload.OrderItemId, nameof(OrderItem.OrderGroup));
@@ -170,25 +178,20 @@ internal sealed class ItemServiceExecutionService(
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.OrderItemId));
 
-        var group = item.OrderGroup ?? await _unitOfWork.OrderGroupRepository.FindAsync(item.OrderGroupId);
-        await EnsureNotDeliveredAsync(group);
+        var (group, order, categoryIds) = await LoadExecutionContextAsync(item);
 
-        if (item.OrderItemStatus == OrderItemStatus.Completed)
-            throw new ValidationExeption("العنصر مكتمل بالفعل ولا يمكن تنفيذ خدمات عليه");
+        group.EnsureCanExecute([payload.ServiceCategoryId], categoryIds);
+        order.EnsureCanExecute();
 
         var alreadyExecuted = _unitOfWork.WorkerProductionRepository
             .Filter(e => e.OrderItemId == payload.OrderItemId && e.ServiceCategoryId == payload.ServiceCategoryId)
             .Sum(e => e.Quantity);
 
-        var newExecutionTotal = payload.Workers.Sum(w => w.Quantity);
-        var remaining = RemainingQuantity(item.Quantity, alreadyExecuted);
-
-        if (newExecutionTotal > remaining)
-            throw new ValidationExeption(
-                $"الكمية المطلوب تنفيذها ({newExecutionTotal}) تتجاوز الكمية المتبقية ({remaining})");
+        item.AcceptExecution(payload.Workers.Sum(w => w.Quantity), alreadyExecuted);
 
         var executionDate = UtcDateTime.AsUtc(payload.ExecutionDate);
-        var executionRecords = payload.Workers.Select(w => CreateExecution(
+        var executionRecords = payload.Workers.Select(w => ItemServiceExecution.Create(
+            _guidGenerator.NewGuid(),
             payload.OrderItemId,
             payload.ServiceCategoryId,
             w.WorkerId,
@@ -196,7 +199,7 @@ internal sealed class ItemServiceExecutionService(
             executionDate,
             payload.Notes)).ToList();
 
-        await PersistExecutionsAsync(executionRecords, [item], userId);
+        await PersistExecutionsAsync(executionRecords, [item], group, order, categoryIds, userId);
     }
 
     public async Task ExecuteItemBatchAsync(ExecuteItemBatchRequestDto payload, string userId)
@@ -208,9 +211,6 @@ internal sealed class ItemServiceExecutionService(
 
         if (item is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(payload.OrderItemId));
-
-        if (item.OrderItemStatus == OrderItemStatus.Completed)
-            throw new ValidationExeption("العنصر مكتمل بالفعل ولا يمكن تنفيذ خدمات عليه");
 
         var group = item.OrderGroup ?? await _unitOfWork.OrderGroupRepository.FindAsync(item.OrderGroupId);
         await ExecuteRemainingBatchAsync(group, [item], serviceIds, payload, userId);
@@ -246,16 +246,24 @@ internal sealed class ItemServiceExecutionService(
     }
 
     private async Task ExecuteRemainingBatchAsync(
-        OrderGroup? group,
+        OrderGroup group,
         IReadOnlyList<OrderItem> items,
         HashSet<Guid> serviceIds,
         ExecuteBatchRequestDto payload,
         string userId)
     {
-        await EnsureNotDeliveredAsync(group);
+        if (group is null)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.GroupNotFound));
 
-        if (group is not null)
-            EnsureServicesBelongToGroup(group.Id, serviceIds);
+        var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
+        if (order is null)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
+
+        var categoryIds = LoadGroupCategoryIds(group.Id);
+        group.EnsureCanExecute(serviceIds, categoryIds);
+        order.EnsureCanExecute();
+
+        await EnsureWorkersExistAsync([payload.WorkerId]);
 
         if (!items.Any())
             throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.BatchNothingToExecute));
@@ -277,33 +285,51 @@ internal sealed class ItemServiceExecutionService(
             throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.BatchNothingToExecute));
 
         var affectedItems = items.Where(i => records.Any(r => r.OrderItemId == i.Id)).ToList();
-        await PersistExecutionsAsync(records, affectedItems, userId);
+        await PersistExecutionsAsync(records, affectedItems, group, order, categoryIds, userId);
     }
 
     private async Task PersistExecutionsAsync(
         List<ItemServiceExecution> records,
         IReadOnlyList<OrderItem> affectedItems,
+        OrderGroup group,
+        Order order,
+        IReadOnlyCollection<Guid> requiredCategoryIds,
         string userId)
     {
-        await _unitOfWork.WorkerProductionRepository.AddRange(records);
+        var itemIds = affectedItems.Select(i => i.Id).ToList();
+        var existing = _unitOfWork.WorkerProductionRepository
+            .Filter(e => itemIds.Contains(e.OrderItemId))
+            .ToList();
 
-        var anyNewlyStarted = false;
         foreach (var item in affectedItems)
         {
-            if (item.OrderItemStatus != OrderItemStatus.New)
-                continue;
+            var executedByCategory = existing
+                .Where(e => e.OrderItemId == item.Id)
+                .Concat(records.Where(r => r.OrderItemId == item.Id))
+                .GroupBy(e => e.ServiceCategoryId)
+                .ToDictionary(g => g.Key, g => g.Sum(e => e.Quantity));
 
-            item.OrderItemStatus = OrderItemStatus.InProgress;
+            item.TryComplete(requiredCategoryIds, executedByCategory);
             _unitOfWork.OrderItemRepository.Update(item);
-            anyNewlyStarted = true;
         }
 
+        await _unitOfWork.WorkerProductionRepository.AddRange(records);
+
+        var allItems = _unitOfWork.OrderItemRepository
+            .Filter(i => i.OrderGroupId == group.Id)
+            .ToList();
+
+        if (group.RefreshStatus(allItems.Select(i => i.OrderItemStatus)))
+            _unitOfWork.OrderGroupRepository.Update(group);
+
+        var allGroups = _unitOfWork.OrderGroupRepository
+            .Filter(g => g.OrderId == order.Id)
+            .ToList();
+
+        if (order.RefreshStatus(allGroups.Select(g => g.Status)))
+            _unitOfWork.OrderRepository.Update(order);
+
         await _unitOfWork.SaveChangesAsync(userId);
-
-        if (anyNewlyStarted)
-            await SetGroupAndOrderInProgressAsync(affectedItems[0].OrderGroupId, userId);
-
-        await UpdateCompletionStatusAsync(affectedItems, userId);
     }
 
     private List<ItemServiceExecution> BuildRemainingRecords(
@@ -319,192 +345,53 @@ internal sealed class ItemServiceExecutionService(
         {
             foreach (var serviceId in serviceIds)
             {
-                var remaining = RemainingQuantity(item.Quantity, AlreadyExecuted(executions, item.Id, serviceId));
+                var alreadyExecuted = executions
+                    .Where(e => e.OrderItemId == item.Id && e.ServiceCategoryId == serviceId)
+                    .Sum(e => e.Quantity);
+
+                var remaining = item.GetRemaining(alreadyExecuted);
                 if (remaining <= 0)
                     continue;
 
-                records.Add(CreateExecution(item.Id, serviceId, workerId, remaining, executionDate, notes));
+                item.AcceptExecution(remaining, alreadyExecuted);
+                records.Add(ItemServiceExecution.Create(
+                    _guidGenerator.NewGuid(),
+                    item.Id,
+                    serviceId,
+                    workerId,
+                    remaining,
+                    executionDate,
+                    notes));
             }
         }
 
         return records;
     }
 
-    private ItemServiceExecution CreateExecution(
-        Guid orderItemId,
-        Guid serviceCategoryId,
-        Guid workerId,
-        int quantity,
-        DateTime executionDate,
-        string notes) => new()
+    private async Task<(OrderGroup Group, Order Order, HashSet<Guid> CategoryIds)> LoadExecutionContextAsync(OrderItem item)
     {
-        Id = _guidGenerator.NewGuid(),
-        OrderItemId = orderItemId,
-        ServiceCategoryId = serviceCategoryId,
-        WorkerId = workerId,
-        Quantity = quantity,
-        ExecutionDate = executionDate,
-        Notes = notes
-    };
-
-    private async Task EnsureNotDeliveredAsync(OrderGroup? group)
-    {
+        var group = item.OrderGroup ?? await _unitOfWork.OrderGroupRepository.FindAsync(item.OrderGroupId);
         if (group is null)
-            return;
-
-        if (group.Status == GroupStatusEnum.Delivered)
-            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.GroupNotFound));
 
         var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
-        if (order?.Status == OrderStatusEnum.Delivered)
-            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.CannotExecuteDelivered));
+        if (order is null)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
+
+        return (group, order, LoadGroupCategoryIds(group.Id));
     }
 
-    private void EnsureServicesBelongToGroup(Guid groupId, HashSet<Guid> serviceIds)
-    {
-        var groupServiceIds = _unitOfWork.OrderGroupServiceRepository
+    private HashSet<Guid> LoadGroupCategoryIds(Guid groupId) =>
+        _unitOfWork.OrderGroupServiceRepository
             .Filter(gs => gs.OrderGroupId == groupId, nameof(OrderGroupService.Service))
             .Select(gs => gs.Service.ServiceCategoryId)
             .ToHashSet();
 
-        if (!serviceIds.IsSubsetOf(groupServiceIds))
-            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.ServiceNotFound));
-    }
-
-    private static int AlreadyExecuted(
-        IEnumerable<ItemServiceExecution> executions,
-        Guid orderItemId,
-        Guid serviceCategoryId) =>
-        executions
-            .Where(e => e.OrderItemId == orderItemId && e.ServiceCategoryId == serviceCategoryId)
-            .Sum(e => e.Quantity);
-
-    private static int RemainingQuantity(int itemQuantity, int alreadyExecuted) =>
-        itemQuantity - alreadyExecuted;
-
-
-    private async Task SetGroupAndOrderInProgressAsync(Guid groupId, string userId)
+    private async Task EnsureWorkersExistAsync(IEnumerable<Guid> workerIds)
     {
-        var group = await _unitOfWork.OrderGroupRepository.FindAsync(groupId);
-        if (group is null) return;
-
-        bool groupUpdated = false;
-        if (group.Status == GroupStatusEnum.New)
-        {
-            group.Status = GroupStatusEnum.InProgress;
-            _unitOfWork.OrderGroupRepository.Update(group);
-            groupUpdated = true;
-        }
-
-        if (groupUpdated)
-            await _unitOfWork.SaveChangesAsync(userId);
-
-        var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
-        if (order is null) return;
-
-        if (order.Status == OrderStatusEnum.New)
-        {
-            order.Status = OrderStatusEnum.InProgress;
-            _unitOfWork.OrderRepository.Update(order);
-            await _unitOfWork.SaveChangesAsync(userId);
-        }
-    }
-
-    private async Task UpdateCompletionStatusAsync(IReadOnlyList<OrderItem> items, string userId)
-    {
-        if (items.Count == 0)
-            return;
-
-        var anyComplete = false;
-        foreach (var item in items)
-        {
-            if (await CheckAndUpdateItemStatusAsync(item, userId))
-                anyComplete = true;
-        }
-
-        if (anyComplete)
-            await CheckAndUpdateGroupStatusAsync(items[0].OrderGroupId, userId);
-    }
-
-    private async Task<bool> CheckAndUpdateItemStatusAsync(OrderItem item, string userId)
-    {
-        // Get all service categories for the item's group
-        var groupServices = _unitOfWork.OrderGroupServiceRepository
-            .Filter(gs => gs.OrderGroupId == item.OrderGroupId,
-                nameof(OrderGroupService.Service),
-                $"{nameof(OrderGroupService.Service)}.{nameof(Service.ServiceCategory)}")
-            .ToList();
-
-        if (!groupServices.Any()) return false;
-
-        var distinctServiceCategoryIds = groupServices
-            .Select(gs => gs.Service.ServiceCategoryId)
-            .Distinct()
-            .ToList();
-
-        // Get all executions for this item
-        var executions = _unitOfWork.WorkerProductionRepository
-            .Filter(e => e.OrderItemId == item.Id)
-            .ToList();
-
-        // Check if all services are completed for this item
-        bool allServicesComplete = distinctServiceCategoryIds.All(scId =>
-            executions.Where(e => e.ServiceCategoryId == scId).Sum(e => e.Quantity) >= item.Quantity);
-
-        if (!allServicesComplete) return false;
-
-        var freshItem = await _unitOfWork.OrderItemRepository.FindAsync(item.Id);
-        if (freshItem!.OrderItemStatus != OrderItemStatus.Completed)
-        {
-            freshItem.OrderItemStatus = OrderItemStatus.Completed;
-            _unitOfWork.OrderItemRepository.Update(freshItem);
-            await _unitOfWork.SaveChangesAsync(userId);
-        }
-
-        return true;
-    }
-
-    private async Task CheckAndUpdateGroupStatusAsync(Guid groupId, string userId)
-    {
-        var allGroupItems = _unitOfWork.OrderItemRepository
-            .Filter(i => i.OrderGroupId == groupId)
-            .ToList();
-
-        if (!allGroupItems.Any()) return;
-
-        bool allItemsComplete = allGroupItems.All(i => i.OrderItemStatus == OrderItemStatus.Completed);
-        if (!allItemsComplete) return;
-
-        var group = await _unitOfWork.OrderGroupRepository.FindAsync(groupId);
-        if (group is null || group.Status is GroupStatusEnum.Completed or GroupStatusEnum.Delivered) return;
-
-        group.Status = GroupStatusEnum.Completed;
-        _unitOfWork.OrderGroupRepository.Update(group);
-        await _unitOfWork.SaveChangesAsync(userId);
-
-        // Check order
-        await CheckAndUpdateOrderStatusAsync(group.OrderId, userId);
-    }
-
-    private async Task CheckAndUpdateOrderStatusAsync(Guid orderId, string userId)
-    {
-        var allGroups = _unitOfWork.OrderGroupRepository
-            .Filter(g => g.OrderId == orderId)
-            .ToList();
-
-        if (!allGroups.Any()) return;
-
-        bool allGroupsComplete = allGroups.All(g =>
-            g.Status == GroupStatusEnum.Completed || g.Status == GroupStatusEnum.Delivered);
-
-        if (!allGroupsComplete) return;
-
-        var order = await _unitOfWork.OrderRepository.FindAsync(orderId);
-        if (order is null || order.Status is OrderStatusEnum.Completed or OrderStatusEnum.Delivered) return;
-
-        order.Status = OrderStatusEnum.Completed;
-        _unitOfWork.OrderRepository.Update(order);
-        await _unitOfWork.SaveChangesAsync(userId);
+        var ids = workerIds.Distinct().ToList();
+        if (ids.Count == 0 || !await _unitOfWork.WorkerRepository.AllExistAsync(ids))
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.WorkerNotFound));
     }
 
     private static ItemWithServiceProgressDto MapToItemWithProgress(

@@ -40,6 +40,10 @@ public static class LocalizationKeys
         public const string CannotAddItemToClosedGroup = "orders.cannot_add_item_to_closed_group";
         public const string GroupNotCompletedForDelivery = "orders.group_not_completed_for_delivery";
         public const string CannotExecuteDelivered = "orders.cannot_execute_delivered";
+        public const string ItemAlreadyCompleted = "orders.item_already_completed";
+        public const string ExecutionExceedsRemaining = "orders.execution_exceeds_remaining";
+        public const string ExecutionQuantityMustBePositive = "orders.execution_quantity_must_be_positive";
+        public const string WorkerNotFound = "orders.worker_not_found";
         public const string CannotDeleteOrderWithWork = "orders.cannot_delete_order_with_work";
         public const string WorkerRequired = "orders.worker_required";
         public const string BatchEmptySelection = "orders.batch_empty_selection";

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Printpress.Domain
+﻿namespace Printpress.Domain
 {
     public class ItemServiceExecution : Entity
     {
@@ -17,5 +11,35 @@ namespace Printpress.Domain
         public virtual Worker Worker { get; set; }
         public virtual OrderItem OrderItem { get; set; }
         public virtual ServiceCategory ServiceCategory { get; set; }
+
+        public static ItemServiceExecution Create(
+            Guid id,
+            Guid orderItemId,
+            Guid serviceCategoryId,
+            Guid workerId,
+            int quantity,
+            DateTime executionDate,
+            string notes)
+        {
+            if (quantity <= 0)
+                throw new BusinessExceptions(LocalizationKeys.Orders.ExecutionQuantityMustBePositive);
+
+            if (workerId == Guid.Empty)
+                throw new BusinessExceptions(LocalizationKeys.Orders.WorkerRequired);
+
+            if (orderItemId == Guid.Empty || serviceCategoryId == Guid.Empty)
+                throw new BusinessExceptions(LocalizationKeys.Shared.InvalidPayload);
+
+            return new ItemServiceExecution
+            {
+                Id = id,
+                OrderItemId = orderItemId,
+                ServiceCategoryId = serviceCategoryId,
+                WorkerId = workerId,
+                Quantity = quantity,
+                ExecutionDate = executionDate,
+                Notes = notes
+            };
+        }
     }
 }
