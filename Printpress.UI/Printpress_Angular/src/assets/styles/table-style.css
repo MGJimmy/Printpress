@@ -4,8 +4,8 @@
 }
 
 .custom-table th {
-    background-color: var(--color-primary) !important;
-    color: #fff;
+    background-color: var(--table-header) !important;
+    color: var(--table-header-text);
     font-weight: bold;
     /* color: white;
     text-align: left;
@@ -18,12 +18,10 @@
     padding: 10px;
 }
 
-.custom-table tr:nth-child(odd) {
-    background-color: #ffffff;
-}
-
-.custom-table tr:nth-child(even) {
-    background-color: var(--color-secondary);
+.custom-table .mat-mdc-row,
+.custom-table .mat-mdc-row:nth-child(odd),
+.custom-table .mat-mdc-row:nth-child(even) {
+    background-color: var(--table-background);
 }
 
 .custom-table tr:last-child td {

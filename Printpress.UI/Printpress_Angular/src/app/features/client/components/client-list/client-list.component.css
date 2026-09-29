@@ -22,7 +22,7 @@
 .mat-table {
   width: 100%;
   margin-top: 1rem;
-  background-color: #fff;
+  background-color: var(--table-background);
 }
 
 .actions-cell {

@@ -183,17 +183,17 @@
 }
 
 .page-shell .mat-mdc-header-row {
-  background: var(--color-primary);
+  background: var(--table-header);
 }
 
 .page-shell .mat-mdc-header-cell {
-  color: #fff !important;
+  color: var(--table-header-text) !important;
   font-weight: 700;
   white-space: nowrap;
 }
 
 .page-shell .mat-mdc-row:hover {
-  background: var(--color-tertiary);
+  background: var(--table-hover);
 }
 
 @media (max-width: 700px) {

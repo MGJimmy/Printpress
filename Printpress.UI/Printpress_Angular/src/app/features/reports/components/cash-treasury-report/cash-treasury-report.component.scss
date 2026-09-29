@@ -23,7 +23,7 @@
 .table-wrap { overflow-x: auto; padding: 0.4rem 0.6rem 0.8rem; }
 .cash-table { width: 100%; }
 :host ::ng-deep .cash-table .mat-mdc-header-row { background: var(--color-primary); }
-:host ::ng-deep .cash-table .mat-mdc-header-cell { color: #fff !important; font-weight: 700; white-space: nowrap; }
+:host ::ng-deep .cash-table .mat-mdc-header-cell { color: var(--color-primary) !important; font-weight: 700; white-space: nowrap; }
 :host ::ng-deep .cash-table .mat-mdc-cell, :host ::ng-deep .cash-table .mat-mdc-header-cell { text-align: center; padding: 0.55rem 0.45rem; font-size: 0.85rem; }
 .amt-in { color: #2e7d32; font-weight: 700; }
 .amt-out { color: #c62828; font-weight: 700; }

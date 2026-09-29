@@ -18,8 +18,8 @@
       text-align: center!important;
     }
     .mat-mdc-header-cell{
-      background-color: transparent!important;
-      color: rgb(255, 34, 0);
+      background-color: var(--table-header) !important;
+      color: var(--table-header-text) !important;
       font-weight: 700;
       font-size: 1.2rem;
       border: 1px solid black;

@@ -10,6 +10,11 @@
   --color-tertiary: #F7E6C4;
   --color-accent: #F1C376;
 
+  --table-background: #ffffff;
+  --table-header: var(--color-primary);
+  --table-header-text: #ffffff;
+  --table-hover: var(--color-tertiary);
+
   --table-btn-view: var(--color-primary);
   --table-btn-edit: var(--color-primary);
   --table-btn-delete: #c62828;
@@ -90,28 +95,28 @@ input{
 
 
 .gradient-table {
-    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-tertiary) 100%);
+    background: var(--table-background);
     border-radius: 8px;
     padding: 1px;
   }
   
   .gradient-table table {
-    background: white;
+    background: var(--table-background);
     border-radius: 8px;
     overflow: hidden;
   }
   
   .gradient-table .mat-mdc-row:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--table-hover);
   }
   
   .gradient-table .mat-mdc-header-row {
-    background: var(--color-primary);
-    color: white;
+    background: var(--table-header);
+    color: var(--table-header-text);
   }
   
   .gradient-table .mat-mdc-header-cell {
-    color: white;
+    color: var(--table-header-text);
     font-weight: 500;
   }
 
@@ -124,5 +129,31 @@ body.sidebar-resizing {
 .group-services-dialog .mat-mdc-dialog-surface {
   max-height: 90vh;
   overflow: auto;
+}
+
+.mat-mdc-table,
+.mat-table {
+  background: var(--table-background);
+}
+
+.mat-mdc-header-row {
+  background: var(--table-header) !important;
+}
+
+.mat-mdc-header-cell,
+th.mat-header-cell {
+  background-color: var(--table-header) !important;
+  color: var(--table-header-text) !important;
+}
+
+.mat-mdc-row,
+.mat-mdc-row:nth-child(odd),
+.mat-mdc-row:nth-child(even),
+.mat-mdc-footer-row {
+  background-color: var(--table-background) !important;
+}
+
+.mat-mdc-row:hover {
+  background-color: var(--table-hover) !important;
 }
   
