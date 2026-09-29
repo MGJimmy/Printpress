@@ -56,7 +56,7 @@
   gap: 0.45rem;
   padding: 0.9rem 1.1rem 0.2rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: var(--color-primary);
 }
 
 .panel-title mat-icon {
@@ -118,14 +118,14 @@
 .kpi strong { font-size: 1.35rem; font-weight: 800; }
 .kpi small { opacity: 0.88; margin-top: 0.2rem; font-size: 0.78rem; }
 
-.kpi-invoices { background: linear-gradient(135deg, #1565c0, #42a5f5); }
-.kpi-lines { background: linear-gradient(135deg, #6a1b9a, #ab47bc); }
+.kpi-invoices { background: var(--color-primary); }
+.kpi-lines { background: var(--color-primary); }
 .kpi-in { background: linear-gradient(135deg, #2e7d32, #66bb6a); }
-.kpi-amount { background: linear-gradient(135deg, #ef6c00, #ffb74d); }
+.kpi-amount { background: var(--color-primary); }
 
 .hint {
   background: #e8f5e9;
-  color: #1b5e20;
+  color: var(--color-primary);
   border-radius: 12px;
   padding: 0.85rem 1.1rem;
   margin: 0 0 1.1rem;
@@ -153,8 +153,8 @@
   padding: 0.7rem 0.65rem;
 }
 
-:host ::ng-deep .cash-table .mat-mdc-row:hover { background: #f1f8f4; }
-:host ::ng-deep .cash-table .mat-mdc-footer-row { background: #f1f8f4; font-weight: 700; }
+:host ::ng-deep .cash-table .mat-mdc-row:hover { background: var(--color-tertiary); }
+:host ::ng-deep .cash-table .mat-mdc-footer-row { background: var(--color-tertiary); font-weight: 700; }
 :host ::ng-deep .cash-table a { color: #2e7d32; font-weight: 700; text-decoration: none; }
 
 .amt-in { color: #2e7d32; font-weight: 700; }

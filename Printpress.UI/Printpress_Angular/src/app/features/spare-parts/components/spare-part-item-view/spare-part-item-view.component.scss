@@ -12,7 +12,7 @@
   padding: 1.15rem 1.35rem;
   border-radius: 16px;
   color: #fff;
-  background: linear-gradient(135deg, #37474f 0%, #546e7a 55%, #90a4ae 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary) 55%, var(--color-accent) 100%);
   box-shadow: 0 10px 28px rgba(55, 71, 79, 0.28);
 }
 
@@ -94,7 +94,7 @@
 .kpi-stock { background: linear-gradient(135deg, #1565c0, #42a5f5); }
 .kpi-in { background: linear-gradient(135deg, #2e7d32, #66bb6a); }
 .kpi-out { background: linear-gradient(135deg, #c62828, #ef5350); }
-.kpi-pack { background: linear-gradient(135deg, #6a1b9a, #ab47bc); }
+.kpi-pack { background: var(--color-primary); }
 
 .panel {
   border-radius: 16px !important;
@@ -109,13 +109,13 @@
   gap: 0.45rem;
   padding: 0.9rem 1.1rem 0.2rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: var(--color-primary);
 }
 
 .panel-title .count {
   margin-inline-start: auto;
-  background: #eceff1;
-  color: #455a64;
+  background: var(--color-tertiary);
+  color: var(--color-primary);
   border-radius: 999px;
   padding: 0.1rem 0.7rem;
   font-size: 0.85rem;
@@ -146,7 +146,7 @@
 .tx-table { width: 100%; }
 
 :host ::ng-deep .tx-table .mat-mdc-header-row {
-  background: linear-gradient(135deg, #37474f, #546e7a);
+  background: var(--color-primary);
 }
 
 :host ::ng-deep .tx-table .mat-mdc-header-cell {
@@ -162,7 +162,7 @@
 }
 
 :host ::ng-deep .tx-table .mat-mdc-row:hover {
-  background: #f4f8fb;
+  background: var(--color-secondary);
 }
 
 .amt-in { color: #2e7d32; font-weight: 700; }
@@ -180,7 +180,7 @@
 
 .badge-in { background: #e8f5e9; color: #2e7d32; }
 .badge-out { background: #ffebee; color: #c62828; }
-.badge-adj { background: #fff8e1; color: #f57f17; }
+.badge-adj { background: var(--color-tertiary); color: var(--color-accent); }
 
 .empty {
   text-align: center;

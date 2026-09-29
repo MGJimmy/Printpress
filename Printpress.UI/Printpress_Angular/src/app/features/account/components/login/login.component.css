@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8f9fa;
+  background-color: var(--color-secondary);
 }
 
 .login-logo {
@@ -69,8 +69,8 @@ input::placeholder {
 }
 
 input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 5px rgba(96, 108, 93, 0.35);
   outline: none;
 }
 
@@ -81,7 +81,7 @@ input.invalid {
 .login-button {
   width: 100%;
   padding: 1rem;
-  background-color: #007bff;
+  background-color: var(--color-primary);
   color: #ffffff;
   font-size: 1.1rem;
   font-weight: 600;
@@ -98,7 +98,7 @@ input.invalid {
 }
 
 .login-button:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: var(--color-primary);
   transform: translateY(-2px);
 }
 

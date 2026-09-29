@@ -1,7 +1,7 @@
 #sidebar-wrapper {
   width: 300px;
   height: 100vh;
-  background-color: #007bff;
+  background-color: var(--color-primary);
   display: flex;
   flex-direction: row;
   transition: width 0.3s ease;
@@ -161,7 +161,8 @@
 }
 
 .list-group-item:hover {
-  background: #0056b3;
+  background: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .fa-icon {
@@ -195,12 +196,14 @@
 =========================== */
 
 .active-link {
-  background: #0056b3 !important;
+  background: var(--color-accent) !important;
+  color: var(--color-primary);
   border-color: white;
 }
 
 .active-link:hover {
-  background: #00479a !important;
+  background: var(--color-tertiary) !important;
+  color: var(--color-primary);
 }
 
 /* ===========================
@@ -232,11 +235,13 @@
 }
 
 .lang-btn {
-  background: #17a2b8;
+  background: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .lang-btn:hover {
-  background: #138496;
+  background: var(--color-tertiary);
+  color: var(--color-primary);
 }
 
 .logout-btn {
@@ -271,8 +276,8 @@
   align-items: center;
   justify-content: center;
 
-  background: #0056b3;
-  color: white;
+  background: var(--color-accent);
+  color: var(--color-primary);
 
   border: none;
   border-radius: 8px;
@@ -284,7 +289,8 @@
 }
 
 .toggle-btn:hover {
-  background: #004494;
+  background: var(--color-tertiary);
+  color: var(--color-primary);
 }
 
 /* ===========================

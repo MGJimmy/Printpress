@@ -12,11 +12,11 @@
   padding: 0.95rem 1.1rem;
   border-radius: 14px;
   color: #fff;
-  background: linear-gradient(135deg, #1565c0 0%, #42a5f5 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
 }
 
 .hero.zero {
-  background: linear-gradient(135deg, #ef6c00 0%, #ffb74d 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent) 100%);
 }
 
 .hero h4 {
@@ -42,7 +42,7 @@
 }
 
 .hint {
-  background: #fff8e1;
+  background: var(--color-tertiary);
   color: #5d4037;
   border-radius: 10px;
   padding: 0.65rem 0.9rem;
@@ -68,12 +68,12 @@
 
 .service-item.new {
   border-color: #66bb6a;
-  background: #f1f8f4;
+  background: var(--color-tertiary);
 }
 
 .service-item.zero-price {
-  border-color: #ffb74d;
-  background: #fff8e1;
+  border-color: var(--color-accent);
+  background: var(--color-tertiary);
 }
 
 .service-name {
@@ -82,7 +82,7 @@
 }
 
 .input-group-text {
-  background-color: #f8f9fa;
+  background-color: var(--color-secondary);
   font-size: 0.8rem;
 }
 
@@ -91,7 +91,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 0.6rem;
-  border-top: 1px solid #eceff1;
+  border-top: 1px solid var(--color-tertiary);
   padding-top: 0.85rem;
   margin-top: 0.4rem;
 }

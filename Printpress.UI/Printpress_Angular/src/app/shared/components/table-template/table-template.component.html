@@ -47,17 +47,17 @@
 
 <ng-template #actionTemplate let-element = "element">
    <button *ngIf="showViewButton"
-    class="mx-3" mat-raised-button color="primary" (click)="onView(element)"><fa-icon [icon]="faView"></fa-icon> عرض</button>
+    class="mx-3 table-btn-view" mat-raised-button (click)="onView(element)"><fa-icon [icon]="faView"></fa-icon> عرض</button>
   <button *ngIf="isShowEditButton"
-    class="mx-3" mat-raised-button color="primary" (click)="onEdit(element)"><fa-icon [icon]="faEdit"></fa-icon> تعديل</button>
+    class="mx-3 table-btn-edit" mat-raised-button (click)="onEdit(element)"><fa-icon [icon]="faEdit"></fa-icon> تعديل</button>
   <button *ngIf="isShowDeleteButton"
-    class="mx-3" mat-raised-button color="warn" (click)="onDelete(element)"> <fa-icon [icon]="faTrash"></fa-icon> حذف</button>
+    class="mx-3 table-btn-delete" mat-raised-button (click)="onDelete(element)"> <fa-icon [icon]="faTrash"></fa-icon> حذف</button>
   <button *ngIf="showVoidButton && element.canVoid"
-    class="mx-3" mat-raised-button color="warn" (click)="onVoid(element)">إلغاء</button>
+    class="mx-3 table-btn-delete" mat-raised-button (click)="onVoid(element)">إلغاء</button>
   <button *ngIf="showDeactivateButton"
-    class="mx-3" mat-raised-button color="accent" (click)="onDeactivate(element)"><fa-icon [icon]="faBan"></fa-icon> تعطيل</button>
+    class="mx-3 table-btn-secondary" mat-raised-button (click)="onDeactivate(element)"><fa-icon [icon]="faBan"></fa-icon> تعطيل</button>
     <button *ngIf="showDeactivateButton"
-    class="mx-3" mat-raised-button color="accent" (click)="onActivate(element)"><fa-icon [icon]="faCheckCircle"></fa-icon> تنشيط</button>
+    class="mx-3 table-btn-secondary" mat-raised-button (click)="onActivate(element)"><fa-icon [icon]="faCheckCircle"></fa-icon> تنشيط</button>
 </ng-template>
 
 <ng-template #dataTemplate let-element = "element" let-column = "column">
@@ -76,7 +76,7 @@
     </ng-template>
   </ng-container>
   <ng-container *ngIf="column === linkColumnName && element[column]">
-    <a style="cursor:pointer; color: var(--primary-color, #1976d2); text-decoration: underline;" (click)="onLinkColumnClick(element)">{{element[column]}}</a>
+    <a style="cursor:pointer; color: var(--color-primary); text-decoration: underline;" (click)="onLinkColumnClick(element)">{{element[column]}}</a>
   </ng-container>
   <ng-container *ngIf="column === linkColumnName && !element[column]">
     —

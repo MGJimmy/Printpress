@@ -3,7 +3,7 @@
 .hero {
   display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;
   padding: 1.15rem 1.35rem; border-radius: 16px; color: #fff;
-  background: linear-gradient(135deg, #4527a0 0%, #5e35b1 55%, #7e57c2 100%);
+  background: var(--color-primary);
   box-shadow: 0 10px 28px rgba(69, 39, 160, 0.28);
 }
 .hero-icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: rgba(255,255,255,0.18); }
@@ -11,8 +11,8 @@
 .hero p { margin: 0.2rem 0 0; opacity: 0.92; font-size: 0.92rem; }
 
 .panel { border-radius: 16px !important; overflow: hidden; margin-bottom: 1.1rem; box-shadow: 0 8px 24px rgba(15,23,42,0.06) !important; }
-.panel-title { display: flex; align-items: center; gap: 0.45rem; padding: 0.9rem 1.1rem 0.2rem; font-weight: 700; color: #1e3a5f; }
-.panel-title mat-icon { color: #5e35b1; }
+.panel-title { display: flex; align-items: center; gap: 0.45rem; padding: 0.9rem 1.1rem 0.2rem; font-weight: 700; color: var(--color-primary); }
+.panel-title mat-icon { color: var(--color-primary); }
 
 .filter-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem 0.75rem; padding: 0.5rem 1.1rem 1rem; align-items: center; }
 .filter-form mat-form-field { width: 100%; }
@@ -25,15 +25,15 @@
 .kpi strong { font-size: 1.25rem; font-weight: 800; }
 .kpi-in { background: linear-gradient(135deg, #2e7d32, #66bb6a); }
 .kpi-out { background: linear-gradient(135deg, #c62828, #ef5350); }
-.kpi-net { background: linear-gradient(135deg, #1565c0, #42a5f5); }
-.kpi-muted { background: linear-gradient(135deg, #455a64, #607d8b); }
+.kpi-net { background: var(--color-primary); }
+.kpi-muted { background: var(--color-primary); }
 
 .table-wrap { overflow-x: auto; padding: 0.4rem 0.6rem 0.8rem; }
 .cash-table { width: 100%; }
-:host ::ng-deep .cash-table .mat-mdc-header-row { background: linear-gradient(135deg, #5e35b1, #4527a0); }
+:host ::ng-deep .cash-table .mat-mdc-header-row { background: var(--color-primary); }
 :host ::ng-deep .cash-table .mat-mdc-header-cell { color: #fff !important; font-weight: 700; white-space: nowrap; }
 :host ::ng-deep .cash-table .mat-mdc-cell, :host ::ng-deep .cash-table .mat-mdc-header-cell { text-align: center; padding: 0.65rem 0.5rem; }
-:host ::ng-deep .cash-table .mat-mdc-row:hover { background: #f3e5f5; }
+:host ::ng-deep .cash-table .mat-mdc-row:hover { background: var(--color-tertiary); }
 
 .amt-in { color: #2e7d32; font-weight: 700; }
 .amt-out { color: #c62828; font-weight: 700; }

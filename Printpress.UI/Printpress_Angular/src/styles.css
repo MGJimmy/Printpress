@@ -4,6 +4,72 @@
 @import './assets/styles/material-icons.css';
 @import './assets/styles/modern-page.css';
 
+:root {
+  --color-primary: #606C5D;
+  --color-secondary: #FFF4F4;
+  --color-tertiary: #F7E6C4;
+  --color-accent: #F1C376;
+
+  --table-btn-view: var(--color-primary);
+  --table-btn-edit: var(--color-primary);
+  --table-btn-delete: #c62828;
+  --table-btn-secondary: var(--color-accent);
+  --table-btn-secondary-text: var(--color-primary);
+}
+
+html,
+body {
+  background: var(--color-secondary);
+}
+
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-fab.mat-primary,
+.mat-mdc-mini-fab.mat-primary {
+  --mdc-filled-button-container-color: var(--color-primary);
+  --mdc-protected-button-container-color: var(--color-primary);
+  --mat-filled-button-state-layer-color: var(--color-primary);
+  --mat-protected-button-state-layer-color: var(--color-primary);
+}
+
+.mat-mdc-outlined-button.mat-primary {
+  --mdc-outlined-button-label-text-color: var(--color-primary);
+  --mdc-outlined-button-outline-color: var(--color-primary);
+}
+
+.mat-mdc-button.mat-primary {
+  --mdc-text-button-label-text-color: var(--color-primary);
+}
+
+.mat-mdc-checkbox.mat-primary {
+  --mdc-checkbox-selected-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-focus-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-pressed-icon-color: var(--color-primary);
+}
+
+.mat-mdc-radio-button.mat-primary {
+  --mdc-radio-selected-icon-color: var(--color-primary);
+  --mdc-radio-selected-hover-icon-color: var(--color-primary);
+  --mdc-radio-selected-focus-icon-color: var(--color-primary);
+  --mdc-radio-selected-pressed-icon-color: var(--color-primary);
+}
+
+.mat-mdc-slide-toggle.mat-primary {
+  --mdc-switch-selected-track-color: var(--color-accent);
+  --mdc-switch-selected-handle-color: var(--color-primary);
+  --mdc-switch-selected-hover-track-color: var(--color-accent);
+  --mdc-switch-selected-focus-track-color: var(--color-accent);
+  --mdc-switch-selected-pressed-track-color: var(--color-accent);
+}
+
+.mat-mdc-form-field.mat-focused {
+  --mdc-outlined-text-field-focus-outline-color: var(--color-accent);
+  --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);
+  --mdc-filled-text-field-focus-label-text-color: var(--color-primary);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--color-accent);
+}
+
 /* Removed Number input field spinners */
 /* For Chrome, Safari, and Edge */
 input[type=number]::-webkit-inner-spin-button,
@@ -24,7 +90,7 @@ input{
 
 
 .gradient-table {
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-tertiary) 100%);
     border-radius: 8px;
     padding: 1px;
   }
@@ -40,7 +106,7 @@ input{
   }
   
   .gradient-table .mat-mdc-header-row {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    background: var(--color-primary);
     color: white;
   }
   

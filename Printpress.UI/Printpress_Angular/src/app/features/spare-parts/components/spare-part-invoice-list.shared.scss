@@ -76,7 +76,7 @@
   gap: 0.45rem;
   padding: 0.9rem 1.1rem 0.2rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: var(--color-primary);
 }
 
 .panel-title .count {
@@ -132,10 +132,10 @@
 .kpi-label { opacity: 0.9; font-size: 0.85rem; margin-bottom: 0.3rem; }
 .kpi strong { font-size: 1.35rem; font-weight: 800; }
 
-.kpi-invoices { background: linear-gradient(135deg, #1565c0, #42a5f5); }
-.kpi-lines { background: linear-gradient(135deg, #6a1b9a, #ab47bc); }
+.kpi-invoices { background: var(--color-primary); }
+.kpi-lines { background: var(--color-primary); }
 .kpi-qty { background: linear-gradient(135deg, #2e7d32, #66bb6a); }
-.kpi-amount { background: linear-gradient(135deg, #ef6c00, #ffb74d); }
+.kpi-amount { background: var(--color-primary); }
 
 .invoice-card {
   border-radius: 16px !important;
@@ -146,7 +146,7 @@
 }
 
 .invoice-card.focused {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.18) !important;
 }
 
@@ -166,7 +166,7 @@
 
 .meta-value {
   font-weight: 700;
-  color: #1e3a5f;
+  color: var(--color-primary);
 }
 
 .meta-value.total { color: #1565c0; font-size: 1.05rem; }
@@ -183,13 +183,13 @@
 .lines-table { width: 100%; }
 
 :host ::ng-deep .lines-table .mat-mdc-header-row {
-  background: #eceff1;
+  background: var(--color-tertiary);
 }
 
 :host ::ng-deep .lines-table .mat-mdc-header-cell {
   font-weight: 700;
   white-space: nowrap;
-  color: #37474f !important;
+  color: var(--color-primary) !important;
 }
 
 :host ::ng-deep .lines-table .mat-mdc-cell,
@@ -199,7 +199,7 @@
   padding: 0.55rem 0.5rem;
 }
 
-:host ::ng-deep .lines-table .mat-mdc-footer-row { background: #f7fafc; font-weight: 700; }
+:host ::ng-deep .lines-table .mat-mdc-footer-row { background: var(--color-secondary); font-weight: 700; }
 
 .amt { font-weight: 700; }
 .amt-out { color: #c62828; font-weight: 700; }
@@ -229,7 +229,7 @@
 }
 
 :host ::ng-deep .invoices-table .mat-mdc-row:hover {
-  background: #f4f8fb;
+  background: var(--color-secondary);
 }
 
 .row-voided {
@@ -252,15 +252,15 @@
 .void-badge { background: #ffebee; color: #c62828; }
 .due-badge { background: #fff3e0; color: #e65100; }
 .paid-badge { background: #e8f5e9; color: #2e7d32; }
-.pending-badge { background: #e3f2fd; color: #1565c0; }
-.received-badge { background: #f3e5f5; color: #6a1b9a; }
+.pending-badge { background: var(--color-tertiary); color: var(--color-primary); }
+.received-badge { background: var(--color-tertiary); color: var(--color-primary); }
 
 .settlement-card {
   margin: 0 0.6rem 1rem;
   padding: 1rem 1.1rem;
   border: 1px solid #e0e6ed;
   border-radius: 12px;
-  background: #f8fafc;
+  background: var(--color-secondary);
 }
 
 .pay-row {

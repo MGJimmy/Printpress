@@ -77,19 +77,19 @@
             </button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="onViewItem(item.id)">
-                <mat-icon style="color:#7b1fa2">visibility</mat-icon>
+                <mat-icon style="color:var(--color-primary)">visibility</mat-icon>
                 <span>عرض سجل التنفيذ</span>
               </button>
               <button mat-menu-item
                       (click)="onExecuteItem(item.id)"
                       [disabled]="!canExecuteItem(item)">
-                <mat-icon [style.color]="canExecuteItem(item) ? '#1976d2' : ''">play_circle</mat-icon>
+                <mat-icon [style.color]="canExecuteItem(item) ? 'var(--color-primary)' : ''">play_circle</mat-icon>
                 <span>{{ isStatus(item.status, 'Completed') ? 'مكتمل' : 'تنفيذ' }}</span>
               </button>
               <button mat-menu-item
                       (click)="onBatchExecuteItem(item)"
                       [disabled]="!canBatchExecuteItem(item)">
-                <mat-icon [style.color]="!isStatus(item.status, 'Completed') ? '#00695c' : ''">playlist_play</mat-icon>
+                <mat-icon [style.color]="!isStatus(item.status, 'Completed') ? 'var(--color-primary)' : ''">playlist_play</mat-icon>
                 <span>{{ _t.t('orders.batch_execute') }}</span>
               </button>
             </mat-menu>

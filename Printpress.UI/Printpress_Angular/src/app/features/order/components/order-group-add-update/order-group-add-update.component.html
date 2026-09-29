@@ -91,10 +91,10 @@
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>اجراء</th>
                 <td mat-cell *matCellDef="let element">
-                    <button *ngIf="!element.isLocked" mat-raised-button color="primary" (click)="editItem_Click(element)">
+                    <button *ngIf="!element.isLocked" class="table-btn-edit" mat-raised-button (click)="editItem_Click(element)">
                         تعديل
                     </button>
-                    <button *ngIf="!element.isLocked" mat-raised-button color="warn" (click)="deleteItem_Click(element)">
+                    <button *ngIf="!element.isLocked" class="table-btn-delete" mat-raised-button (click)="deleteItem_Click(element)">
                         حذف
                     </button>
                 </td>

@@ -43,9 +43,9 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef> الإجراء </th>
           <td mat-cell *matCellDef="let element">
-            <button class="mx-3" mat-raised-button color="primary" (click)="onEditClient(element.id)"><fa-icon
+            <button class="mx-3 table-btn-edit" mat-raised-button (click)="onEditClient(element.id)"><fa-icon
                 [icon]="faEdit"></fa-icon> تعديل</button>
-            <button class="mx-3" mat-raised-button color="warn" (click)="onDeleteClient(element.id)"> <fa-icon
+            <button class="mx-3 table-btn-delete" mat-raised-button (click)="onDeleteClient(element.id)"> <fa-icon
                 [icon]="faTrash"></fa-icon> حذف</button>
           </td>
         </ng-container>

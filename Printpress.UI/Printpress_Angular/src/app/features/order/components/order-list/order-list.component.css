@@ -12,7 +12,7 @@
   padding: 1.15rem 1.35rem;
   border-radius: 16px;
   color: #fff;
-  background: linear-gradient(135deg, #1565c0 0%, #1e88e5 55%, #90caf9 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary) 55%, var(--color-accent) 100%);
   box-shadow: 0 10px 28px rgba(21, 101, 192, 0.28);
 }
 
@@ -49,7 +49,7 @@
 
 .hero-actions button {
   background: #fff;
-  color: #1565c0;
+  color: var(--color-primary);
 }
 
 .panel {
@@ -65,13 +65,13 @@
   gap: 0.45rem;
   padding: 0.9rem 1.1rem 0.2rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: var(--color-primary);
 }
 
 .panel-title .count {
   margin-inline-start: auto;
-  background: #e3f2fd;
-  color: #1565c0;
+  background: var(--color-tertiary);
+  color: var(--color-primary);
   border-radius: 999px;
   padding: 0.1rem 0.7rem;
   font-size: 0.85rem;
@@ -109,7 +109,7 @@
 }
 
 :host ::ng-deep .orders-table .mat-mdc-header-row {
-  background: linear-gradient(135deg, #1565c0, #1e88e5);
+  background: var(--color-primary);
 }
 
 :host ::ng-deep .orders-table .mat-mdc-header-cell {
@@ -125,12 +125,12 @@
 }
 
 :host ::ng-deep .orders-table .mat-mdc-row:hover {
-  background: #f5f9ff;
+  background: var(--color-secondary);
 }
 
 .order-link {
   cursor: pointer;
-  color: #1565c0;
+  color: var(--color-primary);
   font-weight: 700;
   text-decoration: none;
 }
@@ -142,8 +142,8 @@
 .zero-badge {
   display: inline-block;
   margin-inline-start: 0.4rem;
-  background: #fff8e1;
-  color: #f57f17;
+  background: var(--color-tertiary);
+  color: var(--color-accent);
   border-radius: 999px;
   padding: 0.1rem 0.5rem;
   font-size: 0.75rem;
@@ -153,8 +153,8 @@
 .credit-badge {
   display: inline-block;
   margin-inline-start: 0.4rem;
-  background: #e3f2fd;
-  color: #1565c0;
+  background: var(--color-tertiary);
+  color: var(--color-primary);
   border-radius: 999px;
   padding: 0.1rem 0.5rem;
   font-size: 0.75rem;
