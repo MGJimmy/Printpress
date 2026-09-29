@@ -53,11 +53,19 @@
                 <mat-icon>payments</mat-icon>
                 التحويلات المالية
             </button>
+            <button *ngIf="!isOrderClosed"
+                    mat-raised-button
+                    color="accent"
+                    [disabled]="!canCloseOrder || isClosing"
+                    (click)="onCloseOrder()">
+                <mat-icon>lock</mat-icon>
+                {{ _t.t('orders.close_order') }}
+            </button>
         </div>
     </mat-expansion-panel>
 
     <!-- Form Section -->
-    <div *ngIf="componentMode.isEditMode || componentMode.isaddMode" class="mb-4">
+    <div *ngIf="(componentMode.isEditMode || componentMode.isaddMode) && !isOrderClosed" class="mb-4">
         <mat-expansion-panel [expanded]="true">
             <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -119,7 +127,7 @@
     
         <div class="mt-4">
         <div class="mb-2 d-flex align-items-center gap-3 flex-wrap">
-            <button *ngIf="!componentMode.isViewMode"
+            <button *ngIf="!componentMode.isViewMode && !isOrderClosed"
                     mat-raised-button
                     color="primary"
                     (click)="onAddGroup()">
@@ -255,14 +263,14 @@
         </mat-expansion-panel-header>
 
         <div class="mt-4">
-            <app-order-selling-items [isViewMode]="componentMode.isViewMode"></app-order-selling-items>
+            <app-order-selling-items [isViewMode]="componentMode.isViewMode || isOrderClosed"></app-order-selling-items>
         </div>
     </mat-expansion-panel>
 
 
     <!-- Action Buttons -->
     <div class="actions">
-        <button *ngIf="!componentMode.isViewMode" 
+        <button *ngIf="!componentMode.isViewMode && !isOrderClosed" 
                 mat-raised-button 
                 color="primary"
                 (click)="saveOrder_Click()">

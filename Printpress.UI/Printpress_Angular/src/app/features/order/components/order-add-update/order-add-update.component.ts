@@ -12,7 +12,7 @@ import { AddClientComponent } from '../../../client/components/add-client/add-cl
 import { OrderServicePricesComponent } from '../order-service-prices/order-service-prices.component';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderGetDto } from '../../models/order/order-get.Dto';
-import { firstValueFrom, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil, finalize } from 'rxjs';
 import { OrderGroupGetDto } from '../../models/orderGroup/order-group-get.Dto';
 import { TransactionComponent } from '../transaction/transaction.component';
 import { OrderCommunicationService } from '../../services/order-communication.service';
@@ -25,7 +25,9 @@ import { OrderServicesGetDTO } from '../../models/order-service/order-service-ge
 import { mapOrderGetToUpsert } from '../../models/order-mapper';
 import { ObjectStateEnum } from '../../../../core/models/object-state.enum';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { isStatus, normalizeStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/status-display';
+import { isStatus, normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
+import { OrderStatus } from '../../models/enums/order-status.enum';
+import { isOrderStatus, orderStatusBadgeClass, orderStatusI18nKey } from '../../models/enums/order-status-display';
 
 @Component({
   selector: 'app-order-add-update',
@@ -51,12 +53,26 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   public get orderStatusLabel(): string {
-    return this._t.t(statusI18nKey(this.orderGetDto?.status));
+    return this._t.t(orderStatusI18nKey(this.orderGetDto?.status));
   }
 
   public get orderStatusCardClass(): string {
-    const status = normalizeStatus(this.orderGetDto?.status);
-    return status === 'InProgress' ? 'bg-warning text-dark' : `${statusBadgeClass(status)} text-white`;
+    const status = this.orderGetDto?.status;
+    return isOrderStatus(status, OrderStatus.InProgress)
+      ? 'bg-warning text-dark'
+      : `${orderStatusBadgeClass(status)} text-white`;
+  }
+
+  public get isOrderClosed(): boolean {
+    return isOrderStatus(this.orderGetDto?.status, OrderStatus.Closed);
+  }
+
+  public get canCloseOrder(): boolean {
+    if (this.isOrderClosed || this.allGroupRows.length === 0) {
+      return false;
+    }
+
+    return this.allGroupRows.every(g => isStatus(g.status, 'Delivered'));
   }
 
   public get orderBalance(): number {
@@ -83,6 +99,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public orderClientId!: string
   public orderName!: string;
   public orderGetDto: OrderGetDto;
+  protected isClosing = false;
   private destroy$ = new Subject<void>();
 
   constructor(private router: Router,
@@ -96,7 +113,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     private orderComm: OrderCommunicationService,
     private dialogService: DialogService,
     private orderRoutingService: OrderRoutingService,
-    private _t: TranslationService
+    protected _t: TranslationService
   ) {
     this.componentMode = new ComponentMode(this.router);
     this.orderGetDto = this.OrderSharedService.getOrderObject_copy();
@@ -216,7 +233,40 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   protected canDeliverGroup(group: { status?: string; deliveryDate?: Date }): boolean {
-    return isStatus(group.status, 'Completed') && !group.deliveryDate;
+    return !this.isOrderClosed && isStatus(group.status, 'Completed') && !group.deliveryDate;
+  }
+
+  protected async onCloseOrder(): Promise<void> {
+    if (!this.canCloseOrder || this.isClosing || !this.orderGetDto?.id) {
+      return;
+    }
+
+    const confirmed = await firstValueFrom(this.dialogService.confirmDialog({
+      title: this._t.t('orders.confirm_close'),
+      message: this._t.t('orders.close_order_msg'),
+      confirmText: this._t.t('shared.yes'),
+      cancelText: this._t.t('shared.cancel'),
+    }));
+    if (!confirmed) {
+      return;
+    }
+
+    this.isClosing = true;
+    this.orderService.closeOrder(this.orderGetDto.id).pipe(
+      finalize(() => { this.isClosing = false; })
+    ).subscribe({
+      next: () => {
+        this.alertService.showSuccess(this._t.t('orders.order_closed'));
+        this.orderService.getOrderById(this.orderGetDto.id).subscribe(res => {
+          this.orderGetDto = res.data;
+          this.OrderSharedService.setOrderObject(this.orderGetDto);
+          this.bindGroups();
+        });
+      },
+      error: () => {
+        this.alertService.showError(this._t.t('orders.error_closing_order'));
+      }
+    });
   }
 
   private isGroupClosed(group: { status?: string; deliveryDate?: Date }): boolean {

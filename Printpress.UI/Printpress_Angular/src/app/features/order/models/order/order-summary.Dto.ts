@@ -7,6 +7,7 @@ export  class OrderSummaryDto {
       public createdAt: string,
       public orderStatus: string,
       public id: string,
-      public isZeroOrder: boolean = false
+      public isZeroOrder: boolean = false,
+      public canClose: boolean = false
     ) {}
   }

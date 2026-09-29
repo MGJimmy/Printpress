@@ -1,0 +1,57 @@
+---
+description: DDD and clean-design rules discovered for Printpress. Follow on every implementation.
+alwaysApply: true
+---
+
+# DDD and clean design
+
+Add new rules to this file when a design decision is made in chat. Do not re-decide them in later tasks.
+
+## Where a rule lives
+
+- **Application service** checks this request only: missing payload, empty ids, "not found", mapping the DTO, loading the graph, and one `SaveChanges`.
+- **Domain** checks invariants every caller must obey: status transitions, delivered/completed guards, quantity limits, and "this child belongs to this parent".
+- Test: if a second use case must obey it, it is domain. If only this DTO shape needs it, it stays in the application service.
+- The same domain methods serve single and batch flows. Do not copy the rule into a second service.
+
+## Entity, not a passed-in list
+
+- A status or invariant method reads the entity's own children (`Order.OrderGroups`, `OrderGroup.Items`). Do not pass a bare list of statuses; the method cannot know that list is complete or belongs to this entity.
+- The application service loads those children (`Include`, or assign the queried list onto the navigation) and then calls the method with no status list.
+
+## Forgotten load must fail loud
+
+- A required navigation that was not loaded is `null`. Throw. Do not return "unchanged", and do not write a status.
+- Do not initialize required collections with `= new()`. Null must mean "not loaded". An empty list means "loaded, and there are no children".
+- `Enumerable.All` on an empty list is true. Never treat an empty child collection as "everything is complete".
+- The domain cannot query the database. It cannot repair a forgotten load; it can only refuse.
+
+## Creating entities
+
+- One way to create the object: a public constructor that validates. A static `Create` is only for several creation paths or a returned subtype.
+- Keep the Entity Framework constructor parameterless and private. It does not validate.
+- Validation in a constructor or factory is useless while setters stay public. New fields that carry an invariant get a private setter and are set only from that constructor.
+
+## Application use case
+
+- Load, call domain methods, save once. Several `SaveChanges` calls in one use case are a bug.
+- Pass already-loaded entities into domain services. Domain services do not call repositories. Use a domain service only when the rule spans entities and neither entity owns it (see `CashAccountDomainService.Transfer`).
+- Existence checks and worker/id lookups stay in the application service.
+
+## Errors
+
+- Domain throws `BusinessExceptions` with a `LocalizationKeys` value, plus format args when the message needs numbers.
+- Application request checks throw `ValidationExeption` with `_loc.Get(...)`.
+- A programmer mistake (unloaded collection) throws `InvalidOperationException`, not a user-facing validation key.
+
+## Dependencies
+
+- Domain does not reference Entity Framework, repositories, the application layer, or the API.
+- Controllers stay thin: take the DTO, call the application service, return the result.
+
+## Before finishing a change
+
+- Rebuild both apps and fix every build error before the task is done.
+- .NET: `dotnet build Printpress.sln` from the repo root.
+- Angular: `npm run build` in `Printpress.UI/Printpress_Angular`.
+- A failed build is not finished work. Fix the errors and rebuild until both succeed.

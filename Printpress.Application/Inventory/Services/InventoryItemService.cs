@@ -84,7 +84,7 @@ internal sealed class InventoryItemService(
             throw new ValidationExeption("لا يمكن تعطيل الصنف لوجود كمية في المخزن");
 
         var stillProcessed = await _unitOfWork.OrderRepository.AnyAsync(o =>
-            (o.Status == OrderStatusEnum.New || o.Status == OrderStatusEnum.InProgress)
+            (o.Status == OrderStatusEnum.Draft || o.Status == OrderStatusEnum.New || o.Status == OrderStatusEnum.InProgress)
             && (
                 o.SellingItems.Any(si => si.InventoryItemId == id)
                 || o.Services.Any(os => !os.IsDeleted && os.Service.InventoryItemId == id)

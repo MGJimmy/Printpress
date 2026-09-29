@@ -22,4 +22,5 @@ public interface IOrderAggregateService
     Task<OrderMainDataDto> GetOrderMainDataAsync(Guid orderId);
 
     Task DeleteOrder(Guid id, string userId);
+    Task CloseOrderAsync(Guid id, string userId);
 }

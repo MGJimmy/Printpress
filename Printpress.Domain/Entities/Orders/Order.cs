@@ -22,33 +22,66 @@ namespace Printpress.Domain
 
         public void EnsureCanExecute()
         {
-            if (Status == OrderStatusEnum.Delivered)
-                throw new BusinessExceptions(LocalizationKeys.Orders.CannotExecuteDelivered);
+            if (Status == OrderStatusEnum.Closed)
+                throw new BusinessExceptions(LocalizationKeys.Orders.CannotExecuteClosed);
         }
 
-        public bool RefreshStatus(IEnumerable<GroupStatusEnum> groupStatuses)
+        public bool RefreshStatus()
         {
-            if (Status is OrderStatusEnum.Completed or OrderStatusEnum.Delivered)
+            var groups = ActiveGroups();
+
+            if (Status == OrderStatusEnum.Closed)
                 return false;
 
-            var statuses = groupStatuses as ICollection<GroupStatusEnum> ?? groupStatuses.ToList();
-            if (statuses.Count == 0)
+            var next = groups.Count == 0
+                ? OrderStatusEnum.Draft
+                : groups.Any(g => g.Status is GroupStatusEnum.InProgress
+                    or GroupStatusEnum.Completed
+                    or GroupStatusEnum.Delivered)
+                    ? OrderStatusEnum.InProgress
+                    : OrderStatusEnum.New;
+
+            if (Status == next)
                 return false;
 
-            if (statuses.All(status => status is GroupStatusEnum.Completed or GroupStatusEnum.Delivered))
-            {
-                Status = OrderStatusEnum.Completed;
-                return true;
-            }
+            Status = next;
+            return true;
+        }
 
-            if (Status == OrderStatusEnum.New &&
-                statuses.Any(status => status is GroupStatusEnum.InProgress or GroupStatusEnum.Completed or GroupStatusEnum.Delivered))
-            {
-                Status = OrderStatusEnum.InProgress;
-                return true;
-            }
+        public bool CanClose()
+        {
+            if (Status == OrderStatusEnum.Closed)
+                return false;
 
-            return false;
+            return AllGroupsDelivered();
+        }
+
+        public void Close()
+        {
+            if (Status == OrderStatusEnum.Closed)
+                throw new BusinessExceptions(LocalizationKeys.Orders.OrderAlreadyClosed);
+
+            if (!AllGroupsDelivered())
+                throw new BusinessExceptions(LocalizationKeys.Orders.CannotCloseOrder);
+
+            Status = OrderStatusEnum.Closed;
+        }
+
+        private bool AllGroupsDelivered()
+        {
+            var groups = ActiveGroups();
+            if (groups.Count == 0)
+                return false;
+
+            return groups.All(g => g.Status == GroupStatusEnum.Delivered);
+        }
+
+        private List<OrderGroup> ActiveGroups()
+        {
+            if (OrderGroups is null)
+                throw new InvalidOperationException("Order groups were not loaded.");
+
+            return OrderGroups.Where(g => !g.IsDeleted).ToList();
         }
     }
 }

@@ -12,6 +12,7 @@ public record OrderSummaryDto
     public decimal? PaidAmount { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsZeroOrder { get; set; }
+    public bool CanClose { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrderStatusEnum OrderStatus { get; set; }

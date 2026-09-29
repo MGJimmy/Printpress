@@ -71,6 +71,10 @@ export class OrderService {
     return this.httpService.delete<any>(ApiUrlResource.OrderAPI.delete(id));
   }
 
+  public closeOrder(id: string): Observable<any> {
+    return this.httpService.post<any>(ApiUrlResource.OrderAPI.close(id), {});
+  }
+
   public deliverOrderGroup(deliverGroupDto:any): Observable<any> {
     return this.httpService.post<any>( `${ApiUrlResource.OrderAPI.deliverOrderGroup}`,deliverGroupDto);
   }

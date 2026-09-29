@@ -42,6 +42,7 @@ export class ApiUrlResource {
     updateOrder: ApiUrlResource.Order_URL + '/update',
     deliverOrderGroup: ApiUrlResource.Order_URL + '/deliverOrderGroup',
     delete: (id:string) => `${ApiUrlResource.Order_URL}/delete/${id}`,
+    close: (id:string) => `${ApiUrlResource.Order_URL}/close/${id}`,
   };
 
   private static Report_URL = '/api/report';

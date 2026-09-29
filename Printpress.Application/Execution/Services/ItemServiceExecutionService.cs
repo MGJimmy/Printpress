@@ -15,6 +15,10 @@ internal sealed class ItemServiceExecutionService(
         if (group is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(groupId));
 
+        var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
+        if (order is null)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
+
         // Load group services → Service → ServiceCategory
         var groupServices = _unitOfWork.OrderGroupServiceRepository
             .Filter(gs => gs.OrderGroupId == groupId,
@@ -33,7 +37,7 @@ internal sealed class ItemServiceExecutionService(
             .ToList();
 
         if (!items.Any())
-            return BuildEmptyGroupResponse(group, distinctServiceCategories);
+            return BuildEmptyGroupResponse(group, order.Status, distinctServiceCategories);
 
         var itemIds = items.Select(i => i.Id).ToList();
 
@@ -54,6 +58,7 @@ internal sealed class ItemServiceExecutionService(
             OrderId = group.OrderId,
             GroupName = group.Name,
             GroupStatus = group.Status.ToString(),
+            OrderStatus = order.Status.ToString(),
             GroupServices = distinctServiceCategories.Select(sc => new ServiceProgressDto
             {
                 ServiceCategoryId = sc.Id,
@@ -326,7 +331,8 @@ internal sealed class ItemServiceExecutionService(
             .Filter(g => g.OrderId == order.Id)
             .ToList();
 
-        if (order.RefreshStatus(allGroups.Select(g => g.Status)))
+        order.OrderGroups = allGroups;
+        if (order.RefreshStatus())
             _unitOfWork.OrderRepository.Update(order);
 
         await _unitOfWork.SaveChangesAsync(userId);
@@ -426,12 +432,13 @@ internal sealed class ItemServiceExecutionService(
     };
 
     private static OrderGroupItemsResponseDto BuildEmptyGroupResponse(
-        OrderGroup group, List<ServiceCategory> serviceCategories) => new()
+        OrderGroup group, OrderStatusEnum orderStatus, List<ServiceCategory> serviceCategories) => new()
     {
         GroupId = group.Id,
         OrderId = group.OrderId,
         GroupName = group.Name,
         GroupStatus = group.Status.ToString(),
+        OrderStatus = orderStatus.ToString(),
         GroupServices = serviceCategories.Select(sc => new ServiceProgressDto
         {
             ServiceCategoryId = sc.Id,

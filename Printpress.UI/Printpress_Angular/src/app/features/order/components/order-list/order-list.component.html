@@ -138,9 +138,15 @@
                 <span>إصدار فاتورة</span>
               </button>
               <div *appHasRole="userRoleEnum.admin">
-                <button *ngIf="!isStatus(element.orderStatus, OrderStatus.Delivered)" mat-menu-item (click)="onEditOrder(element.id)">
+                <button *ngIf="canEditOrder(element.orderStatus)" mat-menu-item (click)="onEditOrder(element.id)">
                   <mat-icon>edit</mat-icon>
                   <span>تعديل</span>
+                </button>
+                <button *ngIf="canShowClose(element.orderStatus)" mat-menu-item
+                  [disabled]="!element.canClose || isClosing"
+                  (click)="onCloseOrder(element.id)">
+                  <mat-icon>lock</mat-icon>
+                  <span>{{ _t.t('orders.close_order') }}</span>
                 </button>
                 <button *ngIf="canDeleteOrder(element.orderStatus)" mat-menu-item (click)="onDeleteOrder(element.id)">
                   <mat-icon>delete</mat-icon>

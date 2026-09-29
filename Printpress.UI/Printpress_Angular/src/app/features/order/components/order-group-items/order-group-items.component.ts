@@ -20,6 +20,8 @@ import {
   ItemStatusLabels
 } from '../../models/execution/execution.dto';
 import { isStatus, normalizeStatus, statusBadgeClass } from '../../models/enums/status-display';
+import { OrderStatus } from '../../models/enums/order-status.enum';
+import { isOrderStatus } from '../../models/enums/order-status-display';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderRoutingService } from '../../services/order-routing.service';
 import { ExecuteBatchDialogComponent, BatchServiceOption } from '../execute-batch-dialog/execute-batch-dialog.component';
@@ -107,8 +109,13 @@ export class OrderGroupItemsComponent implements OnInit {
     this.router.navigate([`/order/groups/${this.groupId}/items/${itemId}/execute`]);
   }
 
+  get isOrderClosed(): boolean {
+    return isOrderStatus(this.groupData?.orderStatus, OrderStatus.Closed);
+  }
+
   get canBatchExecuteGroup(): boolean {
     return !!this.groupData
+      && !this.isOrderClosed
       && !isStatus(this.groupData.groupStatus, 'Delivered')
       && this.groupData.items.some(i => !isStatus(i.status, 'Completed'))
       && this.groupBatchServices.length > 0;
@@ -152,7 +159,13 @@ export class OrderGroupItemsComponent implements OnInit {
   }
 
   canBatchExecuteItem(item: ItemWithServiceProgressDto): boolean {
-    return !isStatus(item.status, 'Completed') && this.itemBatchServices(item).length > 0;
+    return !this.isOrderClosed
+      && !isStatus(item.status, 'Completed')
+      && this.itemBatchServices(item).length > 0;
+  }
+
+  canExecuteItem(item: ItemWithServiceProgressDto): boolean {
+    return !this.isOrderClosed && !isStatus(item.status, 'Completed');
   }
 
   private itemBatchServices(item: ItemWithServiceProgressDto): BatchServiceOption[] {

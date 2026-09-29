@@ -1,6 +1,6 @@
 export enum OrderStatus {
-    New = "New",
-    InProgress = "InProgress",
-    Completed = "Completed",
-    Delivered = "Delivered"
+  Draft = 'Draft',
+  New = 'New',
+  InProgress = 'InProgress',
+  Closed = 'Closed'
 }

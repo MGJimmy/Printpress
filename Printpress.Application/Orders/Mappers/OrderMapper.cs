@@ -45,6 +45,7 @@ internal class OrderMapper(
         dto.OrderStatus = order.Status;
         dto.CreatedAt = order.CreatedAt;
         dto.IsZeroOrder = order.IsZeroOrder;
+        dto.CanClose = order.CanClose();
 
         return dto; ;
 

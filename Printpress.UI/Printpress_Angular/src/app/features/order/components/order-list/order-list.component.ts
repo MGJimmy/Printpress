@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { imports } from './order-list.imports';
 import { OrderService } from '../../services/order.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, finalize } from 'rxjs';
 import { OrderSummaryDto } from '../../models/order/order-summary.Dto';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 import { PageEvent } from '@angular/material/paginator';
@@ -14,7 +14,7 @@ import { OrderRoutingService } from '../../services/order-routing.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderStatus } from '../../models/enums/order-status.enum';
-import { isStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/status-display';
+import { isOrderStatus, orderStatusBadgeClass, orderStatusI18nKey } from '../../models/enums/order-status-display';
 import { UserRoleEnum } from '../../../../core/models/user-role.enum';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { InvoiceGroupSelectDialogComponent } from '../invoice-group-select-dialog/invoice-group-select-dialog.component';
@@ -35,14 +35,15 @@ export class OrderListComponent implements OnInit {
   public totalCount = 0;
   public displayedColumns = ['orderName', 'clientName', 'totalAmount', 'paidAmount', 'orderStatus', 'createdAt', 'action'];
   protected userRoleEnum = UserRoleEnum;
+  protected isClosing = false;
   protected isLoading = false;
   protected clientItems: SearchSelectItem[] = [];
 
   protected statusOptions = [
+    { value: 5, label: 'مسودة' },
     { value: 1, label: 'جديد' },
     { value: 2, label: 'قيد التنفيذ' },
-    { value: 3, label: 'مكتمل' },
-    { value: 4, label: 'تم التسليم' }
+    { value: 4, label: 'مغلق' }
   ];
 
   filterForm: FormGroup<{
@@ -66,7 +67,7 @@ export class OrderListComponent implements OnInit {
     private router: Router,
     private orderRoutingService: OrderRoutingService,
     private dialog: MatDialog,
-    private _t: TranslationService
+    protected _t: TranslationService
   ) {
     this.dataSource = new MatTableDataSource<OrderSummaryDto>();
     this.filterForm = this.fb.group({
@@ -152,7 +153,15 @@ export class OrderListComponent implements OnInit {
   }
 
   protected canDeleteOrder(orderStatus: string): boolean {
-    return !isStatus(orderStatus, OrderStatus.Delivered, OrderStatus.Completed);
+    return !isOrderStatus(orderStatus, OrderStatus.Closed);
+  }
+
+  protected canEditOrder(orderStatus: string): boolean {
+    return !isOrderStatus(orderStatus, OrderStatus.Closed);
+  }
+
+  protected canShowClose(orderStatus: string): boolean {
+    return !isOrderStatus(orderStatus, OrderStatus.Closed);
   }
 
   public async onDeleteOrder(id: string) {
@@ -174,6 +183,31 @@ export class OrderListComponent implements OnInit {
         this.alertService.showError(this._t.t('orders.error_deleting_order'));
       }
     }
+  }
+
+  protected async onCloseOrder(id: string): Promise<void> {
+    const dialogData = {
+      title: this._t.t('orders.confirm_close'),
+      message: this._t.t('orders.close_order_msg'),
+      confirmText: this._t.t('shared.yes'),
+      cancelText: this._t.t('shared.cancel'),
+    };
+
+    const confirmed = await firstValueFrom(this.dialogService.confirmDialog(dialogData));
+    if (!confirmed || this.isClosing) return;
+
+    this.isClosing = true;
+    this.orderService.closeOrder(id).pipe(
+      finalize(() => { this.isClosing = false; })
+    ).subscribe({
+      next: async () => {
+        this.alertService.showSuccess(this._t.t('orders.order_closed'));
+        await this.loadOrders();
+      },
+      error: () => {
+        this.alertService.showError(this._t.t('orders.error_closing_order'));
+      }
+    });
   }
 
   protected onViewOrder(id: string) {
@@ -205,12 +239,10 @@ export class OrderListComponent implements OnInit {
   }
 
   getStatusBadgeClass(status: OrderStatus | string | number): string {
-    return statusBadgeClass(status);
+    return orderStatusBadgeClass(status);
   }
 
   getStatusText(status: OrderStatus | string | number): string {
-    return this._t.t(statusI18nKey(status));
+    return this._t.t(orderStatusI18nKey(status));
   }
-
-  protected isStatus = isStatus;
 }

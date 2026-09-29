@@ -30,7 +30,9 @@ public static class LocalizationKeys
         public const string ServiceTypeDuplicate   = "orders.service_type_duplicate";
         public const string PrintingMainDuplicate  = "orders.printing_main_duplicate";
         public const string PrintingCoverDuplicate = "orders.printing_cover_duplicate";
-        public const string OrderAlreadyDelivered  = "orders.order_already_delivered";
+        public const string OrderAlreadyClosed     = "orders.order_already_closed";
+        public const string CannotCloseOrder       = "orders.cannot_close_order";
+        public const string CannotExecuteClosed    = "orders.cannot_execute_closed";
         public const string CannotDeleteHasChildren = "orders.cannot_delete_has_children";
         public const string CannotDeleteCompletedGroup = "orders.cannot_delete_completed_group";
         public const string CannotDeleteGroupWithExecutions = "orders.cannot_delete_group_with_executions";

@@ -25,7 +25,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
                 && (dateFrom == null || o.CreatedAt >= dateFrom)
                 && (dateToExclusive == null || o.CreatedAt < dateToExclusive),
             new Sorting(nameof(Order.CreatedAt), SortingDirection.DESC),
-            nameof(Order.Client)
+            nameof(Order.Client),
+            nameof(Order.OrderGroups)
         );
 
         return _OrderMapper.MapToOrderSummeryDto(orders);
@@ -68,8 +69,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
 
         order.Id = _guidGenerator.NewGuid();
-        order.Status = OrderStatusEnum.New;
         order.TotalPaid = 0;
+        order.RefreshStatus();
 
         foreach (var group in order.OrderGroups ?? [])
         {
@@ -253,6 +254,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         Order order = _OrderMapper.MapFromDestinationToSource(orderDTO);
         PreservePersistedStatuses(order, persisted);
+        order.RefreshStatus();
 
         ApplyZeroOrderFlag(order);
         ApplyZeroOrderPrices(order);
@@ -270,20 +272,29 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         if (persisted is null)
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
 
-        if (persisted.Status == OrderStatusEnum.Delivered)
-            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderAlreadyDelivered));
+        if (persisted.Status == OrderStatusEnum.Closed)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderAlreadyClosed));
 
         var executedItemIds = GetExecutedItemIds(persisted);
         var hasCompletedOrDeliveredGroup = (persisted.OrderGroups ?? [])
             .Any(g => !g.IsDeleted && (g.Status == GroupStatusEnum.Completed || g.Status == GroupStatusEnum.Delivered));
 
-        if (persisted.Status == OrderStatusEnum.Completed
-            || persisted.Status == OrderStatusEnum.InProgress
+        if (persisted.Status == OrderStatusEnum.InProgress
             || hasCompletedOrDeliveredGroup
             || executedItemIds.Count > 0)
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotDeleteOrderWithWork));
 
         _IUnitOfWork.OrderRepository.Remove(persisted);
+        await _IUnitOfWork.SaveChangesAsync(userId);
+    }
+
+    public async Task CloseOrderAsync(Guid id, string userId)
+    {
+        var order = await LoadOrderGraphAsync(id, track: true);
+        if (order is null)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
+
+        order.Close();
         await _IUnitOfWork.SaveChangesAsync(userId);
     }
 
@@ -355,8 +366,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
     private void ValidateOrderMutations(Order persisted, OrderUpsertDto incoming, HashSet<Guid> executedItemIds)
     {
-        if (persisted.Status == OrderStatusEnum.Delivered)
-            Reject(LocalizationKeys.Orders.OrderAlreadyDelivered);
+        if (persisted.Status == OrderStatusEnum.Closed)
+            Reject(LocalizationKeys.Orders.OrderAlreadyClosed);
 
         var incomingById = (incoming.OrderGroups ?? []).ToDictionary(g => g.Id);
 

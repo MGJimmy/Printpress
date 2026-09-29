@@ -6,59 +6,44 @@ internal sealed class GroupService(IUnitOfWork unitOfWork, ILocalizationService 
 {
     public async Task<bool> DeliverGroup(DeliverGroupDto groupDeliveryDto, string userId)
     {
+        var group = await unitOfWork.OrderGroupRepository.FirstOrDefaultAsync(x => x.Id == groupDeliveryDto.Id);
 
-        var orderGroup = await unitOfWork.OrderGroupRepository.FirstOrDefaultAsync(x => x.Id == groupDeliveryDto.Id);
-
-        if (orderGroup is null)
+        if (group is null)
         {
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupNotFound));
         }
 
-        if (orderGroup.Status == GroupStatusEnum.Delivered || orderGroup.DeliveryDate.HasValue)
+        if (group.Status == GroupStatusEnum.Delivered || group.DeliveryDate.HasValue)
         {
-            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupAlreadyDelivered, orderGroup.DeliveryDate?.ToString("yyyy-MM-dd")));
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupAlreadyDelivered, group.DeliveryDate?.ToString("yyyy-MM-dd")));
         }
 
-        if (orderGroup.Status != GroupStatusEnum.Completed)
+        if (group.Status != GroupStatusEnum.Completed)
         {
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupNotCompletedForDelivery));
         }
 
-        orderGroup.DeliveryDate = groupDeliveryDto.DeliveryDate;
-        orderGroup.DeliveryName = groupDeliveryDto.DeliveredFrom;
-        orderGroup.ReceiverName = groupDeliveryDto.DeliveredTo;
-        orderGroup.DeliveryNotes = groupDeliveryDto.DeliveryNotes;
-        orderGroup.Status = GroupStatusEnum.Delivered;
-
-        await unitOfWork.SaveChangesAsync(userId);
-
-        bool allDelivered = IsAllOrderGroupDelivered(orderGroup.OrderId);
-        if (allDelivered)
-        {
-            await MarkOrderAsDelivered(orderGroup.OrderId, userId);
-        }
-
-        return true;
-
-    }
-    private bool IsAllOrderGroupDelivered(Guid orderId)
-    {
-        var notDeliveredCount = unitOfWork.OrderGroupRepository.Count(x => x.OrderId == orderId && x.Status != GroupStatusEnum.Delivered && !x.IsDeleted);
-
-        return notDeliveredCount == 0;
-
-    }
-    private async Task MarkOrderAsDelivered(Guid orderId, string userId)
-    {
-        var order = await unitOfWork.OrderRepository.FirstOrDefaultAsync(x => x.Id == orderId);
+        var order = await unitOfWork.OrderRepository.FirstOrDefaultAsync(
+            x => x.Id == group.OrderId,
+            true,
+            nameof(Order.OrderGroups));
 
         if (order is null)
-        {
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
-        }
 
-        order.Status = OrderStatusEnum.Delivered;
+        var trackedGroup = order.OrderGroups?.FirstOrDefault(g => g.Id == group.Id);
+        if (trackedGroup is null)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.GroupNotFound));
+
+        trackedGroup.DeliveryDate = groupDeliveryDto.DeliveryDate;
+        trackedGroup.DeliveryName = groupDeliveryDto.DeliveredFrom;
+        trackedGroup.ReceiverName = groupDeliveryDto.DeliveredTo;
+        trackedGroup.DeliveryNotes = groupDeliveryDto.DeliveryNotes;
+        trackedGroup.Status = GroupStatusEnum.Delivered;
+
+        order.RefreshStatus();
         await unitOfWork.SaveChangesAsync(userId);
-    }
 
+        return true;
+    }
 }

@@ -70,6 +70,14 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
     }
 
     [HttpPost]
+    [Route("close/{id}")]
+    public async Task<IActionResult> Close(Guid id)
+    {
+        await _IOrderService.CloseOrderAsync(id, UserId);
+        return Ok();
+    }
+
+    [HttpPost]
     [Route("DeliverOrderGroup")]
     public async Task<IActionResult> DeliverOrderGroup(DeliverGroupDto groupDeliveryDto)
     {

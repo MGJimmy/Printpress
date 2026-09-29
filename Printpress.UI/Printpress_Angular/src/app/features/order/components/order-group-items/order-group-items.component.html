@@ -82,8 +82,8 @@
               </button>
               <button mat-menu-item
                       (click)="onExecuteItem(item.id)"
-                      [disabled]="isStatus(item.status, 'Completed')">
-                <mat-icon [style.color]="!isStatus(item.status, 'Completed') ? '#1976d2' : ''">play_circle</mat-icon>
+                      [disabled]="!canExecuteItem(item)">
+                <mat-icon [style.color]="canExecuteItem(item) ? '#1976d2' : ''">play_circle</mat-icon>
                 <span>{{ isStatus(item.status, 'Completed') ? 'مكتمل' : 'تنفيذ' }}</span>
               </button>
               <button mat-menu-item

@@ -149,7 +149,7 @@ internal sealed class CashTransactionService(
     public async Task<List<OrderLookupDto>> GetUndeliveredOrdersAsync()
     {
         var orders = _unitOfWork.OrderRepository.Filter(
-            o => o.Status != OrderStatusEnum.Delivered && !o.IsDeleted);
+            o => o.Status != OrderStatusEnum.Closed && !o.IsDeleted);
 
         return orders
             .Select(o => new OrderLookupDto

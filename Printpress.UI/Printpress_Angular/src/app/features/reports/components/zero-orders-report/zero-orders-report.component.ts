@@ -16,7 +16,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { ZeroOrdersReportService } from '../../services/zero-orders-report.service';
 import { ZeroOrdersReportDto } from '../../models/zero-orders-report.dto';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { statusI18nKey } from '../../../order/models/enums/status-display';
+import { orderStatusI18nKey } from '../../../order/models/enums/order-status-display';
 
 @Component({
   selector: 'app-zero-orders-report',
@@ -92,7 +92,7 @@ export class ZeroOrdersReportComponent implements OnInit {
   }
 
   statusText(status: string): string {
-    return this.translation.t(statusI18nKey(status));
+    return this.translation.t(orderStatusI18nKey(status));
   }
 
   private asDate(value: Date | null): Date | null {
