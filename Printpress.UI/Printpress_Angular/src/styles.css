@@ -5,14 +5,14 @@
 @import './assets/styles/modern-page.css';
 
 :root {
-  --color-primary: #606C5D;
-  --color-secondary: #FFF4F4;
-  --color-tertiary: #F7E6C4;
-  --color-accent: #F1C376;
+  --color-primary: #243447;
+  --color-secondary: #F4F6F8;
+  --color-tertiary: #E6EDF3;
+  --color-accent: #C4A36A;
 
-  --table-background: #ffffff;
+  --table-background: #FFFFFF;
   --table-header: var(--color-primary);
-  --table-header-text: #ffffff;
+  --table-header-text: #FFFFFF;
   --table-hover: var(--color-tertiary);
 
   --table-btn-view: var(--color-primary);
