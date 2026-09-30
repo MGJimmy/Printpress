@@ -1,0 +1,77 @@
+<div class="page-shell" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>fact_check</mat-icon>
+    </div>
+    <div>
+      <h1>تسوية استهلاك</h1>
+      <p>تسجيل فرق الفترة بين الصرف والتنفيذ. لا يغيّر رصيد المخزن.</p>
+    </div>
+    <button mat-stroked-button type="button" class="hero-back" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+      رجوع
+    </button>
+  </header>
+
+  <section class="kpis" *ngIf="selectedItem">
+    <article class="kpi kpi-qty">
+      <span class="kpi-label">الصنف</span>
+      <strong>{{ selectedItem.name }}</strong>
+    </article>
+  </section>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>edit_note</mat-icon>
+      <span>بيانات التسوية</span>
+    </div>
+    <form [formGroup]="form">
+      <div class="filters stock-out-fields">
+        <app-inventory-category-item-select
+          [itemControl]="form.controls.inventoryItemId"
+          [activeOnly]="false"
+          [initialItemId]="initialItemId"
+          (selectedItemChange)="onSelectedItem($event)">
+        </app-inventory-category-item-select>
+
+        <mat-form-field appearance="outline">
+          <mat-label>تاريخ التسوية</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="occurredAt" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="form.controls.occurredAt.hasError('required')">يجب إدخال تاريخ التسوية</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>النوع</mat-label>
+          <mat-select formControlName="settlementType">
+            <mat-option value="ExtraWaste">هالك إضافي</mat-option>
+            <mat-option value="Theft">سرقة / فقد</mat-option>
+            <mat-option value="Other">أخرى</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.controls.settlementType.hasError('required')">يجب اختيار النوع</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>الكمية (وحدات)</mat-label>
+          <input matInput type="number" formControlName="quantity" min="1" />
+          <mat-error *ngIf="form.controls.quantity.hasError('required')">يجب إدخال الكمية</mat-error>
+          <mat-error *ngIf="form.controls.quantity.hasError('min')">يجب أن تكون الكمية أكبر من صفر</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>السبب / ملاحظات</mat-label>
+          <textarea matInput formControlName="notes" rows="1" maxlength="500"></textarea>
+          <mat-error *ngIf="form.controls.notes.hasError('required')">الملاحظات مطلوبة</mat-error>
+          <mat-error *ngIf="form.controls.notes.hasError('maxlength')">الملاحظات يجب ألا تتجاوز 500 حرف</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button"
+                [disabled]="form.invalid || !selectedItem || isSaving"
+                (click)="onSave()">حفظ التسوية</button>
+        <button mat-stroked-button type="button" (click)="onCancel()">إلغاء</button>
+      </div>
+    </form>
+  </mat-card>
+</div>

@@ -30,6 +30,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<InventoryItemCategory_LKP> InventoryItemCategory_LKP { get; set; }
     public DbSet<PurchaseInvoice> PurchaseInvoice { get; set; }
     public DbSet<PurchaseInvoiceLine> PurchaseInvoiceLine { get; set; }
+    public DbSet<InventoryUsageSettlement> InventoryUsageSettlement { get; set; }
     #endregion
 
     #region SpareParts

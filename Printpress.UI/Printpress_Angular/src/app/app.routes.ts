@@ -155,6 +155,22 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'usage-settlements/new',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/usage-settlement-create/usage-settlement-create.component'
+              ).then((m) => m.UsageSettlementCreateComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'usage-settlements',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/usage-settlement-list/usage-settlement-list.component'
+              ).then((m) => m.UsageSettlementListComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'stock-in/invoices',
             loadComponent: () =>
               import(

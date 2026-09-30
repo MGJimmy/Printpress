@@ -48,6 +48,15 @@ internal class ReportRepository : IReportRepository
             .SumAsync(t => (int?)t.Quantity) ?? 0;
     }
 
+    public async Task<int> GetUsageSettlementUnitsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.InventoryUsageSettlement
+            .Where(s => s.InventoryItemId == inventoryItemId
+                && (dateFrom == null || s.OccurredAt >= dateFrom)
+                && (dateToExclusive == null || s.OccurredAt < dateToExclusive))
+            .SumAsync(s => (int?)s.Quantity) ?? 0;
+    }
+
     public async Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
     {
         var serviceIds = await _context.Service

@@ -271,6 +271,47 @@ namespace Printpress.Infrastructure.Migrations
                     b.ToTable("InventoryTransactions", "Inventory");
                 });
 
+            modelBuilder.Entity("Printpress.Domain.InventoryUsageSettlement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("InventoryItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SettlementType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId", "OccurredAt");
+
+                    b.ToTable("InventoryUsageSettlements", "Inventory");
+                });
+
             modelBuilder.Entity("Printpress.Domain.ItemDetailsKey_LKP", b =>
                 {
                     b.Property<int>("Id")
@@ -1344,6 +1385,17 @@ namespace Printpress.Infrastructure.Migrations
                     b.Navigation("InventoryItem");
 
                     b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("Printpress.Domain.InventoryUsageSettlement", b =>
+                {
+                    b.HasOne("Printpress.Domain.InventoryItem", "InventoryItem")
+                        .WithMany()
+                        .HasForeignKey("InventoryItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("InventoryItem");
                 });
 
             modelBuilder.Entity("Printpress.Domain.ItemServiceExecution", b =>

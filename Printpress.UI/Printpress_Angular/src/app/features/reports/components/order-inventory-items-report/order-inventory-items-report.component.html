@@ -94,11 +94,33 @@
         <strong>{{ reportResult.difference | number:'1.2-2' }}</strong>
         <small>سالب يعني صرف أكثر من المتوقع</small>
       </article>
+      <article class="kpi kpi-net">
+        <span class="kpi-label">تسويات الفترة</span>
+        <strong>{{ reportResult.settlementUnits | number }}</strong>
+        <small>وحدات</small>
+      </article>
+      <article class="kpi kpi-stock">
+        <span class="kpi-label">الفرق غير المفسَّر</span>
+        <strong>{{ reportResult.unexplainedDifference | number:'1.2-2' }}</strong>
+        <small>الفرق − التسويات</small>
+      </article>
     </section>
+
+    <div class="actions" style="padding: 0 0 1rem; display: flex; gap: 0.75rem;">
+      <button mat-raised-button color="primary" type="button" (click)="addSettlement()">
+        <mat-icon>add</mat-icon>
+        إضافة تسوية
+      </button>
+      <button mat-stroked-button type="button" (click)="openHistory()">
+        <mat-icon>history</mat-icon>
+        سجل التسويات
+      </button>
+    </div>
 
     <p class="hint">
       الرصيد الحالي يحسب من كل حركات المخزن (دخول − خروج) وليس من الفترة فقط.
       الاستهلاك الإنتاجي يعتمد على الكميات المنفَّذة في الإنتاج.
+      التسوية تفسّر الفرق فقط ولا تغيّر رصيد المخزن.
     </p>
 
     <mat-card class="panel">
@@ -160,6 +182,16 @@
             <th mat-header-cell *matHeaderCellDef>الفرق</th>
             <td mat-cell *matCellDef="let row" [ngClass]="differenceClass(row.difference)">
               {{ row.difference | number:'1.2-2' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="settlementUnits">
+            <th mat-header-cell *matHeaderCellDef>تسويات</th>
+            <td mat-cell *matCellDef="let row">{{ row.settlementUnits | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="unexplainedDifference">
+            <th mat-header-cell *matHeaderCellDef>غير مفسَّر</th>
+            <td mat-cell *matCellDef="let row" [ngClass]="differenceClass(row.unexplainedDifference)">
+              {{ row.unexplainedDifference | number:'1.2-2' }}
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

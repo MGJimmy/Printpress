@@ -96,6 +96,12 @@ export class ApiUrlResource {
     getAll: ApiUrlResource.InventoryTransaction_URL + '/getAll',
   };
 
+  private static InventoryUsageSettlement_URL = '/api/InventoryUsageSettlement';
+  public static readonly InventoryUsageSettlementAPI = {
+    create: ApiUrlResource.InventoryUsageSettlement_URL,
+    getAll: ApiUrlResource.InventoryUsageSettlement_URL,
+  };
+
   private static FileUpload_URL = '/api/FileUpload';
   public static readonly FileUploadAPI = {
     upload: ApiUrlResource.FileUpload_URL + '/upload'

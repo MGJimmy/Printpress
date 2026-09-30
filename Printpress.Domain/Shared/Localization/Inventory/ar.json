@@ -1,0 +1,14 @@
+{
+  "inventory.item_not_found": "عنصر المخزون غير موجود",
+  "inventory.usage_settlement_item_required": "يجب اختيار عنصر المخزون",
+  "inventory.usage_settlement_quantity_must_be_positive": "يجب أن تكون كمية التسوية أكبر من صفر",
+  "inventory.usage_settlement_type_invalid": "نوع تسوية الاستهلاك غير صالح",
+  "inventory.usage_settlement_notes_required": "ملاحظات التسوية مطلوبة",
+  "inventory.usage_settlement_notes_max_length": "الملاحظات يجب ألا تتجاوز 500 حرف",
+  "inventory.usage_settlement_date_required": "تاريخ التسوية مطلوب",
+  "inventory.field_item": "عنصر المخزون",
+  "inventory.field_quantity": "الكمية",
+  "inventory.field_type": "نوع التسوية",
+  "inventory.field_date": "التاريخ",
+  "inventory.field_notes": "ملاحظات"
+}

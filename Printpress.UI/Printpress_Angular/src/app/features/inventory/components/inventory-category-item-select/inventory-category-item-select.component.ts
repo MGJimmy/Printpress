@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,6 +13,15 @@ export interface InventoryCategoryOption {
   name: string;
 }
 
+const CATEGORY_IDS: Record<string, number> = {
+  Paper: 1,
+  Ink: 2,
+  InkSupplements: 3,
+  CleaningTools: 4,
+  SparePart: 6,
+  Other: 999,
+};
+
 @Component({
   selector: 'app-inventory-category-item-select',
   standalone: true,
@@ -23,9 +32,11 @@ export interface InventoryCategoryOption {
     '[class.full-width]': 'fullWidth'
   }
 })
-export class InventoryCategoryItemSelectComponent implements OnInit, OnDestroy {
+export class InventoryCategoryItemSelectComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) itemControl!: FormControl<string>;
   @Input() fullWidth = false;
+  @Input() activeOnly = true;
+  @Input() initialItemId: string | null = null;
   @Output() selectedItemChange = new EventEmitter<InventoryItemDto | null>();
 
   categories: InventoryCategoryOption[] = [];
@@ -33,6 +44,7 @@ export class InventoryCategoryItemSelectComponent implements OnInit, OnDestroy {
   categoryId = new FormControl<number | null>(null, Validators.required);
 
   private destroy$ = new Subject<void>();
+  private pendingItemId: string | null = null;
 
   constructor(
     private inventoryService: InventoryService,
@@ -43,7 +55,10 @@ export class InventoryCategoryItemSelectComponent implements OnInit, OnDestroy {
     this.itemControl.disable({ emitEvent: false });
 
     this.inventoryService.getCategoriesAll().subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categories = res.data ?? [];
+        this.applyInitialItem();
+      },
       error: () => this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات')
     });
 
@@ -58,8 +73,13 @@ export class InventoryCategoryItemSelectComponent implements OnInit, OnDestroy {
       this.inventoryService.getByCategory(categoryId).subscribe({
         next: (res) => {
           if (this.categoryId.value !== categoryId) return;
-          this.items = (res.data ?? []).filter(item => item.isActive);
+          const all = res.data ?? [];
+          this.items = this.activeOnly ? all.filter(item => item.isActive) : all;
           this.itemControl.enable({ emitEvent: false });
+          if (this.pendingItemId && this.items.some(i => i.id === this.pendingItemId)) {
+            this.itemControl.setValue(this.pendingItemId);
+            this.pendingItemId = null;
+          }
         },
         error: () => this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون')
       });
@@ -70,8 +90,30 @@ export class InventoryCategoryItemSelectComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialItemId'] && !changes['initialItemId'].firstChange) {
+      this.applyInitialItem();
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private applyInitialItem(): void {
+    if (!this.initialItemId) return;
+
+    this.inventoryService.getById(this.initialItemId).subscribe({
+      next: (res) => {
+        const item = res.data;
+        if (!item) return;
+        const categoryId = CATEGORY_IDS[item.inventoryItemCategory];
+        if (categoryId == null) return;
+        this.pendingItemId = item.id;
+        this.categoryId.setValue(categoryId);
+      },
+      error: () => this.alertService.showError('حدث خطأ أثناء تحميل عنصر المخزون')
+    });
   }
 }

@@ -52,6 +52,9 @@ public static class DependencyInjection
         services.AddScoped<IInventoryTransactionService, InventoryTransactionService>();
         services.AddScoped<IValidator<StockOutCreateDto>, StockOutCreateDtoValidator>();
         services.AddAutoMapper(typeof(InventoryTransactionProfile));
+
+        services.AddScoped<IInventoryUsageSettlementService, InventoryUsageSettlementService>();
+        services.AddScoped<IValidator<InventoryUsageSettlementCreateDto>, InventoryUsageSettlementCreateDtoValidator>();
         #endregion
 
 

@@ -1,0 +1,14 @@
+{
+  "inventory.item_not_found": "Inventory item not found",
+  "inventory.usage_settlement_item_required": "Inventory item is required",
+  "inventory.usage_settlement_quantity_must_be_positive": "Settlement quantity must be greater than 0",
+  "inventory.usage_settlement_type_invalid": "Invalid usage settlement type",
+  "inventory.usage_settlement_notes_required": "Settlement notes are required",
+  "inventory.usage_settlement_notes_max_length": "Notes must not exceed 500 characters",
+  "inventory.usage_settlement_date_required": "Settlement date is required",
+  "inventory.field_item": "Inventory item",
+  "inventory.field_quantity": "Quantity",
+  "inventory.field_type": "Settlement type",
+  "inventory.field_date": "Date",
+  "inventory.field_notes": "Notes"
+}

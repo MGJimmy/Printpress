@@ -49,6 +49,12 @@ Add new rules to this file when a design decision is made in chat. Do not re-dec
 - Domain does not reference Entity Framework, repositories, the application layer, or the API.
 - Controllers stay thin: take the DTO, call the application service, return the result.
 
+## Usage settlement
+
+- `InventoryUsageSettlement` explains period Out vs execute on the order-inventory-items report. It does not create `InventoryTransaction` and does not change stock.
+- Quantity is units. `OccurredAt` is the business date. Type + notes are required.
+- Report `Difference` stays Out − (execute + expected waste). Period settlement sum and unexplained = Difference − settlement units. Same date filter as Out/execute.
+
 ## Before finishing a change
 
 - Rebuild both apps and fix every build error before the task is done.

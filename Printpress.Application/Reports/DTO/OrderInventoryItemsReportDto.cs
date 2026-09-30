@@ -13,6 +13,8 @@ public class OrderInventoryItemsReportDto
     public decimal PaperUsedUnits { get; set; }
     public decimal ExpectedWaste { get; set; }
     public decimal Difference { get; set; }
+    public int SettlementUnits { get; set; }
+    public decimal UnexplainedDifference { get; set; }
     public int CurrentStockCartons { get; set; }
     public int CurrentStockUnits { get; set; }
     public int PeriodNetCartons { get; set; }

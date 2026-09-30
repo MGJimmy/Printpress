@@ -10,6 +10,8 @@ export interface OrderInventoryItemsReportDto {
   paperUsedUnits: number;
   expectedWaste: number;
   difference: number;
+  settlementUnits: number;
+  unexplainedDifference: number;
   currentStockCartons: number;
   currentStockUnits: number;
   periodNetCartons: number;

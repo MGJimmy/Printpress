@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderInventoryItemsReportService } from '../../services/order-inventory-items-report.service';
@@ -55,12 +56,14 @@ export class OrderInventoryItemsReportComponent implements OnInit {
     'cartonsIn', 'unitsIn', 'cartonsOut', 'unitsOut',
     'periodNetCartons', 'currentStockCartons',
     'paperUsedUnits', 'expectedWaste', 'difference',
+    'settlementUnits', 'unexplainedDifference',
   ];
 
   constructor(
     private fb: NonNullableFormBuilder,
     private reportService: OrderInventoryItemsReportService,
     private alertService: AlertService,
+    private router: Router,
   ) {
     const now = new Date();
     this.filterForm = this.fb.group({
@@ -136,6 +139,34 @@ export class OrderInventoryItemsReportComponent implements OnInit {
     if (value < 0) return 'amt-out';
     if (value > 0) return 'amt-in';
     return 'amt-balance';
+  }
+
+  addSettlement(): void {
+    const { inventoryItemId, dateTo } = this.filterForm.getRawValue();
+    const to = this.asDate(dateTo);
+    const quantityHint = this.reportResult
+      ? Math.max(0, Math.round(this.reportResult.unexplainedDifference))
+      : undefined;
+    this.router.navigate(['/inventory/usage-settlements/new'], {
+      queryParams: {
+        itemId: inventoryItemId,
+        quantity: quantityHint && quantityHint > 0 ? quantityHint : undefined,
+        occurredAt: to ? this.toIsoDate(to) : undefined,
+      },
+    });
+  }
+
+  openHistory(): void {
+    const { inventoryItemId, dateFrom, dateTo } = this.filterForm.getRawValue();
+    const from = this.asDate(dateFrom);
+    const to = this.asDate(dateTo);
+    this.router.navigate(['/inventory/usage-settlements'], {
+      queryParams: {
+        itemId: inventoryItemId,
+        dateFrom: from ? this.toIsoDate(from) : undefined,
+        dateTo: to ? this.toIsoDate(to) : undefined,
+      },
+    });
   }
 
   private asDate(value: Date | null): Date | null {

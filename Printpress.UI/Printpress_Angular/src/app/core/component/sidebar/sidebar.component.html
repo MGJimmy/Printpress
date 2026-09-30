@@ -59,6 +59,16 @@
 
     <a
       *appHasRole="userRoleEnum.admin"
+      routerLink="/inventory/usage-settlements"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: false }"
+      class="list-group-item list-group-item-action">
+      <fa-icon [icon]="faBars" class="fa-icon mx-2"></fa-icon>
+      <span>تسويات الاستهلاك</span>
+    </a>
+
+    <a
+      *appHasRole="userRoleEnum.admin"
       routerLink="/spare-parts/items"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"

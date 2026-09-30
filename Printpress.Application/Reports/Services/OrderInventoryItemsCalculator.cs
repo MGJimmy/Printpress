@@ -41,4 +41,9 @@ internal static class OrderInventoryItemsCalculator
     {
         return Math.Round(unitsOut - (paperUsed + expectedWaste), 2);
     }
+
+    public static decimal CalculateUnexplainedDifference(decimal difference, int settlementUnits)
+    {
+        return Math.Round(difference - settlementUnits, 2);
+    }
 }

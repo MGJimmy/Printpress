@@ -19,6 +19,7 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<InventoryItemCategory_LKP>().Configure();
             modelBuilder.Entity<PurchaseInvoice>().Configure(Schema, PurchaseInvoiceNumberSequence);
             modelBuilder.Entity<PurchaseInvoiceLine>().Configure();
+            modelBuilder.Entity<InventoryUsageSettlement>().Configure();
         }
 
         private static void Configure(this EntityTypeBuilder<InventoryItem> entity)
@@ -118,6 +119,25 @@ namespace Printpress.Infrastructure
             entity.HasOne(x => x.InventoryItem)
                 .WithMany()
                 .HasForeignKey(x => x.InventoryItemId);
+        }
+
+        private static void Configure(this EntityTypeBuilder<InventoryUsageSettlement> entity)
+        {
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.SetSchemaTable(Schema);
+
+            entity.Property(x => x.Notes)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(x => x.OccurredAt)
+                .IsRequired();
+
+            entity.HasOne(x => x.InventoryItem)
+                .WithMany()
+                .HasForeignKey(x => x.InventoryItemId);
+
+            entity.HasIndex(x => new { x.InventoryItemId, x.OccurredAt });
         }
     }
 }

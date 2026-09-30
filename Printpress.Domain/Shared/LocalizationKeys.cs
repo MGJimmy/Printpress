@@ -85,6 +85,22 @@ public static class LocalizationKeys
         public const string InvalidDateRange = "cashAccounts.invalid_date_range";
     }
 
+    public static class Inventory
+    {
+        public const string ItemNotFound = "inventory.item_not_found";
+        public const string UsageSettlementItemRequired = "inventory.usage_settlement_item_required";
+        public const string UsageSettlementQuantityMustBePositive = "inventory.usage_settlement_quantity_must_be_positive";
+        public const string UsageSettlementTypeInvalid = "inventory.usage_settlement_type_invalid";
+        public const string UsageSettlementNotesRequired = "inventory.usage_settlement_notes_required";
+        public const string UsageSettlementNotesMaxLength = "inventory.usage_settlement_notes_max_length";
+        public const string UsageSettlementDateRequired = "inventory.usage_settlement_date_required";
+        public const string FieldItem = "inventory.field_item";
+        public const string FieldQuantity = "inventory.field_quantity";
+        public const string FieldType = "inventory.field_type";
+        public const string FieldDate = "inventory.field_date";
+        public const string FieldNotes = "inventory.field_notes";
+    }
+
     public static class Invoices
     {
         public const string AlreadyVoided = "invoices.already_voided";
