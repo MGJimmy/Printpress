@@ -54,6 +54,7 @@ Add new rules to this file when a design decision is made in chat. Do not re-dec
 - `InventoryUsageSettlement` explains period Out vs execute on the order-inventory-items report. It does not create `InventoryTransaction` and does not change stock.
 - Quantity is units. `OccurredAt` is the business date. Type + notes are required.
 - Report `Difference` stays Out − (execute + expected waste). Period settlement sum and unexplained = Difference − settlement units. Same date filter as Out/execute.
+- Void keeps the row. Do not delete. Report sums only non-voided settlements. Void requires a reason and cannot be voided twice.
 
 ## Before finishing a change
 

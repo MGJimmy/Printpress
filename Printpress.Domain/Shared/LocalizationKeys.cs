@@ -94,6 +94,8 @@ public static class LocalizationKeys
         public const string UsageSettlementNotesRequired = "inventory.usage_settlement_notes_required";
         public const string UsageSettlementNotesMaxLength = "inventory.usage_settlement_notes_max_length";
         public const string UsageSettlementDateRequired = "inventory.usage_settlement_date_required";
+        public const string UsageSettlementNotFound = "inventory.usage_settlement_not_found";
+        public const string UsageSettlementAlreadyVoided = "inventory.usage_settlement_already_voided";
         public const string FieldItem = "inventory.field_item";
         public const string FieldQuantity = "inventory.field_quantity";
         public const string FieldType = "inventory.field_type";

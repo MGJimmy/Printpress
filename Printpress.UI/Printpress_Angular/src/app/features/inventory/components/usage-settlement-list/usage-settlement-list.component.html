@@ -82,7 +82,7 @@
         <strong>{{ report.count | number }}</strong>
       </article>
       <article class="kpi kpi-qty">
-        <span class="kpi-label">إجمالي الوحدات</span>
+        <span class="kpi-label">إجمالي الوحدات (غير الملغاة)</span>
         <strong>{{ report.totalQuantity | number }}</strong>
       </article>
     </section>
@@ -100,7 +100,10 @@
           </ng-container>
           <ng-container matColumnDef="type">
             <th mat-header-cell *matHeaderCellDef>النوع</th>
-            <td mat-cell *matCellDef="let row">{{ typeLabel(row.settlementType) }}</td>
+            <td mat-cell *matCellDef="let row">
+              {{ typeLabel(row.settlementType) }}
+              <span class="void-badge" *ngIf="row.isVoided">ملغاة</span>
+            </td>
           </ng-container>
           <ng-container matColumnDef="itemName">
             <th mat-header-cell *matHeaderCellDef>العنصر</th>
@@ -118,14 +121,29 @@
           </ng-container>
           <ng-container matColumnDef="notes">
             <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
-            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+            <td mat-cell *matCellDef="let row">
+              {{ row.notes || '—' }}
+              <div *ngIf="row.isVoided && row.voidReason">سبب الإلغاء: {{ row.voidReason }}</div>
+            </td>
           </ng-container>
           <ng-container matColumnDef="createdAt">
             <th mat-header-cell *matHeaderCellDef>أُنشئت</th>
             <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
           </ng-container>
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>إجراء</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-stroked-button type="button" color="warn"
+                      *ngIf="!row.isVoided"
+                      [disabled]="isVoiding"
+                      (click)="voidRow(row.id, row.isVoided)">
+                <mat-icon>cancel</mat-icon>
+                إلغاء
+              </button>
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="columns"></tr>
-          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns" [class.row-voided]="row.isVoided"></tr>
         </table>
       </div>
       <ng-template #emptyRows>

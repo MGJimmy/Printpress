@@ -6,6 +6,8 @@
   "inventory.usage_settlement_notes_required": "ملاحظات التسوية مطلوبة",
   "inventory.usage_settlement_notes_max_length": "الملاحظات يجب ألا تتجاوز 500 حرف",
   "inventory.usage_settlement_date_required": "تاريخ التسوية مطلوب",
+  "inventory.usage_settlement_not_found": "تسوية الاستهلاك غير موجودة",
+  "inventory.usage_settlement_already_voided": "هذه التسوية ملغاة مسبقاً",
   "inventory.field_item": "عنصر المخزون",
   "inventory.field_quantity": "الكمية",
   "inventory.field_type": "نوع التسوية",

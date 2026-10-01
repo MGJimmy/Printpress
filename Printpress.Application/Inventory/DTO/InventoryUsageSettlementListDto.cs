@@ -18,6 +18,10 @@ public class InventoryUsageSettlementListRowDto
     public string Notes { get; set; }
     public DateTime CreatedAt { get; set; }
     public string CreatedBy { get; set; }
+    public bool IsVoided { get; set; }
+    public string VoidReason { get; set; }
+    public DateTime? VoidedAt { get; set; }
+    public string VoidedBy { get; set; }
 }
 
 public class InventoryUsageSettlementListDto

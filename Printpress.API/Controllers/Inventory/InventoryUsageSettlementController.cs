@@ -15,6 +15,13 @@ public class InventoryUsageSettlementController(IInventoryUsageSettlementService
         return Ok();
     }
 
+    [HttpPost("void/{id}")]
+    public async Task<IActionResult> Void(Guid id, [FromBody] VoidInvoiceDto payload)
+    {
+        await _service.VoidAsync(id, payload?.Reason, UserId);
+        return Ok();
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [FromQuery] int? categoryId,

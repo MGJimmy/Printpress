@@ -52,6 +52,7 @@ internal class ReportRepository : IReportRepository
     {
         return await _context.InventoryUsageSettlement
             .Where(s => s.InventoryItemId == inventoryItemId
+                && !s.IsVoided
                 && (dateFrom == null || s.OccurredAt >= dateFrom)
                 && (dateToExclusive == null || s.OccurredAt < dateToExclusive))
             .SumAsync(s => (int?)s.Quantity) ?? 0;

@@ -31,6 +31,19 @@ internal sealed class InventoryUsageSettlementService(
         await _unitOfWork.SaveChangesAsync(userId);
     }
 
+    public async Task VoidAsync(Guid id, string reason, string userId)
+    {
+        reason = InvoiceVoidHelper.RequireReason(reason, _loc);
+
+        var settlement = await _unitOfWork.InventoryUsageSettlementRepository.FindAsync(id);
+        if (settlement is null)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Inventory.UsageSettlementNotFound));
+
+        settlement.MarkAsVoided(reason, userId);
+        _unitOfWork.InventoryUsageSettlementRepository.Update(settlement);
+        await _unitOfWork.SaveChangesAsync(userId);
+    }
+
     public async Task<InventoryUsageSettlementListDto> GetAllAsync(
         int? categoryId,
         Guid? itemId,
@@ -62,14 +75,18 @@ internal sealed class InventoryUsageSettlementService(
             SettlementType = s.SettlementType,
             Notes = s.Notes,
             CreatedAt = s.CreatedAt,
-            CreatedBy = s.CreatedBy
+            CreatedBy = s.CreatedBy,
+            IsVoided = s.IsVoided,
+            VoidReason = s.VoidReason,
+            VoidedAt = s.VoidedAt,
+            VoidedBy = s.VoidedBy
         }).ToList();
 
         return new InventoryUsageSettlementListDto
         {
             Rows = rows,
             Count = rows.Count,
-            TotalQuantity = rows.Sum(r => r.Quantity)
+            TotalQuantity = rows.Where(r => !r.IsVoided).Sum(r => r.Quantity)
         };
     }
 }

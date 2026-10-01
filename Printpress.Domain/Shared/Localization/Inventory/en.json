@@ -6,6 +6,8 @@
   "inventory.usage_settlement_notes_required": "Settlement notes are required",
   "inventory.usage_settlement_notes_max_length": "Notes must not exceed 500 characters",
   "inventory.usage_settlement_date_required": "Settlement date is required",
+  "inventory.usage_settlement_not_found": "Usage settlement not found",
+  "inventory.usage_settlement_already_voided": "This usage settlement is already voided",
   "inventory.field_item": "Inventory item",
   "inventory.field_quantity": "Quantity",
   "inventory.field_type": "Settlement type",

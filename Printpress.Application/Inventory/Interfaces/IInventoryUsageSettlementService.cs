@@ -5,6 +5,7 @@ namespace Printpress.Application;
 public interface IInventoryUsageSettlementService
 {
     Task CreateAsync(InventoryUsageSettlementCreateDto payload, string userId);
+    Task VoidAsync(Guid id, string reason, string userId);
 
     Task<InventoryUsageSettlementListDto> GetAllAsync(
         int? categoryId,

@@ -34,4 +34,11 @@ export class InventoryUsageSettlementService {
       params,
     );
   }
+
+  void(id: string, reason?: string): Observable<ApiResponseDto<unknown>> {
+    return this.httpService.post<ApiResponseDto<unknown>>(
+      ApiUrlResource.InventoryUsageSettlementAPI.void(id),
+      { reason: reason ?? '' },
+    );
+  }
 }

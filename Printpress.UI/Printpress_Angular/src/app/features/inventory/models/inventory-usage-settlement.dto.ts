@@ -19,6 +19,10 @@ export interface InventoryUsageSettlementListRowDto {
   notes: string;
   createdAt: string;
   createdBy: string;
+  isVoided: boolean;
+  voidReason: string | null;
+  voidedAt: string | null;
+  voidedBy: string | null;
 }
 
 export interface InventoryUsageSettlementListDto {

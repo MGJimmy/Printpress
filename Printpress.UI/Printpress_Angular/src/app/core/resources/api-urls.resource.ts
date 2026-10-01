@@ -100,6 +100,7 @@ export class ApiUrlResource {
   public static readonly InventoryUsageSettlementAPI = {
     create: ApiUrlResource.InventoryUsageSettlement_URL,
     getAll: ApiUrlResource.InventoryUsageSettlement_URL,
+    void: (id: string) => `${ApiUrlResource.InventoryUsageSettlement_URL}/void/${id}`,
   };
 
   private static FileUpload_URL = '/api/FileUpload';

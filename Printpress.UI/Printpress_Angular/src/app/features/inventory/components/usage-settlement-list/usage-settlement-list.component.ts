@@ -14,6 +14,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
+import { DialogService } from '../../../../shared/services/dialog.service';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryUsageSettlementService } from '../../services/inventory-usage-settlement.service';
 import { InventoryUsageSettlementListDto, InventoryUsageSettlementType } from '../../models/inventory-usage-settlement.dto';
@@ -49,7 +50,8 @@ export class UsageSettlementListComponent implements OnInit {
   items: InventoryItemFilterDto[] = [];
   report: InventoryUsageSettlementListDto | null = null;
   isLoading = false;
-  columns = ['occurredAt', 'type', 'itemName', 'categoryName', 'quantity', 'notes', 'createdAt'];
+  isVoiding = false;
+  columns = ['occurredAt', 'type', 'itemName', 'categoryName', 'quantity', 'notes', 'createdAt', 'action'];
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;
@@ -65,6 +67,7 @@ export class UsageSettlementListComponent implements OnInit {
     private inventoryService: InventoryService,
     private http: HttpService,
     private alertService: AlertService,
+    private dialogService: DialogService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
@@ -159,6 +162,29 @@ export class UsageSettlementListComponent implements OnInit {
     const itemId = this.filterForm.controls.itemId.value;
     this.router.navigate(['/inventory/usage-settlements/new'], {
       queryParams: itemId ? { itemId } : {},
+    });
+  }
+
+  voidRow(id: string, isVoided: boolean): void {
+    if (isVoided || this.isVoiding) return;
+    this.dialogService.promptDialog({
+      title: 'تأكيد إلغاء التسوية',
+      message: 'لن تُحسب هذه التسوية في تقرير الاستهلاك. أدخل سبب الإلغاء للمتابعة.',
+      fieldLabel: 'سبب الإلغاء',
+      confirmText: 'نعم، إلغاء',
+      cancelText: 'تراجع',
+      maxLength: 500,
+    }).subscribe((reason) => {
+      if (!reason) return;
+      this.isVoiding = true;
+      this.settlementService.void(id, reason).pipe(
+        finalize(() => { this.isVoiding = false; }),
+      ).subscribe({
+        next: () => {
+          this.alertService.showSuccess('تم إلغاء التسوية');
+          this.search();
+        },
+      });
     });
   }
 

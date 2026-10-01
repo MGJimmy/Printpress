@@ -133,6 +133,16 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.OccurredAt)
                 .IsRequired();
 
+            entity.Property(x => x.IsVoided)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(x => x.VoidReason)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.VoidedBy)
+                .HasMaxLength(100);
+
             entity.HasOne(x => x.InventoryItem)
                 .WithMany()
                 .HasForeignKey(x => x.InventoryItemId);
