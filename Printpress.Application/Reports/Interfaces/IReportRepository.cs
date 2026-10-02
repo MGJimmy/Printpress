@@ -25,4 +25,12 @@ public interface IReportRepository
         int? categoryId, Guid? inventoryItemId, Guid? workerId, DateTime? dateFrom, DateTime? dateToExclusive);
 
     Task<List<InventoryMovementTxProjection>> GetInventoryMovementsAsync(Guid inventoryItemId);
+
+    Task<List<OutstandingDocumentProjection>> GetOpenOrdersAsync();
+    Task<List<OutstandingDocumentProjection>> GetUnpaidWorkerAdvancesAsync();
+    Task<List<OutstandingDocumentProjection>> GetOpenPurchaseInvoicesAsync();
+    Task<List<OutstandingDocumentProjection>> GetOpenSparePartPurchaseInvoicesAsync();
+    Task<List<OutstandingDocumentProjection>> GetOpenLoansAsync();
+    Task<List<OutstandingMonthlySalaryWorkerProjection>> GetActiveMonthlySalaryWorkersAsync();
+    Task<List<OutstandingSalaryTransactionProjection>> GetSalaryTransactionsFromAsync(DateTime fromUtc, List<Guid> workerIds);
 }

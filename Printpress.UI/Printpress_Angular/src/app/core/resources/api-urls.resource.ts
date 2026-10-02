@@ -228,6 +228,7 @@ export class ApiUrlResource {
     cashByDocument: ApiUrlResource.Reports_URL + '/cash-by-document',
     cashTreasury: ApiUrlResource.Reports_URL + '/cash-treasury',
     zeroOrders: ApiUrlResource.Reports_URL + '/zero-orders',
+    outstandingBalances: ApiUrlResource.Reports_URL + '/outstanding-balances',
   };
 
 }

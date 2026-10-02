@@ -98,6 +98,7 @@ public static class DependencyInjection
         services.AddScoped<IInventoryStockOutReportService, InventoryStockOutReportService>();
         services.AddScoped<IInventoryMovementReportService, InventoryMovementReportService>();
         services.AddScoped<IZeroOrdersReportService, ZeroOrdersReportService>();
+        services.AddScoped<IOutstandingBalancesReportService, OutstandingBalancesReportService>();
         services.AddScoped<ICashBookReportService, CashBookReportService>();
         services.AddScoped<ICashReconcileReportService, CashReconcileReportService>();
         services.AddScoped<ICashMovementSummaryReportService, CashMovementSummaryReportService>();

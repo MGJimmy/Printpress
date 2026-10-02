@@ -469,4 +469,126 @@ internal class ReportRepository : IReportRepository
             })
             .ToListAsync();
     }
+
+    public async Task<List<OutstandingDocumentProjection>> GetOpenOrdersAsync()
+    {
+        return await _context.Order
+            .Where(o => !o.IsDeleted
+                && (o.TotalPrice ?? 0) - (o.TotalPaid ?? 0) > 0)
+            .Select(o => new OutstandingDocumentProjection
+            {
+                Id = o.Id,
+                PartyName = o.Client.Name,
+                DocumentLabel = o.Name,
+                Date = o.CreatedAt,
+                Total = o.TotalPrice ?? 0,
+                Paid = o.TotalPaid ?? 0,
+                Remaining = (o.TotalPrice ?? 0) - (o.TotalPaid ?? 0)
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<OutstandingDocumentProjection>> GetUnpaidWorkerAdvancesAsync()
+    {
+        return await _context.Worker
+            .Where(w => w.UnpaidAdvanceAmount > 0)
+            .Select(w => new OutstandingDocumentProjection
+            {
+                Id = w.Id,
+                PartyName = w.Name,
+                DocumentLabel = "",
+                Date = w.CreatedAt,
+                Total = null,
+                Paid = null,
+                Remaining = w.UnpaidAdvanceAmount
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<OutstandingDocumentProjection>> GetOpenPurchaseInvoicesAsync()
+    {
+        return await _context.PurchaseInvoice
+            .Where(i => !i.IsVoided && i.PaidAmount < i.TotalAmount)
+            .Select(i => new OutstandingDocumentProjection
+            {
+                Id = i.Id,
+                PartyName = i.SupplierName,
+                DocumentLabel = i.InvoiceNumber.ToString(),
+                Date = i.InvoiceDate,
+                Total = i.TotalAmount,
+                Paid = i.PaidAmount,
+                Remaining = i.TotalAmount - i.PaidAmount
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<OutstandingDocumentProjection>> GetOpenSparePartPurchaseInvoicesAsync()
+    {
+        return await _context.SparePartPurchaseInvoice
+            .Where(i => !i.IsVoided && i.PaidAmount < i.TotalAmount)
+            .Select(i => new OutstandingDocumentProjection
+            {
+                Id = i.Id,
+                PartyName = i.SupplierName,
+                DocumentLabel = i.InvoiceNumber.ToString(),
+                Date = i.InvoiceDate,
+                Total = i.TotalAmount,
+                Paid = i.PaidAmount,
+                Remaining = i.TotalAmount - i.PaidAmount
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<OutstandingDocumentProjection>> GetOpenLoansAsync()
+    {
+        return await _context.Loan
+            .Where(l => !l.IsVoided && l.PaidAmount < l.Principal)
+            .Select(l => new OutstandingDocumentProjection
+            {
+                Id = l.Id,
+                PartyName = l.Lender.Name,
+                DocumentLabel = l.LoanNumber.ToString(),
+                Date = l.OccurredAt,
+                Total = l.Principal,
+                Paid = l.PaidAmount,
+                Remaining = l.Principal - l.PaidAmount
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<OutstandingMonthlySalaryWorkerProjection>> GetActiveMonthlySalaryWorkersAsync()
+    {
+        return await _context.Worker
+            .Where(w => w.IsActive
+                && w.SalaryType == SalaryType.Monthly
+                && w.MonthlySalary != null)
+            .Select(w => new OutstandingMonthlySalaryWorkerProjection
+            {
+                Id = w.Id,
+                Name = w.Name,
+                MonthlySalary = w.MonthlySalary.Value
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<OutstandingSalaryTransactionProjection>> GetSalaryTransactionsFromAsync(
+        DateTime fromUtc,
+        List<Guid> workerIds)
+    {
+        if (workerIds.Count == 0)
+            return [];
+
+        var nextMonth = fromUtc.AddMonths(1);
+        return await _context.WorkerSalaryTransaction
+            .Where(t => workerIds.Contains(t.WorkerId)
+                && t.TransactionDate >= fromUtc
+                && t.TransactionDate < nextMonth)
+            .Select(t => new OutstandingSalaryTransactionProjection
+            {
+                WorkerId = t.WorkerId,
+                TransactionType = t.TransactionType,
+                Amount = t.Amount
+            })
+            .ToListAsync();
+    }
 }

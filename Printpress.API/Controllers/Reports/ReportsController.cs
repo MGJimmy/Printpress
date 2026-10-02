@@ -18,7 +18,8 @@ public class ReportsController(
     IInventoryPurchaseReportService _inventoryPurchaseService,
     IInventoryStockOutReportService _inventoryStockOutService,
     IInventoryMovementReportService _inventoryMovementService,
-    IZeroOrdersReportService _zeroOrdersReportService) : AppBaseController
+    IZeroOrdersReportService _zeroOrdersReportService,
+    IOutstandingBalancesReportService _outstandingBalancesReportService) : AppBaseController
 {
     [Authorize]
     [HttpGet("order-inventory-items")]
@@ -207,6 +208,14 @@ public class ReportsController(
         DateTime? from = UtcDateTime.StartOfDay(dateFrom);
         DateTime? toExclusive = UtcDateTime.ExclusiveEnd(dateTo);
         var result = await _zeroOrdersReportService.GetReportAsync(from, toExclusive);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("outstanding-balances")]
+    public async Task<IActionResult> GetOutstandingBalances()
+    {
+        var result = await _outstandingBalancesReportService.GetReportAsync();
         return Ok(result);
     }
 }

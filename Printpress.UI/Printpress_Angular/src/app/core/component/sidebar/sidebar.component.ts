@@ -189,6 +189,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
       return;
     }
     this.isReportsExpanded = true;
+    if (url.startsWith('/reports/outstanding')) {
+      return;
+    }
     if (url.startsWith('/reports/cash-')) {
       this.expandedReportGroup = 'cash';
     } else if (
