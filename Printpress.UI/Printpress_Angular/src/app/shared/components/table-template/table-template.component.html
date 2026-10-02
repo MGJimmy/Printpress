@@ -76,7 +76,15 @@
     </ng-template>
   </ng-container>
   <ng-container *ngIf="column === linkColumnName && element[column]">
-    <a style="cursor:pointer; color: var(--color-primary); text-decoration: underline;" (click)="onLinkColumnClick(element)">{{element[column]}}</a>
+    <a
+      *ngIf="linkRoute(element) as route; else clickLink"
+      class="table-ref-link"
+      [routerLink]="route"
+      target="_blank"
+      rel="noopener noreferrer">{{ element[column] }}</a>
+    <ng-template #clickLink>
+      <a class="table-ref-link" (click)="onLinkColumnClick(element)">{{ element[column] }}</a>
+    </ng-template>
   </ng-container>
   <ng-container *ngIf="column === linkColumnName && !element[column]">
     —

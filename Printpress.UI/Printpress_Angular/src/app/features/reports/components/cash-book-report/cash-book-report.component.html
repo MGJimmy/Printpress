@@ -100,7 +100,7 @@
           <ng-container matColumnDef="summaryAccountName">
             <th mat-header-cell *matHeaderCellDef>الخزينة</th>
             <td mat-cell *matCellDef="let row">
-              <a class="ref-link" [routerLink]="['/general/cash-accounts/view', row.cashAccountId]">{{ row.cashAccountName }}</a>
+              <a class="ref-link" [routerLink]="['/general/cash-accounts/view', row.cashAccountId]" target="_blank" rel="noopener noreferrer">{{ row.cashAccountName }}</a>
             </td>
           </ng-container>
           <ng-container matColumnDef="summaryOpening">
@@ -141,7 +141,7 @@
           <ng-container matColumnDef="lineAccountName">
             <th mat-header-cell *matHeaderCellDef>الخزينة</th>
             <td mat-cell *matCellDef="let row">
-              <a class="ref-link" [routerLink]="['/general/cash-accounts/view', row.cashAccountId]">{{ row.cashAccountName }}</a>
+              <a class="ref-link" [routerLink]="['/general/cash-accounts/view', row.cashAccountId]" target="_blank" rel="noopener noreferrer">{{ row.cashAccountName }}</a>
             </td>
           </ng-container>
           <ng-container matColumnDef="inAmount">

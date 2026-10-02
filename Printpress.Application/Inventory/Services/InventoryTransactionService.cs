@@ -22,9 +22,12 @@ internal sealed class InventoryTransactionService(
                 new Sorting(nameof(InventoryTransaction.OccurredAt), SortingDirection.DESC),
                 nameof(InventoryTransaction.Worker));
 
+        var items = _mapper.Map<List<InventoryTransactionDto>>(result.Items);
+        AttachPurchaseInvoiceReferences(items);
+
         return Task.FromResult(new PagedList<InventoryTransactionDto>
         {
-            Items = _mapper.Map<List<InventoryTransactionDto>>(result.Items),
+            Items = items,
             TotalCount = result.TotalCount,
             PageNumber = result.PageNumber,
             PageSize = result.PageSize
@@ -59,12 +62,14 @@ internal sealed class InventoryTransactionService(
             query = query.Where(x => x.OccurredAt <= dateTo.Value.AddDays(1));
 
         var totalCount = query.Count();
-        var items = query
+        var source = query
             .OrderByDescending(x => x.OccurredAt)
             .Skip((paging.PageNumber - 1) * paging.PageSize)
             .Take(paging.PageSize)
-            .Select(item => _mapper.Map<InventoryTransactionDto>(item))
             .ToList();
+
+        var items = source.Select(item => _mapper.Map<InventoryTransactionDto>(item)).ToList();
+        AttachPurchaseInvoiceReferences(items);
 
         return Task.FromResult(new PagedList<InventoryTransactionDto>
         {
@@ -195,5 +200,45 @@ internal sealed class InventoryTransactionService(
                 => ("صرف يدوي", ""),
             _ => ("—", "")
         };
+    }
+
+    private void AttachPurchaseInvoiceReferences(List<InventoryTransactionDto> items)
+    {
+        var purchaseIds = items
+            .Where(t => t.InventoryTransactionType == InventoryTransactionType.In
+                && t.ReferenceType == InventoryTransactionReferenceType.Purchase)
+            .Select(t => t.ReferenceId)
+            .Distinct()
+            .ToList();
+
+        if (purchaseIds.Count == 0)
+            return;
+
+        var purchaseLines = _unitOfWork.PurchaseInvoiceLineRepository
+            .Filter(
+                l => purchaseIds.Contains(l.Id),
+                nameof(PurchaseInvoiceLine.PurchaseInvoice))
+            .ToDictionary(l => l.Id);
+
+        for (var i = 0; i < items.Count; i++)
+        {
+            var item = items[i];
+            if (item.InventoryTransactionType != InventoryTransactionType.In
+                || item.ReferenceType != InventoryTransactionReferenceType.Purchase)
+                continue;
+
+            if (!purchaseLines.TryGetValue(item.ReferenceId, out var line))
+            {
+                items[i] = item with { ReferenceLabel = "فاتورة شراء", ReferenceRoute = "" };
+                continue;
+            }
+
+            var number = line.PurchaseInvoice is null ? "—" : line.PurchaseInvoice.InvoiceNumber.ToString();
+            items[i] = item with
+            {
+                ReferenceLabel = $"فاتورة شراء: {number}",
+                ReferenceRoute = $"/inventory/stock-in/invoices/{line.PurchaseInvoiceId}"
+            };
+        }
     }
 }

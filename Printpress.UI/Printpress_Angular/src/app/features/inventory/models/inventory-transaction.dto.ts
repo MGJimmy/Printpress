@@ -10,4 +10,6 @@ export interface InventoryTransactionDto {
   inventoryItemName: string;
   workerId?: string;
   workerName?: string;
+  referenceLabel?: string;
+  referenceRoute?: string;
 }

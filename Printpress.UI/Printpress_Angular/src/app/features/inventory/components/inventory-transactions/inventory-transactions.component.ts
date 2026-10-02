@@ -167,10 +167,6 @@ export class InventoryTransactionsComponent implements OnInit {
     this.router.navigate(['/inventory/items']);
   }
 
-  openReference(route: string): void {
-    void this.router.navigateByUrl(route);
-  }
-
   private asDate(value: Date | null): Date | null {
     if (!value) return null;
     const date = value instanceof Date ? value : new Date(value);

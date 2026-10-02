@@ -26,7 +26,8 @@ import { WorkerCreateDto, WorkerUpdateDto } from '../../models/worker.dto';
     MatIconModule,
     MatSelectModule
   ],
-  templateUrl: './worker-upsert.component.html'
+  templateUrl: './worker-upsert.component.html',
+  styleUrl: './worker-upsert.component.scss'
 })
 export class WorkerUpsertComponent implements OnInit, OnDestroy {
   isEditMode = false;

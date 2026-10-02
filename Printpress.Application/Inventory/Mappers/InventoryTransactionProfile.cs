@@ -9,6 +9,8 @@ public class InventoryTransactionProfile : Profile
     {
         CreateMap<InventoryTransaction, InventoryTransactionDto>()
             .ForMember(dest => dest.WorkerName, opt => opt.MapFrom(src => src.Worker != null ? src.Worker.Name : null))
-            .ForMember(dest => dest.InventoryItemName, opt => opt.MapFrom(src => src.InventoryItem != null ? src.InventoryItem.Name : null));
+            .ForMember(dest => dest.InventoryItemName, opt => opt.MapFrom(src => src.InventoryItem != null ? src.InventoryItem.Name : null))
+            .ForMember(dest => dest.ReferenceLabel, opt => opt.Ignore())
+            .ForMember(dest => dest.ReferenceRoute, opt => opt.Ignore());
     }
 }

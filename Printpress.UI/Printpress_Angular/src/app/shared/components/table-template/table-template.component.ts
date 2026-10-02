@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { SharedPaginationComponent } from '../shared-pagination/shared-pagination.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +26,8 @@ import { TranslateModule } from '@ngx-translate/core';
     MatTableModule,
     CommonModule,
     FontAwesomeModule,
-    TranslateModule
+    TranslateModule,
+    RouterLink
   ],
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.css'],
@@ -51,6 +53,8 @@ export class TableTemplateComponent implements OnInit {
   @Output() deactivateClicked: EventEmitter<string> = new EventEmitter<string>();
   @Output() activateClicked: EventEmitter<string> = new EventEmitter<string>();
   @Input() linkColumnName: string = '';
+  @Input() linkColumnHrefField: string = '';
+  @Input() linkIdRoutePrefix: string = '';
   @Output() linkColumnClicked: EventEmitter<any> = new EventEmitter<any>();
 
   displayedColumns: string[] = [];
@@ -155,6 +159,18 @@ export class TableTemplateComponent implements OnInit {
 
   onLinkColumnClick(element: any): void {
     this.linkColumnClicked.emit(element);
+  }
+
+  linkRoute(element: any): string | null {
+    if (!element) return null;
+    if (this.linkColumnHrefField) {
+      const route = element[this.linkColumnHrefField];
+      return typeof route === 'string' && route.length > 0 ? route : null;
+    }
+    if (this.linkIdRoutePrefix && element.id) {
+      return `${this.linkIdRoutePrefix}${element.id}`;
+    }
+    return null;
   }
 
 

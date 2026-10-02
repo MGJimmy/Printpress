@@ -23,7 +23,6 @@ import { CashTransactionDto } from '../../models/cash-transaction.dto';
 import { AddCashTransactionDialogComponent } from '../add-cash-transaction-dialog/add-cash-transaction-dialog.component';
 import { TransferCashDialogComponent } from '../transfer-cash-dialog/transfer-cash-dialog.component';
 import { DialogService } from '../../../../shared/services/dialog.service';
-import { openCashReference } from '../../utils/cash-reference.util';
 
 @Component({
   selector: 'app-cash-account-view',
@@ -187,10 +186,6 @@ export class CashAccountViewComponent implements OnInit {
     this.currentPage = event.currentPage;
     this.pageSize = event.pageSize;
     this.loadTransactions();
-  }
-
-  onReferenceClicked(row: CashTransactionDto): void {
-    openCashReference(this.router, row.referenceRoute);
   }
 
   onAddTransaction(): void {

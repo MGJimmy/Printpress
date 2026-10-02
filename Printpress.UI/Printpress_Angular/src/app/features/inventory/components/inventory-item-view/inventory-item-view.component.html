@@ -146,8 +146,8 @@
           [totalItemsCount]="totalTransactionsCount"
           [isShowEditButton]="false"
           [isShowDeleteButton]="false"
-          [linkColumnName]="'workerName'"
-          (linkColumnClicked)="onWorkerLinkClicked($event)"
+          [linkColumnName]="'referenceLabel'"
+          [linkColumnHrefField]="'referenceRoute'"
           (pageChanged)="onPageChanged($event)">
         </app-table-template>
 

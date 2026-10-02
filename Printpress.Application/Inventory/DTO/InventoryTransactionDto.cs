@@ -22,4 +22,6 @@ public record InventoryTransactionDto
     public string InventoryItemName { get; init; }
     public Guid? WorkerId { get; init; }
     public string? WorkerName { get; init; }
+    public string ReferenceLabel { get; init; }
+    public string ReferenceRoute { get; init; }
 }

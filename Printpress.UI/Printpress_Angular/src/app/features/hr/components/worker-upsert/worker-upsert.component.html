@@ -3,7 +3,7 @@
     <div class="hero-icon">
       <mat-icon>person</mat-icon>
     </div>
-    <div>
+    <div class="hero-text">
       <h1>{{ isEditMode ? 'تعديل بيانات العامل' : 'إضافة عامل جديد' }}</h1>
       <p>الاسم وبيانات الراتب</p>
     </div>
@@ -21,9 +21,9 @@
     <form [formGroup]="form">
       <div class="filters">
         <mat-form-field appearance="outline">
-          <mat-label>الاسم</mat-label>
-          <input matInput formControlName="name" />
-          <mat-error>الاسم مطلوب</mat-error>
+          <mat-label>الاسم *</mat-label>
+          <input matInput formControlName="name" required />
+          <mat-error *ngIf="form.controls.name.hasError('required')">الاسم مطلوب</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -37,12 +37,12 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>نوع الراتب</mat-label>
-          <mat-select formControlName="salaryType">
+          <mat-label>نوع الراتب *</mat-label>
+          <mat-select formControlName="salaryType" required>
             <mat-option [value]="1">شهري</mat-option>
             <mat-option [value]="2">يومي</mat-option>
           </mat-select>
-          <mat-error>نوع الراتب مطلوب</mat-error>
+          <mat-error *ngIf="form.controls.salaryType.hasError('required')">نوع الراتب مطلوب</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" *ngIf="showMonthlySalary">

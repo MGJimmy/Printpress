@@ -25,3 +25,10 @@
       border: 1px solid black;
     }
   }
+
+.table-ref-link {
+  cursor: pointer;
+  color: var(--color-primary);
+  text-decoration: underline;
+  font-weight: 700;
+}
