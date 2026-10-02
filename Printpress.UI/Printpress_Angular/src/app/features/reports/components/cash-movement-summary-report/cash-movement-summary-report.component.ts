@@ -54,6 +54,7 @@ export class CashMovementSummaryReportComponent implements OnInit {
     Purchases: 'مشتريات',
     Expenses: 'مصروفات',
     CapitalInjection: 'ضخ رأس المال',
+    Loan: 'قرض',
     Maintenance: 'صيانة',
     ExternalServices: 'خدمات خارجية',
     Salaries: 'رواتب',

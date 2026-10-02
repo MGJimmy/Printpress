@@ -1,0 +1,84 @@
+<div class="cash-account" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>account_balance</mat-icon>
+    </div>
+    <div class="hero-text">
+      <h1>قروض الشركة</h1>
+      <p>أصل القرض والسداد بدون فوائد</p>
+    </div>
+    <div class="hero-actions">
+      <button mat-stroked-button type="button" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        قرض جديد
+      </button>
+    </div>
+  </header>
+
+  <mat-card class="panel filter-panel">
+    <div class="panel-title">
+      <mat-icon>tune</mat-icon>
+      <span>تصفية القروض</span>
+    </div>
+    <form [formGroup]="filterForm">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>المقرض</mat-label>
+          <mat-select formControlName="lenderId">
+            <mat-option value="">الكل</mat-option>
+            <mat-option *ngFor="let l of lenders" [value]="l.id">{{ l.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>المتبقي</mat-label>
+          <mat-select formControlName="hasRemaining">
+            <mat-option value="">الكل</mat-option>
+            <mat-option value="true">عليه متبقي</mat-option>
+            <mat-option value="false">مسدد / ملغى</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>الحالة</mat-label>
+          <mat-select formControlName="isVoided">
+            <mat-option value="">الكل</mat-option>
+            <mat-option value="false">ساري</mat-option>
+            <mat-option value="true">ملغى</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="from" formControlName="dateFrom">
+          <mat-datepicker-toggle matIconSuffix [for]="from"></mat-datepicker-toggle>
+          <mat-datepicker #from></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="to" formControlName="dateTo">
+          <mat-datepicker-toggle matIconSuffix [for]="to"></mat-datepicker-toggle>
+          <mat-datepicker #to></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="button" (click)="onSearch()">
+          <mat-icon>search</mat-icon>
+          بحث
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card class="panel">
+    <div class="table-wrap">
+      <app-table-template
+        [columnDefs]="columnDefs"
+        [originalSource]="loans"
+        [totalItemsCount]="totalCount"
+        [showViewButton]="true"
+        [isShowEditButton]="false"
+        [isShowDeleteButton]="false"
+        (viewClicked)="onView($event)"
+        (pageChanged)="onPageChange($event)">
+      </app-table-template>
+    </div>
+  </mat-card>
+</div>

@@ -83,6 +83,8 @@ public static class LocalizationKeys
         public const string FieldToAccount = "cashAccounts.field_to_account";
         public const string TransactionNotFound = "cashAccounts.transaction_not_found";
         public const string InvalidDateRange = "cashAccounts.invalid_date_range";
+        public const string LoanDisbursementDescription = "cashAccounts.loan_disbursement_description";
+        public const string LoanRepaymentDescription = "cashAccounts.loan_repayment_description";
     }
 
     public static class Inventory
@@ -114,5 +116,41 @@ public static class LocalizationKeys
         public const string PaymentAmountInvalid = "invoices.payment_amount_invalid";
         public const string AlreadyReceived = "invoices.already_received";
         public const string AlreadyFullyPaid = "invoices.already_fully_paid";
+    }
+
+    public static class Lenders
+    {
+        public const string NotFound = "lenders.not_found";
+        public const string NameRequired = "lenders.name_required";
+        public const string NameMaxLength = "lenders.name_max_length";
+        public const string HasLoans = "lenders.has_loans";
+        public const string PhoneMaxLength = "lenders.phone_max_length";
+        public const string NotesMaxLength = "lenders.notes_max_length";
+        public const string FieldName = "lenders.field_name";
+        public const string FieldPhone = "lenders.field_phone";
+        public const string FieldNotes = "lenders.field_notes";
+    }
+
+    public static class Loans
+    {
+        public const string NotFound = "loans.not_found";
+        public const string LenderRequired = "loans.lender_required";
+        public const string PrincipalMustBePositive = "loans.principal_must_be_positive";
+        public const string DateRequired = "loans.date_required";
+        public const string AlreadyVoided = "loans.already_voided";
+        public const string PaymentAmountInvalid = "loans.payment_amount_invalid";
+        public const string PaymentExceedsRemaining = "loans.payment_exceeds_remaining";
+        public const string ReverseExceedsPaid = "loans.reverse_exceeds_paid";
+        public const string CannotVoidHasPayments = "loans.cannot_void_has_payments";
+        public const string AlreadyFullyPaid = "loans.already_fully_paid";
+        public const string PaymentNotFound = "loans.payment_not_found";
+        public const string CannotVoidFromVault = "loans.cannot_void_from_vault";
+        public const string CannotCreateFromVault = "loans.cannot_create_from_vault";
+        public const string CashAccountRequired = "loans.cash_account_required";
+        public const string FieldPrincipal = "loans.field_principal";
+        public const string FieldAmount = "loans.field_amount";
+        public const string FieldDate = "loans.field_date";
+        public const string FieldCashAccount = "loans.field_cash_account";
+        public const string FieldNotes = "loans.field_notes";
     }
 }

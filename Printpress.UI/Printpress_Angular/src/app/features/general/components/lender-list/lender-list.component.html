@@ -1,0 +1,36 @@
+<div class="cash-account" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>handshake</mat-icon>
+    </div>
+    <div class="hero-text">
+      <h1>المقرضون</h1>
+      <p>جهات إقراض الشركة</p>
+    </div>
+    <div class="hero-actions">
+      <button mat-stroked-button type="button" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        إضافة مقرض
+      </button>
+    </div>
+  </header>
+
+  <mat-card class="panel">
+    <div class="panel-title">
+      <mat-icon>table_chart</mat-icon>
+      <span>القائمة</span>
+      <span class="count">{{ totalCount }}</span>
+    </div>
+    <div class="table-wrap">
+      <app-table-template
+        [columnDefs]="columnDefs"
+        [originalSource]="lenders"
+        [totalItemsCount]="totalCount"
+        [isShowEditButton]="true"
+        [isShowDeleteButton]="true"
+        (editClicked)="onEdit($event)"
+        (deleteClicked)="onDelete($event)">
+      </app-table-template>
+    </div>
+  </mat-card>
+</div>

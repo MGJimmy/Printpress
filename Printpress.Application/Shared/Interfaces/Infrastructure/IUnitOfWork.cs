@@ -1,4 +1,4 @@
-﻿using Printpress.Domain;
+using Printpress.Domain;
 
 namespace Printpress.Application;
 
@@ -34,6 +34,8 @@ public interface IUnitOfWork
 
     IGenericRepository<CashAccount> CashAccountRepository { get; }
     IGenericRepository<CashTransaction> CashTransactionRepository { get; }
+    IGenericRepository<Lender> LenderRepository { get; }
+    IGenericRepository<Loan> LoanRepository { get; }
 
     Task SaveChangesAsync(string userId);
 }

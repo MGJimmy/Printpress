@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +17,7 @@ namespace Printpress.Domain
         Salaries = 7,
         SalesReturn = 8,
         Transfer = 9,
+        Loan = 10,
         Other = 99
     }
 }

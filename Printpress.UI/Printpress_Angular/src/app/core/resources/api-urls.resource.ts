@@ -184,6 +184,25 @@ export class ApiUrlResource {
     getById: (id: string) => `${ApiUrlResource.CashAccount_URL}/getById/${id}`,
   };
 
+  private static Lender_URL = '/api/Lender';
+  public static readonly LenderAPI = {
+    getAll: ApiUrlResource.Lender_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.Lender_URL}/getById/${id}`,
+    add: ApiUrlResource.Lender_URL + '/add',
+    update: (id: string) => `${ApiUrlResource.Lender_URL}/update/${id}`,
+    delete: (id: string) => `${ApiUrlResource.Lender_URL}/delete/${id}`,
+  };
+
+  private static Loan_URL = '/api/Loan';
+  public static readonly LoanAPI = {
+    getAll: ApiUrlResource.Loan_URL + '/getAll',
+    getById: (id: string) => `${ApiUrlResource.Loan_URL}/getById/${id}`,
+    add: ApiUrlResource.Loan_URL + '/add',
+    pay: (id: string) => `${ApiUrlResource.Loan_URL}/pay/${id}`,
+    void: (id: string) => `${ApiUrlResource.Loan_URL}/void/${id}`,
+    voidPayment: (id: string) => `${ApiUrlResource.Loan_URL}/voidPayment/${id}`,
+  };
+
   private static CashTransaction_URL = '/api/CashTransaction';
   public static readonly CashTransactionAPI = {
     getByCashAccountId: (cashAccountId: string) => `${ApiUrlResource.CashTransaction_URL}/getByCashAccountId/${cashAccountId}`,

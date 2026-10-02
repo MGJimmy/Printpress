@@ -1,0 +1,130 @@
+<div class="cash-account" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>account_balance</mat-icon>
+    </div>
+    <div class="hero-text">
+      <h1>تفاصيل القرض</h1>
+      <p *ngIf="loan">قرض رقم {{ loan.loanNumber }} — {{ loan.lenderName }}</p>
+    </div>
+    <div class="hero-actions">
+      <button mat-stroked-button type="button" class="hero-back" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        رجوع
+      </button>
+      <button *ngIf="canVoidLoan" mat-stroked-button type="button" class="hero-danger" (click)="voidLoan()" [disabled]="isVoiding">
+        إلغاء القرض
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="isLoading && !loan" class="text-center my-4">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
+
+  <mat-card class="panel" *ngIf="loan">
+    <div class="summary-grid">
+      <div>
+        <span class="kpi-label">الأصل</span>
+        <strong>{{ loan.principal | number:'1.2-2' }}</strong>
+      </div>
+      <div>
+        <span class="kpi-label">المسدد</span>
+        <strong>{{ loan.paidAmount | number:'1.2-2' }}</strong>
+      </div>
+      <div>
+        <span class="kpi-label">المتبقي</span>
+        <strong>{{ loan.remaining | number:'1.2-2' }}</strong>
+      </div>
+      <div>
+        <span class="kpi-label">التاريخ</span>
+        <strong>{{ loan.occurredAt | date:'yyyy-MM-dd' }}</strong>
+      </div>
+      <div>
+        <span class="kpi-label">الخزينة</span>
+        <strong>{{ loan.cashAccountName || '—' }}</strong>
+      </div>
+      <div>
+        <span class="kpi-label">الحالة</span>
+        <strong class="status-void" *ngIf="loan.isVoided">ملغى</strong>
+        <strong class="status-closed" *ngIf="!loan.isVoided && loan.isClosed">مسدد</strong>
+        <strong class="status-open" *ngIf="!loan.isVoided && !loan.isClosed">ساري</strong>
+      </div>
+    </div>
+    <p class="notes-line" *ngIf="loan.notes">ملاحظات: {{ loan.notes }}</p>
+    <p class="notes-line" *ngIf="loan.isVoided">سبب الإلغاء: {{ loan.voidReason || '—' }}</p>
+  </mat-card>
+
+  <mat-card class="panel" *ngIf="loan && canPay">
+    <div class="panel-title">سداد دفعة من خزينة {{ loan.cashAccountName || '—' }}</div>
+    <form [formGroup]="payForm" (ngSubmit)="pay()">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>المبلغ *</mat-label>
+            <input matInput type="number" formControlName="amount" min="0.01" step="0.01" required>
+            <mat-error *ngIf="payForm.controls.amount.hasError('required')">المبلغ مطلوب</mat-error>
+            <mat-error *ngIf="payForm.controls.amount.hasError('min')">يجب أن يكون المبلغ أكبر من صفر</mat-error>
+            <mat-error *ngIf="payForm.controls.amount.hasError('exceedsRemaining')">المبلغ أكبر من المتبقي على القرض</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>التاريخ *</mat-label>
+            <input matInput [matDatepicker]="payPicker" formControlName="occurredAt" required>
+            <mat-datepicker-toggle matIconSuffix [for]="payPicker"></mat-datepicker-toggle>
+            <mat-datepicker #payPicker></mat-datepicker>
+            <mat-error *ngIf="payForm.controls.occurredAt.hasError('required')">تاريخ السداد مطلوب</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>ملاحظة</mat-label>
+            <input matInput formControlName="note" maxlength="500">
+            <mat-error *ngIf="payForm.controls.note.hasError('maxlength')">الملاحظة يجب ألا تتجاوز 500 حرف</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-12 pay-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="isPaying">تسجيل السداد</button>
+        </div>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card class="panel" *ngIf="loan">
+    <div class="panel-title">سجل السداد</div>
+    <table mat-table [dataSource]="loan.payments" class="pay-table" *ngIf="loan.payments.length; else noPay">
+      <ng-container matColumnDef="transactionDate">
+        <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+        <td mat-cell *matCellDef="let p">{{ p.transactionDate | date:'yyyy-MM-dd' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef class="col-num">المبلغ</th>
+        <td mat-cell *matCellDef="let p" class="col-num">{{ p.amount | number:'1.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>الوصف</th>
+        <td mat-cell *matCellDef="let p">{{ p.description }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>الحالة</th>
+        <td mat-cell *matCellDef="let p">
+          <span class="badge" [class.badge-void]="p.isVoided" [class.badge-ok]="!p.isVoided">
+            {{ p.isVoided ? 'ملغاة' : 'سارية' }}
+          </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let p">
+          <button *ngIf="!p.isVoided && !loan.isVoided" mat-stroked-button color="warn" type="button" (click)="voidPayment(p.id, p.isVoided)" [disabled]="isVoiding">
+            إلغاء الدفعة
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="paymentColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: paymentColumns;"></tr>
+    </table>
+    <ng-template #noPay><p class="empty">لا توجد دفعات</p></ng-template>
+  </mat-card>
+</div>

@@ -1,0 +1,46 @@
+<div class="cash-account" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>handshake</mat-icon>
+    </div>
+    <div class="hero-text">
+      <h1>{{ isEdit ? 'تعديل بيانات المقرض' : 'إضافة مقرض جديد' }}</h1>
+      <p>{{ isEdit ? 'تحديث اسم جهة الإقراض وبيانات التواصل' : 'جهة إقراض الشركة — الاسم مطلوب' }}</p>
+    </div>
+    <button mat-stroked-button type="button" class="hero-back" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      رجوع
+    </button>
+  </header>
+
+  <mat-card class="panel">
+    <form [formGroup]="form" class="row g-3" (ngSubmit)="save()">
+      <div class="col-md-4">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>اسم المقرض *</mat-label>
+          <input matInput formControlName="name" required maxlength="200">
+          <mat-error *ngIf="form.controls.name.hasError('required')">اسم المقرض مطلوب</mat-error>
+          <mat-error *ngIf="form.controls.name.hasError('maxlength')">الاسم يجب ألا يتجاوز 200 حرف</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>الهاتف</mat-label>
+          <input matInput formControlName="phone" maxlength="50">
+          <mat-error *ngIf="form.controls.phone.hasError('maxlength')">رقم الهاتف يجب ألا يتجاوز 50 حرفاً</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>ملاحظات</mat-label>
+          <input matInput formControlName="notes" maxlength="500">
+          <mat-error *ngIf="form.controls.notes.hasError('maxlength')">الملاحظات يجب ألا تتجاوز 500 حرف</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-12 actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="isSaving">حفظ</button>
+        <button mat-stroked-button type="button" (click)="goBack()">رجوع</button>
+      </div>
+    </form>
+  </mat-card>
+</div>

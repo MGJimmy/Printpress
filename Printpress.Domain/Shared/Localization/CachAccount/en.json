@@ -28,6 +28,8 @@
     "cashAccounts.field_to_account": "Destination account",
     "cashAccounts.transaction_not_found": "Cash transaction not found",
     "cashAccounts.invalid_date_range": "The start date must be on or before the end date",
+    "cashAccounts.loan_disbursement_description": "Loan received from {0}",
+    "cashAccounts.loan_repayment_description": "Loan repayment {0}",
     "invoices.already_voided": "This invoice is already voided",
     "invoices.insufficient_stock_to_void": "Cannot void the invoice because remaining stock of '{0}' is insufficient",
     "invoices.not_found": "Invoice not found",

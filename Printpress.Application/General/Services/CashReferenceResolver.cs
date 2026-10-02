@@ -15,7 +15,8 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
             IdsOf(transactions, CashTransactionReferenceType.WorkerSalaryTransaction),
             IdsOf(transactions, CashTransactionReferenceType.PurchaseInventoryInvoice),
             IdsOf(transactions, CashTransactionReferenceType.PurchaseSparePartInvoice),
-            IdsOf(transactions, CashTransactionReferenceType.SellingSparePartInvoice));
+            IdsOf(transactions, CashTransactionReferenceType.SellingSparePartInvoice),
+            IdsOf(transactions, CashTransactionReferenceType.Loan));
 
         var transferIds = IdsOf(transactions, CashTransactionReferenceType.Transfer);
         var transferLegs = transferIds.Count == 0
@@ -41,7 +42,8 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
             documents.Where(d => d.Type == CashTransactionReferenceType.WorkerSalaryTransaction && d.Id.HasValue).Select(d => d.Id!.Value).Distinct().ToList(),
             documents.Where(d => d.Type == CashTransactionReferenceType.PurchaseInventoryInvoice && d.Id.HasValue).Select(d => d.Id!.Value).Distinct().ToList(),
             documents.Where(d => d.Type == CashTransactionReferenceType.PurchaseSparePartInvoice && d.Id.HasValue).Select(d => d.Id!.Value).Distinct().ToList(),
-            documents.Where(d => d.Type == CashTransactionReferenceType.SellingSparePartInvoice && d.Id.HasValue).Select(d => d.Id!.Value).Distinct().ToList());
+            documents.Where(d => d.Type == CashTransactionReferenceType.SellingSparePartInvoice && d.Id.HasValue).Select(d => d.Id!.Value).Distinct().ToList(),
+            documents.Where(d => d.Type == CashTransactionReferenceType.Loan && d.Id.HasValue).Select(d => d.Id!.Value).Distinct().ToList());
 
         var result = new Dictionary<string, CashReferenceLink>();
         foreach (var doc in documents)
@@ -58,7 +60,8 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
         List<Guid> salaryIds,
         List<Guid> purchaseIds,
         List<Guid> sparePurchaseIds,
-        List<Guid> spareSellIds)
+        List<Guid> spareSellIds,
+        List<Guid> loanIds)
     {
         var orders = orderIds.Count == 0
             ? new Dictionary<Guid, Order>()
@@ -82,7 +85,11 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
             ? new Dictionary<Guid, SparePartSellingInvoice>()
             : (await unitOfWork.SparePartSellingInvoiceRepository.FilterAsync(p => spareSellIds.Contains(p.Id))).ToDictionary(p => p.Id);
 
-        return new Lookups(orders, salaries, purchases, sparePurchases, spareSells);
+        var loans = loanIds.Count == 0
+            ? new Dictionary<Guid, Loan>()
+            : (await unitOfWork.LoanRepository.FilterAsync(l => loanIds.Contains(l.Id), nameof(Loan.Lender))).ToDictionary(l => l.Id);
+
+        return new Lookups(orders, salaries, purchases, sparePurchases, spareSells, loans);
     }
 
     private static List<Guid> IdsOf(IReadOnlyList<CashTransaction> txs, CashTransactionReferenceType type)
@@ -148,6 +155,15 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
             CashTransactionReferenceType.SellingSparePartInvoice
                 => new CashReferenceLink { Label = "فاتورة بيع قطع غيار" },
 
+            CashTransactionReferenceType.Loan when lookups.Loans.TryGetValue(key, out var loan)
+                => new CashReferenceLink
+                {
+                    Label = $"قرض: {loan.LoanNumber} — {loan.Lender?.Name ?? "—"}",
+                    Route = $"/general/loans/{loan.Id}"
+                },
+            CashTransactionReferenceType.Loan
+                => new CashReferenceLink { Label = "قرض", Route = $"/general/loans/{key}" },
+
             CashTransactionReferenceType.Transfer
                 => new CashReferenceLink { Label = "تحويل" },
 
@@ -178,5 +194,6 @@ internal sealed class CashReferenceResolver(IUnitOfWork unitOfWork)
         Dictionary<Guid, WorkerSalaryTransaction> Salaries,
         Dictionary<Guid, PurchaseInvoice> Purchases,
         Dictionary<Guid, SparePartPurchaseInvoice> SparePurchases,
-        Dictionary<Guid, SparePartSellingInvoice> SpareSells);
+        Dictionary<Guid, SparePartSellingInvoice> SpareSells,
+        Dictionary<Guid, Loan> Loans);
 }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -112,6 +112,11 @@ public static class DependencyInjection
         services.AddScoped<ICashTransactionService, CashTransactionService>();
         services.AddScoped<IValidator<AddCashTransactionDto>, AddCashTransactionDtoValidator>();
         services.AddScoped<IValidator<TransferCashTransactionDto>, TransferCashTransactionDtoValidator>();
+        services.AddScoped<ILenderService, LenderService>();
+        services.AddScoped<ILoanService, LoanService>();
+        services.AddScoped<IValidator<LenderUpsertDto>, LenderUpsertDtoValidator>();
+        services.AddScoped<IValidator<LoanCreateDto>, LoanCreateDtoValidator>();
+        services.AddScoped<IValidator<LoanPayDto>, LoanPayDtoValidator>();
         services.AddAutoMapper(typeof(CashAccountProfile));
         services.AddAutoMapper(typeof(CashTransactionProfile));
         #endregion

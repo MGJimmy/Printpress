@@ -71,6 +71,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   isReportsExpanded = false;
   isHRExpanded = false;
+  isTreasuryExpanded = false;
   expandedReportGroup: 'inventory' | 'orders' | 'cash' | null = null;
 
   private subscriptions: Subscription = new Subscription();
@@ -172,10 +173,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.isHRExpanded = !this.isHRExpanded;
   }
 
+  toggleTreasury(): void {
+    this.isTreasuryExpanded = !this.isTreasuryExpanded;
+  }
+
   private syncExpandedFromUrl(): void {
     const url = this.router.url;
     if (url.startsWith('/hr/')) {
       this.isHRExpanded = true;
+    }
+    if (url.startsWith('/general/cash-accounts') || url.startsWith('/general/lenders') || url.startsWith('/general/loans')) {
+      this.isTreasuryExpanded = true;
     }
     if (!url.startsWith('/reports/')) {
       return;

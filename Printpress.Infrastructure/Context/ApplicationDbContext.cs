@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Printpress.Domain;
 
 namespace Printpress.Infrastructure;
@@ -52,6 +52,8 @@ public class ApplicationDbContext : DbContext
     #region General
     public DbSet<CashAccount> CashAccount { get; set; }
     public DbSet<CashTransaction> CashTransaction { get; set; }
+    public DbSet<Lender> Lender { get; set; }
+    public DbSet<Loan> Loan { get; set; }
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

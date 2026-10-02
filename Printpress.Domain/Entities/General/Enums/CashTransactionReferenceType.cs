@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +14,7 @@ namespace Printpress.Domain
         SellingSparePartInvoice = 4,
         WorkerSalaryTransaction = 5,
         Transfer = 6,
+        Loan = 7,
         Other = 99
     }
 }

@@ -87,15 +87,38 @@
       <span>المستخدمين</span>
     </a>
 
-    <a
-      *appHasRole="userRoleEnum.admin"
-      routerLink="/general/cash-accounts"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: false }"
-      class="list-group-item list-group-item-action">
+    <div class="list-group-item reports-parent" (click)="toggleTreasury()" *appHasRole="userRoleEnum.admin">
       <fa-icon [icon]="faMoneyBillWave" class="fa-icon mx-2"></fa-icon>
       <span>الخزينة</span>
-    </a>
+      <fa-icon class="chevron" [icon]="isTreasuryExpanded ? faChevronDown : faChevronLeft"></fa-icon>
+    </div>
+
+    <div *ngIf="isTreasuryExpanded" class="reports-children">
+      <a
+        *appHasRole="userRoleEnum.admin"
+        routerLink="/general/cash-accounts"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="list-group-item list-group-item-action ps-5">
+        <span>الحسابات</span>
+      </a>
+      <a
+        *appHasRole="userRoleEnum.admin"
+        routerLink="/general/lenders"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="list-group-item list-group-item-action ps-5">
+        <span>المقرضون</span>
+      </a>
+      <a
+        *appHasRole="userRoleEnum.admin"
+        routerLink="/general/loans"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="list-group-item list-group-item-action ps-5">
+        <span>القروض</span>
+      </a>
+    </div>
 
     <!-- HR -->
     <div class="list-group-item reports-parent" (click)="toggleHR()">

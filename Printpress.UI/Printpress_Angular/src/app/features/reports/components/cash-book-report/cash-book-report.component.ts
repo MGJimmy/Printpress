@@ -64,6 +64,7 @@ export class CashBookReportComponent implements OnInit {
     { value: 'Purchases', label: 'مشتريات' },
     { value: 'Expenses', label: 'مصروفات' },
     { value: 'CapitalInjection', label: 'ضخ رأس المال' },
+    { value: 'Loan', label: 'قرض' },
     { value: 'Maintenance', label: 'صيانة' },
     { value: 'ExternalServices', label: 'خدمات خارجية' },
     { value: 'Salaries', label: 'رواتب' },

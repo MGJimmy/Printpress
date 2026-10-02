@@ -99,7 +99,8 @@ namespace Printpress.Domain
 
             if (transaction.ReferenceType is CashTransactionReferenceType.PurchaseInventoryInvoice
                 or CashTransactionReferenceType.PurchaseSparePartInvoice
-                or CashTransactionReferenceType.SellingSparePartInvoice)
+                or CashTransactionReferenceType.SellingSparePartInvoice
+                or CashTransactionReferenceType.Loan)
                 return false;
 
             return true;

@@ -44,6 +44,7 @@ export class CashByDocumentReportComponent implements OnInit {
     PurchaseSparePartInvoice: 'فاتورة شراء قطع غيار',
     SellingSparePartInvoice: 'فاتورة بيع قطع غيار',
     WorkerSalaryTransaction: 'حركة راتب',
+    Loan: 'قرض',
     Transfer: 'تحويل',
     Other: 'أخرى',
   };

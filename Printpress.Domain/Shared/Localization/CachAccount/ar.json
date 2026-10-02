@@ -28,6 +28,8 @@
     "cashAccounts.field_to_account": "الخزينة المحوَّل إليها",
     "cashAccounts.transaction_not_found": "الحركة المالية غير موجودة",
     "cashAccounts.invalid_date_range": "تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساوياً له",
+    "cashAccounts.loan_disbursement_description": "استلام قرض من {0}",
+    "cashAccounts.loan_repayment_description": "سداد قرض رقم {0}",
     "invoices.already_voided": "هذه الفاتورة ملغاة مسبقاً",
     "invoices.insufficient_stock_to_void": "لا يمكن إلغاء الفاتورة لأن الكمية المتبقية من '{0}' غير كافية",
     "invoices.not_found": "الفاتورة غير موجودة",

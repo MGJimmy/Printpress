@@ -82,6 +82,9 @@ internal sealed class CashTransactionService(
         if (!string.IsNullOrEmpty(payload.ReferenceType))
             referenceTypeEnum = EnumHelper.MapStringToEnum<CashTransactionReferenceType>(payload.ReferenceType);
 
+        if (categoryEnum == CashTransactionCategory.Loan || referenceTypeEnum == CashTransactionReferenceType.Loan)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Loans.CannotCreateFromVault));
+
         var transaction = _cashAccountDomainService.AddCashAccountTransaction(
             account,
             typeEnum,
@@ -202,6 +205,9 @@ internal sealed class CashTransactionService(
 
         if (original.ReferenceType == CashTransactionReferenceType.WorkerSalaryTransaction)
             throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.CannotVoidSalaryFromVault));
+
+        if (original.ReferenceType == CashTransactionReferenceType.Loan)
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Loans.CannotVoidFromVault));
 
         if (!CashAccountDomainService.CanVoidFromVault(original))
             throw new ValidationExeption(_loc.Get(LocalizationKeys.CashAccounts.CannotVoidOrderOrInvoice));

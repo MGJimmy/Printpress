@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Printpress.Application;
 using Printpress.Domain;
 
@@ -39,6 +39,8 @@ namespace Printpress.Infrastructure
         private IGenericRepository<PayrollPeriod> _payrollPeriodRepository;
         private IGenericRepository<CashAccount> _cashAccountRepository;
         private IGenericRepository<CashTransaction> _cashTransactionRepository;
+        private IGenericRepository<Lender> _lenderRepository;
+        private IGenericRepository<Loan> _loanRepository;
 
 
 
@@ -306,6 +308,26 @@ namespace Printpress.Infrastructure
                 if (_cashTransactionRepository == null)
                     _cashTransactionRepository = new GenericRepository<CashTransaction>(_context);
                 return _cashTransactionRepository;
+            }
+        }
+
+        public IGenericRepository<Lender> LenderRepository
+        {
+            get
+            {
+                if (_lenderRepository == null)
+                    _lenderRepository = new GenericRepository<Lender>(_context);
+                return _lenderRepository;
+            }
+        }
+
+        public IGenericRepository<Loan> LoanRepository
+        {
+            get
+            {
+                if (_loanRepository == null)
+                    _loanRepository = new GenericRepository<Loan>(_context);
+                return _loanRepository;
             }
         }
 

@@ -342,6 +342,48 @@ export const routes: Routes = [
                 .then(m => m.CashAccountViewComponent),
             canActivate: [authGuard],
           },
+          {
+            path: 'lenders',
+            loadComponent: () =>
+              import('./features/general/components/lender-list/lender-list.component')
+                .then(m => m.LenderListComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'lenders/new',
+            loadComponent: () =>
+              import('./features/general/components/lender-add-update/lender-add-update.component')
+                .then(m => m.LenderAddUpdateComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'lenders/:id',
+            loadComponent: () =>
+              import('./features/general/components/lender-add-update/lender-add-update.component')
+                .then(m => m.LenderAddUpdateComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'loans',
+            loadComponent: () =>
+              import('./features/general/components/loan-list/loan-list.component')
+                .then(m => m.LoanListComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'loans/new',
+            loadComponent: () =>
+              import('./features/general/components/loan-add/loan-add.component')
+                .then(m => m.LoanAddComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'loans/:id',
+            loadComponent: () =>
+              import('./features/general/components/loan-details/loan-details.component')
+                .then(m => m.LoanDetailsComponent),
+            canActivate: [authGuard],
+          },
         ]
       },
       {
