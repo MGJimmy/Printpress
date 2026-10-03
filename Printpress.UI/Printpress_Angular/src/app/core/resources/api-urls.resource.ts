@@ -41,6 +41,7 @@ export class ApiUrlResource {
     insertOrder: ApiUrlResource.Order_URL + '/insert',
     updateOrder: ApiUrlResource.Order_URL + '/update',
     deliverOrderGroup: ApiUrlResource.Order_URL + '/deliverOrderGroup',
+    deliverOrderSellingItem: ApiUrlResource.Order_URL + '/deliverOrderSellingItem',
     delete: (id:string) => `${ApiUrlResource.Order_URL}/delete/${id}`,
     close: (id:string) => `${ApiUrlResource.Order_URL}/close/${id}`,
   };

@@ -50,6 +50,10 @@ public static class LocalizationKeys
         public const string WorkerRequired = "orders.worker_required";
         public const string BatchEmptySelection = "orders.batch_empty_selection";
         public const string BatchNothingToExecute = "orders.batch_nothing_to_execute";
+        public const string SellingItemAlreadyDelivered = "orders.selling_item_already_delivered";
+        public const string SellingItemDeliveryDateRequired = "orders.selling_item_delivery_date_required";
+        public const string SellingItemDeliveryNamesRequired = "orders.selling_item_delivery_names_required";
+        public const string SellingItemDeliveryMaxLength = "orders.selling_item_delivery_max_length";
     }
 
     public static class CashAccounts

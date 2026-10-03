@@ -9,4 +9,9 @@ export interface OrderSellingItemGetDto extends IObjectState {
     quantity: number;
     price: number;
     inventoryItemName?: string;
+    isDelivered: boolean;
+    deliveryDate?: string;
+    deliveryName?: string;
+    receiverName?: string;
+    deliveryNotes?: string;
 }

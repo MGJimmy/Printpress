@@ -23,4 +23,5 @@ public interface IOrderAggregateService
 
     Task DeleteOrder(Guid id, string userId);
     Task CloseOrderAsync(Guid id, string userId);
+    Task<bool> DeliverSellingItemAsync(DeliverGroupDto deliveryDto, string userId);
 }

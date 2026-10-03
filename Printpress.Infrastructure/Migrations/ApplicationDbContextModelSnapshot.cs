@@ -738,8 +738,24 @@ namespace Printpress.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("DeliveryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeliveryName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("DeliveryNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<Guid?>("InventoryItemId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDelivered")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsInventoryItem")
                         .HasColumnType("boolean");
@@ -757,6 +773,10 @@ namespace Printpress.Infrastructure.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ReceiverName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

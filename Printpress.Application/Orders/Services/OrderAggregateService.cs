@@ -26,7 +26,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
                 && (dateToExclusive == null || o.CreatedAt < dateToExclusive),
             new Sorting(nameof(Order.CreatedAt), SortingDirection.DESC),
             nameof(Order.Client),
-            nameof(Order.OrderGroups)
+            nameof(Order.OrderGroups),
+            nameof(Order.SellingItems)
         );
 
         return _OrderMapper.MapToOrderSummeryDto(orders);
@@ -281,7 +282,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
 
         if (persisted.Status == OrderStatusEnum.InProgress
             || hasCompletedOrDeliveredGroup
-            || executedItemIds.Count > 0)
+            || executedItemIds.Count > 0
+            || HasDeliveredSellingItem(persisted))
             ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.CannotDeleteOrderWithWork));
 
         _IUnitOfWork.OrderRepository.Remove(persisted);
@@ -298,13 +300,41 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
         await _IUnitOfWork.SaveChangesAsync(userId);
     }
 
+    public async Task<bool> DeliverSellingItemAsync(DeliverGroupDto deliveryDto, string userId)
+    {
+        if (deliveryDto is null || deliveryDto.Id == Guid.Empty)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Shared.InvalidPayload));
+
+        var order = await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync(
+            o => o.SellingItems.Any(i => i.Id == deliveryDto.Id),
+            true,
+            nameof(Order.SellingItems));
+
+        if (order is null)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
+
+        var line = order.SellingItems.FirstOrDefault(i => i.Id == deliveryDto.Id);
+        if (line is null)
+            ValidationExeption.FireValidationException(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
+
+        line.MarkDelivered(
+            deliveryDto.DeliveryDate,
+            deliveryDto.DeliveredFrom,
+            deliveryDto.DeliveredTo,
+            deliveryDto.DeliveryNotes);
+
+        await _IUnitOfWork.SaveChangesAsync(userId);
+        return true;
+    }
+
     private async Task<Order> LoadOrderGraphAsync(Guid orderId, bool track)
     {
         string[] includes = [
             $"{nameof(Order.OrderGroups)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.Items)}.{nameof(OrderItem.Details)}",
-            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}"
+            $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}",
+            nameof(Order.SellingItems)
         ];
 
         return await _IUnitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == orderId, track, includes);
@@ -376,6 +406,8 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             incomingById.TryGetValue(persistedGroup.Id, out var incomingGroup);
             ValidateGroupMutation(persistedGroup, incomingGroup, executedItemIds);
         }
+
+        ValidateSellingItemMutations(persisted, incoming);
     }
 
     private void ValidateGroupMutation(
@@ -491,6 +523,38 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     private void Reject(string localizationKey)
         => ValidationExeption.FireValidationException(_loc.Get(localizationKey));
 
+    private void ValidateSellingItemMutations(Order persisted, OrderUpsertDto incoming)
+    {
+        if (persisted.SellingItems is null)
+            throw new InvalidOperationException("Order selling items were not loaded.");
+
+        var incomingById = (incoming.SellingItems ?? []).ToDictionary(i => i.Id);
+
+        foreach (var persistedItem in persisted.SellingItems)
+        {
+            incomingById.TryGetValue(persistedItem.Id, out var incomingItem);
+            if (incomingItem is null || incomingItem.ObjectState == TrackingState.Deleted || SellingItemChanged(persistedItem, incomingItem))
+                persistedItem.EnsureMutable();
+        }
+    }
+
+    private static bool SellingItemChanged(OrderSellingItem persisted, OrderSellingItemUpsertDTO incoming)
+    {
+        return !string.Equals(persisted.Name, incoming.Name, StringComparison.Ordinal)
+            || persisted.InventoryItemId != incoming.InventoryItemId
+            || persisted.IsInventoryItem != incoming.IsInventoryItem
+            || persisted.Quantity != incoming.Quantity
+            || persisted.Price != incoming.Price;
+    }
+
+    private static bool HasDeliveredSellingItem(Order persisted)
+    {
+        if (persisted.SellingItems is null)
+            throw new InvalidOperationException("Order selling items were not loaded.");
+
+        return persisted.SellingItems.Any(i => i.IsDelivered);
+    }
+
     private static bool GroupServicesChanged(OrderGroup persisted, OrderGroupUpsertDTO incoming)
     {
         var persistedServiceKeys = (persisted.OrderGroupServices ?? [])
@@ -560,6 +624,15 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
                     item.OrderItemStatus = OrderItemStatus.New;
                 }
             }
+        }
+
+        var persistedSellingItems = persisted.SellingItems
+            ?? throw new InvalidOperationException("Order selling items were not loaded.");
+        var persistedSellingById = persistedSellingItems.ToDictionary(i => i.Id);
+        foreach (var sellingItem in mapped.SellingItems ?? [])
+        {
+            if (persistedSellingById.TryGetValue(sellingItem.Id, out var persistedItem))
+                sellingItem.RestoreDeliveryFrom(persistedItem);
         }
     }
 }

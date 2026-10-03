@@ -78,4 +78,8 @@ export class OrderService {
   public deliverOrderGroup(deliverGroupDto:any): Observable<any> {
     return this.httpService.post<any>( `${ApiUrlResource.OrderAPI.deliverOrderGroup}`,deliverGroupDto);
   }
+
+  public deliverOrderSellingItem(deliverGroupDto: any): Observable<any> {
+    return this.httpService.post<any>(`${ApiUrlResource.OrderAPI.deliverOrderSellingItem}`, deliverGroupDto);
+  }
 }

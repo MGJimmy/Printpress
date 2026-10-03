@@ -85,4 +85,12 @@ public class OrderController(IOrderAggregateService _IOrderService, IOrderGroupS
         return Ok(result);
     }
 
+    [HttpPost]
+    [Route("DeliverOrderSellingItem")]
+    public async Task<IActionResult> DeliverOrderSellingItem(DeliverGroupDto deliveryDto)
+    {
+        var result = await _IOrderService.DeliverSellingItemAsync(deliveryDto, UserId);
+        return Ok(result);
+    }
+
 }

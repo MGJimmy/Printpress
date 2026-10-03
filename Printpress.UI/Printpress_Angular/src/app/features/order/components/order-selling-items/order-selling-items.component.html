@@ -41,11 +41,21 @@
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>إجراء</th>
                 <td mat-cell *matCellDef="let element">
-                    <button *ngIf="!isViewMode" class="table-btn-edit" mat-icon-button (click)="onEditItem(element)">
+                    <button *ngIf="canEditOrDelete(element)" class="table-btn-edit" mat-icon-button (click)="onEditItem(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button *ngIf="!isViewMode" class="table-btn-delete" mat-icon-button (click)="onDeleteItem(element)">
+                    <button *ngIf="canEditOrDelete(element)" class="table-btn-delete" mat-icon-button (click)="onDeleteItem(element)">
                         <mat-icon>delete</mat-icon>
+                    </button>
+                    <button *ngIf="canDeliver(element)" mat-stroked-button color="primary" type="button"
+                            (click)="onDeliver(element)" [disabled]="isDelivering">
+                        <mat-icon>local_shipping</mat-icon>
+                        تسليم
+                    </button>
+                    <button *ngIf="isViewMode && element.isDelivered" mat-stroked-button type="button"
+                            (click)="onDeliveryDetails(element)">
+                        <mat-icon>info</mat-icon>
+                        تفاصيل التسليم
                     </button>
                 </td>
             </ng-container>

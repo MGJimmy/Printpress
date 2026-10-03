@@ -117,6 +117,11 @@ namespace Printpress.Application
                 Quantity = item.Quantity,
                 Price = item.Price,
                 InventoryItemName = item.InventoryItem?.Name,
+                IsDelivered = item.IsDelivered,
+                DeliveryDate = item.DeliveryDate,
+                DeliveryName = item.DeliveryName,
+                ReceiverName = item.ReceiverName,
+                DeliveryNotes = item.DeliveryNotes,
                 ObjectState = TrackingState.Unchanged
             };
         }

@@ -263,7 +263,12 @@
         </mat-expansion-panel-header>
 
         <div class="mt-4">
-            <app-order-selling-items [isViewMode]="componentMode.isViewMode || isOrderClosed"></app-order-selling-items>
+            <app-order-selling-items
+                *ngIf="orderReady"
+                [isViewMode]="componentMode.isViewMode || isOrderClosed"
+                [isOrderClosed]="isOrderClosed"
+                (delivered)="onSellingItemDelivered($event)">
+            </app-order-selling-items>
         </div>
     </mat-expansion-panel>
 

@@ -603,7 +603,8 @@ public addOrderServicesDistinct(orderService: OrderServicesGetDTO) {
         isInventoryItem: false,
         quantity: 0,
         price: 0,
-        objectState: ObjectStateEnum.temp
+        objectState: ObjectStateEnum.temp,
+        isDelivered: false
       };
       this.orderObject.sellingItems.push(item);
     }
@@ -626,7 +627,8 @@ public addOrderServicesDistinct(orderService: OrderServicesGetDTO) {
       isInventoryItem: false,
       quantity: 0,
       price: 0,
-      objectState: ObjectStateEnum.temp
+      objectState: ObjectStateEnum.temp,
+      isDelivered: false
     };
 
     this.orderObject.sellingItems.push(item);

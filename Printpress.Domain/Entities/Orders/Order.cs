@@ -53,7 +53,7 @@ namespace Printpress.Domain
             if (Status == OrderStatusEnum.Closed)
                 return false;
 
-            return AllGroupsDelivered();
+            return AllGroupsDelivered() && AllSellingItemsDelivered();
         }
 
         public void Close()
@@ -61,7 +61,7 @@ namespace Printpress.Domain
             if (Status == OrderStatusEnum.Closed)
                 throw new BusinessExceptions(LocalizationKeys.Orders.OrderAlreadyClosed);
 
-            if (!AllGroupsDelivered())
+            if (!AllGroupsDelivered() || !AllSellingItemsDelivered())
                 throw new BusinessExceptions(LocalizationKeys.Orders.CannotCloseOrder);
 
             Status = OrderStatusEnum.Closed;
@@ -74,6 +74,14 @@ namespace Printpress.Domain
                 return false;
 
             return groups.All(g => g.Status == GroupStatusEnum.Delivered);
+        }
+
+        private bool AllSellingItemsDelivered()
+        {
+            if (SellingItems is null)
+                throw new InvalidOperationException("Order selling items were not loaded.");
+
+            return SellingItems.All(i => i.IsDelivered);
         }
 
         private List<OrderGroup> ActiveGroups()

@@ -213,6 +213,14 @@ namespace Printpress.Infrastructure
                 .WithMany()
                 .HasForeignKey(x => x.InventoryItemId);
 
+            entity.Property(x => x.IsDelivered)
+                .HasDefaultValue(false);
+            entity.Property(x => x.DeliveryName)
+                .HasMaxLength(200);
+            entity.Property(x => x.ReceiverName)
+                .HasMaxLength(200);
+            entity.Property(x => x.DeliveryNotes)
+                .HasMaxLength(500);
         }
     }
 }

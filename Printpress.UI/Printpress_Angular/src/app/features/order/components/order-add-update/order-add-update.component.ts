@@ -72,7 +72,10 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    return this.allGroupRows.every(g => isStatus(g.status, 'Delivered'));
+    const groupsDelivered = this.allGroupRows.every(g => isStatus(g.status, 'Delivered'));
+    const sellingItems = this.orderGetDto?.sellingItems ?? [];
+    const sellingDelivered = sellingItems.every(item => item.isDelivered);
+    return groupsDelivered && sellingDelivered;
   }
 
   public get orderBalance(): number {
@@ -100,6 +103,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public orderName!: string;
   public orderGetDto: OrderGetDto;
   protected isClosing = false;
+  protected orderReady = false;
   private destroy$ = new Subject<void>();
 
   constructor(private router: Router,
@@ -134,18 +138,14 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    const orderId = this.activedRoute.snapshot.paramMap.get('id');
+    const shouldReloadFromApi = this.componentMode.isViewMode
+      || (this.componentMode.isEditMode && !!orderId && this.orderGetDto.id != orderId);
 
-
-
-    if (this.componentMode.isViewMode || this.componentMode.isEditMode) {
-     
-      let orderId = this.activedRoute.snapshot.paramMap.get('id');
-
-      if (this.orderGetDto.id != orderId) {
-        let response = await firstValueFrom(this.orderService.getOrderById(orderId!));
-        this.orderGetDto = response.data
-        this.OrderSharedService.setOrderObject(this.orderGetDto);
-      }
+    if (shouldReloadFromApi && orderId) {
+      const response = await firstValueFrom(this.orderService.getOrderById(orderId));
+      this.orderGetDto = response.data;
+      this.OrderSharedService.setOrderObject(this.orderGetDto);
     }
 
     // Temp solution to prevent unsaved changes warning in case of view mode
@@ -157,9 +157,9 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     this.bindGroups();
     this.orderName = this.orderGetDto.name;
     this.orderClientId = this.orderGetDto.clientId;
+    this.orderReady = true;
 
     await this.loadAllClients();
-
   }
 
   private bindGroups(){
@@ -442,6 +442,12 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe();
+  }
+
+  public onSellingItemDelivered(order: OrderGetDto): void {
+    this.orderGetDto = order;
+    this.OrderSharedService.setOrderObject(order);
+    this.bindGroups();
   }
   
 }
