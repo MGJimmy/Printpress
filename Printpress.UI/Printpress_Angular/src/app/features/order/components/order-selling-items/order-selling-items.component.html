@@ -63,6 +63,9 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
+        <div *ngIf="isViewMode" class="text-muted mt-2">
+            الإجمالي: {{ sellingLinesTotal | number:'1.2-2' }}
+        </div>
     </ng-container>
 
     <ng-template #noDataTemplate>

@@ -59,6 +59,10 @@ export class OrderSellingItemsComponent implements OnInit {
     this.dataSource = this.orderSharedDataService.getOrderSellingItems_copy();
   }
 
+  get sellingLinesTotal(): number {
+    return this.dataSource.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 0), 0);
+  }
+
   canDeliver(item: OrderSellingItemGetDto): boolean {
     return this.isViewMode && !this.isOrderClosed && !item.isDelivered;
   }

@@ -83,7 +83,7 @@ export class OrderGroupItemsComponent implements OnInit {
 
   private buildColumns(): void {
     const serviceColumns = (this.groupData?.groupServices ?? []).map(s => `svc_${s.serviceCategoryId}`);
-    this.displayedColumns = ['name', 'quantity', 'status', ...serviceColumns, 'actions'];
+    this.displayedColumns = ['name', 'quantity', 'pagesFaces', 'unitPrice', 'total', 'status', ...serviceColumns, 'actions'];
   }
 
   applyFilter(): void {
@@ -103,6 +103,22 @@ export class OrderGroupItemsComponent implements OnInit {
 
   getServiceProgress(item: ItemWithServiceProgressDto, serviceCategoryId: string): ServiceProgressDto | null {
     return item.serviceProgresses.find(s => s.serviceCategoryId === serviceCategoryId) ?? null;
+  }
+
+  get groupServicesNames(): string {
+    return (this.groupData?.services ?? [])
+      .map(service => service.isCover ? `غلاف ${service.name}` : (service.name ?? ''))
+      .filter(name => !!name)
+      .join(' - ');
+  }
+
+  pagesFacesLabel(item: ItemWithServiceProgressDto): string {
+    const pages = item.numberOfPages?.trim();
+    const faces = item.numberOfPrintingFaces?.trim();
+    if (!pages && !faces) {
+      return '—';
+    }
+    return `${pages || '—'} / ${faces || '—'}`;
   }
 
   onExecuteItem(itemId: string): void {

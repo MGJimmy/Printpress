@@ -39,7 +39,8 @@ import { isOrderStatus, orderStatusBadgeClass, orderStatusI18nKey } from '../../
 export class OrderAddUpdateComponent implements OnInit, OnDestroy {
 
   public componentMode: ComponentMode;
-  public displayedColumns = ['name', 'status', 'deliveryDate', 'deliveredTo', 'action'];
+  public displayedColumns: string[] = ['name', 'status', 'deliveryDate', 'deliveredTo', 'action'];
+  public orderServiceColumns: string[] = ['serviceName', 'isCover', 'price'];
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public groupStatusFilter: string = 'all';
   private allGroupRows: OrderGroupGridViewModel[] = [];
@@ -160,6 +161,20 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     this.orderReady = true;
 
     await this.loadAllClients();
+  }
+
+  public get groupsTotal(): number {
+    return this.sumLineTotals(
+      this.OrderSharedService.getOrderGroups_Copy().flatMap(group => group.items ?? [])
+    );
+  }
+
+  public get sellingLinesTotal(): number {
+    return this.sumLineTotals(this.OrderSharedService.getOrderSellingItems_copy());
+  }
+
+  private sumLineTotals(lines: { price: number; quantity: number }[]): number {
+    return lines.reduce((sum, line) => sum + (line.price || 0) * (line.quantity || 0), 0);
   }
 
   private bindGroups(){
@@ -379,7 +394,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
         deliveredTo: orderGroup.deliveredTo,
         deliveryNotes: orderGroup.deliveryNotes,
         hasExecutedItems: this.groupHasExecutedItems(orderGroup)
-      }
+      };
     });
   }
 

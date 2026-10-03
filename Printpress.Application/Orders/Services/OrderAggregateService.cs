@@ -42,6 +42,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}",
             $"{nameof(Order.OrderGroups)}.{nameof(OrderGroup.OrderGroupServices)}.{nameof(OrderGroupService.Service)}",
             $"{nameof(Order.Services)}",
+            $"{nameof(Order.Services)}.{nameof(OrderService.Service)}",
             $"{nameof(Order.SellingItems)}",
             $"{nameof(Order.SellingItems)}.{nameof(OrderSellingItem.InventoryItem)}",
             $"{nameof(Order.Client)}"];

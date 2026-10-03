@@ -8,5 +8,6 @@ public class OrderGroupItemsResponseDto
     public string GroupStatus { get; set; }
     public string OrderStatus { get; set; }
     public List<ServiceProgressDto> GroupServices { get; set; }
+    public List<OrderGroupServiceRateDto> Services { get; set; }
     public List<ItemWithServiceProgressDto> Items { get; set; }
 }

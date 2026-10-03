@@ -15,7 +15,11 @@ internal sealed class ItemServiceExecutionService(
         if (group is null)
             throw new ValidationExeption(ResponseMessage.CreateIdNotExistMessage(groupId));
 
-        var order = await _unitOfWork.OrderRepository.FindAsync(group.OrderId);
+        var order = await _unitOfWork.OrderRepository.FirstOrDefaultAsync(
+            o => o.Id == group.OrderId,
+            false,
+            nameof(Order.Services),
+            $"{nameof(Order.Services)}.{nameof(OrderService.Service)}");
         if (order is null)
             throw new ValidationExeption(_loc.Get(LocalizationKeys.Orders.OrderNotFound));
 
@@ -31,13 +35,17 @@ internal sealed class ItemServiceExecutionService(
             .DistinctBy(sc => sc.Id)
             .ToList();
 
+        var serviceRates = MapGroupServiceRates(
+            groupServices.Where(gs => !gs.IsDeleted).ToList(),
+            order);
+
         // Load items for the group
         var items = _unitOfWork.OrderItemRepository
-            .Filter(i => i.OrderGroupId == groupId)
+            .Filter(i => i.OrderGroupId == groupId, nameof(OrderItem.Details))
             .ToList();
 
         if (!items.Any())
-            return BuildEmptyGroupResponse(group, order.Status, distinctServiceCategories);
+            return BuildEmptyGroupResponse(group, order.Status, distinctServiceCategories, serviceRates);
 
         var itemIds = items.Select(i => i.Id).ToList();
 
@@ -66,6 +74,7 @@ internal sealed class ItemServiceExecutionService(
                 Executed = 0,
                 Total = 0
             }).ToList(),
+            Services = serviceRates,
             Items = itemDtos
         };
     }
@@ -418,6 +427,9 @@ internal sealed class ItemServiceExecutionService(
             Id = item.Id,
             Name = item.Name,
             Quantity = item.Quantity,
+            Price = item.Price,
+            NumberOfPages = ItemDetailValue(item, ItemDetailsKeyEnum.NumberOfPages),
+            NumberOfPrintingFaces = ItemDetailValue(item, ItemDetailsKeyEnum.NumberOfPrintingFaces),
             Status = item.OrderItemStatus.ToString(),
             ServiceProgresses = serviceProgresses
         };
@@ -432,7 +444,10 @@ internal sealed class ItemServiceExecutionService(
     };
 
     private static OrderGroupItemsResponseDto BuildEmptyGroupResponse(
-        OrderGroup group, OrderStatusEnum orderStatus, List<ServiceCategory> serviceCategories) => new()
+        OrderGroup group,
+        OrderStatusEnum orderStatus,
+        List<ServiceCategory> serviceCategories,
+        List<OrderGroupServiceRateDto> serviceRates) => new()
     {
         GroupId = group.Id,
         OrderId = group.OrderId,
@@ -446,6 +461,36 @@ internal sealed class ItemServiceExecutionService(
             Executed = 0,
             Total = 0
         }).ToList(),
+        Services = serviceRates,
         Items = []
     };
+
+    private static List<OrderGroupServiceRateDto> MapGroupServiceRates(
+        List<OrderGroupService> groupServices,
+        Order order)
+    {
+        if (order.Services is null)
+            throw new InvalidOperationException("Order services were not loaded.");
+
+        return groupServices.Select(gs =>
+        {
+            var orderService = order.Services.FirstOrDefault(s =>
+                s.ServiceId == gs.ServiceId && s.IsCover == gs.IsCover);
+
+            return new OrderGroupServiceRateDto
+            {
+                Name = gs.Service?.Name,
+                IsCover = gs.IsCover,
+                UnitPrice = orderService?.Price
+            };
+        }).ToList();
+    }
+
+    private static string ItemDetailValue(OrderItem item, ItemDetailsKeyEnum key)
+    {
+        if (item.Details is null)
+            throw new InvalidOperationException("Item details were not loaded.");
+
+        return item.Details.FirstOrDefault(d => !d.IsDeleted && d.ItemDetailsKey == key)?.Value;
+    }
 }

@@ -55,6 +55,7 @@ namespace Printpress.Application
                 OrderId = orderService.OrderId,
                 Price = orderService.Price,
                 ServiceId = orderService.ServiceId,
+                ServiceName = orderService.Service?.Name,
                 IsCover = orderService.IsCover,
                 //ObjectState = ObjectState.Unchanged
             };

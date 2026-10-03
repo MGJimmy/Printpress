@@ -10,8 +10,17 @@ export interface ItemWithServiceProgressDto {
   id: string;
   name: string;
   quantity: number;
+  price: number;
+  numberOfPages?: string;
+  numberOfPrintingFaces?: string;
   status: string;
   serviceProgresses: ServiceProgressDto[];
+}
+
+export interface OrderGroupServiceRateDto {
+  name: string;
+  isCover: boolean;
+  unitPrice?: number;
 }
 
 export interface OrderGroupItemsResponseDto {
@@ -21,6 +30,7 @@ export interface OrderGroupItemsResponseDto {
   groupStatus: string;
   orderStatus: string;
   groupServices: ServiceProgressDto[];
+  services: OrderGroupServiceRateDto[];
   items: ItemWithServiceProgressDto[];
 }
 
