@@ -20,7 +20,7 @@ internal static class OrderInventoryItemsCalculator
         return items.Sum(item => CalculatePaperUsedForItem(item));
     }
 
-    private static decimal CalculatePaperUsedForItem(OrderItemUsageProjection item)
+    public static decimal CalculatePaperUsedForItem(OrderItemUsageProjection item)
     {
         if (item.IsCover)
             return item.Quantity;

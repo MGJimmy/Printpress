@@ -9,6 +9,11 @@ public interface IReportRepository
     Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo);
     Task<int> GetDeliveredSellingCartonsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
     Task<int> GetConversionUnitsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
+    Task<List<InventoryOutMovementProjection>> GetConsumptionOutRowsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
+    Task<List<ConsumptionExecuteProjection>> GetConsumptionExecuteRowsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
+    Task<List<DeliveredSellingProjection>> GetDeliveredSellingRowsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
+    Task<List<ConversionSourceProjection>> GetConversionRowsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
+    Task<List<SettlementSourceProjection>> GetSettlementRowsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
 
     // Report 2: Inventory & Services Usage
     Task<List<InventoryItemStockProjection>> GetInventoryItemsStockByCategoryAsync(int categoryId, DateTime? dateFrom, DateTime? dateTo);

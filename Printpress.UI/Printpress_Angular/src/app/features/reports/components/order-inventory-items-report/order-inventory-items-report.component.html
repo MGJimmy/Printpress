@@ -178,6 +178,218 @@
         </table>
       </div>
     </mat-card>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>outbox</mat-icon>
+        <span>خروج</span>
+      </div>
+      <div class="table-wrap" *ngIf="reportResult.outRows?.length; else emptyOut">
+        <table mat-table [dataSource]="reportResult.outRows" class="cash-table">
+          <ng-container matColumnDef="occurredAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.occurredAt | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="cartons">
+            <th mat-header-cell *matHeaderCellDef>كراتين</th>
+            <td mat-cell *matCellDef="let row">{{ row.cartons | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="units">
+            <th mat-header-cell *matHeaderCellDef>وحدات</th>
+            <td mat-cell *matCellDef="let row">{{ row.units | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="workerName">
+            <th mat-header-cell *matHeaderCellDef>العامل</th>
+            <td mat-cell *matCellDef="let row">{{ row.workerName || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel }}</a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="outColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: outColumns;"></tr>
+        </table>
+      </div>
+      <ng-template #emptyOut>
+        <p class="empty">لا توجد حركات خروج في الفترة</p>
+      </ng-template>
+    </mat-card>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>precision_manufacturing</mat-icon>
+        <span>تنفيذ</span>
+      </div>
+      <div class="table-wrap" *ngIf="reportResult.executeRows?.length; else emptyExecute">
+        <table mat-table [dataSource]="reportResult.executeRows" class="cash-table">
+          <ng-container matColumnDef="occurredAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.occurredAt | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="orderName">
+            <th mat-header-cell *matHeaderCellDef>الطلب</th>
+            <td mat-cell *matCellDef="let row">{{ row.orderName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="workerName">
+            <th mat-header-cell *matHeaderCellDef>العامل</th>
+            <td mat-cell *matCellDef="let row">{{ row.workerName || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>كمية منفَّذة</th>
+            <td mat-cell *matCellDef="let row">{{ row.quantity | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="paperUnits">
+            <th mat-header-cell *matHeaderCellDef>وحدات ورق</th>
+            <td mat-cell *matCellDef="let row">{{ row.paperUnits | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel }}</a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="executeColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: executeColumns;"></tr>
+        </table>
+      </div>
+      <ng-template #emptyExecute>
+        <p class="empty">لا توجد تنفيذات في الفترة</p>
+      </ng-template>
+    </mat-card>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>local_shipping</mat-icon>
+        <span>بيع مسلَّم</span>
+      </div>
+      <div class="table-wrap" *ngIf="reportResult.sellingRows?.length; else emptySelling">
+        <table mat-table [dataSource]="reportResult.sellingRows" class="cash-table">
+          <ng-container matColumnDef="occurredAt">
+            <th mat-header-cell *matHeaderCellDef>تاريخ التسليم</th>
+            <td mat-cell *matCellDef="let row">{{ row.occurredAt | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="orderName">
+            <th mat-header-cell *matHeaderCellDef>الطلب</th>
+            <td mat-cell *matCellDef="let row">{{ row.orderName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="cartons">
+            <th mat-header-cell *matHeaderCellDef>كراتين</th>
+            <td mat-cell *matCellDef="let row">{{ row.cartons | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="units">
+            <th mat-header-cell *matHeaderCellDef>وحدات</th>
+            <td mat-cell *matCellDef="let row">{{ row.units | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>العنصر</th>
+            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel }}</a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="sellingColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: sellingColumns;"></tr>
+        </table>
+      </div>
+      <ng-template #emptySelling>
+        <p class="empty">لا يوجد بيع مسلَّم في الفترة</p>
+      </ng-template>
+    </mat-card>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>transform</mat-icon>
+        <span>تحويل إلى منتج</span>
+      </div>
+      <div class="table-wrap" *ngIf="reportResult.conversionRows?.length; else emptyConversion">
+        <table mat-table [dataSource]="reportResult.conversionRows" class="cash-table">
+          <ng-container matColumnDef="occurredAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.occurredAt | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>وحدات</th>
+            <td mat-cell *matCellDef="let row">{{ row.quantity | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>السبب</th>
+            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel }}</a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="conversionColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: conversionColumns;"></tr>
+        </table>
+      </div>
+      <ng-template #emptyConversion>
+        <p class="empty">لا توجد تحويلات إلى منتج في الفترة</p>
+      </ng-template>
+    </mat-card>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>fact_check</mat-icon>
+        <span>تسويات</span>
+      </div>
+      <div class="table-wrap" *ngIf="reportResult.settlementRows?.length; else emptySettlement">
+        <table mat-table [dataSource]="reportResult.settlementRows" class="cash-table">
+          <ng-container matColumnDef="occurredAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.occurredAt | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="settlementType">
+            <th mat-header-cell *matHeaderCellDef>النوع</th>
+            <td mat-cell *matCellDef="let row">{{ settlementTypeLabel(row.settlementType) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>وحدات</th>
+            <td mat-cell *matCellDef="let row">{{ row.quantity | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel }}</a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="settlementColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: settlementColumns;"></tr>
+        </table>
+      </div>
+      <ng-template #emptySettlement>
+        <p class="empty">لا توجد تسويات في الفترة</p>
+      </ng-template>
+    </mat-card>
   </ng-container>
 
   <p class="empty" *ngIf="!reportResult && !isLoading">

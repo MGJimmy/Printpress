@@ -26,6 +26,84 @@ internal sealed class OrderInventoryItemsReportService(IUnitOfWork _unitOfWork) 
         var difference = OrderInventoryItemsCalculator.CalculateDifference(unitsOut, consumption, conversionUnits, expectedWaste);
         var settlementUnits = await _unitOfWork.ReportRepository.GetUsageSettlementUnitsAsync(inventoryItemId, dateFrom, dateTo);
 
+        var dateQuery = BuildDateQuery(dateFrom, dateTo);
+        var outRows = (await _unitOfWork.ReportRepository.GetConsumptionOutRowsAsync(inventoryItemId, dateFrom, dateTo))
+            .Select(r => new ConsumptionOutRowDto
+            {
+                Id = r.Id,
+                OccurredAt = r.CreatedAt,
+                Cartons = r.Cartons,
+                Units = OrderInventoryItemsCalculator.CalculateUnitsFromCartons(r.Cartons, unitsPerCarton),
+                WorkerName = r.WorkerName,
+                Notes = r.Notes,
+                ReferenceLabel = "حركة المخزن",
+                ReferenceRoute = $"/inventory/transactions?itemId={inventoryItemId}&type=Out{dateQuery}"
+            })
+            .ToList();
+
+        var executeRows = (await _unitOfWork.ReportRepository.GetConsumptionExecuteRowsAsync(inventoryItemId, dateFrom, dateTo))
+            .Select(r => new ConsumptionExecuteRowDto
+            {
+                Id = r.Id,
+                OccurredAt = r.ExecutionDate,
+                OrderName = r.OrderName,
+                WorkerName = r.WorkerName,
+                Quantity = r.Quantity,
+                NumberOfPages = r.NumberOfPages,
+                NumberOfPrintingFaces = r.NumberOfPrintingFaces,
+                IsCover = r.IsCover,
+                PaperUnits = OrderInventoryItemsCalculator.CalculatePaperUsedForItem(new OrderItemUsageProjection
+                {
+                    Quantity = r.Quantity,
+                    NumberOfPages = r.NumberOfPages,
+                    NumberOfPrintingFaces = r.NumberOfPrintingFaces,
+                    IsCover = r.IsCover
+                }),
+                Notes = r.Notes,
+                ReferenceLabel = r.OrderName,
+                ReferenceRoute = $"/order/groups/{r.OrderGroupId}/items/{r.OrderItemId}/history"
+            })
+            .ToList();
+
+        var sellingRows = (await _unitOfWork.ReportRepository.GetDeliveredSellingRowsAsync(inventoryItemId, dateFrom, dateTo))
+            .Select(r => new ConsumptionSellingRowDto
+            {
+                Id = r.Id,
+                OccurredAt = r.DeliveryDate,
+                OrderName = r.OrderName,
+                Cartons = r.Cartons,
+                Units = OrderInventoryItemsCalculator.CalculateUnitsFromCartons(r.Cartons, unitsPerCarton),
+                Notes = r.Name,
+                ReferenceLabel = r.OrderName,
+                ReferenceRoute = $"/order/view/{r.OrderId}"
+            })
+            .ToList();
+
+        var conversionRows = (await _unitOfWork.ReportRepository.GetConversionRowsAsync(inventoryItemId, dateFrom, dateTo))
+            .Select(r => new ConsumptionConversionRowDto
+            {
+                Id = r.Id,
+                OccurredAt = r.OccurredAt,
+                Quantity = r.Quantity,
+                Notes = r.Notes,
+                ReferenceLabel = "تحويل إلى منتج",
+                ReferenceRoute = $"/inventory/usage-conversions?itemId={inventoryItemId}{dateQuery}"
+            })
+            .ToList();
+
+        var settlementRows = (await _unitOfWork.ReportRepository.GetSettlementRowsAsync(inventoryItemId, dateFrom, dateTo))
+            .Select(r => new ConsumptionSettlementRowDto
+            {
+                Id = r.Id,
+                OccurredAt = r.OccurredAt,
+                Quantity = r.Quantity,
+                SettlementType = r.SettlementType,
+                Notes = r.Notes,
+                ReferenceLabel = "تسويات الاستهلاك",
+                ReferenceRoute = $"/inventory/usage-settlements?itemId={inventoryItemId}{dateQuery}"
+            })
+            .ToList();
+
         return new OrderInventoryItemsReportDto
         {
             ItemCategory = item.CategoryName,
@@ -45,7 +123,22 @@ internal sealed class OrderInventoryItemsReportService(IUnitOfWork _unitOfWork) 
             CurrentStockCartons = currentStockCartons,
             CurrentStockUnits = OrderInventoryItemsCalculator.CalculateUnitsFromCartons(currentStockCartons, unitsPerCarton),
             PeriodNetCartons = cartonsIn - cartonsOut,
-            PeriodNetUnits = unitsIn - unitsOut
+            PeriodNetUnits = unitsIn - unitsOut,
+            OutRows = outRows,
+            ExecuteRows = executeRows,
+            SellingRows = sellingRows,
+            ConversionRows = conversionRows,
+            SettlementRows = settlementRows
         };
+    }
+
+    private static string BuildDateQuery(DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        var parts = new List<string>();
+        if (dateFrom is not null)
+            parts.Add($"dateFrom={dateFrom.Value:yyyy-MM-dd}");
+        if (dateToExclusive is not null)
+            parts.Add($"dateTo={dateToExclusive.Value.AddDays(-1):yyyy-MM-dd}");
+        return parts.Count == 0 ? "" : "&" + string.Join("&", parts);
     }
 }

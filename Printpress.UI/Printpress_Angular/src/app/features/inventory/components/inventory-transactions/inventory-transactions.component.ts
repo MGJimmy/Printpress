@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -71,6 +71,7 @@ export class InventoryTransactionsComponent implements OnInit {
     private http: HttpService,
     private alertService: AlertService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {
     this.filterForm = this.fb.group({
       categoryId: this.fb.control<number | null>(null),
@@ -101,6 +102,32 @@ export class InventoryTransactionsComponent implements OnInit {
         });
       }
     });
+
+    const q = this.route.snapshot.queryParamMap;
+    const itemId = q.get('itemId');
+    const type = q.get('type');
+    const dateFrom = q.get('dateFrom');
+    const dateTo = q.get('dateTo');
+    if (type) this.filterForm.controls.type.setValue(type);
+    if (dateFrom) {
+      const d = new Date(dateFrom);
+      if (!Number.isNaN(d.getTime())) this.filterForm.controls.dateFrom.setValue(d);
+    }
+    if (dateTo) {
+      const d = new Date(dateTo);
+      if (!Number.isNaN(d.getTime())) this.filterForm.controls.dateTo.setValue(d);
+    }
+    if (itemId) {
+      this.filterForm.controls.itemId.setValue(itemId);
+      this.inventoryService.getById(itemId).subscribe({
+        next: (res) => {
+          if (res.data) {
+            this.items = [{ id: res.data.id, name: res.data.name }];
+          }
+        },
+      });
+    }
+
     this.search();
   }
 

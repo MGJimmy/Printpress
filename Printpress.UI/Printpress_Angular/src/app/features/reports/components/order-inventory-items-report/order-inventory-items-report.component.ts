@@ -11,7 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderInventoryItemsReportService } from '../../services/order-inventory-items-report.service';
@@ -33,6 +33,7 @@ import { OrderInventoryItemsReportDto, InventoryCategoryFilterDto, InventoryItem
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    RouterLink,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './order-inventory-items-report.component.html',
@@ -57,6 +58,11 @@ export class OrderInventoryItemsReportComponent implements OnInit {
     'paperUsedUnits', 'conversionUnits', 'expectedWaste', 'difference',
     'settlementUnits', 'unexplainedDifference',
   ];
+  outColumns = ['occurredAt', 'cartons', 'units', 'workerName', 'notes', 'reference'];
+  executeColumns = ['occurredAt', 'orderName', 'workerName', 'quantity', 'paperUnits', 'notes', 'reference'];
+  sellingColumns = ['occurredAt', 'orderName', 'cartons', 'units', 'notes', 'reference'];
+  conversionColumns = ['occurredAt', 'quantity', 'notes', 'reference'];
+  settlementColumns = ['occurredAt', 'settlementType', 'quantity', 'notes', 'reference'];
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -132,6 +138,27 @@ export class OrderInventoryItemsReportComponent implements OnInit {
       dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
       dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
     });
+  }
+
+  settlementTypeLabel(type: string): string {
+    if (type === 'ExtraWaste') return 'هالك إضافي';
+    if (type === 'Theft') return 'سرقة / فقد';
+    if (type === 'Other') return 'أخرى';
+    return type;
+  }
+
+  sourcePath(route: string): string {
+    return route.split('?')[0];
+  }
+
+  sourceQuery(route: string): Record<string, string> {
+    const i = route.indexOf('?');
+    if (i < 0) return {};
+    const params: Record<string, string> = {};
+    new URLSearchParams(route.substring(i + 1)).forEach((value, key) => {
+      params[key] = value;
+    });
+    return params;
   }
 
   differenceClass(value: number): string {

@@ -20,4 +20,9 @@ public class OrderInventoryItemsReportDto
     public int CurrentStockUnits { get; set; }
     public int PeriodNetCartons { get; set; }
     public int PeriodNetUnits { get; set; }
+    public List<ConsumptionOutRowDto> OutRows { get; set; } = [];
+    public List<ConsumptionExecuteRowDto> ExecuteRows { get; set; } = [];
+    public List<ConsumptionSellingRowDto> SellingRows { get; set; } = [];
+    public List<ConsumptionConversionRowDto> ConversionRows { get; set; } = [];
+    public List<ConsumptionSettlementRowDto> SettlementRows { get; set; } = [];
 }

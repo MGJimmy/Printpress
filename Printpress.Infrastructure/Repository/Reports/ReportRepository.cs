@@ -139,6 +139,163 @@ internal class ReportRepository : IReportRepository
             .SumAsync(c => (int?)c.Quantity) ?? 0;
     }
 
+    public async Task<List<InventoryOutMovementProjection>> GetConsumptionOutRowsAsync(
+        Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.InventoryTransaction
+            .Where(t => t.InventoryItemId == inventoryItemId
+                && t.InventoryTransactionType == InventoryTransactionType.Out
+                && (dateFrom == null || t.CreatedAt >= dateFrom)
+                && (dateToExclusive == null || t.CreatedAt < dateToExclusive))
+            .OrderByDescending(t => t.CreatedAt)
+            .Select(t => new InventoryOutMovementProjection
+            {
+                Id = t.Id,
+                CreatedAt = t.CreatedAt,
+                Cartons = t.Quantity,
+                WorkerName = t.Worker != null ? t.Worker.Name : null,
+                Notes = t.Notes
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<ConsumptionExecuteProjection>> GetConsumptionExecuteRowsAsync(
+        Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        var serviceIds = await _context.Service
+            .Where(s => s.InventoryItemId == inventoryItemId)
+            .Select(s => s.Id)
+            .ToListAsync();
+
+        if (serviceIds.Count == 0)
+            return [];
+
+        var orders = await _context.Order
+            .Include(o => o.OrderGroups)
+                .ThenInclude(og => og.OrderGroupServices)
+                    .ThenInclude(ogs => ogs.Service)
+            .Include(o => o.OrderGroups)
+                .ThenInclude(og => og.Items)
+                    .ThenInclude(i => i.Details)
+            .Where(o => !o.IsDeleted
+                && o.Services.Any(os => !os.IsDeleted && serviceIds.Contains(os.ServiceId)))
+            .ToListAsync();
+
+        var candidates = orders
+            .SelectMany(o => (o.OrderGroups ?? []).Where(og => !og.IsDeleted)
+                .SelectMany(og => (og.OrderGroupServices ?? [])
+                    .Where(os => !os.IsDeleted && serviceIds.Contains(os.ServiceId) && os.Service != null)
+                    .SelectMany(os => (og.Items ?? [])
+                        .Where(item => !item.IsDeleted)
+                        .Select(item => (Order: o, Group: og, GroupService: os, Item: item)))))
+            .DistinctBy(c => (c.Item.Id, c.GroupService.Service.ServiceCategoryId, c.GroupService.IsCover))
+            .ToList();
+
+        if (candidates.Count == 0)
+            return [];
+
+        var candidateMap = candidates
+            .GroupBy(c => (c.Item.Id, c.GroupService.Service.ServiceCategoryId))
+            .ToDictionary(g => g.Key, g => g.First());
+
+        var itemIds = candidateMap.Keys.Select(k => k.Id).Distinct().ToList();
+        var executions = await _context.WorkerProduction
+            .Include(e => e.Worker)
+            .Where(e => itemIds.Contains(e.OrderItemId)
+                && e.Quantity > 0
+                && (dateFrom == null || e.ExecutionDate >= dateFrom)
+                && (dateToExclusive == null || e.ExecutionDate < dateToExclusive))
+            .OrderByDescending(e => e.ExecutionDate)
+            .ToListAsync();
+
+        return executions
+            .Where(e => candidateMap.ContainsKey((e.OrderItemId, e.ServiceCategoryId)))
+            .Select(e =>
+            {
+                var c = candidateMap[(e.OrderItemId, e.ServiceCategoryId)];
+                return new ConsumptionExecuteProjection
+                {
+                    Id = e.Id,
+                    ExecutionDate = e.ExecutionDate,
+                    OrderId = c.Order.Id,
+                    OrderName = c.Order.Name,
+                    OrderGroupId = c.Group.Id,
+                    OrderItemId = c.Item.Id,
+                    WorkerName = e.Worker?.Name,
+                    Quantity = e.Quantity,
+                    NumberOfPages = int.TryParse(c.Item.Details?.FirstOrDefault(d => !d.IsDeleted && d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value, out var pages) ? pages : 0,
+                    NumberOfPrintingFaces = int.TryParse(c.Item.Details?.FirstOrDefault(d => !d.IsDeleted && d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value, out var faces) ? faces : 0,
+                    IsCover = c.GroupService.IsCover,
+                    Notes = e.Notes
+                };
+            })
+            .ToList();
+    }
+
+    public async Task<List<DeliveredSellingProjection>> GetDeliveredSellingRowsAsync(
+        Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.Set<OrderSellingItem>()
+            .Where(i => i.IsInventoryItem
+                && i.InventoryItemId == inventoryItemId
+                && i.IsDelivered
+                && i.DeliveryDate != null
+                && !i.Order.IsDeleted
+                && (dateFrom == null || i.DeliveryDate >= dateFrom)
+                && (dateToExclusive == null || i.DeliveryDate < dateToExclusive))
+            .OrderByDescending(i => i.DeliveryDate)
+            .Select(i => new DeliveredSellingProjection
+            {
+                Id = i.Id,
+                OrderId = i.OrderId,
+                OrderName = i.Order.Name,
+                DeliveryDate = i.DeliveryDate.Value,
+                Cartons = i.Quantity,
+                Name = i.Name
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<ConversionSourceProjection>> GetConversionRowsAsync(
+        Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.InventoryConversion
+            .Where(c => c.InventoryItemId == inventoryItemId
+                && c.Status == InventoryConversionStatus.Completed
+                && !c.IsVoided
+                && (dateFrom == null || c.OccurredAt >= dateFrom)
+                && (dateToExclusive == null || c.OccurredAt < dateToExclusive))
+            .OrderByDescending(c => c.OccurredAt)
+            .Select(c => new ConversionSourceProjection
+            {
+                Id = c.Id,
+                OccurredAt = c.OccurredAt,
+                Quantity = c.Quantity,
+                Notes = c.Notes
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<SettlementSourceProjection>> GetSettlementRowsAsync(
+        Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.InventoryUsageSettlement
+            .Where(s => s.InventoryItemId == inventoryItemId
+                && !s.IsVoided
+                && (dateFrom == null || s.OccurredAt >= dateFrom)
+                && (dateToExclusive == null || s.OccurredAt < dateToExclusive))
+            .OrderByDescending(s => s.OccurredAt)
+            .Select(s => new SettlementSourceProjection
+            {
+                Id = s.Id,
+                OccurredAt = s.OccurredAt,
+                Quantity = s.Quantity,
+                SettlementType = s.SettlementType,
+                Notes = s.Notes
+            })
+            .ToListAsync();
+    }
+
 
     public async Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync_old(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
     {
