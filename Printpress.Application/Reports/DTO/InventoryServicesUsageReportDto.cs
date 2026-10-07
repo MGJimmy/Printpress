@@ -16,4 +16,7 @@ public class InventoryServicesUsageReportDto
     public int TotalOrders { get; set; }
     public int TotalItems { get; set; }
     public decimal TotalPaperUsed { get; set; }
+
+    public List<ServiceUsageExecuteRowDto> ExecuteRows { get; set; } = [];
+    public List<ServiceUsageOrderRowDto> OrderRows { get; set; } = [];
 }

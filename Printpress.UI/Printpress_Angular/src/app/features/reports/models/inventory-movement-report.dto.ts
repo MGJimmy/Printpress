@@ -6,6 +6,8 @@ export interface InventoryMovementLineDto {
   outQuantity: number;
   runningBalance: number;
   referenceType: string;
+  referenceLabel: string;
+  referenceRoute: string;
   workerName: string | null;
   notes: string | null;
 }

@@ -201,6 +201,16 @@
   font-weight: 700;
 }
 
+.ref-link {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ref-link:hover {
+  text-decoration: underline;
+}
+
 .amt-in { color: var(--color-in); font-weight: 700; }
 .amt-out { color: var(--color-out); font-weight: 700; }
 .amt-balance { color: #1565c0; font-weight: 800; }

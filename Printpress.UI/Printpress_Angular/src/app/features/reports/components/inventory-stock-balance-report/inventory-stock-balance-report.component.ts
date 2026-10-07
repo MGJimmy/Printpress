@@ -108,6 +108,19 @@ export class InventoryStockBalanceReportComponent implements OnInit {
     this.search();
   }
 
+  movementQuery(row: { categoryId: number; itemId: string }): Record<string, string> {
+    const query: Record<string, string> = {
+      categoryId: String(row.categoryId),
+      inventoryItemId: row.itemId,
+    };
+    const v = this.filterForm.getRawValue();
+    const from = this.asDate(v.dateFrom);
+    const to = this.asDate(v.dateTo);
+    if (from) query['dateFrom'] = this.toIsoDate(from);
+    if (to) query['dateTo'] = this.toIsoDate(to);
+    return query;
+  }
+
   stockClass(value: number): string {
     if (value < 0) return 'amt-out';
     if (value === 0) return 'amt-muted';

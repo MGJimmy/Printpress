@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryServicesUsageReportService } from '../../services/inventory-services-usage-report.service';
@@ -36,6 +37,7 @@ import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-r
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    RouterLink,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-services-usage-report.component.html',
@@ -61,6 +63,8 @@ export class InventoryServicesUsageReportComponent implements OnInit {
   ];
 
   serviceColumns = ['svcName', 'svcOrders', 'svcItems', 'svcPaper'];
+  executeColumns = ['occurredAt', 'serviceName', 'orderName', 'workerName', 'quantity', 'paperUnits', 'notes', 'reference'];
+  orderColumns = ['occurredAt', 'serviceName', 'orderName', 'reference'];
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -132,6 +136,33 @@ export class InventoryServicesUsageReportComponent implements OnInit {
       dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
       dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
     });
+  }
+
+  movementQuery(row: { categoryId: number; itemId: string }): Record<string, string> {
+    const query: Record<string, string> = {
+      categoryId: String(row.categoryId),
+      inventoryItemId: row.itemId,
+    };
+    const v = this.filterForm.getRawValue();
+    const from = this.asDate(v.dateFrom);
+    const to = this.asDate(v.dateTo);
+    if (from) query['dateFrom'] = this.toIsoDate(from);
+    if (to) query['dateTo'] = this.toIsoDate(to);
+    return query;
+  }
+
+  sourcePath(route: string): string {
+    return route.split('?')[0];
+  }
+
+  sourceQuery(route: string): Record<string, string> {
+    const i = route.indexOf('?');
+    if (i < 0) return {};
+    const params: Record<string, string> = {};
+    new URLSearchParams(route.substring(i + 1)).forEach((value, key) => {
+      params[key] = value;
+    });
+    return params;
   }
 
   private asDate(value: Date | null): Date | null {

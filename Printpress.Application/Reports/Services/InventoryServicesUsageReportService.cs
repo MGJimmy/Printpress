@@ -22,6 +22,14 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
             ? await _unitOfWork.ReportRepository.GetServiceItemRawDataAsync(serviceIds, dateFrom, dateTo)
             : new List<ServiceItemRaw>();
 
+        var executeProjections = serviceIds.Count > 0
+            ? await _unitOfWork.ReportRepository.GetServiceExecuteRowsAsync(serviceIds, dateFrom, dateTo)
+            : [];
+
+        var orderProjections = serviceIds.Count > 0
+            ? await _unitOfWork.ReportRepository.GetServiceOrderRowsAsync(serviceIds, dateFrom, dateTo)
+            : [];
+
         var inventoryRows = BuildInventoryRows(inventoryItems);
         var serviceRows = BuildServiceRows(services, orderCounts, itemRawData);
 
@@ -39,7 +47,9 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
             Services = serviceRows,
             TotalOrders = serviceRows.Sum(r => r.OrderCount),
             TotalItems = serviceRows.Sum(r => r.ItemCount),
-            TotalPaperUsed = serviceRows.Sum(r => r.PaperUsed)
+            TotalPaperUsed = serviceRows.Sum(r => r.PaperUsed),
+            ExecuteRows = executeProjections.Select(MapExecuteRow).ToList(),
+            OrderRows = orderProjections.Select(MapOrderRow).ToList()
         };
     }
 
@@ -53,6 +63,8 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
     {
         return items.Select(i => new InventoryItemUsageRowDto
         {
+            ItemId = i.Id,
+            CategoryId = i.CategoryId,
             ItemCategory = i.CategoryName,
             ItemName = i.Name,
             PacksPerCarton = i.PacksPerCarton,
@@ -113,5 +125,41 @@ internal sealed class InventoryServicesUsageReportService(IUnitOfWork _unitOfWor
 
         int faces = int.TryParse(item.FacesValue, out var f) && f > 0 ? f : 1;
         return Math.Round((decimal)(item.Quantity * pages) / faces, 2);
+    }
+
+    private static ServiceUsageExecuteRowDto MapExecuteRow(ServiceExecuteProjection r)
+    {
+        return new ServiceUsageExecuteRowDto
+        {
+            Id = r.Id,
+            OccurredAt = r.ExecutionDate,
+            ServiceName = r.ServiceName,
+            OrderName = r.OrderName,
+            WorkerName = r.WorkerName,
+            Quantity = r.Quantity,
+            PaperUnits = OrderInventoryItemsCalculator.CalculatePaperUsedForItem(new OrderItemUsageProjection
+            {
+                Quantity = r.Quantity,
+                NumberOfPages = r.NumberOfPages,
+                NumberOfPrintingFaces = r.NumberOfPrintingFaces,
+                IsCover = r.IsCover
+            }),
+            Notes = r.Notes,
+            ReferenceLabel = r.OrderName,
+            ReferenceRoute = $"/order/groups/{r.OrderGroupId}/items/{r.OrderItemId}/history"
+        };
+    }
+
+    private static ServiceUsageOrderRowDto MapOrderRow(ServiceOrderProjection r)
+    {
+        return new ServiceUsageOrderRowDto
+        {
+            OrderId = r.OrderId,
+            OccurredAt = r.CreatedAt,
+            ServiceName = r.ServiceName,
+            OrderName = r.OrderName,
+            ReferenceLabel = r.OrderName,
+            ReferenceRoute = $"/order/view/{r.OrderId}"
+        };
     }
 }

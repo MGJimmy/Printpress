@@ -11,6 +11,8 @@ public class InventoryMovementLineDto
     public int OutQuantity { get; set; }
     public int RunningBalance { get; set; }
     public string ReferenceType { get; set; }
+    public string ReferenceLabel { get; set; }
+    public string ReferenceRoute { get; set; }
     public string WorkerName { get; set; }
     public string Notes { get; set; }
 }
@@ -34,6 +36,7 @@ public class InventoryMovementTxProjection
     public InventoryTransactionType Type { get; set; }
     public int Quantity { get; set; }
     public InventoryTransactionReferenceType ReferenceType { get; set; }
+    public Guid ReferenceId { get; set; }
     public string WorkerName { get; set; }
     public string Notes { get; set; }
 }

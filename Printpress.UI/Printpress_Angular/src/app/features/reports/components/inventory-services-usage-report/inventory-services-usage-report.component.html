@@ -115,7 +115,11 @@
           </ng-container>
           <ng-container matColumnDef="invName">
             <th mat-header-cell *matHeaderCellDef>العنصر</th>
-            <td mat-cell *matCellDef="let row">{{ row.itemName }}</td>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="['/reports/inventory-movement']"
+                 [queryParams]="movementQuery(row)"
+                 target="_blank" rel="noopener noreferrer">{{ row.itemName }}</a>
+            </td>
             <td mat-footer-cell *matFooterCellDef></td>
           </ng-container>
           <ng-container matColumnDef="invPacks">
@@ -210,6 +214,96 @@
       </div>
       <ng-template #noSvc>
         <p class="empty">لا توجد خدمات في هذا التصنيف</p>
+      </ng-template>
+    </mat-card>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>precision_manufacturing</mat-icon>
+        <span>تنفيذ</span>
+        <span class="count">{{ reportResult.executeRows.length }}</span>
+      </div>
+      <div class="table-wrap" *ngIf="reportResult.executeRows.length; else noExec">
+        <table mat-table [dataSource]="reportResult.executeRows" class="cash-table">
+          <ng-container matColumnDef="occurredAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.occurredAt | date:'yyyy-MM-dd HH:mm' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="serviceName">
+            <th mat-header-cell *matHeaderCellDef>الخدمة</th>
+            <td mat-cell *matCellDef="let row">{{ row.serviceName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="orderName">
+            <th mat-header-cell *matHeaderCellDef>الطلب</th>
+            <td mat-cell *matCellDef="let row">{{ row.orderName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="workerName">
+            <th mat-header-cell *matHeaderCellDef>العامل</th>
+            <td mat-cell *matCellDef="let row">{{ row.workerName || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>الكمية</th>
+            <td mat-cell *matCellDef="let row">{{ row.quantity | number }}</td>
+          </ng-container>
+          <ng-container matColumnDef="paperUnits">
+            <th mat-header-cell *matHeaderCellDef>أوراق</th>
+            <td mat-cell *matCellDef="let row">{{ row.paperUnits | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>ملاحظات</th>
+            <td mat-cell *matCellDef="let row">{{ row.notes || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel }}</a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="executeColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: executeColumns;"></tr>
+        </table>
+      </div>
+      <ng-template #noExec>
+        <p class="empty">لا يوجد تنفيذ في الفترة</p>
+      </ng-template>
+    </mat-card>
+
+    <mat-card class="panel">
+      <div class="panel-title">
+        <mat-icon>receipt_long</mat-icon>
+        <span>طلبات الخدمات</span>
+        <span class="count">{{ reportResult.orderRows.length }}</span>
+      </div>
+      <div class="table-wrap" *ngIf="reportResult.orderRows.length; else noOrders">
+        <table mat-table [dataSource]="reportResult.orderRows" class="cash-table">
+          <ng-container matColumnDef="occurredAt">
+            <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+            <td mat-cell *matCellDef="let row">{{ row.occurredAt | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="serviceName">
+            <th mat-header-cell *matHeaderCellDef>الخدمة</th>
+            <td mat-cell *matCellDef="let row">{{ row.serviceName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="orderName">
+            <th mat-header-cell *matHeaderCellDef>الطلب</th>
+            <td mat-cell *matCellDef="let row">{{ row.orderName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>المرجع</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel }}</a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="orderColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: orderColumns;"></tr>
+        </table>
+      </div>
+      <ng-template #noOrders>
+        <p class="empty">لا توجد طلبات خدمات في الفترة</p>
       </ng-template>
     </mat-card>
   </ng-container>

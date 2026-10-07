@@ -138,6 +138,7 @@
 :host ::ng-deep .cash-table .mat-mdc-row:hover { background: #fff5f5; }
 :host ::ng-deep .cash-table .mat-mdc-footer-row { background: #fff5f5; font-weight: 700; }
 :host ::ng-deep .cash-table a { color: #c62828; font-weight: 700; text-decoration: none; }
+.ref-link:hover { text-decoration: underline; }
 
 .amt-out { color: var(--color-out); font-weight: 700; }
 .notes { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

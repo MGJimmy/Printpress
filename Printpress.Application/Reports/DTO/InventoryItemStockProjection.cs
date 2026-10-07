@@ -3,6 +3,7 @@ namespace Printpress.Application;
 public class InventoryItemStockProjection
 {
     public Guid Id { get; set; }
+    public int CategoryId { get; set; }
     public string Name { get; set; }
     public string CategoryName { get; set; }
     public int? PacksPerCarton { get; set; }

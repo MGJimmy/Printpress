@@ -132,6 +132,15 @@
             <td mat-cell *matCellDef="let row" class="notes">{{ row.notes || '—' }}</td>
             <td mat-footer-cell *matFooterCellDef></td>
           </ng-container>
+          <ng-container matColumnDef="source">
+            <th mat-header-cell *matHeaderCellDef>الحركة</th>
+            <td mat-cell *matCellDef="let row">
+              <a class="ref-link" [routerLink]="['/inventory/transactions']"
+                 [queryParams]="txQuery(row)"
+                 target="_blank" rel="noopener noreferrer">حركات المخزن</a>
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="columns"></tr>
           <tr mat-row *matRowDef="let row; columns: columns;"></tr>
           <tr mat-footer-row *matFooterRowDef="columns"></tr>

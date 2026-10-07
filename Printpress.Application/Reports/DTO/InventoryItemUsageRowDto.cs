@@ -2,6 +2,8 @@ namespace Printpress.Application;
 
 public class InventoryItemUsageRowDto
 {
+    public Guid ItemId { get; set; }
+    public int CategoryId { get; set; }
     public string ItemCategory { get; set; }
     public string ItemName { get; set; }
     public int? PacksPerCarton { get; set; }

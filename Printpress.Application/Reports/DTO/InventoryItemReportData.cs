@@ -2,6 +2,7 @@ namespace Printpress.Application;
 
 public class InventoryItemReportData
 {
+    public int CategoryId { get; set; }
     public string Name { get; set; }
     public string CategoryName { get; set; }
     public int? PacksPerCarton { get; set; }

@@ -19,6 +19,7 @@ internal class ReportRepository : IReportRepository
             .Where(i => i.Id == inventoryItemId)
             .Select(i => new InventoryItemReportData
             {
+                CategoryId = i.InventoryItemCategoryId,
                 Name = i.Name,
                 CategoryName = i.InventoryItemCategory_LKP.Name,
                 PacksPerCarton = i.PacksPerCarton,
@@ -360,6 +361,7 @@ internal class ReportRepository : IReportRepository
             .Select(i => new InventoryItemStockProjection
             {
                 Id = i.Id,
+                CategoryId = i.InventoryItemCategoryId,
                 Name = i.Name,
                 CategoryName = i.InventoryItemCategory_LKP.Name,
                 PacksPerCarton = i.PacksPerCarton,
@@ -480,6 +482,91 @@ internal class ReportRepository : IReportRepository
             .Where(r => r != null)
             .Select(r => r!)
             .ToList();
+    }
+
+    public async Task<List<ServiceExecuteProjection>> GetServiceExecuteRowsAsync(
+        List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        if (serviceIds.Count == 0)
+            return [];
+
+        var orders = await _context.Order
+            .Include(o => o.OrderGroups)
+                .ThenInclude(og => og.OrderGroupServices)
+                    .ThenInclude(ogs => ogs.Service)
+            .Include(o => o.OrderGroups)
+                .ThenInclude(og => og.Items)
+                    .ThenInclude(i => i.Details)
+            .Where(o => !o.IsDeleted
+                && o.Services.Any(os => !os.IsDeleted && serviceIds.Contains(os.ServiceId)))
+            .ToListAsync();
+
+        var candidates = orders
+            .SelectMany(o => (o.OrderGroups ?? []).Where(og => !og.IsDeleted)
+                .SelectMany(og => (og.OrderGroupServices ?? [])
+                    .Where(os => !os.IsDeleted && serviceIds.Contains(os.ServiceId) && os.Service != null)
+                    .SelectMany(os => (og.Items ?? [])
+                        .Where(item => !item.IsDeleted)
+                        .Select(item => (Order: o, Group: og, GroupService: os, Item: item)))))
+            .ToList();
+
+        if (candidates.Count == 0)
+            return [];
+
+        var itemIds = candidates.Select(c => c.Item.Id).Distinct().ToList();
+        var executions = await _context.WorkerProduction
+            .Include(e => e.Worker)
+            .Where(e => itemIds.Contains(e.OrderItemId)
+                && e.Quantity > 0
+                && (dateFrom == null || e.ExecutionDate >= dateFrom)
+                && (dateToExclusive == null || e.ExecutionDate < dateToExclusive))
+            .OrderByDescending(e => e.ExecutionDate)
+            .ToListAsync();
+
+        return executions
+            .SelectMany(e => candidates
+                .Where(c => c.Item.Id == e.OrderItemId
+                    && c.GroupService.Service.ServiceCategoryId == e.ServiceCategoryId)
+                .Select(c => new ServiceExecuteProjection
+                {
+                    Id = e.Id,
+                    ExecutionDate = e.ExecutionDate,
+                    ServiceName = c.GroupService.Service.Name,
+                    OrderId = c.Order.Id,
+                    OrderName = c.Order.Name,
+                    OrderGroupId = c.Group.Id,
+                    OrderItemId = c.Item.Id,
+                    WorkerName = e.Worker?.Name,
+                    Quantity = e.Quantity,
+                    NumberOfPages = int.TryParse(c.Item.Details?.FirstOrDefault(d => !d.IsDeleted && d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value, out var pages) ? pages : 0,
+                    NumberOfPrintingFaces = int.TryParse(c.Item.Details?.FirstOrDefault(d => !d.IsDeleted && d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value, out var faces) ? faces : 0,
+                    IsCover = c.GroupService.IsCover,
+                    Notes = e.Notes
+                }))
+            .ToList();
+    }
+
+    public async Task<List<ServiceOrderProjection>> GetServiceOrderRowsAsync(
+        List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        if (serviceIds.Count == 0)
+            return [];
+
+        return await _context.OrderService
+            .Where(os => serviceIds.Contains(os.ServiceId)
+                && !os.IsDeleted
+                && !os.Order.IsDeleted
+                && (dateFrom == null || os.Order.CreatedAt >= dateFrom)
+                && (dateToExclusive == null || os.Order.CreatedAt < dateToExclusive))
+            .OrderByDescending(os => os.Order.CreatedAt)
+            .Select(os => new ServiceOrderProjection
+            {
+                OrderId = os.OrderId,
+                CreatedAt = os.Order.CreatedAt,
+                OrderName = os.Order.Name,
+                ServiceName = os.Service.Name
+            })
+            .ToListAsync();
     }
 
     private async Task<Dictionary<(Guid OrderItemId, Guid ServiceCategoryId), int>> GetExecutedQuantitiesAsync(
@@ -624,6 +711,7 @@ internal class ReportRepository : IReportRepository
                 Id = t.Id,
                 MovementDate = t.OccurredAt,
                 ItemId = t.InventoryItemId,
+                CategoryId = t.InventoryItem.InventoryItemCategoryId,
                 ItemName = t.InventoryItem.Name,
                 CategoryName = t.InventoryItem.InventoryItemCategory_LKP.Name,
                 Quantity = t.Quantity,
@@ -647,6 +735,7 @@ internal class ReportRepository : IReportRepository
                 Type = t.InventoryTransactionType,
                 Quantity = t.Quantity,
                 ReferenceType = t.ReferenceType,
+                ReferenceId = t.ReferenceId,
                 WorkerName = t.Worker != null ? t.Worker.Name : null,
                 Notes = t.Notes
             })

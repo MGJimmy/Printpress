@@ -108,7 +108,13 @@
           </ng-container>
           <ng-container matColumnDef="referenceType">
             <th mat-header-cell *matHeaderCellDef>المصدر</th>
-            <td mat-cell *matCellDef="let row">{{ row.referenceType }}</td>
+            <td mat-cell *matCellDef="let row">
+              <a *ngIf="row.referenceRoute" class="ref-link"
+                 [routerLink]="sourcePath(row.referenceRoute)"
+                 [queryParams]="sourceQuery(row.referenceRoute)"
+                 target="_blank" rel="noopener noreferrer">{{ row.referenceLabel || row.referenceType }}</a>
+              <span *ngIf="!row.referenceRoute">{{ row.referenceLabel || row.referenceType }}</span>
+            </td>
           </ng-container>
           <ng-container matColumnDef="inQuantity">
             <th mat-header-cell *matHeaderCellDef>دخول</th>

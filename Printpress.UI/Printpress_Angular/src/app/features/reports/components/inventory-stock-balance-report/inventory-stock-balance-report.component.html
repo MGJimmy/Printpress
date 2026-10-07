@@ -90,7 +90,9 @@
           <ng-container matColumnDef="itemName">
             <th mat-header-cell *matHeaderCellDef>العنصر</th>
             <td mat-cell *matCellDef="let row">
-              <a [routerLink]="['/inventory/items/view', row.itemId]">{{ row.itemName }}</a>
+              <a class="ref-link" [routerLink]="['/reports/inventory-movement']"
+                 [queryParams]="movementQuery(row)"
+                 target="_blank" rel="noopener noreferrer">{{ row.itemName }}</a>
             </td>
             <td mat-footer-cell *matFooterCellDef><strong>الإجمالي</strong></td>
           </ng-container>

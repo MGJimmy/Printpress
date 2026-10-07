@@ -2,6 +2,7 @@ export interface InventoryStockOutRowDto {
   id: string;
   movementDate: string;
   itemId: string;
+  categoryId: number;
   itemName: string;
   categoryName: string;
   quantity: number;

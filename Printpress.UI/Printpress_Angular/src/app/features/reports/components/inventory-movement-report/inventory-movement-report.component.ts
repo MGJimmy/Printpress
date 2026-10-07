@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryMovementReportService } from '../../services/inventory-movement-report.service';
@@ -33,6 +34,7 @@ import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    RouterLink,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-movement-report.component.html',
@@ -43,6 +45,7 @@ export class InventoryMovementReportComponent implements OnInit {
   items: InventoryItemFilterDto[] = [];
   report: InventoryMovementReportDto | null = null;
   isLoading = false;
+  private hydrating = false;
 
   columns = ['movementDate', 'type', 'referenceType', 'inQuantity', 'outQuantity', 'runningBalance', 'workerName', 'notes'];
 
@@ -57,6 +60,7 @@ export class InventoryMovementReportComponent implements OnInit {
     private fb: NonNullableFormBuilder,
     private reportService: InventoryMovementReportService,
     private alertService: AlertService,
+    private route: ActivatedRoute,
   ) {
     const now = new Date();
     this.filterForm = this.fb.group({
@@ -74,6 +78,7 @@ export class InventoryMovementReportComponent implements OnInit {
     });
 
     this.filterForm.controls.categoryId.valueChanges.subscribe((categoryId) => {
+      if (this.hydrating) return;
       this.items = [];
       this.filterForm.controls.inventoryItemId.setValue('');
       this.report = null;
@@ -84,6 +89,56 @@ export class InventoryMovementReportComponent implements OnInit {
         });
       }
     });
+
+    this.hydrateFromQuery();
+  }
+
+  sourcePath(route: string): string {
+    return route.split('?')[0];
+  }
+
+  sourceQuery(route: string): Record<string, string> {
+    const i = route.indexOf('?');
+    if (i < 0) return {};
+    const params: Record<string, string> = {};
+    new URLSearchParams(route.substring(i + 1)).forEach((value, key) => {
+      params[key] = value;
+    });
+    return params;
+  }
+
+  private hydrateFromQuery(): void {
+    const q = this.route.snapshot.queryParamMap;
+    const categoryRaw = q.get('categoryId');
+    const inventoryItemId = q.get('inventoryItemId');
+    const dateFrom = this.parseIsoDate(q.get('dateFrom'));
+    const dateTo = this.parseIsoDate(q.get('dateTo'));
+    if (dateFrom) this.filterForm.controls.dateFrom.setValue(dateFrom);
+    if (dateTo) this.filterForm.controls.dateTo.setValue(dateTo);
+
+    const categoryId = categoryRaw ? Number(categoryRaw) : NaN;
+    if (!Number.isFinite(categoryId) || !inventoryItemId) return;
+
+    this.hydrating = true;
+    this.filterForm.controls.categoryId.setValue(categoryId);
+    this.reportService.getItemsByCategory(categoryId).subscribe({
+      next: (res) => {
+        this.items = res.data ?? [];
+        this.filterForm.controls.inventoryItemId.setValue(inventoryItemId);
+        this.hydrating = false;
+        this.search();
+      },
+      error: () => {
+        this.hydrating = false;
+        this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون');
+      },
+    });
+  }
+
+  private parseIsoDate(value: string | null): Date | null {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 
   search(): void {

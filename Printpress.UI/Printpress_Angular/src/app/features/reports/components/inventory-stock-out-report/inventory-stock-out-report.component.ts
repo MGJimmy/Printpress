@@ -49,7 +49,7 @@ export class InventoryStockOutReportComponent implements OnInit {
   report: InventoryStockOutReportDto | null = null;
   isLoading = false;
 
-  columns = ['movementDate', 'itemName', 'categoryName', 'quantity', 'workerName', 'notes'];
+  columns = ['movementDate', 'itemName', 'categoryName', 'quantity', 'workerName', 'notes', 'source'];
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;
@@ -122,6 +122,16 @@ export class InventoryStockOutReportComponent implements OnInit {
       next: (res) => { this.report = res.data; },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التقرير'); },
     });
+  }
+
+  txQuery(row: { itemId: string }): Record<string, string> {
+    const query: Record<string, string> = { itemId: row.itemId, type: 'Out' };
+    const v = this.filterForm.getRawValue();
+    const from = this.asDate(v.dateFrom);
+    const to = this.asDate(v.dateTo);
+    if (from) query['dateFrom'] = this.toIsoDate(from);
+    if (to) query['dateTo'] = this.toIsoDate(to);
+    return query;
   }
 
   reset(): void {

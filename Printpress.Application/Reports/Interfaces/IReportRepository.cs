@@ -21,6 +21,8 @@ public interface IReportRepository
     Task<List<ServiceBasicInfo>> GetServicesByCategoryIdAsync(Guid serviceCategoryId);
     Task<Dictionary<Guid, int>> GetOrderCountsByServiceAsync(List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateTo);
     Task<List<ServiceItemRaw>> GetServiceItemRawDataAsync(List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateTo);
+    Task<List<ServiceExecuteProjection>> GetServiceExecuteRowsAsync(List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateToExclusive);
+    Task<List<ServiceOrderProjection>> GetServiceOrderRowsAsync(List<Guid> serviceIds, DateTime? dateFrom, DateTime? dateToExclusive);
 
     Task<List<InventoryStockBalanceRowDto>> GetInventoryStockBalanceAsync(
         int? categoryId, DateTime? dateFrom, DateTime? dateToExclusive);

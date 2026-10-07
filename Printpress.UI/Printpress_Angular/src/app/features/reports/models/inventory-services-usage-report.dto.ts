@@ -1,4 +1,28 @@
+export interface ServiceUsageExecuteRowDto {
+  id: string;
+  occurredAt: string;
+  serviceName: string;
+  orderName: string;
+  workerName: string | null;
+  quantity: number;
+  paperUnits: number;
+  notes: string | null;
+  referenceLabel: string;
+  referenceRoute: string;
+}
+
+export interface ServiceUsageOrderRowDto {
+  orderId: string;
+  occurredAt: string;
+  serviceName: string;
+  orderName: string;
+  referenceLabel: string;
+  referenceRoute: string;
+}
+
 export interface InventoryItemUsageRowDto {
+  itemId: string;
+  categoryId: number;
   itemCategory: string;
   itemName: string;
   packsPerCarton: number | null;
@@ -35,6 +59,8 @@ export interface InventoryServicesUsageReportDto {
   totalOrders: number;
   totalItems: number;
   totalPaperUsed: number;
+  executeRows: ServiceUsageExecuteRowDto[];
+  orderRows: ServiceUsageOrderRowDto[];
 }
 
 export interface ServiceCategoryFilterDto {
