@@ -20,6 +20,7 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<PurchaseInvoice>().Configure(Schema, PurchaseInvoiceNumberSequence);
             modelBuilder.Entity<PurchaseInvoiceLine>().Configure();
             modelBuilder.Entity<InventoryUsageSettlement>().Configure();
+            modelBuilder.Entity<InventoryConversion>().Configure();
         }
 
         private static void Configure(this EntityTypeBuilder<InventoryItem> entity)
@@ -146,6 +147,43 @@ namespace Printpress.Infrastructure
             entity.HasOne(x => x.InventoryItem)
                 .WithMany()
                 .HasForeignKey(x => x.InventoryItemId);
+
+            entity.HasIndex(x => new { x.InventoryItemId, x.OccurredAt });
+        }
+
+        private static void Configure(this EntityTypeBuilder<InventoryConversion> entity)
+        {
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.SetSchemaTable(Schema);
+
+            entity.Property(x => x.Notes)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(x => x.OccurredAt)
+                .IsRequired();
+
+            entity.Property(x => x.Status)
+                .IsRequired()
+                .HasDefaultValue(InventoryConversionStatus.Open);
+
+            entity.Property(x => x.CompletedBy)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.IsVoided)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(x => x.VoidReason)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.VoidedBy)
+                .HasMaxLength(100);
+
+            entity.HasOne(x => x.InventoryItem)
+                .WithMany()
+                .HasForeignKey(x => x.InventoryItemId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasIndex(x => new { x.InventoryItemId, x.OccurredAt });
         }

@@ -55,6 +55,9 @@ public static class DependencyInjection
 
         services.AddScoped<IInventoryUsageSettlementService, InventoryUsageSettlementService>();
         services.AddScoped<IValidator<InventoryUsageSettlementCreateDto>, InventoryUsageSettlementCreateDtoValidator>();
+
+        services.AddScoped<IInventoryConversionService, InventoryConversionService>();
+        services.AddScoped<IValidator<InventoryConversionCreateDto>, InventoryConversionCreateDtoValidator>();
         #endregion
 
 

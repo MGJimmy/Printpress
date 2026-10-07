@@ -54,7 +54,7 @@ export class OrderInventoryItemsReportComponent implements OnInit {
   displayedColumns = [
     'itemCategory', 'itemName', 'packsPerCarton', 'unitsPerPack',
     'cartonsOut', 'unitsOut',
-    'paperUsedUnits', 'expectedWaste', 'difference',
+    'paperUsedUnits', 'conversionUnits', 'expectedWaste', 'difference',
     'settlementUnits', 'unexplainedDifference',
   ];
 

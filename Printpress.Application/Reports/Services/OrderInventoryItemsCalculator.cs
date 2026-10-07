@@ -42,9 +42,9 @@ internal static class OrderInventoryItemsCalculator
         return Math.Round(paperUsed * wastePercent / 100m, 2);
     }
 
-    public static decimal CalculateDifference(int unitsOut, decimal consumption, decimal expectedWaste)
+    public static decimal CalculateDifference(int unitsOut, decimal consumption, int conversionUnits, decimal expectedWaste)
     {
-        return Math.Round(unitsOut - (consumption + expectedWaste), 2);
+        return Math.Round(unitsOut - (consumption + conversionUnits + expectedWaste), 2);
     }
 
     public static decimal CalculateUnexplainedDifference(decimal difference, int settlementUnits)

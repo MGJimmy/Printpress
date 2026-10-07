@@ -8,6 +8,7 @@ export interface OrderInventoryItemsReportDto {
   cartonsOut: number;
   unitsOut: number;
   paperUsedUnits: number;
+  conversionUnits: number;
   expectedWaste: number;
   difference: number;
   settlementUnits: number;

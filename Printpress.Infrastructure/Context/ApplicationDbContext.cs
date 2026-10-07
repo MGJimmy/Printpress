@@ -31,6 +31,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<PurchaseInvoice> PurchaseInvoice { get; set; }
     public DbSet<PurchaseInvoiceLine> PurchaseInvoiceLine { get; set; }
     public DbSet<InventoryUsageSettlement> InventoryUsageSettlement { get; set; }
+    public DbSet<InventoryConversion> InventoryConversion { get; set; }
     #endregion
 
     #region SpareParts

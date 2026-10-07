@@ -102,6 +102,14 @@ public static class LocalizationKeys
         public const string UsageSettlementDateRequired = "inventory.usage_settlement_date_required";
         public const string UsageSettlementNotFound = "inventory.usage_settlement_not_found";
         public const string UsageSettlementAlreadyVoided = "inventory.usage_settlement_already_voided";
+        public const string ConversionItemRequired = "inventory.conversion_item_required";
+        public const string ConversionQuantityMustBePositive = "inventory.conversion_quantity_must_be_positive";
+        public const string ConversionNotesRequired = "inventory.conversion_notes_required";
+        public const string ConversionNotesMaxLength = "inventory.conversion_notes_max_length";
+        public const string ConversionDateRequired = "inventory.conversion_date_required";
+        public const string ConversionNotFound = "inventory.conversion_not_found";
+        public const string ConversionAlreadyVoided = "inventory.conversion_already_voided";
+        public const string ConversionAlreadyCompleted = "inventory.conversion_already_completed";
         public const string FieldItem = "inventory.field_item";
         public const string FieldQuantity = "inventory.field_quantity";
         public const string FieldType = "inventory.field_type";

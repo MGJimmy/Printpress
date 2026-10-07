@@ -74,8 +74,13 @@
         <strong>{{ reportResult.paperUsedUnits | number:'1.2-2' }}</strong>
         <small>هالك متوقع {{ reportResult.expectedWaste | number:'1.2-2' }}</small>
       </article>
+      <article class="kpi kpi-qty">
+        <span class="kpi-label">تحويل إلى منتج</span>
+        <strong>{{ reportResult.conversionUnits | number }}</strong>
+        <small>وحدات مكتملة</small>
+      </article>
       <article class="kpi kpi-diff">
-        <span class="kpi-label">الفرق (خروج − استهلاك وهالك)</span>
+        <span class="kpi-label">الفرق (خروج − استهلاك وتحويل إلى منتج وهالك)</span>
         <strong>{{ reportResult.difference | number:'1.2-2' }}</strong>
         <small>سالب يعني صرف أكثر من المتوقع</small>
       </article>
@@ -104,8 +109,9 @@
 
     <p class="hint">
       الاستهلاك يشمل الإنتاج المنفَّذ والبيع المسلَّم من المخزن.
-      الفرق = خروج المخزن − الاستهلاك − الهالك المتوقع.
+      الفرق = خروج المخزن − الاستهلاك − التحويل إلى منتج − الهالك المتوقع.
       التسوية تفسّر الفرق فقط ولا تغيّر رصيد المخزن.
+      وحدات التحويل إلى منتج مكتملة تدخل في الفرق ولا تغيّر رصيد المخزن.
     </p>
 
     <mat-card class="panel">
@@ -142,6 +148,10 @@
           <ng-container matColumnDef="paperUsedUnits">
             <th mat-header-cell *matHeaderCellDef>استهلاك</th>
             <td mat-cell *matCellDef="let row">{{ row.paperUsedUnits | number:'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="conversionUnits">
+            <th mat-header-cell *matHeaderCellDef>تحويل إلى منتج</th>
+            <td mat-cell *matCellDef="let row">{{ row.conversionUnits | number }}</td>
           </ng-container>
           <ng-container matColumnDef="expectedWaste">
             <th mat-header-cell *matHeaderCellDef>هالك متوقع</th>

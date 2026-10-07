@@ -21,8 +21,9 @@ internal sealed class OrderInventoryItemsReportService(IUnitOfWork _unitOfWork) 
         var currentStockCartons = stockIn - stockOut;
         var paperUsed = OrderInventoryItemsCalculator.CalculatePaperUsed(orderItemsUsage);
         var consumption = OrderInventoryItemsCalculator.CalculateConsumption(paperUsed, deliveredSellingUnits);
+        var conversionUnits = await _unitOfWork.ReportRepository.GetConversionUnitsAsync(inventoryItemId, dateFrom, dateTo);
         var expectedWaste = OrderInventoryItemsCalculator.CalculateExpectedWaste(paperUsed, item.ExpectedProductionWastePercent);
-        var difference = OrderInventoryItemsCalculator.CalculateDifference(unitsOut, consumption, expectedWaste);
+        var difference = OrderInventoryItemsCalculator.CalculateDifference(unitsOut, consumption, conversionUnits, expectedWaste);
         var settlementUnits = await _unitOfWork.ReportRepository.GetUsageSettlementUnitsAsync(inventoryItemId, dateFrom, dateTo);
 
         return new OrderInventoryItemsReportDto
@@ -36,6 +37,7 @@ internal sealed class OrderInventoryItemsReportService(IUnitOfWork _unitOfWork) 
             CartonsOut = cartonsOut,
             UnitsOut = unitsOut,
             PaperUsedUnits = consumption,
+            ConversionUnits = conversionUnits,
             ExpectedWaste = expectedWaste,
             Difference = difference,
             SettlementUnits = settlementUnits,

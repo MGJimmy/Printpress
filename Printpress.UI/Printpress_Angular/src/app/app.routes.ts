@@ -155,6 +155,22 @@ export const routes: Routes = [
             canActivate: [authGuard],
           },
           {
+            path: 'usage-conversions/new',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/usage-conversion-create/usage-conversion-create.component'
+              ).then((m) => m.UsageConversionCreateComponent),
+            canActivate: [authGuard],
+          },
+          {
+            path: 'usage-conversions',
+            loadComponent: () =>
+              import(
+                './features/inventory/components/usage-conversion-list/usage-conversion-list.component'
+              ).then((m) => m.UsageConversionListComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'usage-settlements/new',
             loadComponent: () =>
               import(

@@ -11,6 +11,7 @@ public class OrderInventoryItemsReportDto
     public int CartonsOut { get; set; }
     public int UnitsOut { get; set; }
     public decimal PaperUsedUnits { get; set; }
+    public int ConversionUnits { get; set; }
     public decimal ExpectedWaste { get; set; }
     public decimal Difference { get; set; }
     public int SettlementUnits { get; set; }

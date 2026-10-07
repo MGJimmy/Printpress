@@ -104,6 +104,14 @@ export class ApiUrlResource {
     void: (id: string) => `${ApiUrlResource.InventoryUsageSettlement_URL}/void/${id}`,
   };
 
+  private static InventoryConversion_URL = '/api/InventoryConversion';
+  public static readonly InventoryConversionAPI = {
+    create: ApiUrlResource.InventoryConversion_URL,
+    getAll: ApiUrlResource.InventoryConversion_URL,
+    complete: (id: string) => `${ApiUrlResource.InventoryConversion_URL}/complete/${id}`,
+    void: (id: string) => `${ApiUrlResource.InventoryConversion_URL}/void/${id}`,
+  };
+
   private static FileUpload_URL = '/api/FileUpload';
   public static readonly FileUploadAPI = {
     upload: ApiUrlResource.FileUpload_URL + '/upload'

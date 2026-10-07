@@ -128,6 +128,17 @@ internal class ReportRepository : IReportRepository
             .SumAsync(i => (int?)i.Quantity) ?? 0;
     }
 
+    public async Task<int> GetConversionUnitsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.InventoryConversion
+            .Where(c => c.InventoryItemId == inventoryItemId
+                && c.Status == InventoryConversionStatus.Completed
+                && !c.IsVoided
+                && (dateFrom == null || c.OccurredAt >= dateFrom)
+                && (dateToExclusive == null || c.OccurredAt < dateToExclusive))
+            .SumAsync(c => (int?)c.Quantity) ?? 0;
+    }
+
 
     public async Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync_old(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo)
     {
