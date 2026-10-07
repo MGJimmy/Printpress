@@ -75,16 +75,18 @@ internal class ReportRepository : IReportRepository
             .Include(o => o.OrderGroups)
                 .ThenInclude(og => og.Items)
                     .ThenInclude(i => i.Details)
-            .Where(o => o.Services.Any(os => serviceIds.Contains(os.ServiceId)))
+            .Where(o => !o.IsDeleted
+                && o.Services.Any(os => !os.IsDeleted && serviceIds.Contains(os.ServiceId)))
             .ToListAsync();
 
         var candidates = orders
-            .SelectMany(o => o.OrderGroups ?? [])
+            .SelectMany(o => (o.OrderGroups ?? []).Where(og => !og.IsDeleted))
             .SelectMany(og => (og.OrderGroupServices ?? [])
-                .Where(os => serviceIds.Contains(os.ServiceId) && os.Service != null)
+                .Where(os => !os.IsDeleted && serviceIds.Contains(os.ServiceId) && os.Service != null)
                 .SelectMany(os => (og.Items ?? [])
                     .Where(item => !item.IsDeleted)
                     .Select(item => (Item: item, GroupService: os))))
+            .DistinctBy(c => (c.Item.Id, c.GroupService.Service.ServiceCategoryId, c.GroupService.IsCover))
             .ToList();
 
         if (candidates.Count == 0)
@@ -103,14 +105,27 @@ internal class ReportRepository : IReportRepository
                 return new OrderItemUsageProjection
                 {
                     Quantity = executedQty,
-                    NumberOfPages = int.TryParse(c.Item.Details?.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value, out var pages) ? pages : 0,
-                    NumberOfPrintingFaces = int.TryParse(c.Item.Details?.FirstOrDefault(d => d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value, out var faces) ? faces : 0,
+                    NumberOfPages = int.TryParse(c.Item.Details?.FirstOrDefault(d => !d.IsDeleted && d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPages)?.Value, out var pages) ? pages : 0,
+                    NumberOfPrintingFaces = int.TryParse(c.Item.Details?.FirstOrDefault(d => !d.IsDeleted && d.ItemDetailsKey == ItemDetailsKeyEnum.NumberOfPrintingFaces)?.Value, out var faces) ? faces : 0,
                     IsCover = c.GroupService.IsCover
                 };
             })
             .Where(p => p != null)
             .Select(p => p!)
             .ToList();
+    }
+
+    public async Task<int> GetDeliveredSellingCartonsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    {
+        return await _context.Set<OrderSellingItem>()
+            .Where(i => i.IsInventoryItem
+                && i.InventoryItemId == inventoryItemId
+                && i.IsDelivered
+                && i.DeliveryDate != null
+                && !i.Order.IsDeleted
+                && (dateFrom == null || i.DeliveryDate >= dateFrom)
+                && (dateToExclusive == null || i.DeliveryDate < dateToExclusive))
+            .SumAsync(i => (int?)i.Quantity) ?? 0;
     }
 
 

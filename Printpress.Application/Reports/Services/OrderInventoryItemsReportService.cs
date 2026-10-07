@@ -12,14 +12,17 @@ internal sealed class OrderInventoryItemsReportService(IUnitOfWork _unitOfWork) 
         var stockIn = await _unitOfWork.ReportRepository.GetInventoryCartonsInAsync(inventoryItemId, null, null);
         var stockOut = await _unitOfWork.ReportRepository.GetInventorycartonsOutAsync(inventoryItemId, null, null);
         var orderItemsUsage = await _unitOfWork.ReportRepository.GetOrderItemsUsageAsync(inventoryItemId, dateFrom, dateTo);
+        var deliveredSellingCartons = await _unitOfWork.ReportRepository.GetDeliveredSellingCartonsAsync(inventoryItemId, dateFrom, dateTo);
 
         var unitsPerCarton = OrderInventoryItemsCalculator.CalculateUnitsPerCarton(item.PacksPerCarton, item.UnitsPerPack);
         var unitsIn = OrderInventoryItemsCalculator.CalculateUnitsFromCartons(cartonsIn, unitsPerCarton);
         var unitsOut = OrderInventoryItemsCalculator.CalculateUnitsFromCartons(cartonsOut, unitsPerCarton);
+        var deliveredSellingUnits = OrderInventoryItemsCalculator.CalculateUnitsFromCartons(deliveredSellingCartons, unitsPerCarton);
         var currentStockCartons = stockIn - stockOut;
         var paperUsed = OrderInventoryItemsCalculator.CalculatePaperUsed(orderItemsUsage);
+        var consumption = OrderInventoryItemsCalculator.CalculateConsumption(paperUsed, deliveredSellingUnits);
         var expectedWaste = OrderInventoryItemsCalculator.CalculateExpectedWaste(paperUsed, item.ExpectedProductionWastePercent);
-        var difference = OrderInventoryItemsCalculator.CalculateDifference(unitsOut, paperUsed, expectedWaste);
+        var difference = OrderInventoryItemsCalculator.CalculateDifference(unitsOut, consumption, expectedWaste);
         var settlementUnits = await _unitOfWork.ReportRepository.GetUsageSettlementUnitsAsync(inventoryItemId, dateFrom, dateTo);
 
         return new OrderInventoryItemsReportDto
@@ -32,7 +35,7 @@ internal sealed class OrderInventoryItemsReportService(IUnitOfWork _unitOfWork) 
             UnitsIn = unitsIn,
             CartonsOut = cartonsOut,
             UnitsOut = unitsOut,
-            PaperUsedUnits = paperUsed,
+            PaperUsedUnits = consumption,
             ExpectedWaste = expectedWaste,
             Difference = difference,
             SettlementUnits = settlementUnits,
