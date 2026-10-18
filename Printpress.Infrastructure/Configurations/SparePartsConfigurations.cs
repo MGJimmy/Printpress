@@ -44,6 +44,9 @@ namespace Printpress.Infrastructure
 
             entity.Property(x => x.Notes)
                 .HasMaxLength(500);
+
+            entity.Property(x => x.ReferenceType)
+                .HasConversion<int?>();
         }
 
         private static void Configure(this EntityTypeBuilder<SparePartPurchaseInvoice> entity, string schema, string sequenceName)

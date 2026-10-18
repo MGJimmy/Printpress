@@ -13,4 +13,6 @@ public record SparePartTransactionDto
     public int Quantity { get; init; }
     public string Notes { get; init; }
     public DateTime CreatedAt { get; init; }
+    public string ReferenceLabel { get; init; }
+    public string ReferenceRoute { get; init; }
 }

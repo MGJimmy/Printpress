@@ -36,7 +36,9 @@ internal sealed class SparePartSellingInvoiceService(
             l.InventoryItemId,
             SparePartInventoryTransactionType.Out,
             (int)l.Quantity,
-            string.Empty) { Id = _guidGenerator.NewGuid() }).ToList();
+            string.Empty,
+            SparePartInventoryTransactionReferenceType.Sale,
+            invoice.Id) { Id = _guidGenerator.NewGuid() }).ToList();
 
         await _unitOfWork.SparePartTransactionRepository.AddRange(transactions);
 
@@ -123,7 +125,9 @@ internal sealed class SparePartSellingInvoiceService(
             line.InventoryItemId,
             SparePartInventoryTransactionType.In,
             (int)line.Quantity,
-            $"إلغاء فاتورة بيع {invoice.InvoiceNumber}")
+            $"إلغاء فاتورة بيع {invoice.InvoiceNumber}",
+            SparePartInventoryTransactionReferenceType.Sale,
+            invoice.Id)
         { Id = _guidGenerator.NewGuid() }).ToList();
 
         await _unitOfWork.SparePartTransactionRepository.AddRange(restorals);

@@ -4,4 +4,6 @@ export interface SparePartTransactionDto {
   quantity: number;
   notes: string;
   createdAt: string;
+  referenceLabel?: string | null;
+  referenceRoute?: string | null;
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -38,6 +38,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
     MatSelectModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    RouterLink,
     SharedPaginationComponent,
   ],
   providers: [provideNativeDateAdapter()],
@@ -50,7 +51,7 @@ export class SparePartItemViewComponent implements OnInit {
   totalTransactionsCount = 0;
   isLoadingItem = false;
   isLoadingTx = false;
-  displayedColumns = ['createdAt', 'type', 'quantity', 'notes'];
+  displayedColumns = ['createdAt', 'type', 'quantity', 'reference', 'notes'];
 
   filterForm: FormGroup<{
     dateFrom: FormControl<Date | null>;

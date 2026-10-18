@@ -9,6 +9,8 @@ public class SparePartItemProfile : Profile
     {
         CreateMap<SparePartItemAddDto, SparePartInventoryItem>();
         CreateMap<SparePartItemUpdateDto, SparePartInventoryItem>();
-        CreateMap<SparePartInventoryTransaction, SparePartTransactionDto>();
+        CreateMap<SparePartInventoryTransaction, SparePartTransactionDto>()
+            .ForMember(dest => dest.ReferenceLabel, opt => opt.Ignore())
+            .ForMember(dest => dest.ReferenceRoute, opt => opt.Ignore());
     }
 }

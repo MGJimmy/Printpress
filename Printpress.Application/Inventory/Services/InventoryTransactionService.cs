@@ -205,8 +205,7 @@ internal sealed class InventoryTransactionService(
     private void AttachPurchaseInvoiceReferences(List<InventoryTransactionDto> items)
     {
         var purchaseIds = items
-            .Where(t => t.InventoryTransactionType == InventoryTransactionType.In
-                && t.ReferenceType == InventoryTransactionReferenceType.Purchase)
+            .Where(t => t.ReferenceType == InventoryTransactionReferenceType.Purchase && t.ReferenceId != Guid.Empty)
             .Select(t => t.ReferenceId)
             .Distinct()
             .ToList();
@@ -223,15 +222,11 @@ internal sealed class InventoryTransactionService(
         for (var i = 0; i < items.Count; i++)
         {
             var item = items[i];
-            if (item.InventoryTransactionType != InventoryTransactionType.In
-                || item.ReferenceType != InventoryTransactionReferenceType.Purchase)
+            if (item.ReferenceType != InventoryTransactionReferenceType.Purchase || item.ReferenceId == Guid.Empty)
                 continue;
 
-            if (!purchaseLines.TryGetValue(item.ReferenceId, out var line))
-            {
-                items[i] = item with { ReferenceLabel = "فاتورة شراء", ReferenceRoute = "" };
+            if (!purchaseLines.TryGetValue(item.ReferenceId, out var line) || line.PurchaseInvoiceId == Guid.Empty)
                 continue;
-            }
 
             var number = line.PurchaseInvoice is null ? "—" : line.PurchaseInvoice.InvoiceNumber.ToString();
             items[i] = item with
