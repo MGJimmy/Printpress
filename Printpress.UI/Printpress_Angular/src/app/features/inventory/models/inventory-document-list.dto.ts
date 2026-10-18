@@ -28,6 +28,7 @@ export interface InventoryPurchaseInvoiceListItemDto {
   remainingAmount: number;
   isGoodsReceived: boolean;
   attachmentFilePath: string;
+  notes?: string | null;
   createdAt: string;
   isVoided: boolean;
   voidReason?: string | null;

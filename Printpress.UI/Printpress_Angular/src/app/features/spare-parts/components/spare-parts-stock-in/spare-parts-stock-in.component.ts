@@ -54,6 +54,7 @@ export class SparePartsStockInComponent implements OnInit {
   form: FormGroup<{
     invoiceDate: FormControl<Date | null>;
     supplierName: FormControl<string>;
+    notes: FormControl<string>;
     paidNow: FormControl<number>;
     receiveNow: FormControl<boolean>;
   }>;
@@ -91,6 +92,7 @@ export class SparePartsStockInComponent implements OnInit {
     this.form = this.fb.group({
       invoiceDate: new FormControl<Date | null>(null, Validators.required),
       supplierName: this.fb.control('', Validators.required),
+      notes: this.fb.control('', Validators.maxLength(500)),
       paidNow: this.fb.control(0, [Validators.required, Validators.min(0)]),
       receiveNow: this.fb.control(true),
     });
@@ -192,6 +194,7 @@ export class SparePartsStockInComponent implements OnInit {
         attachmentFilePath,
         paidNow,
         receiveNow: formValue.receiveNow,
+        notes: formValue.notes || undefined,
         lines: this.lines.map(l => ({
           sparePartItemId: l.sparePartItemId,
           quantity: l.quantity,

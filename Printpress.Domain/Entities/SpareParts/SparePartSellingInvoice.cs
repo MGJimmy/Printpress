@@ -13,6 +13,7 @@ namespace Printpress.Domain
         public int InvoiceNumber { get; private set; }
         public string ClientName { get; private set; }
         public DateTime InvoiceDate { get; private set; }
+        public string Notes { get; private set; }
         public decimal TotalAmount { get; private set; }
         public bool IsVoided { get; private set; }
         public string VoidReason { get; private set; }
@@ -28,13 +29,15 @@ namespace Printpress.Domain
         public SparePartSellingInvoice(
             int invoiceNumber,
             string clientName,
-            DateTime invoiceDate
+            DateTime invoiceDate,
+            string notes
             )
         {
             Id = Guid.NewGuid();
             InvoiceNumber = invoiceNumber;
             ClientName = clientName;
             InvoiceDate = invoiceDate;
+            Notes = NormalizeNotes(notes);
         }
 
         public void AddLine(
@@ -66,6 +69,14 @@ namespace Printpress.Domain
             VoidReason = reason;
             VoidedAt = DateTime.UtcNow;
             VoidedBy = userId;
+        }
+
+        private static string NormalizeNotes(string notes)
+        {
+            notes ??= string.Empty;
+            if (notes.Length > 500)
+                throw new BusinessExceptions(LocalizationKeys.Shared.MaxLength, nameof(Notes), 500);
+            return notes;
         }
     }
 }

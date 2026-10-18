@@ -50,6 +50,7 @@ export class SparePartsStockOutComponent implements OnInit {
   form: FormGroup<{
     clientName: FormControl<string>;
     invoiceDate: FormControl<Date | null>;
+    notes: FormControl<string>;
   }>;
 
   lines: SellingLineViewModel[] = [];
@@ -74,7 +75,8 @@ export class SparePartsStockOutComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       clientName: this.fb.control('', Validators.required),
-      invoiceDate: new FormControl<Date | null>(null, Validators.required)
+      invoiceDate: new FormControl<Date | null>(null, Validators.required),
+      notes: this.fb.control('', Validators.maxLength(500)),
     });
   }
 
@@ -135,6 +137,7 @@ export class SparePartsStockOutComponent implements OnInit {
       const dto: SparePartSellingInvoiceCreateDto = {
         clientName: formValue.clientName,
         invoiceDate: formValue.invoiceDate?.toISOString() || '',
+        notes: formValue.notes || undefined,
         lines: this.lines.map(l => ({
           sparePartItemId: l.sparePartItemId,
           quantity: l.quantity,

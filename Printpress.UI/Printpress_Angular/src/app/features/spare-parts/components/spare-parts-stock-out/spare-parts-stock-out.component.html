@@ -34,6 +34,15 @@
             </mat-form-field>
           </div>
         </div>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>ملاحظات (اختياري)</mat-label>
+              <textarea matInput formControlName="notes" rows="2" maxlength="500"></textarea>
+              <mat-error *ngIf="form.controls.notes.hasError('maxlength')">الملاحظات يجب ألا تتجاوز 500 حرف</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
       </form>
 
       <div class="mt-4">
