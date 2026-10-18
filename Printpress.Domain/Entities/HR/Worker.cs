@@ -22,6 +22,7 @@ namespace Printpress.Domain
         public virtual ICollection<WorkerSalaryTransaction> SalaryTransactions { get; set; } = [];
         public virtual ICollection<ItemServiceExecution> WorkerProductions { get; set; } = [];
         public virtual ICollection<InventoryTransaction> InventoryTransactions { get; set; } = [];
+        public virtual ICollection<WorkerAttendance> Attendance { get; private set; }
 
         public WorkerSalaryTransaction AddTransaction(
             Guid id,
@@ -62,6 +63,66 @@ namespace Printpress.Domain
             return workHasSalaryTransactions ? false : true;
         }
 
+        public WorkerAttendance CheckIn(DateTime time)
+        {
+            EnsureAttendanceLoaded();
 
+            if (time == default)
+                throw new BusinessExceptions(LocalizationKeys.HR.TimeRequired);
+
+            if (Attendance.Any(a => !a.IsVoided && a.CheckOutAt is null))
+                throw new BusinessExceptions(LocalizationKeys.HR.AlreadyCheckedIn);
+
+            EnsureNoOverlap(time, null);
+
+            var stretch = new WorkerAttendance(Id, time);
+            Attendance.Add(stretch);
+            return stretch;
+        }
+
+        public WorkerAttendance CheckOut(DateTime time)
+        {
+            EnsureAttendanceLoaded();
+
+            if (time == default)
+                throw new BusinessExceptions(LocalizationKeys.HR.TimeRequired);
+
+            var open = Attendance.SingleOrDefault(a => !a.IsVoided && a.CheckOutAt is null)
+                ?? throw new BusinessExceptions(LocalizationKeys.HR.NotCheckedIn);
+
+            EnsureNoOverlap(open.CheckInAt, time, open);
+            open.Close(time);
+            return open;
+        }
+
+        public WorkerAttendance AddClosed(DateTime checkInAt, DateTime checkOutAt)
+        {
+            EnsureAttendanceLoaded();
+
+            var stretch = new WorkerAttendance(Id, checkInAt);
+            stretch.Close(checkOutAt);
+            EnsureNoOverlap(stretch.CheckInAt, stretch.CheckOutAt);
+            Attendance.Add(stretch);
+            return stretch;
+        }
+
+        private void EnsureAttendanceLoaded()
+        {
+            if (Attendance is null)
+                throw new InvalidOperationException("Worker.Attendance was not loaded.");
+        }
+
+        private void EnsureNoOverlap(DateTime checkInAt, DateTime? checkOutAt, WorkerAttendance self = null)
+        {
+            var end = checkOutAt ?? DateTime.MaxValue;
+            var overlaps = Attendance.Any(a =>
+                !a.IsVoided
+                && (self is null || a != self)
+                && checkInAt < (a.CheckOutAt ?? DateTime.MaxValue)
+                && a.CheckInAt < end);
+
+            if (overlaps)
+                throw new BusinessExceptions(LocalizationKeys.HR.StretchOverlaps);
+        }
     }
 }

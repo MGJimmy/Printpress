@@ -29,6 +29,9 @@ import {
 } from '../../models/worker.dto';
 import { PayrollPeriodDto } from '../../models/payroll-period.dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { DialogService } from '../../../../shared/services/dialog.service';
+import { WorkerAttendanceListDto, WorkerAttendanceRowDto } from '../../models/worker-attendance.dto';
+import { finalize } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { DatePipe } from '@angular/common';
@@ -121,6 +124,17 @@ export class WorkerDetailsComponent implements OnInit {
   productionDateFrom: Date | null = null;
   productionDateTo: Date | null = null;
 
+  attendance: WorkerAttendanceListDto | null = null;
+  attendanceDateFrom: Date | null = null;
+  attendanceDateTo: Date | null = null;
+  punchAt = '';
+  closedCheckInAt = '';
+  closedCheckOutAt = '';
+  isLoadingAttendance = false;
+  isSavingPunch = false;
+  isSavingClosed = false;
+  isVoidingAttendance = false;
+
   transactionForm: FormGroup<{
     payrollPeriodId: FormControl<string>;
     transactionType: FormControl<number>;
@@ -150,7 +164,8 @@ export class WorkerDetailsComponent implements OnInit {
     private invTransactionService: InventoryTransactionService,
     private inventoryService: InventoryService,
     private reportService: InventoryServicesUsageReportService,
-    private orderRoutingService: OrderRoutingService
+    private orderRoutingService: OrderRoutingService,
+    private dialogService: DialogService,
   ) {
     this.transactionForm = this.fb.group({
       payrollPeriodId: this.fb.control('', Validators.required),
@@ -169,6 +184,13 @@ export class WorkerDetailsComponent implements OnInit {
     this.loadOpenPeriods();
     this.loadInvCategories();
     this.loadInventoryTransactions();
+    const now = new Date();
+    this.attendanceDateFrom = new Date(now.getFullYear(), now.getMonth(), 1);
+    this.attendanceDateTo = now;
+    this.punchAt = this.toLocalInput(now);
+    this.closedCheckInAt = this.punchAt;
+    this.closedCheckOutAt = this.punchAt;
+    this.loadAttendance();
   }
 
   private loadWorker(id: string, productionDateFrom?: Date | null, productionDateTo?: Date | null): void {
@@ -326,6 +348,113 @@ export class WorkerDetailsComponent implements OnInit {
   
   onBack(): void {
     this.router.navigate(['/hr/workers']);
+  }
+
+  loadAttendance(): void {
+    if (!this.workerId) return;
+    this.isLoadingAttendance = true;
+    this.workerService.getAttendance(
+      this.workerId,
+      this.attendanceDateFrom ? this.toIsoDate(this.attendanceDateFrom) : undefined,
+      this.attendanceDateTo ? this.toIsoDate(this.attendanceDateTo) : undefined,
+    ).pipe(
+      finalize(() => { this.isLoadingAttendance = false; }),
+    ).subscribe({
+      next: (res) => { this.attendance = res.data; },
+      error: () => { this.alertService.showError('حدث خطأ أثناء تحميل سجل الحضور'); },
+    });
+  }
+
+  resetAttendanceFilter(): void {
+    const now = new Date();
+    this.attendanceDateFrom = new Date(now.getFullYear(), now.getMonth(), 1);
+    this.attendanceDateTo = now;
+    this.loadAttendance();
+  }
+
+  onPunch(): void {
+    if (!this.worker || this.isSavingPunch) return;
+    const at = this.toIsoFromLocal(this.punchAt);
+    if (!at) {
+      this.alertService.showError('الوقت مطلوب');
+      return;
+    }
+
+    this.isSavingPunch = true;
+    const request = this.attendance?.isCheckedIn
+      ? this.workerService.checkOut(this.worker.id, at)
+      : this.workerService.checkIn(this.worker.id, at);
+
+    request.pipe(
+      finalize(() => { this.isSavingPunch = false; }),
+    ).subscribe({
+      next: () => {
+        this.alertService.showSuccess(this.attendance?.isCheckedIn ? 'تم تسجيل الانصراف' : 'تم تسجيل الحضور');
+        this.punchAt = this.toLocalInput(new Date());
+        this.loadAttendance();
+      },
+    });
+  }
+
+  onAddClosedAttendance(): void {
+    if (!this.worker || this.isSavingClosed) return;
+    const checkInAt = this.toIsoFromLocal(this.closedCheckInAt);
+    const checkOutAt = this.toIsoFromLocal(this.closedCheckOutAt);
+    if (!checkInAt || !checkOutAt) {
+      this.alertService.showError('وقت الحضور والانصراف مطلوبان');
+      return;
+    }
+
+    this.isSavingClosed = true;
+    this.workerService.addClosedAttendance(this.worker.id, checkInAt, checkOutAt).pipe(
+      finalize(() => { this.isSavingClosed = false; }),
+    ).subscribe({
+      next: () => {
+        this.alertService.showSuccess('تم إضافة فترة الحضور');
+        this.loadAttendance();
+      },
+    });
+  }
+
+  voidAttendance(row: WorkerAttendanceRowDto): void {
+    if (row.isVoided || this.isVoidingAttendance) return;
+    this.dialogService.promptDialog({
+      title: 'تأكيد إلغاء سجل الحضور',
+      message: 'سيبقى السجل ظاهراً ولن يُحسب في مجموع الساعات. أدخل سبب الإلغاء للمتابعة.',
+      fieldLabel: 'سبب الإلغاء',
+      confirmText: 'نعم، إلغاء',
+      cancelText: 'تراجع',
+      maxLength: 500,
+    }).subscribe((reason) => {
+      if (!reason) return;
+      this.isVoidingAttendance = true;
+      this.workerService.voidAttendance(this.workerId, row.id, reason).pipe(
+        finalize(() => { this.isVoidingAttendance = false; }),
+      ).subscribe({
+        next: () => {
+          this.alertService.showSuccess('تم إلغاء سجل الحضور');
+          this.loadAttendance();
+        },
+      });
+    });
+  }
+
+  private toLocalInput(date: Date): string {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  private toIsoFromLocal(value: string): string | null {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  }
+
+  private toIsoDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
     onInvCategoryChange(): void {

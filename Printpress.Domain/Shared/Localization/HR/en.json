@@ -1,0 +1,15 @@
+{
+  "hr.worker_not_found": "Worker not found",
+  "hr.worker_required": "Worker is required",
+  "hr.worker_inactive": "Inactive workers cannot be checked in or given a new stretch",
+  "hr.time_required": "Time is required",
+  "hr.already_checked_in": "The worker already has an open stretch",
+  "hr.not_checked_in": "The worker has no open stretch",
+  "hr.leave_must_be_after_arrival": "Leave time must be after arrival",
+  "hr.stretch_exceeds_24_hours": "A stretch cannot last more than 24 hours",
+  "hr.stretch_overlaps": "This stretch overlaps another attendance record",
+  "hr.attendance_not_found": "Attendance record not found",
+  "hr.attendance_already_voided": "This attendance record is already voided",
+  "hr.void_reason_max_length": "The reason must not exceed 500 characters",
+  "hr.invalid_date_range": "Start date must be before end date"
+}

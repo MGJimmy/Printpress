@@ -1,0 +1,15 @@
+{
+  "hr.worker_not_found": "العامل غير موجود",
+  "hr.worker_required": "يجب اختيار العامل",
+  "hr.worker_inactive": "لا يمكن تسجيل حضور أو إضافة فترة لعامل غير نشط",
+  "hr.time_required": "الوقت مطلوب",
+  "hr.already_checked_in": "العامل لديه فترة حضور مفتوحة",
+  "hr.not_checked_in": "لا توجد فترة حضور مفتوحة للعامل",
+  "hr.leave_must_be_after_arrival": "وقت الانصراف يجب أن يكون بعد وقت الحضور",
+  "hr.stretch_exceeds_24_hours": "لا يجوز أن تمتد الفترة أكثر من 24 ساعة",
+  "hr.stretch_overlaps": "هذه الفترة تتداخل مع سجل حضور آخر",
+  "hr.attendance_not_found": "سجل الحضور غير موجود",
+  "hr.attendance_already_voided": "سجل الحضور ملغى مسبقاً",
+  "hr.void_reason_max_length": "السبب يجب ألا يتجاوز 500 حرفاً",
+  "hr.invalid_date_range": "تاريخ البداية يجب أن يكون قبل تاريخ النهاية"
+}

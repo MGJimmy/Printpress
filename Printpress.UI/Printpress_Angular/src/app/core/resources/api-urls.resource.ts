@@ -178,7 +178,12 @@ export class ApiUrlResource {
     add: ApiUrlResource.Worker_URL + '/add',
     update: ApiUrlResource.Worker_URL + '/update',
     deactivate: (id: string) => `${ApiUrlResource.Worker_URL}/deactivate/${id}`,
-    activate: (id: string) => `${ApiUrlResource.Worker_URL}/activate/${id}`
+    activate: (id: string) => `${ApiUrlResource.Worker_URL}/activate/${id}`,
+    attendance: (id: string) => `${ApiUrlResource.Worker_URL}/${id}/attendance`,
+    attendanceCheckIn: (id: string) => `${ApiUrlResource.Worker_URL}/${id}/attendance/check-in`,
+    attendanceCheckOut: (id: string) => `${ApiUrlResource.Worker_URL}/${id}/attendance/check-out`,
+    attendanceClosed: (id: string) => `${ApiUrlResource.Worker_URL}/${id}/attendance/closed`,
+    attendanceVoid: (id: string, attendanceId: string) => `${ApiUrlResource.Worker_URL}/${id}/attendance/${attendanceId}/void`,
   };
 
   private static WorkerSalaryTransaction_URL = '/api/WorkerSalaryTransaction';

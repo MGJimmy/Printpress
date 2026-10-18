@@ -143,6 +143,23 @@ public static class LocalizationKeys
         public const string FieldNotes = "lenders.field_notes";
     }
 
+    public static class HR
+    {
+        public const string WorkerNotFound = "hr.worker_not_found";
+        public const string WorkerRequired = "hr.worker_required";
+        public const string WorkerInactive = "hr.worker_inactive";
+        public const string TimeRequired = "hr.time_required";
+        public const string AlreadyCheckedIn = "hr.already_checked_in";
+        public const string NotCheckedIn = "hr.not_checked_in";
+        public const string LeaveMustBeAfterArrival = "hr.leave_must_be_after_arrival";
+        public const string StretchExceeds24Hours = "hr.stretch_exceeds_24_hours";
+        public const string StretchOverlaps = "hr.stretch_overlaps";
+        public const string AttendanceNotFound = "hr.attendance_not_found";
+        public const string AttendanceAlreadyVoided = "hr.attendance_already_voided";
+        public const string VoidReasonMaxLength = "hr.void_reason_max_length";
+        public const string InvalidDateRange = "hr.invalid_date_range";
+    }
+
     public static class Loans
     {
         public const string NotFound = "loans.not_found";

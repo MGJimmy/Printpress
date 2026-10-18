@@ -86,6 +86,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<PayrollPeriodCreateDto>, PayrollPeriodCreateDtoValidator>();
 
         services.AddScoped<IWorkerService, WorkerService>();
+        services.AddScoped<IWorkerAttendanceService, WorkerAttendanceService>();
         services.AddScoped<IValidator<WorkerCreateDto>, WorkerCreateDtoValidator>();
         services.AddScoped<IValidator<WorkerUpdateDto>, WorkerUpdateDtoValidator>();
 

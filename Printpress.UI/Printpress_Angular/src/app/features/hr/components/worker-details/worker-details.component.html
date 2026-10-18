@@ -171,6 +171,100 @@
     </mat-card-content>
   </mat-card>
 
+  <mat-card class="shadow-sm mb-3">
+    <mat-card-content>
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h6 class="text-muted mb-0">
+          سجل الحضور
+          <span class="badge bg-secondary ms-2">{{ attendance?.rows?.length || 0 }}</span>
+        </h6>
+        <span class="badge" [ngClass]="attendance?.isCheckedIn ? 'bg-success' : 'bg-secondary'">
+          {{ attendance?.isCheckedIn ? 'داخل' : 'خارج' }}
+        </span>
+      </div>
+
+      <div class="d-flex gap-2 align-items-center flex-wrap mb-3" *ngIf="worker.isActive">
+        <mat-form-field appearance="outline" class="mb-0" style="width:220px">
+          <mat-label>الوقت</mat-label>
+          <input matInput type="datetime-local" [(ngModel)]="punchAt" [ngModelOptions]="{standalone: true}" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" (click)="onPunch()" [disabled]="isSavingPunch">
+          <mat-icon>{{ attendance?.isCheckedIn ? 'logout' : 'login' }}</mat-icon>
+          {{ attendance?.isCheckedIn ? 'انصراف' : 'حضور' }}
+        </button>
+      </div>
+
+      <div class="d-flex gap-2 align-items-end flex-wrap mb-3" *ngIf="worker.isActive">
+        <mat-form-field appearance="outline" class="mb-0" style="width:220px">
+          <mat-label>حضور منسي</mat-label>
+          <input matInput type="datetime-local" [(ngModel)]="closedCheckInAt" [ngModelOptions]="{standalone: true}" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="mb-0" style="width:220px">
+          <mat-label>انصراف منسي</mat-label>
+          <input matInput type="datetime-local" [(ngModel)]="closedCheckOutAt" [ngModelOptions]="{standalone: true}" />
+        </mat-form-field>
+        <button mat-stroked-button color="primary" type="button" (click)="onAddClosedAttendance()" [disabled]="isSavingClosed">
+          <mat-icon>add</mat-icon>
+          إضافة فترة
+        </button>
+      </div>
+
+      <div class="d-flex gap-2 align-items-center flex-wrap mb-3">
+        <mat-form-field appearance="outline" class="mb-0" style="width:160px">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="attFrom" [(ngModel)]="attendanceDateFrom" [ngModelOptions]="{standalone: true}" />
+          <mat-datepicker-toggle matIconSuffix [for]="attFrom"></mat-datepicker-toggle>
+          <mat-datepicker #attFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="mb-0" style="width:160px">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="attTo" [(ngModel)]="attendanceDateTo" [ngModelOptions]="{standalone: true}" />
+          <mat-datepicker-toggle matIconSuffix [for]="attTo"></mat-datepicker-toggle>
+          <mat-datepicker #attTo></mat-datepicker>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" (click)="loadAttendance()" [disabled]="isLoadingAttendance">
+          <mat-icon>search</mat-icon>
+          بحث
+        </button>
+        <button mat-stroked-button type="button" (click)="resetAttendanceFilter()" [disabled]="isLoadingAttendance">إعادة</button>
+      </div>
+
+      <div *ngIf="attendance?.rows?.length; else noAttendance">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>الحضور</th>
+              <th>الانصراف</th>
+              <th>الساعات</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of attendance?.rows" [class.table-secondary]="row.isVoided">
+              <td>{{ row.checkInAt | date:'yyyy-MM-dd HH:mm' }}</td>
+              <td>{{ row.checkOutAt ? (row.checkOutAt | date:'yyyy-MM-dd HH:mm') : '—' }}</td>
+              <td>{{ row.hours != null ? (row.hours | number:'1.2-2') : '—' }}</td>
+              <td>
+                <span class="badge bg-secondary" *ngIf="row.isVoided">ملغى</span>
+                <button mat-button color="warn" type="button" *ngIf="!row.isVoided"
+                        (click)="voidAttendance(row)" [disabled]="isVoidingAttendance">
+                  إلغاء
+                </button>
+                <div class="small text-muted" *ngIf="row.isVoided && row.voidReason">{{ row.voidReason }}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-muted">
+          إجمالي الساعات: <strong>{{ attendance?.totalHours | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+      <ng-template #noAttendance>
+        <div class="text-center text-muted py-4">لا توجد سجلات حضور في الفترة المحددة</div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+
   <!-- Productions Table -->
   <mat-card class="shadow-sm">
     <mat-card-content>
