@@ -36,6 +36,7 @@ public static class DependencyInjection
 
         //reports
         services.AddScoped<IReportFactory, InvoiceReportFactory>();
+        services.AddScoped<IReportFactory, SparePartSellingInvoiceReportFactory>();
         #endregion
 
 

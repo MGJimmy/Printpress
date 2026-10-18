@@ -114,6 +114,10 @@
               <mat-icon>visibility</mat-icon>
               عرض
             </button>
+            <button mat-stroked-button type="button" (click)="generateInvoice(row.id)">
+              <mat-icon>receipt</mat-icon>
+              إصدار فاتورة
+            </button>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

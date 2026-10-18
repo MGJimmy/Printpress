@@ -116,6 +116,10 @@ export class SparePartsStockOutInvoicesComponent implements OnInit {
     this.router.navigate(['/spare-parts/stock-out/invoices', id]);
   }
 
+  generateInvoice(id: string): void {
+    window.open(`report-viewer?reportName=sparePartSellingInvoice&id=${id}`, '_blank');
+  }
+
   goCreate(): void {
     this.router.navigate(['/spare-parts/stock-out']);
   }
