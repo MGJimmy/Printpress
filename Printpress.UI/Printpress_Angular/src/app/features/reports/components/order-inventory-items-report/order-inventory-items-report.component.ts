@@ -16,6 +16,7 @@ import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderInventoryItemsReportService } from '../../services/order-inventory-items-report.service';
 import { OrderInventoryItemsReportDto, InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
+import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-order-inventory-items-report',
@@ -34,6 +35,7 @@ import { OrderInventoryItemsReportDto, InventoryCategoryFilterDto, InventoryItem
     MatTableModule,
     MatProgressSpinnerModule,
     RouterLink,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './order-inventory-items-report.component.html',

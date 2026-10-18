@@ -20,6 +20,7 @@ import {
   ServiceCategoryFilterDto
 } from '../../models/inventory-services-usage-report.dto';
 import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-report.dto';
+import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-services-usage-report',
@@ -38,6 +39,7 @@ import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-r
     MatTableModule,
     MatProgressSpinnerModule,
     RouterLink,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-services-usage-report.component.html',

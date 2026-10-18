@@ -17,6 +17,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryMovementReportService } from '../../services/inventory-movement-report.service';
 import { InventoryMovementReportDto } from '../../models/inventory-movement-report.dto';
 import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
+import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-movement-report',
@@ -35,6 +36,7 @@ import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models
     MatTableModule,
     MatProgressSpinnerModule,
     RouterLink,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-movement-report.component.html',

@@ -7,6 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryItemDto } from '../../models/inventory-item.dto';
 import { AlertService } from '../../../../core/services/alert.service';
+import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
 
 export interface InventoryCategoryOption {
   id: number;
@@ -25,7 +26,7 @@ const CATEGORY_IDS: Record<string, number> = {
 @Component({
   selector: 'app-inventory-category-item-select',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, InventoryItemCategoryArabicPipe],
   templateUrl: './inventory-category-item-select.component.html',
   styleUrl: './inventory-category-item-select.component.scss',
   host: {

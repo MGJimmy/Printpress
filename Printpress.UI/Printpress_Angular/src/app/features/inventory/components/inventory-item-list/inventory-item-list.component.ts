@@ -15,6 +15,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 import { MatIconModule } from '@angular/material/icon';
 import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
+import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-item-list',
@@ -28,6 +29,7 @@ import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../../rep
     MatSelectModule,
     TableTemplateComponent,
     MatIconModule,
+    InventoryItemCategoryArabicPipe,
   ],
   templateUrl: './inventory-item-list.component.html',
   styleUrl: './inventory-item-list.component.scss',

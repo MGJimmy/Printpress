@@ -23,6 +23,7 @@ import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../../rep
 import { ApiUrlResource } from '../../../../core/resources/api-urls.resource';
 import { HttpService } from '../../../../core/services/http.service';
 import { ApiResponseDto } from '../../../../core/models/api-response.dto';
+import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-transactions',
@@ -41,6 +42,7 @@ import { ApiResponseDto } from '../../../../core/models/api-response.dto';
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-transactions.component.html',

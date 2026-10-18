@@ -39,7 +39,7 @@
         <mat-label>الفئة</mat-label>
         <mat-select formControlName="categoryId">
           <mat-option [value]="null">الكل</mat-option>
-          <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+          <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name | inventoryItemCategoryArabic }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">

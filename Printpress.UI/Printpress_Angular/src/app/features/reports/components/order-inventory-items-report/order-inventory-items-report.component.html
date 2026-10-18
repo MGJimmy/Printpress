@@ -19,7 +19,7 @@
         <mat-form-field appearance="outline">
           <mat-label>تصنيف عنصر المخزن</mat-label>
           <mat-select formControlName="categoryId">
-            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name | inventoryItemCategoryArabic }}</mat-option>
           </mat-select>
           <mat-error>يجب اختيار التصنيف</mat-error>
         </mat-form-field>

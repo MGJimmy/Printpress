@@ -19,6 +19,7 @@ import { WorkerDto } from '../../../hr/models/worker.dto';
 import { InventoryStockOutReportService } from '../../services/inventory-stock-out-report.service';
 import { InventoryStockOutReportDto } from '../../models/inventory-stock-out-report.dto';
 import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
+import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-stock-out-report',
@@ -37,6 +38,7 @@ import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-stock-out-report.component.html',

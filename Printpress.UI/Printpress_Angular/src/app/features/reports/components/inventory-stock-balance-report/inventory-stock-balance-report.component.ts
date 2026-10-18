@@ -17,6 +17,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryStockBalanceReportService } from '../../services/inventory-stock-balance-report.service';
 import { InventoryStockBalanceReportDto } from '../../models/inventory-stock-balance-report.dto';
 import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-report.dto';
+import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-stock-balance-report',
@@ -35,6 +36,7 @@ import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-r
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-stock-balance-report.component.html',

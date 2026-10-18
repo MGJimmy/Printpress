@@ -24,6 +24,7 @@ import { HttpService } from '../../../../core/services/http.service';
 import { ApiResponseDto } from '../../../../core/models/api-response.dto';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
+import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-stock-in-invoices',
@@ -42,6 +43,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
     MatTableModule,
     MatProgressSpinnerModule,
     SharedPaginationComponent,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-stock-in-invoices.component.html',

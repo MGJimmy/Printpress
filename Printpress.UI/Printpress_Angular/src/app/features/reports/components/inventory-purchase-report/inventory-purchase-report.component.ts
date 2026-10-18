@@ -17,6 +17,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryPurchaseReportService } from '../../services/inventory-purchase-report.service';
 import { InventoryPurchaseReportDto } from '../../models/inventory-purchase-report.dto';
 import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
+import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-purchase-report',
@@ -35,6 +36,7 @@ import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-purchase-report.component.html',
