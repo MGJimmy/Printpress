@@ -119,6 +119,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<TransferCashTransactionDto>, TransferCashTransactionDtoValidator>();
         services.AddScoped<ILenderService, LenderService>();
         services.AddScoped<ILoanService, LoanService>();
+        services.AddScoped<ITodoItemService, TodoItemService>();
         services.AddScoped<IValidator<LenderUpsertDto>, LenderUpsertDtoValidator>();
         services.AddScoped<IValidator<LoanCreateDto>, LoanCreateDtoValidator>();
         services.AddScoped<IValidator<LoanPayDto>, LoanPayDtoValidator>();

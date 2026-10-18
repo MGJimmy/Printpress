@@ -24,7 +24,8 @@ import {
   faGlobe,
   faMoneyBillWave,
   faChevronDown,
-  faChevronLeft
+  faChevronLeft,
+  faClipboardList
 } from '@fortawesome/free-solid-svg-icons';
 import { TranslationService } from '../../services/translation.service';
 
@@ -68,6 +69,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   faMoneyBillWave = faMoneyBillWave;
   faChevronDown = faChevronDown;
   faChevronLeft = faChevronLeft;
+  faClipboardList = faClipboardList;
 
   isReportsExpanded = false;
   isHRExpanded = false;

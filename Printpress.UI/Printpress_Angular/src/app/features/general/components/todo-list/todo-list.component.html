@@ -1,0 +1,41 @@
+<div class="cash-account" dir="rtl">
+  <header class="hero">
+    <div class="hero-icon">
+      <mat-icon>checklist</mat-icon>
+    </div>
+    <div class="hero-text">
+      <h1>المهام</h1>
+      <p>قائمة مهام الورشة</p>
+    </div>
+  </header>
+
+  <mat-card class="panel">
+    <mat-tab-group>
+      <mat-tab label="للتنفيذ">
+        <form class="add-row" (ngSubmit)="add()">
+          <mat-form-field appearance="outline">
+            <mat-label>المهمة</mat-label>
+            <input matInput name="title" [(ngModel)]="title" maxlength="200" />
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" [disabled]="isSaving">إضافة</button>
+        </form>
+
+        <p class="empty" *ngIf="isLoaded && openItems.length === 0">لا توجد مهام للتنفيذ</p>
+
+        <div class="todo-row" *ngFor="let item of openItems">
+          <span class="todo-title">{{ item.title }}</span>
+          <button mat-stroked-button type="button" (click)="complete(item)" [disabled]="isSaving">تم</button>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="المكتمل">
+        <p class="empty" *ngIf="isLoaded && completedItems.length === 0">لا توجد مهام مكتملة</p>
+
+        <div class="todo-row" *ngFor="let item of completedItems">
+          <span class="todo-title">{{ item.title }}</span>
+          <span class="todo-date">{{ item.completedAt | date:'yyyy/MM/dd HH:mm' }}</span>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>

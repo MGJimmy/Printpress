@@ -198,6 +198,13 @@ export class ApiUrlResource {
     getById: (id: string) => `${ApiUrlResource.CashAccount_URL}/getById/${id}`,
   };
 
+  private static TodoItem_URL = '/api/TodoItem';
+  public static readonly TodoItemAPI = {
+    getList: ApiUrlResource.TodoItem_URL + '/getList',
+    add: ApiUrlResource.TodoItem_URL + '/add',
+    complete: (id: string) => `${ApiUrlResource.TodoItem_URL}/complete/${id}`,
+  };
+
   private static Lender_URL = '/api/Lender';
   public static readonly LenderAPI = {
     getAll: ApiUrlResource.Lender_URL + '/getAll',

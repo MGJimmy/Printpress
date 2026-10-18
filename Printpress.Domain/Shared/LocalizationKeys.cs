@@ -183,4 +183,12 @@ public static class LocalizationKeys
         public const string FieldCashAccount = "loans.field_cash_account";
         public const string FieldNotes = "loans.field_notes";
     }
+
+    public static class Todos
+    {
+        public const string TitleRequired = "todos.title_required";
+        public const string TitleMaxLength = "todos.title_max_length";
+        public const string AlreadyCompleted = "todos.already_completed";
+        public const string NotFound = "todos.not_found";
+    }
 }

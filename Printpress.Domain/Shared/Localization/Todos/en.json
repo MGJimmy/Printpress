@@ -1,0 +1,6 @@
+{
+  "todos.title_required": "Title is required",
+  "todos.title_max_length": "Title must not exceed 200 characters",
+  "todos.already_completed": "This task is already completed",
+  "todos.not_found": "Task not found"
+}

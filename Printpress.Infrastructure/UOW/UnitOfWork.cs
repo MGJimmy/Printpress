@@ -42,6 +42,7 @@ namespace Printpress.Infrastructure
         private IGenericRepository<CashTransaction> _cashTransactionRepository;
         private IGenericRepository<Lender> _lenderRepository;
         private IGenericRepository<Loan> _loanRepository;
+        private IGenericRepository<TodoItem> _todoItemRepository;
 
 
 
@@ -339,6 +340,16 @@ namespace Printpress.Infrastructure
                 if (_loanRepository == null)
                     _loanRepository = new GenericRepository<Loan>(_context);
                 return _loanRepository;
+            }
+        }
+
+        public IGenericRepository<TodoItem> TodoItemRepository
+        {
+            get
+            {
+                if (_todoItemRepository == null)
+                    _todoItemRepository = new GenericRepository<TodoItem>(_context);
+                return _todoItemRepository;
             }
         }
 

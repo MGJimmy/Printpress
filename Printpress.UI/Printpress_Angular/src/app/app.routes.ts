@@ -345,6 +345,13 @@ export const routes: Routes = [
         path: 'general',
         children: [
           {
+            path: 'todos',
+            loadComponent: () =>
+              import('./features/general/components/todo-list/todo-list.component')
+                .then(m => m.TodoListComponent),
+            canActivate: [authGuard],
+          },
+          {
             path: 'cash-accounts',
             loadComponent: () =>
               import('./features/general/components/cash-account-list/cash-account-list.component')

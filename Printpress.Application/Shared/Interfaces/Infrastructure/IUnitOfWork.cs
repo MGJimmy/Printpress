@@ -37,6 +37,7 @@ public interface IUnitOfWork
     IGenericRepository<CashTransaction> CashTransactionRepository { get; }
     IGenericRepository<Lender> LenderRepository { get; }
     IGenericRepository<Loan> LoanRepository { get; }
+    IGenericRepository<TodoItem> TodoItemRepository { get; }
 
     Task SaveChangesAsync(string userId);
 }

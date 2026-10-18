@@ -1,0 +1,6 @@
+{
+  "todos.title_required": "عنوان المهمة مطلوب",
+  "todos.title_max_length": "عنوان المهمة يجب ألا يتجاوز 200 حرف",
+  "todos.already_completed": "هذه المهمة مكتملة بالفعل",
+  "todos.not_found": "المهمة غير موجودة"
+}

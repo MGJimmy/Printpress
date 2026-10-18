@@ -56,6 +56,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<CashTransaction> CashTransaction { get; set; }
     public DbSet<Lender> Lender { get; set; }
     public DbSet<Loan> Loan { get; set; }
+    public DbSet<TodoItem> TodoItem { get; set; }
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -38,6 +38,15 @@
     </a>
 
     <a
+      routerLink="/general/todos"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="list-group-item list-group-item-action">
+      <fa-icon [icon]="faClipboardList" class="fa-icon mx-2"></fa-icon>
+      <span>المهام</span>
+    </a>
+
+    <a
       *appHasRole="userRoleEnum.admin"
       routerLink="/services"
       routerLinkActive="active-link"

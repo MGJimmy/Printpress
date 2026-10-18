@@ -17,6 +17,7 @@ namespace Printpress.Infrastructure
             modelBuilder.Entity<CashTransaction>().Configure();
             modelBuilder.Entity<Lender>().Configure();
             modelBuilder.Entity<Loan>().Configure(Schema, LoanNumberSequence);
+            modelBuilder.Entity<TodoItem>().Configure();
         }
 
         private static void Configure(this EntityTypeBuilder<CashAccount> entity)
@@ -128,6 +129,20 @@ namespace Printpress.Infrastructure
                 .WithMany()
                 .HasForeignKey(x => x.CashAccountId)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private static void Configure(this EntityTypeBuilder<TodoItem> entity)
+        {
+            entity.SetSchemaTable(Schema);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+
+            entity.Property(x => x.Title)
+                .IsRequired()
+                .HasMaxLength(TodoItem.TitleMaxLength);
+
+            entity.Property(x => x.IsCompleted)
+                .IsRequired()
+                .HasDefaultValue(false);
         }
     }
 }
