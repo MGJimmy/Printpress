@@ -4,6 +4,7 @@ public class SparePartSellingInvoiceCreateDto
 {
     public string ClientName { get; set; }
     public DateTime InvoiceDate { get; set; }
+    public string Notes { get; set; }
     public List<SparePartSellingInvoiceLineCreateDto> Lines { get; set; }
 }
 

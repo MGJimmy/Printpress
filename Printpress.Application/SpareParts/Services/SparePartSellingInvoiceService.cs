@@ -23,7 +23,8 @@ internal sealed class SparePartSellingInvoiceService(
         var invoice = new SparePartSellingInvoice(
                 default,
                 payload.ClientName,
-                UtcDateTime.AsUtc(payload.InvoiceDate));
+                UtcDateTime.AsUtc(payload.InvoiceDate),
+                payload.Notes);
 
         foreach (var line in payload.Lines)
         {
@@ -36,7 +37,7 @@ internal sealed class SparePartSellingInvoiceService(
             l.InventoryItemId,
             SparePartInventoryTransactionType.Out,
             (int)l.Quantity,
-            string.Empty,
+            invoice.Notes ?? string.Empty,
             SparePartInventoryTransactionReferenceType.Sale,
             invoice.Id) { Id = _guidGenerator.NewGuid() }).ToList();
 
@@ -152,6 +153,7 @@ internal sealed class SparePartSellingInvoiceService(
         InvoiceDate = invoice.InvoiceDate,
         ClientName = invoice.ClientName,
         TotalAmount = invoice.TotalAmount,
+        Notes = invoice.Notes,
         CreatedAt = invoice.CreatedAt,
         IsVoided = invoice.IsVoided,
         VoidReason = invoice.VoidReason,

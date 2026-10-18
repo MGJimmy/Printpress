@@ -17,15 +17,24 @@ namespace Printpress.Infrastructure
 
         }
 
-        public async Task<PagedList<InventoryItem>> GetAllWithTransactions(Paging paging)
+        public async Task<PagedList<InventoryItem>> GetAllWithTransactions(Paging paging, int? categoryId, Guid? itemId)
         {
-            var items = Context.InventoryItem.Include(x => x.InventoryTransactions)
-                .SelectPage(paging);
+            var query = Context.InventoryItem.AsQueryable();
+            if (categoryId is not null)
+                query = query.Where(i => i.InventoryItemCategoryId == categoryId);
+            if (itemId is not null)
+                query = query.Where(i => i.Id == itemId);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Include(x => x.InventoryTransactions)
+                .SelectPage(paging)
+                .ToListAsync();
 
             return new PagedList<InventoryItem>
             {
-                Items = await items.ToListAsync(),
-                TotalCount = Context.InventoryItem.Count(),
+                Items = items,
+                TotalCount = totalCount,
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
             };

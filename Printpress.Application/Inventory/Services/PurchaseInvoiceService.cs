@@ -21,7 +21,7 @@ internal sealed class PurchaseInvoiceService(
         if (!validationResult.IsValid)
             throw new ValidationExeption(validationResult.Errors.First().ErrorMessage);
 
-        var entity = new PurchaseInvoice(UtcDateTime.AsUtc(payload.InvoiceDate), payload.SupplierName, payload.AttachmentFilePath);
+        var entity = new PurchaseInvoice(UtcDateTime.AsUtc(payload.InvoiceDate), payload.SupplierName, payload.AttachmentFilePath, payload.Notes);
         entity.Id = _guidGenerator.NewGuid();
 
         payload.Lines.ForEach(line =>
@@ -39,7 +39,7 @@ internal sealed class PurchaseInvoiceService(
         if (receiveNow)
         {
             var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(
-                entity.PurchaseInvoiceLines.ToList(), DateTime.UtcNow);
+                entity.PurchaseInvoiceLines.ToList(), DateTime.UtcNow, entity.Notes);
             await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
         }
 
@@ -163,7 +163,7 @@ internal sealed class PurchaseInvoiceService(
         invoice.ReceiveGoods();
 
         var inventoryTransactions = _inventoryTransactionService.CreateInventoryTransaction(
-            invoice.PurchaseInvoiceLines.ToList(), DateTime.UtcNow);
+            invoice.PurchaseInvoiceLines.ToList(), DateTime.UtcNow, invoice.Notes);
         await _unitOfWork.InventoryTransactionRepository.AddRange(inventoryTransactions);
 
         _unitOfWork.PurchaseInvoiceRepository.Update(invoice);
@@ -232,6 +232,7 @@ internal sealed class PurchaseInvoiceService(
         RemainingAmount = invoice.IsVoided ? 0 : invoice.TotalAmount - invoice.PaidAmount,
         IsGoodsReceived = invoice.IsGoodsReceived,
         AttachmentFilePath = invoice.AttachmentFilePath,
+        Notes = invoice.Notes,
         CreatedAt = invoice.CreatedAt,
         IsVoided = invoice.IsVoided,
         VoidReason = invoice.VoidReason,

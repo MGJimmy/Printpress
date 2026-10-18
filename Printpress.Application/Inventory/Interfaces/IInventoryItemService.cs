@@ -5,7 +5,7 @@ public interface IInventoryItemService
     Task<InventoryItemDto> AddAsync(InventoryItemAddDto payload, string userId);
     Task<InventoryItemDto> UpdateAsync(Guid id, InventoryItemUpdateDto payload, string userId);
     Task<InventoryItemDto> GetByIdAsync(Guid id);
-    Task<PagedList<InventoryItemDto>> GetAllAsync(Paging paging);
+    Task<PagedList<InventoryItemDto>> GetAllAsync(Paging paging, int? categoryId, Guid? itemId);
     Task<List<InventoryItemDto>> GetByCategoryAsync(int categoryId);
     Task<List<InventoryItemSelectionDto>> GetAllForSelectionAsync();
     Task DeleteAsync(Guid id, string userId);

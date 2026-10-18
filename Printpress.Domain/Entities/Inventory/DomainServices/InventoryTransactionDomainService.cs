@@ -15,17 +15,20 @@ namespace Printpress.Domain
             _guidGenerator = guidGenerator;
         }
 
-        public List<InventoryTransaction> CreateInventoryTransaction(List<PurchaseInvoiceLine> purchaseInvoiceLines, DateTime occurredAt)
+        public List<InventoryTransaction> CreateInventoryTransaction(List<PurchaseInvoiceLine> purchaseInvoiceLines, DateTime occurredAt, string notes)
         {
             return purchaseInvoiceLines.Select(x =>
             {
+                var movementNotes = string.IsNullOrWhiteSpace(notes)
+                    ? $"Purchase of {x.Quantity} units at price {x.UnitPrice} per unit"
+                    : notes;
                 var transaction = new InventoryTransaction(
                     x.InventoryItemId,
                     InventoryTransactionType.In,
                     (int)x.Quantity,
                     InventoryTransactionReferenceType.Purchase,
                     x.Id,
-                    $"Purchase of {x.Quantity} units at price {x.UnitPrice} per unit",
+                    movementNotes,
                     occurredAt
                 );
                 transaction.Id = _guidGenerator.NewGuid();

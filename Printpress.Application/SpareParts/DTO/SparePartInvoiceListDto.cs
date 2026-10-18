@@ -23,6 +23,7 @@ public class SparePartPurchaseInvoiceListItemDto
     public decimal RemainingAmount { get; set; }
     public bool IsGoodsReceived { get; set; }
     public string AttachmentFilePath { get; set; }
+    public string Notes { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsVoided { get; set; }
     public string VoidReason { get; set; }
@@ -49,6 +50,7 @@ public class SparePartSellingInvoiceListItemDto
     public DateTime InvoiceDate { get; set; }
     public string ClientName { get; set; }
     public decimal TotalAmount { get; set; }
+    public string Notes { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsVoided { get; set; }
     public string VoidReason { get; set; }

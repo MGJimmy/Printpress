@@ -11,10 +11,14 @@ internal sealed class SparePartPurchaseInvoiceService(
 {
     public async Task<Guid> CreateAsync(SparePartPurchaseInvoiceCreateDto payload, string userId)
     {
+        if (payload.Notes is { Length: > 500 })
+            throw new ValidationExeption(_loc.Get(LocalizationKeys.Shared.MaxLength, nameof(payload.Notes), 500));
+
         var invoice = new SparePartPurchaseInvoice(
             UtcDateTime.AsUtc(payload.InvoiceDate),
             payload.SupplierName,
-            payload.AttachmentFilePath ?? string.Empty);
+            payload.AttachmentFilePath ?? string.Empty,
+            payload.Notes);
 
         foreach (var line in payload.Lines)
         {
@@ -195,7 +199,7 @@ internal sealed class SparePartPurchaseInvoiceService(
             line.InventoryItemId,
             SparePartInventoryTransactionType.In,
             (int)line.Quantity,
-            string.Empty,
+            invoice.Notes ?? string.Empty,
             SparePartInventoryTransactionReferenceType.Purchase,
             invoice.Id) { Id = _guidGenerator.NewGuid() }).ToList();
 
@@ -223,6 +227,7 @@ internal sealed class SparePartPurchaseInvoiceService(
         RemainingAmount = invoice.IsVoided ? 0 : invoice.TotalAmount - invoice.PaidAmount,
         IsGoodsReceived = invoice.IsGoodsReceived,
         AttachmentFilePath = invoice.AttachmentFilePath,
+        Notes = invoice.Notes,
         CreatedAt = invoice.CreatedAt,
         IsVoided = invoice.IsVoided,
         VoidReason = invoice.VoidReason,

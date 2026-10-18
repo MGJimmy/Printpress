@@ -74,6 +74,10 @@
         <a *ngIf="invoice.attachmentFilePath" href="javascript:void(0)" class="attach-link" (click)="openAttachment(invoice.attachmentFilePath)">فتح المرفق</a>
         <span *ngIf="!invoice.attachmentFilePath" class="meta-value">—</span>
       </div>
+      <div>
+        <span class="meta-label">ملاحظات</span>
+        <span class="meta-value">{{ invoice.notes || '—' }}</span>
+      </div>
       <div *ngIf="invoice.isVoided">
         <span class="meta-label">سبب الإلغاء</span>
         <span class="meta-value">{{ invoice.voidReason || '—' }}</span>
