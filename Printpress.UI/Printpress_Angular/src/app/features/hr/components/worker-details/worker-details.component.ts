@@ -30,7 +30,7 @@ import {
 import { PayrollPeriodDto } from '../../models/payroll-period.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DialogService } from '../../../../shared/services/dialog.service';
-import { WorkerAttendanceListDto, WorkerAttendanceRowDto } from '../../models/worker-attendance.dto';
+import { WorkerAttendanceListDto } from '../../models/worker-attendance.dto';
 import { finalize } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
@@ -105,6 +105,14 @@ export class WorkerDetailsComponent implements OnInit {
     { column: 'notes', headerName: 'ملاحظات' }
   ];
 
+  attendanceColDefs: TableColDefinitionModel[] = [
+    { column: 'checkInAt', headerName: 'الحضور' },
+    { column: 'checkOutAt', headerName: 'الانصراف' },
+    { column: 'hours', headerName: 'الساعات' },
+    { column: 'status', headerName: 'الحالة' },
+    { column: 'voidReason', headerName: 'سبب الإلغاء' },
+  ];
+
   inventoryColDefs: TableColDefinitionModel[] = [
     { column: 'inventoryItemName', headerName: 'الصنف' },
     { 
@@ -125,6 +133,7 @@ export class WorkerDetailsComponent implements OnInit {
   productionDateTo: Date | null = null;
 
   attendance: WorkerAttendanceListDto | null = null;
+  flatAttendance: any[] = [];
   attendanceDateFrom: Date | null = null;
   attendanceDateTo: Date | null = null;
   punchAt = '';
@@ -367,7 +376,18 @@ export class WorkerDetailsComponent implements OnInit {
     ).pipe(
       finalize(() => { this.isLoadingAttendance = false; }),
     ).subscribe({
-      next: (res) => { this.attendance = res.data; },
+      next: (res) => {
+        this.attendance = res.data;
+        this.flatAttendance = (res.data?.rows ?? []).map((row) => ({
+          id: row.id,
+          checkInAt: this.formatClock(row.checkInAt),
+          checkOutAt: this.formatClock(row.checkOutAt),
+          hours: row.hours != null ? Number(row.hours).toFixed(2) : '—',
+          status: row.isVoided ? 'ملغى' : (row.checkOutAt ? 'مغلقة' : 'مفتوحة'),
+          voidReason: row.voidReason || '—',
+          canVoid: !row.isVoided,
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل سجل الحضور'); },
     });
   }
@@ -435,8 +455,9 @@ export class WorkerDetailsComponent implements OnInit {
     });
   }
 
-  voidAttendance(row: WorkerAttendanceRowDto): void {
-    if (row.isVoided || this.isVoidingAttendance) return;
+  voidAttendance(id: string): void {
+    const row = this.attendance?.rows.find((r) => r.id === id);
+    if (!row || row.isVoided || this.isVoidingAttendance) return;
     this.dialogService.promptDialog({
       title: 'تأكيد إلغاء سجل الحضور',
       message: 'سيبقى السجل ظاهراً ولن يُحسب في مجموع الساعات. أدخل سبب الإلغاء للمتابعة.',
@@ -461,6 +482,11 @@ export class WorkerDetailsComponent implements OnInit {
   private toLocalInput(date: Date): string {
     const pad = (n: number) => String(n).padStart(2, '0');
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  private formatClock(value: string | null): string {
+    if (!value) return '—';
+    return value.replace('T', ' ').substring(0, 16);
   }
 
   private toTypedClock(value: string): string | null {
