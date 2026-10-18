@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { Subscription } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { WorkerService } from '../../services/worker.service';
@@ -24,7 +24,7 @@ import { WorkerCreateDto, WorkerUpdateDto } from '../../models/worker.dto';
     MatInputModule,
     MatCardModule,
     MatIconModule,
-    MatSelectModule
+    SearchSelectComponent
   ],
   templateUrl: './worker-upsert.component.html',
   styleUrl: './worker-upsert.component.scss'
@@ -34,6 +34,10 @@ export class WorkerUpsertComponent implements OnInit, OnDestroy {
   workerId: string | null = null;
   showMonthlySalary = false;
   showDailySalary = false;
+  salaryTypeOptions: SearchSelectItem[] = [
+    { value: 1, label: 'شهري' },
+    { value: 2, label: 'يومي' },
+  ];
 
   form: FormGroup<{
     name: FormControl<string>;

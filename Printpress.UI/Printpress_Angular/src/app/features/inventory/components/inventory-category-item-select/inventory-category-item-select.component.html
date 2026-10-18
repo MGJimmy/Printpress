@@ -1,15 +1,13 @@
-<mat-form-field appearance="outline">
-  <mat-label>التصنيف</mat-label>
-  <mat-select [formControl]="categoryId">
-    <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name | inventoryItemCategoryArabic }}</mat-option>
-  </mat-select>
-  <mat-error *ngIf="categoryId.hasError('required')">يجب اختيار التصنيف</mat-error>
-</mat-form-field>
+<app-search-select
+  [formControl]="categoryId"
+  label="التصنيف"
+  [items]="categoryOptions"
+  [required]="true">
+</app-search-select>
 
-<mat-form-field appearance="outline">
-  <mat-label>الصنف</mat-label>
-  <mat-select [formControl]="itemControl">
-    <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
-  </mat-select>
-  <mat-error *ngIf="itemControl.hasError('required')">يجب اختيار الصنف</mat-error>
-</mat-form-field>
+<app-search-select
+  [formControl]="itemControl"
+  label="الصنف"
+  [items]="itemOptions"
+  [required]="true">
+</app-search-select>

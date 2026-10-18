@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } f
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -17,8 +16,8 @@ import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { SparePartPurchaseInvoiceService } from '../../services/spare-part-purchase-invoice.service';
 import { SparePartService } from '../../services/spare-part.service';
-import { SparePartItemDto } from '../../models/spare-part-item.dto';
 import { SparePartPurchaseInvoiceListItemDto } from '../../models/spare-part-invoice-list.dto';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 
@@ -31,7 +30,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -45,14 +44,29 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
   styleUrl: '../spare-part-invoice-list.shared.scss',
 })
 export class SparePartsStockInInvoicesComponent implements OnInit {
-  items: SparePartItemDto[] = [];
+  itemOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  voidedOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: false, label: 'سارية' },
+    { value: true, label: 'ملغاة' },
+  ];
+  remainingOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: true, label: 'عليها باقي' },
+    { value: false, label: 'مسددة' },
+  ];
+  receivedOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: false, label: 'لم تدخل' },
+    { value: true, label: 'دخلت' },
+  ];
   invoices: SparePartPurchaseInvoiceListItemDto[] = [];
   invoiceCount = 0;
   isLoading = false;
   displayedColumns = ['invoiceNumber', 'invoiceDate', 'supplierName', 'totalAmount', 'paidAmount', 'remainingAmount', 'status', 'createdAt', 'action'];
 
   filterForm: FormGroup<{
-    itemId: FormControl<string>;
+    itemId: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
     isVoided: FormControl<boolean | null>;
@@ -72,7 +86,7 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
     private route: ActivatedRoute,
   ) {
     this.filterForm = this.fb.group({
-      itemId: this.fb.control(''),
+      itemId: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
       isVoided: this.fb.control<boolean | null>(null),
@@ -89,7 +103,12 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
     }
 
     this.sparePartService.getAllForSelection().subscribe({
-      next: (res) => { this.items = res.data ?? []; },
+      next: (res) => {
+        this.itemOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((item) => ({ value: item.id, label: item.name })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل قطع الغيار'); },
     });
     this.search();
@@ -102,7 +121,7 @@ export class SparePartsStockInInvoicesComponent implements OnInit {
 
   reset(): void {
     this.filterForm.reset({
-      itemId: '',
+      itemId: null,
       dateFrom: null,
       dateTo: null,
       isVoided: null,

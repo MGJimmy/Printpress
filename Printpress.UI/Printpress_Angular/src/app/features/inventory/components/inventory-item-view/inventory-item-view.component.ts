@@ -9,7 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
@@ -33,7 +33,7 @@ import { InventoryTransactionDto } from '../../models/inventory-transaction.dto'
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSelectModule,
+    SearchSelectComponent,
     TableTemplateComponent
   ],
   templateUrl: './inventory-item-view.component.html'
@@ -61,7 +61,13 @@ export class InventoryItemViewComponent implements OnInit {
 
   filterDateFrom: Date | null = null;
   filterDateTo: Date | null = null;
-  filterTransactionType: string = '';
+  filterTransactionType: string | null = null;
+  transactionTypeOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: 'In', label: 'إدخال' },
+    { value: 'Out', label: 'صرف' },
+    { value: 'Adjustment', label: 'تسوية' },
+  ];
 
   columnDefs: TableColDefinitionModel[] = [
     { headerName: 'نوع الحركة',
@@ -150,7 +156,7 @@ export class InventoryItemViewComponent implements OnInit {
   resetFilter(): void {
     this.filterDateFrom = null;
     this.filterDateTo = null;
-    this.filterTransactionType = '';
+    this.filterTransactionType = null;
     this.currentPage = 1;
     this.loadTransactions();
   }

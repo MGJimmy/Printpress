@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { InventoryService } from '../../../inventory/services/inventory.service';
 import { InventoryItemSelectionDto } from '../../../inventory/models/inventory-item-selection.dto';
@@ -24,7 +24,7 @@ import { Subscription } from 'rxjs';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatRadioModule
   ],
   templateUrl: './order-selling-item-upsert.component.html',
@@ -34,6 +34,7 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
   inventoryItems: InventoryItemSelectionDto[] = [];
+  inventoryItemOptions: SearchSelectItem[] = [];
   isInventoryItem: boolean = false;
   isEdit: boolean = false;
   itemId: string = '';
@@ -96,6 +97,7 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
   private loadInventoryItems(): void {
     this.inventoryService.getAllForSelection().subscribe(res => {
       this.inventoryItems = (res.data ?? []).filter(item => item.isActive !== false);
+      this.inventoryItemOptions = this.inventoryItems.map((item) => ({ value: item.id, label: item.name }));
     });
   }
 

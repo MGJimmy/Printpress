@@ -9,7 +9,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PageEvent } from '@angular/material/paginator';
@@ -21,6 +20,7 @@ import { SparePartItemDto } from '../../models/spare-part-item.dto';
 import { SparePartTransactionDto } from '../../models/spare-part-transaction.dto';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-spare-part-item-view',
@@ -35,7 +35,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatTableModule,
     MatProgressSpinnerModule,
     RouterLink,
@@ -52,11 +52,17 @@ export class SparePartItemViewComponent implements OnInit {
   isLoadingItem = false;
   isLoadingTx = false;
   displayedColumns = ['createdAt', 'type', 'quantity', 'reference', 'notes'];
+  transactionTypeOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: 'In', label: 'إدخال' },
+    { value: 'Out', label: 'صرف' },
+    { value: 'Adjustment', label: 'تسوية' },
+  ];
 
   filterForm: FormGroup<{
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
-    transactionType: FormControl<string>;
+    transactionType: FormControl<string | null>;
   }>;
 
   private itemId!: string;
@@ -74,7 +80,7 @@ export class SparePartItemViewComponent implements OnInit {
     this.filterForm = this.fb.group({
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
-      transactionType: this.fb.control(''),
+      transactionType: this.fb.control<string | null>(null),
     });
   }
 
@@ -93,7 +99,7 @@ export class SparePartItemViewComponent implements OnInit {
     this.filterForm.reset({
       dateFrom: null,
       dateTo: null,
-      transactionType: '',
+      transactionType: null,
     });
     this.search();
   }

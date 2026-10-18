@@ -35,22 +35,19 @@
           placeholder="ابحث عن عميل">
         </app-search-select>
 
-        <mat-form-field appearance="outline">
-          <mat-label>الحالة</mat-label>
-          <mat-select formControlName="status">
-            <mat-option [value]="null">الكل</mat-option>
-            <mat-option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="status"
+          label="الحالة"
+          [items]="statusOptions"
+          [allowClear]="false">
+        </app-search-select>
 
-        <mat-form-field appearance="outline">
-          <mat-label>نوع الطلب</mat-label>
-          <mat-select formControlName="isZeroOrder">
-            <mat-option [value]="null">الكل</mat-option>
-            <mat-option [value]="true">صفري</mat-option>
-            <mat-option [value]="false">عادي</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="isZeroOrder"
+          label="نوع الطلب"
+          [items]="zeroOrderOptions"
+          [allowClear]="false">
+        </app-search-select>
 
         <mat-form-field appearance="outline">
           <mat-label>من تاريخ</mat-label>

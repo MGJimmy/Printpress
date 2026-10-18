@@ -4,24 +4,23 @@
     <div class="row my-3">
       <!-- Categories Dropdown -->
       <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>الفئة</mat-label>
-          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategorySelect($event.value)" [disabled]="servicesLocked">
-            <mat-option *ngFor="let cat of serviceCategories" [value]="cat">{{ cat |serviceCategoryArabic }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          [(ngModel)]="selectedCategory"
+          (selectionChange)="onCategorySelect($event)"
+          label="الفئة"
+          [items]="categoryOptions"
+          [disabled]="servicesLocked">
+        </app-search-select>
       </div>
 
       <!-- Services Dropdown -->
       <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>الخدمة</mat-label>
-          <mat-select [(ngModel)]="selectedServiceId" [disabled]="servicesLocked || !filteredServices ||filteredServices.length === 0">
-            <mat-option *ngFor="let service of filteredServices" [value]="service.id">
-              {{ service.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          [(ngModel)]="selectedServiceId"
+          label="الخدمة"
+          [items]="serviceOptions"
+          [disabled]="servicesLocked || serviceOptions.length === 0">
+        </app-search-select>
 
         <mat-checkbox
           *ngIf="isPrintingCategorySelected"

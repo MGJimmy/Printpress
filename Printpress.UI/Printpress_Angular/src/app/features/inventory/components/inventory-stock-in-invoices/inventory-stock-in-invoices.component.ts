@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } f
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -18,13 +17,14 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { PurchaseInvoiceService } from '../../services/purchase-invoice.service';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryPurchaseInvoiceListItemDto } from '../../models/inventory-document-list.dto';
-import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
+import { InventoryCategoryFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
 import { ApiUrlResource } from '../../../../core/resources/api-urls.resource';
 import { HttpService } from '../../../../core/services/http.service';
 import { ApiResponseDto } from '../../../../core/models/api-response.dto';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
-import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
+import { inventoryItemCategoryArabic } from '../../pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-inventory-stock-in-invoices',
@@ -35,7 +35,7 @@ import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-cate
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -43,15 +43,29 @@ import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-cate
     MatTableModule,
     MatProgressSpinnerModule,
     SharedPaginationComponent,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-stock-in-invoices.component.html',
   styleUrl: '../inventory-docs.shared.scss',
 })
 export class InventoryStockInInvoicesComponent implements OnInit {
-  categories: InventoryCategoryFilterDto[] = [];
-  items: InventoryItemFilterDto[] = [];
+  categoryOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  itemOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  voidedOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: false, label: 'سارية' },
+    { value: true, label: 'ملغاة' },
+  ];
+  remainingOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: true, label: 'عليها باقي' },
+    { value: false, label: 'مسددة' },
+  ];
+  receivedOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: false, label: 'لم تدخل' },
+    { value: true, label: 'دخلت' },
+  ];
   invoices: InventoryPurchaseInvoiceListItemDto[] = [];
   invoiceCount = 0;
   isLoading = false;
@@ -59,7 +73,7 @@ export class InventoryStockInInvoicesComponent implements OnInit {
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;
-    itemId: FormControl<string>;
+    itemId: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
     isVoided: FormControl<boolean | null>;
@@ -81,7 +95,7 @@ export class InventoryStockInInvoicesComponent implements OnInit {
   ) {
     this.filterForm = this.fb.group({
       categoryId: this.fb.control<number | null>(null),
-      itemId: this.fb.control(''),
+      itemId: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
       isVoided: this.fb.control<boolean | null>(null),
@@ -98,15 +112,28 @@ export class InventoryStockInInvoicesComponent implements OnInit {
     }
 
     this.http.get<ApiResponseDto<InventoryCategoryFilterDto[]>>(ApiUrlResource.InventoryAPI.CategoryBasicInfoAll).subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((category) => ({
+            value: category.id,
+            label: inventoryItemCategoryArabic(category.name),
+          })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
     this.filterForm.controls.categoryId.valueChanges.subscribe((categoryId) => {
-      this.items = [];
-      this.filterForm.controls.itemId.setValue('');
+      this.itemOptions = [{ value: null, label: 'الكل' }];
+      this.filterForm.controls.itemId.setValue(null);
       if (categoryId != null) {
         this.inventoryService.getByCategory(categoryId).subscribe({
-          next: (res) => { this.items = (res.data ?? []).map((i) => ({ id: i.id, name: i.name })); },
+          next: (res) => {
+            this.itemOptions = [
+              { value: null, label: 'الكل' },
+              ...(res.data ?? []).map((item) => ({ value: item.id, label: item.name })),
+            ];
+          },
           error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }
@@ -120,10 +147,10 @@ export class InventoryStockInInvoicesComponent implements OnInit {
   }
 
   reset(): void {
-    this.items = [];
+    this.itemOptions = [{ value: null, label: 'الكل' }];
     this.filterForm.reset({
       categoryId: null,
-      itemId: '',
+      itemId: null,
       dateFrom: null,
       dateTo: null,
       isVoided: null,

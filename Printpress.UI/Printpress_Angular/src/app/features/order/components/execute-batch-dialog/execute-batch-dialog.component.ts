@@ -72,7 +72,7 @@ export class ExecuteBatchDialogComponent implements OnInit {
       next: (res) => {
         this.workerItems = res.data
           .filter(w => w.isActive)
-          .map(w => ({ id: w.id, name: w.name }));
+          .map(w => ({ value: w.id, label: w.name }));
       },
       error: () => this.alertService.showError(this._t.t('orders.error_loading_workers'))
     });

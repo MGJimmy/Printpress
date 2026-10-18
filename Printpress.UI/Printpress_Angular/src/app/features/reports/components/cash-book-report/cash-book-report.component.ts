@@ -5,7 +5,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -16,7 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { CashAccountService } from '../../../general/services/cash-account.service';
-import { CashAccountDto } from '../../../general/models/cash-account.dto';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { CashBookReportService } from '../../services/cash-book-report.service';
 import { CashBookLineDto, CashBookReportDto } from '../../models/cash-book-report.dto';
 
@@ -30,7 +29,7 @@ import { CashBookLineDto, CashBookReportDto } from '../../models/cash-book-repor
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -44,21 +43,21 @@ import { CashBookLineDto, CashBookReportDto } from '../../models/cash-book-repor
   styleUrl: './cash-book-report.component.scss',
 })
 export class CashBookReportComponent implements OnInit {
-  accounts: CashAccountDto[] = [];
+  accountOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
   report: CashBookReportDto | null = null;
   isLoading = false;
   pageIndex = 0;
   pageSize = 10;
   pageSizeOptions = [5, 10, 25, 50];
 
-  typeOptions = [
-    { value: '', label: 'الكل' },
+  typeOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
     { value: 'In', label: 'وارد' },
     { value: 'Out', label: 'صادر' },
   ];
 
-  categoryOptions = [
-    { value: '', label: 'الكل' },
+  categoryOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
     { value: 'Sales', label: 'مبيعات' },
     { value: 'SalesReturn', label: 'مرتجع مبيعات' },
     { value: 'Purchases', label: 'مشتريات' },
@@ -80,11 +79,11 @@ export class CashBookReportComponent implements OnInit {
   summaryColumns = ['summaryAccountName', 'summaryOpening', 'summaryIn', 'summaryOut', 'summaryClosing'];
 
   filterForm: FormGroup<{
-    cashAccountId: FormControl<string>;
+    cashAccountId: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
-    type: FormControl<string>;
-    category: FormControl<string>;
+    type: FormControl<string | null>;
+    category: FormControl<string | null>;
     search: FormControl<string>;
   }>;
 
@@ -97,11 +96,11 @@ export class CashBookReportComponent implements OnInit {
   ) {
     const now = new Date();
     this.filterForm = this.fb.group({
-      cashAccountId: this.fb.control(''),
+      cashAccountId: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1)),
       dateTo: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
-      type: this.fb.control(''),
-      category: this.fb.control(''),
+      type: this.fb.control<string | null>(null),
+      category: this.fb.control<string | null>(null),
       search: this.fb.control(''),
     });
   }
@@ -123,7 +122,12 @@ export class CashBookReportComponent implements OnInit {
     });
 
     this.cashAccountService.getAll().subscribe({
-      next: (res) => { this.accounts = res.data ?? []; },
+      next: (res) => {
+        this.accountOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((account) => ({ value: account.id, label: account.name })),
+        ];
+      },
     });
 
     this.search();
@@ -188,11 +192,11 @@ export class CashBookReportComponent implements OnInit {
   reset(): void {
     const now = new Date();
     this.filterForm.reset({
-      cashAccountId: this.route.snapshot.queryParamMap.get('cashAccountId') ?? '',
+      cashAccountId: this.route.snapshot.queryParamMap.get('cashAccountId') ?? null,
       dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
       dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-      type: '',
-      category: '',
+      type: null,
+      category: null,
       search: '',
     });
     this.search();

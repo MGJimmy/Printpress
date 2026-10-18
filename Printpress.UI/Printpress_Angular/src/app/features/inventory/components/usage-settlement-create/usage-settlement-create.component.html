@@ -42,15 +42,12 @@
           <mat-error *ngIf="form.controls.occurredAt.hasError('required')">يجب إدخال تاريخ التسوية</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>النوع</mat-label>
-          <mat-select formControlName="settlementType">
-            <mat-option value="ExtraWaste">هالك إضافي</mat-option>
-            <mat-option value="Theft">سرقة / فقد</mat-option>
-            <mat-option value="Other">أخرى</mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.settlementType.hasError('required')">يجب اختيار النوع</mat-error>
-        </mat-form-field>
+        <app-search-select
+          formControlName="settlementType"
+          label="النوع"
+          [items]="settlementTypeOptions"
+          [required]="true">
+        </app-search-select>
 
         <mat-form-field appearance="outline">
           <mat-label>الكمية (وحدات)</mat-label>

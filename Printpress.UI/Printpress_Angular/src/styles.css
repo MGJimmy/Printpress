@@ -217,4 +217,8 @@ td.mat-cell.cell-out,
   -webkit-text-fill-color: var(--color-out) !important;
   font-weight: 700;
 }
+
+.cdk-overlay-pane:has(.search-select-panel) {
+  z-index: 2000 !important;
+}
   

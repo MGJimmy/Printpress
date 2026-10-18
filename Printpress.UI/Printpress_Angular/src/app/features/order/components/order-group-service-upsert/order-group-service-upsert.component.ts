@@ -2,9 +2,7 @@ import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button';
 import { ConfirmDialogModel } from '../../../../core/models/confirm-dialog.model';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
-import { MatFormField } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -18,7 +16,7 @@ import { ServiceService } from '../../../setup/services/service.service';
 import { ServiceGetDto } from '../../../setup/models/service-get.dto';
 import { ServiceCategoryEnum } from '../../../setup/models/service-category.enum';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
-import { ServiceCategoryArabicPipe } from '../../../setup/Pipes/service-category-arabic.pipe';
+import { ServiceCategoryArabicMap } from '../../../setup/models/Mappers/service-category-arabic.map';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { isStatus } from '../../models/enums/status-display';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -33,14 +31,11 @@ export interface ServiceCat_interface {
   imports: [
     MatButtonModule,
     TableTemplateComponent,
-    MatSelectModule,
-    MatInputModule,
-    MatFormField,
+    SearchSelectComponent,
     MatCardModule,
     FormsModule,
     CommonModule,
     MatDialogModule,
-    ServiceCategoryArabicPipe,
     MatCheckboxModule
   ],
   templateUrl: './order-group-service-upsert.component.html',
@@ -58,6 +53,8 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
   sellingCategories: ServiceCat_interface[] = [];
   otherCategories: ServiceCat_interface[] = [];
   serviceCategories!: ServiceCategoryEnum[]
+  categoryOptions: SearchSelectItem[] = [];
+  serviceOptions: SearchSelectItem[] = [];
   allServices: ServiceGetDto[] = [];
 
   selectedCategory: string | null = null;
@@ -130,15 +127,15 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
 
     if(!group.orderGroupServices || group.orderGroupServices.length == 0){
       this.serviceCategories =  Object.keys(ServiceCategoryEnum).sort() as ServiceCategoryEnum[];
-      return;
-    }
-
-    if(group.isHasSellingService){
+    } else if(group.isHasSellingService){
       this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key === ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
-      return;
+    } else {
+      this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
     }
-
-    this.serviceCategories = Object.keys(ServiceCategoryEnum).filter(key => key != ServiceCategoryEnum.Selling).sort() as ServiceCategoryEnum[];
+    this.categoryOptions = this.serviceCategories.map((category) => ({
+      value: category,
+      label: ServiceCategoryArabicMap[category] ?? category,
+    }));
   }
 
 
@@ -165,8 +162,12 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     });
   }
 
-  onCategorySelect(serviceCategoryEnumValue: string): void {
-    this.filteredServices = this.allServices.filter(s => s.serviceCategoryCode === serviceCategoryEnumValue);
+  onCategorySelect(serviceCategoryEnumValue: string | number | boolean | null): void {
+    const category = typeof serviceCategoryEnumValue === 'string' ? serviceCategoryEnumValue : null;
+    this.filteredServices = category
+      ? this.allServices.filter(s => s.serviceCategoryCode === category)
+      : [];
+    this.serviceOptions = this.filteredServices.map((service) => ({ value: service.id, label: service.name }));
     this.selectedServiceId = null;
     this.updateCoverCheckboxState();
   }
@@ -206,6 +207,7 @@ export class OrderGroupServiceUpsertComponent implements OnInit, OnDestroy {
     this.isCover = false;
     this.isCoverCheckboxDisabled = false;
     this.filteredServices = [];
+    this.serviceOptions = [];
   }
 
   addGroupService(): void {

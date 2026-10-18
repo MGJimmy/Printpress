@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } f
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -17,13 +16,13 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryTransactionService } from '../../services/inventory-transaction.service';
 import { InventoryService } from '../../services/inventory.service';
 import { WorkerService } from '../../../hr/services/worker.service';
-import { WorkerDto } from '../../../hr/models/worker.dto';
 import { InventoryTransactionListDto } from '../../models/inventory-document-list.dto';
-import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
+import { InventoryCategoryFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
 import { ApiUrlResource } from '../../../../core/resources/api-urls.resource';
 import { HttpService } from '../../../../core/services/http.service';
 import { ApiResponseDto } from '../../../../core/models/api-response.dto';
-import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
+import { inventoryItemCategoryArabic } from '../../pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-inventory-transactions',
@@ -35,32 +34,37 @@ import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-cate
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-transactions.component.html',
   styleUrl: '../inventory-docs.shared.scss',
 })
 export class InventoryTransactionsComponent implements OnInit {
-  categories: InventoryCategoryFilterDto[] = [];
-  items: InventoryItemFilterDto[] = [];
-  workers: WorkerDto[] = [];
+  categoryOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  itemOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  workerOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  typeOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: 'In', label: 'دخول' },
+    { value: 'Out', label: 'خروج' },
+    { value: 'Adjustment', label: 'تسوية' },
+  ];
   report: InventoryTransactionListDto | null = null;
   isLoading = false;
   columns = ['occurredAt', 'type', 'itemName', 'categoryName', 'quantity', 'reference', 'workerName', 'notes'];
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;
-    itemId: FormControl<string>;
-    workerId: FormControl<string>;
-    type: FormControl<string>;
+    itemId: FormControl<string | null>;
+    workerId: FormControl<string | null>;
+    type: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
   }>;
@@ -77,9 +81,9 @@ export class InventoryTransactionsComponent implements OnInit {
   ) {
     this.filterForm = this.fb.group({
       categoryId: this.fb.control<number | null>(null),
-      itemId: this.fb.control(''),
-      workerId: this.fb.control(''),
-      type: this.fb.control(''),
+      itemId: this.fb.control<string | null>(null),
+      workerId: this.fb.control<string | null>(null),
+      type: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
     });
@@ -87,19 +91,37 @@ export class InventoryTransactionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.http.get<ApiResponseDto<InventoryCategoryFilterDto[]>>(ApiUrlResource.InventoryAPI.CategoryBasicInfoAll).subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((category) => ({
+            value: category.id,
+            label: inventoryItemCategoryArabic(category.name),
+          })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
     this.workerService.getActive().subscribe({
-      next: (res) => { this.workers = res.data ?? []; },
+      next: (res) => {
+        this.workerOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((worker) => ({ value: worker.id, label: worker.name })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل العمال'); },
     });
     this.filterForm.controls.categoryId.valueChanges.subscribe((categoryId) => {
-      this.items = [];
-      this.filterForm.controls.itemId.setValue('');
+      this.itemOptions = [{ value: null, label: 'الكل' }];
+      this.filterForm.controls.itemId.setValue(null);
       if (categoryId != null) {
         this.inventoryService.getByCategory(categoryId).subscribe({
-          next: (res) => { this.items = (res.data ?? []).map((i) => ({ id: i.id, name: i.name })); },
+          next: (res) => {
+            this.itemOptions = [
+              { value: null, label: 'الكل' },
+              ...(res.data ?? []).map((item) => ({ value: item.id, label: item.name })),
+            ];
+          },
           error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }
@@ -124,7 +146,10 @@ export class InventoryTransactionsComponent implements OnInit {
       this.inventoryService.getById(itemId).subscribe({
         next: (res) => {
           if (res.data) {
-            this.items = [{ id: res.data.id, name: res.data.name }];
+            this.itemOptions = [
+              { value: null, label: 'الكل' },
+              { value: res.data.id, label: res.data.name },
+            ];
           }
         },
       });
@@ -159,12 +184,12 @@ export class InventoryTransactionsComponent implements OnInit {
   }
 
   reset(): void {
-    this.items = [];
+    this.itemOptions = [{ value: null, label: 'الكل' }];
     this.filterForm.reset({
       categoryId: null,
-      itemId: '',
-      workerId: '',
-      type: '',
+      itemId: null,
+      workerId: null,
+      type: null,
       dateFrom: null,
       dateTo: null,
     });

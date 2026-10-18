@@ -26,13 +26,12 @@
     </div>
     <form [formGroup]="filterForm">
       <div class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>القطعة</mat-label>
-          <mat-select formControlName="itemId">
-            <mat-option value="">الكل</mat-option>
-            <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="itemId"
+          label="القطعة"
+          [items]="itemOptions"
+          [allowClear]="false">
+        </app-search-select>
         <mat-form-field appearance="outline">
           <mat-label>من تاريخ</mat-label>
           <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
@@ -45,14 +44,12 @@
           <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
           <mat-datepicker #pickerTo></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>الحالة</mat-label>
-          <mat-select formControlName="isVoided">
-            <mat-option [value]="null">الكل</mat-option>
-            <mat-option [value]="false">سارية</mat-option>
-            <mat-option [value]="true">ملغاة</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="isVoided"
+          label="الحالة"
+          [items]="voidedOptions"
+          [allowClear]="false">
+        </app-search-select>
       </div>
       <div class="actions">
         <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoading">

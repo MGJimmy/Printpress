@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFor
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -15,12 +14,9 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryServicesUsageReportService } from '../../services/inventory-services-usage-report.service';
-import {
-  InventoryServicesUsageReportDto,
-  ServiceCategoryFilterDto
-} from '../../models/inventory-services-usage-report.dto';
-import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-report.dto';
-import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { InventoryServicesUsageReportDto } from '../../models/inventory-services-usage-report.dto';
+import { inventoryItemCategoryArabic } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-inventory-services-usage-report',
@@ -31,7 +27,7 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -39,15 +35,14 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatTableModule,
     MatProgressSpinnerModule,
     RouterLink,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-services-usage-report.component.html',
   styleUrl: './inventory-services-usage-report.component.scss',
 })
 export class InventoryServicesUsageReportComponent implements OnInit {
-  inventoryCategories: InventoryCategoryFilterDto[] = [];
-  serviceCategories: ServiceCategoryFilterDto[] = [];
+  inventoryCategoryOptions: SearchSelectItem[] = [];
+  serviceCategoryOptions: SearchSelectItem[] = [];
   reportResult: InventoryServicesUsageReportDto | null = null;
   isLoading = false;
 
@@ -88,12 +83,22 @@ export class InventoryServicesUsageReportComponent implements OnInit {
 
   private loadFilters(): void {
     this.reportService.getInventoryCategories().subscribe({
-      next: (res) => { this.inventoryCategories = res.data ?? []; },
+      next: (res) => {
+        this.inventoryCategoryOptions = (res.data ?? []).map((category) => ({
+          value: category.id,
+          label: inventoryItemCategoryArabic(category.name),
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل تصنيفات المخزون'); },
     });
 
     this.reportService.getServiceCategories().subscribe({
-      next: (res) => { this.serviceCategories = res.data ?? []; },
+      next: (res) => {
+        this.serviceCategoryOptions = (res.data ?? []).map((category) => ({
+          value: category.id,
+          label: category.name,
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل تصنيفات الخدمات'); },
     });
   }

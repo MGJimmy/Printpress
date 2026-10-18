@@ -39,11 +39,18 @@ export class OrderListComponent implements OnInit {
   protected isLoading = false;
   protected clientItems: SearchSelectItem[] = [];
 
-  protected statusOptions = [
+  protected statusOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
     { value: 5, label: 'مسودة' },
     { value: 1, label: 'جديد' },
     { value: 2, label: 'قيد التنفيذ' },
     { value: 4, label: 'مغلق' }
+  ];
+
+  protected zeroOrderOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: true, label: 'صفري' },
+    { value: false, label: 'عادي' }
   ];
 
   filterForm: FormGroup<{
@@ -88,7 +95,7 @@ export class OrderListComponent implements OnInit {
   private loadClients(): void {
     this.clientService.getAll().subscribe({
       next: (res) => {
-        this.clientItems = (res.data ?? []).map(c => ({ id: c.id, name: c.name }));
+        this.clientItems = (res.data ?? []).map(c => ({ value: c.id, label: c.name }));
       }
     });
   }

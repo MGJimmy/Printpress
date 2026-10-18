@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFor
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -26,7 +26,7 @@ export interface TransferCashDialogData {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
@@ -42,7 +42,7 @@ export class TransferCashDialogComponent implements OnInit {
     transactionDate: FormControl<Date | null>;
   }>;
 
-  accounts: CashAccountDto[] = [];
+  accountOptions: SearchSelectItem[] = [];
   isSubmitting = false;
 
   constructor(
@@ -65,7 +65,10 @@ export class TransferCashDialogComponent implements OnInit {
   ngOnInit(): void {
     this.cashAccountService.getAll().subscribe({
       next: (response) => {
-        this.accounts = response.data;
+        this.accountOptions = (response.data ?? []).map((account) => ({
+          value: account.id,
+          label: this.accountLabel(account),
+        }));
       },
       error: () => {
         this.alertService.showError('حدث خطأ أثناء تحميل الخزائن');

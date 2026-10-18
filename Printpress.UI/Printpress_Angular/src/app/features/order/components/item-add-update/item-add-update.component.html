@@ -42,14 +42,13 @@
           <mat-error *ngIf="itemForm.get('numberOfPages')?.hasError('required')">عدد الصفحات مطلوبة</mat-error>
           <mat-error *ngIf="itemForm.get('numberOfPages')?.hasError('min')">عدد الصفحات يجب أن تكون أكبر من صفر</mat-error>
         </mat-form-field>
-        <mat-form-field appearance="outline" *ngIf="group.isHasPrintingService">
-          <mat-label>اوجة الطباعة</mat-label>
-          <mat-select formControlName="numberOfPrintingFaces">
-            <mat-option [value]="1">وجه</mat-option>
-            <mat-option [value]="2">وجهين</mat-option>
-          </mat-select>
-          <mat-error *ngIf="itemForm.get('numberOfPrintingFaces')?.hasError('required')">اوجة الطباعة مطلوبة</mat-error>
-        </mat-form-field>
+        <app-search-select
+          *ngIf="group.isHasPrintingService"
+          formControlName="numberOfPrintingFaces"
+          label="اوجة الطباعة"
+          [items]="printingFaceOptions"
+          [required]="true">
+        </app-search-select>
       </div>
       <div class="actions">
         <button type="submit" [disabled]="itemForm.invalid" mat-raised-button color="primary">حفظ</button>

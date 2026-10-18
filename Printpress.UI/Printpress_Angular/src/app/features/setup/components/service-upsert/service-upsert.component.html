@@ -22,28 +22,23 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>نوع الخدمة</mat-label>
-        <mat-select formControlName="serviceCategoryId" required (selectionChange)="onCategorySelect($event.value)">
-          <mat-option *ngFor="let category of serviceCategories" [value]="category.id">
-            {{category.name}}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="serviceForm.get('serviceCategoryId')?.hasError('required')">
-          نوع الخدمة مطلوب
-        </mat-error>
-      </mat-form-field>
+      <app-search-select
+        formControlName="serviceCategoryId"
+        label="نوع الخدمة"
+        [items]="serviceCategoryOptions"
+        [required]="true"
+        (selectionChange)="onCategorySelect($event)">
+      </app-search-select>
 
       <!-- Inventory Items Dropdown (shown only when category requires inventory) -->
       <div *ngIf="requiresInventoryItem">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>عنصر المخزون</mat-label>
-          <mat-select [(ngModel)]="selectedInventoryItemId" [ngModelOptions]="{standalone: true}" [disabled]="!filteredInventoryItems || filteredInventoryItems.length === 0">
-            <mat-option *ngFor="let item of filteredInventoryItems" [value]="item.id">
-              {{ item.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          [(ngModel)]="selectedInventoryItemId"
+          [ngModelOptions]="{standalone: true}"
+          label="عنصر المخزون"
+          [items]="inventoryItemOptions"
+          [disabled]="inventoryItemOptions.length === 0">
+        </app-search-select>
       </div>
     </div>
 

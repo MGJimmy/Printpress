@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } f
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -18,11 +17,12 @@ import { DialogService } from '../../../../shared/services/dialog.service';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryUsageSettlementService } from '../../services/inventory-usage-settlement.service';
 import { InventoryUsageSettlementListDto, InventoryUsageSettlementType } from '../../models/inventory-usage-settlement.dto';
-import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
+import { InventoryCategoryFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
 import { ApiUrlResource } from '../../../../core/resources/api-urls.resource';
 import { HttpService } from '../../../../core/services/http.service';
 import { ApiResponseDto } from '../../../../core/models/api-response.dto';
-import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
+import { inventoryItemCategoryArabic } from '../../pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-usage-settlement-list',
@@ -34,22 +34,27 @@ import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-cate
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './usage-settlement-list.component.html',
   styleUrl: '../inventory-docs.shared.scss',
 })
 export class UsageSettlementListComponent implements OnInit {
-  categories: InventoryCategoryFilterDto[] = [];
-  items: InventoryItemFilterDto[] = [];
+  categoryOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  itemOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  typeOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: 'ExtraWaste', label: 'هالك إضافي' },
+    { value: 'Theft', label: 'سرقة / فقد' },
+    { value: 'Other', label: 'أخرى' },
+  ];
   report: InventoryUsageSettlementListDto | null = null;
   isLoading = false;
   isVoiding = false;
@@ -57,8 +62,8 @@ export class UsageSettlementListComponent implements OnInit {
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;
-    itemId: FormControl<string>;
-    type: FormControl<string>;
+    itemId: FormControl<string | null>;
+    type: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
   }>;
@@ -75,8 +80,8 @@ export class UsageSettlementListComponent implements OnInit {
   ) {
     this.filterForm = this.fb.group({
       categoryId: this.fb.control<number | null>(null),
-      itemId: this.fb.control(''),
-      type: this.fb.control(''),
+      itemId: this.fb.control<string | null>(null),
+      type: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
     });
@@ -84,15 +89,28 @@ export class UsageSettlementListComponent implements OnInit {
 
   ngOnInit(): void {
     this.http.get<ApiResponseDto<InventoryCategoryFilterDto[]>>(ApiUrlResource.InventoryAPI.CategoryBasicInfoAll).subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((category) => ({
+            value: category.id,
+            label: inventoryItemCategoryArabic(category.name),
+          })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
     this.filterForm.controls.categoryId.valueChanges.subscribe((categoryId) => {
-      this.items = [];
-      this.filterForm.controls.itemId.setValue('');
+      this.itemOptions = [{ value: null, label: 'الكل' }];
+      this.filterForm.controls.itemId.setValue(null);
       if (categoryId != null) {
         this.inventoryService.getByCategory(categoryId).subscribe({
-          next: (res) => { this.items = (res.data ?? []).map((i) => ({ id: i.id, name: i.name })); },
+          next: (res) => {
+            this.itemOptions = [
+              { value: null, label: 'الكل' },
+              ...(res.data ?? []).map((item) => ({ value: item.id, label: item.name })),
+            ];
+          },
           error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }
@@ -142,11 +160,11 @@ export class UsageSettlementListComponent implements OnInit {
   }
 
   reset(): void {
-    this.items = [];
+    this.itemOptions = [{ value: null, label: 'الكل' }];
     this.filterForm.reset({
       categoryId: null,
-      itemId: '',
-      type: '',
+      itemId: null,
+      type: null,
       dateFrom: null,
       dateTo: null,
     });

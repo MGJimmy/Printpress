@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -36,7 +35,6 @@ import { ExecuteBatchDialogComponent, BatchServiceOption } from '../execute-batc
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatSelectModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
@@ -53,6 +51,7 @@ export class ExecuteItemServiceComponent implements OnInit {
   groupId!: string;
   itemSummary: ItemExecutionSummaryDto | null = null;
   workerItems: SearchSelectItem[] = [];
+  serviceOptions: SearchSelectItem[] = [];
   selectedService: ServiceProgressDto | null = null;
   isSaving = false;
   progressColumns = ['name', 'progress', 'remaining', 'status'];
@@ -94,6 +93,12 @@ export class ExecuteItemServiceComponent implements OnInit {
     this.executionService.getItemSummary(this.itemId).subscribe({
       next: (res) => {
         this.itemSummary = res.data;
+        this.serviceOptions = (res.data?.serviceProgresses ?? [])
+          .map((service) => ({
+            value: service.serviceCategoryId,
+            label: service.serviceCategoryName + (service.isCompleted ? ' (مكتمل)' : ''),
+            disabled: service.isCompleted,
+          }));
       },
       error: () => this.alertService.showError(this._t.t('orders.error_loading_item'))
     });
@@ -102,15 +107,16 @@ export class ExecuteItemServiceComponent implements OnInit {
       next: (res) => {
         this.workerItems = res.data
           .filter(w => w.isActive)
-          .map(w => ({ id: w.id, name: w.name }));
+          .map(w => ({ value: w.id, label: w.name }));
       },
       error: () => this.alertService.showError(this._t.t('orders.error_loading_workers'))
     });
   }
 
-  onServiceSelect(serviceCategoryId: string): void {
+  onServiceSelect(serviceCategoryId: string | number | boolean | null): void {
+    const id = typeof serviceCategoryId === 'string' ? serviceCategoryId : null;
     this.selectedService = this.itemSummary?.serviceProgresses.find(
-      s => s.serviceCategoryId === serviceCategoryId
+      s => s.serviceCategoryId === id && !s.isCompleted
     ) ?? null;
   }
 

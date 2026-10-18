@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { Router } from '@angular/router';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
@@ -14,8 +13,7 @@ import { InventoryItemDto } from '../../models/inventory-item.dto';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 import { MatIconModule } from '@angular/material/icon';
-import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
-import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-category-arabic.pipe';
+import { inventoryItemCategoryArabic } from '../../pipes/inventory-item-category-arabic.pipe';
 
 @Component({
   selector: 'app-inventory-item-list',
@@ -25,11 +23,9 @@ import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-cate
     ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
+    SearchSelectComponent,
     TableTemplateComponent,
     MatIconModule,
-    InventoryItemCategoryArabicPipe,
   ],
   templateUrl: './inventory-item-list.component.html',
   styleUrl: './inventory-item-list.component.scss',
@@ -37,12 +33,12 @@ import { InventoryItemCategoryArabicPipe } from '../../pipes/inventory-item-cate
 export class InventoryItemListComponent implements OnInit {
   items: InventoryItemDto[] = [];
   totalCount = 0;
-  categories: InventoryCategoryFilterDto[] = [];
-  nameItems: InventoryItemFilterDto[] = [];
+  categoryOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  itemOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;
-    itemId: FormControl<string>;
+    itemId: FormControl<string | null>;
   }>;
 
   columnDefs: TableColDefinitionModel[] = [
@@ -72,21 +68,34 @@ export class InventoryItemListComponent implements OnInit {
   ) {
     this.filterForm = this.fb.group({
       categoryId: this.fb.control<number | null>(null),
-      itemId: this.fb.control(''),
+      itemId: this.fb.control<string | null>(null),
     });
   }
 
   ngOnInit() {
     this.inventoryService.getCategoriesAll().subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((category) => ({
+            value: category.id,
+            label: inventoryItemCategoryArabic(category.name),
+          })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
     this.filterForm.controls.categoryId.valueChanges.subscribe((categoryId) => {
-      this.nameItems = [];
-      this.filterForm.controls.itemId.setValue('', { emitEvent: false });
+      this.itemOptions = [{ value: null, label: 'الكل' }];
+      this.filterForm.controls.itemId.setValue(null, { emitEvent: false });
       if (categoryId != null) {
         this.inventoryService.getByCategory(categoryId).subscribe({
-          next: (res) => { this.nameItems = (res.data ?? []).map((i) => ({ id: i.id, name: i.name })); },
+          next: (res) => {
+            this.itemOptions = [
+              { value: null, label: 'الكل' },
+              ...(res.data ?? []).map((item) => ({ value: item.id, label: item.name })),
+            ];
+          },
           error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }

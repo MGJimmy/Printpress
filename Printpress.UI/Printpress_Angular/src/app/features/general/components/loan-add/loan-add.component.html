@@ -28,15 +28,12 @@
         </div>
       </div>
       <div class="col-md-4">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>الخزينة *</mat-label>
-          <mat-select formControlName="cashAccountId" required>
-            <mat-option *ngFor="let a of accounts" [value]="a.id">
-              {{ a.name }} ({{ a.type === 'SpareParts' ? 'قطع الغيار' : 'رئيسية' }})
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.cashAccountId.hasError('required')">الخزينة مطلوبة</mat-error>
-        </mat-form-field>
+        <app-search-select
+          formControlName="cashAccountId"
+          label="الخزينة *"
+          [items]="accountOptions"
+          [required]="true">
+        </app-search-select>
       </div>
       <div class="col-md-4">
         <mat-form-field appearance="outline" class="w-100">

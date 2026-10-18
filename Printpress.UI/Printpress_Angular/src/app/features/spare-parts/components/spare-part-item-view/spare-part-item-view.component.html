@@ -70,15 +70,12 @@
           <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
           <mat-datepicker #pickerTo></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>نوع الحركة</mat-label>
-          <mat-select formControlName="transactionType">
-            <mat-option value="">الكل</mat-option>
-            <mat-option value="In">إدخال</mat-option>
-            <mat-option value="Out">صرف</mat-option>
-            <mat-option value="Adjustment">تسوية</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="transactionType"
+          label="نوع الحركة"
+          [items]="transactionTypeOptions"
+          [allowClear]="false">
+        </app-search-select>
       </div>
       <div class="actions">
         <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="isLoadingTx">

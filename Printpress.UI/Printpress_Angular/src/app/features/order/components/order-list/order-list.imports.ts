@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
@@ -28,7 +27,6 @@ export const imports = [
   MatIconModule,
   MatMenuModule,
   MatDialogModule,
-  MatSelectModule,
   MatDatepickerModule,
   MatNativeDateModule,
   SharedPaginationComponent,

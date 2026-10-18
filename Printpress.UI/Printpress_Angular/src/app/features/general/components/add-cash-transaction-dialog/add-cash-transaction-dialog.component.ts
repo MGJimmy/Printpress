@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFor
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -38,7 +37,6 @@ const OUT_CATEGORIES = [
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
@@ -108,8 +106,8 @@ export class AddCashTransactionDialogComponent implements OnInit {
       next: (response) => {
         this.undeliveredOrders = response.data;
         this.undeliveredOrderItems = this.undeliveredOrders.map(o => ({
-          id: o.orderId,
-          name: o.orderName
+          value: o.orderId,
+          label: o.orderName
         }));
       },
       error: () => {

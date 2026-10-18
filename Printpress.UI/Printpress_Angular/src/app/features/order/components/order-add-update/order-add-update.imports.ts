@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { SharedPaginationComponent } from '../../../../shared/components/shared-pagination/shared-pagination.component';
 import { RouterModule } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent } from '../../../../shared/components/search-select/search-select.component';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -25,7 +25,7 @@ export const imports = [
   MatIconModule,
   SharedPaginationComponent,
   RouterModule,
-  MatSelectModule,
+  SearchSelectComponent,
   MatDialogModule,
   MatMenuModule,
   MatExpansionModule,

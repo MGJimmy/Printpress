@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -15,7 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { CashAccountService } from '../../../general/services/cash-account.service';
-import { CashAccountDto } from '../../../general/models/cash-account.dto';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { CashMovementSummaryReportService } from '../../services/cash-movement-summary-report.service';
 import { CashMovementSliceDto, CashMovementSummaryReportDto } from '../../models/cash-movement-summary-report.dto';
 
@@ -28,7 +27,7 @@ import { CashMovementSliceDto, CashMovementSummaryReportDto } from '../../models
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -41,7 +40,7 @@ import { CashMovementSliceDto, CashMovementSummaryReportDto } from '../../models
   styleUrl: './cash-movement-summary-report.component.scss',
 })
 export class CashMovementSummaryReportComponent implements OnInit {
-  accounts: CashAccountDto[] = [];
+  accountOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
   report: CashMovementSummaryReportDto | null = null;
   isLoading = false;
 
@@ -63,7 +62,7 @@ export class CashMovementSummaryReportComponent implements OnInit {
   };
 
   filterForm: FormGroup<{
-    cashAccountId: FormControl<string>;
+    cashAccountId: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
   }>;
@@ -78,7 +77,7 @@ export class CashMovementSummaryReportComponent implements OnInit {
   ) {
     const now = new Date();
     this.filterForm = this.fb.group({
-      cashAccountId: this.fb.control(''),
+      cashAccountId: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1)),
       dateTo: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
     });
@@ -89,7 +88,12 @@ export class CashMovementSummaryReportComponent implements OnInit {
     if (preselected) this.filterForm.controls.cashAccountId.setValue(preselected);
 
     this.cashAccountService.getAll().subscribe({
-      next: (res) => { this.accounts = res.data ?? []; },
+      next: (res) => {
+        this.accountOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((account) => ({ value: account.id, label: account.name })),
+        ];
+      },
     });
     this.search();
   }
@@ -123,7 +127,7 @@ export class CashMovementSummaryReportComponent implements OnInit {
   reset(): void {
     const now = new Date();
     this.filterForm.reset({
-      cashAccountId: '',
+      cashAccountId: null,
       dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
       dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
     });

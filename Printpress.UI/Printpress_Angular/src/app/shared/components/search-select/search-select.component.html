@@ -36,9 +36,9 @@
     <mat-icon>search</mat-icon>
   </button>
 
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
-    <mat-option *ngFor="let item of filteredItems" [value]="item.id">
-      {{ item.name }}
+  <mat-autocomplete #auto="matAutocomplete" class="search-select-panel" (optionSelected)="onOptionSelected($event)">
+    <mat-option *ngFor="let item of filteredItems" [value]="item" [disabled]="!!item.disabled">
+      {{ item.label }}
     </mat-option>
     <mat-option *ngIf="filteredItems.length === 0" disabled>
       لا توجد نتائج

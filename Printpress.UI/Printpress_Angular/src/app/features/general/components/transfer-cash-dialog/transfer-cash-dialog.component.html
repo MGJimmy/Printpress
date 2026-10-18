@@ -4,20 +4,20 @@ add<h2 mat-dialog-title>تحويل بين الخزائن</h2>
   <form [formGroup]="form" class="mt-2">
     <div class="row g-3">
       <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>من خزينة</mat-label>
-          <mat-select formControlName="fromCashAccountId">
-            <mat-option *ngFor="let a of accounts" [value]="a.id">{{ accountLabel(a) }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="fromCashAccountId"
+          label="من خزينة"
+          [items]="accountOptions"
+          [required]="true">
+        </app-search-select>
       </div>
       <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>إلى خزينة</mat-label>
-          <mat-select formControlName="toCashAccountId">
-            <mat-option *ngFor="let a of accounts" [value]="a.id">{{ accountLabel(a) }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="toCashAccountId"
+          label="إلى خزينة"
+          [items]="accountOptions"
+          [required]="true">
+        </app-search-select>
       </div>
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">

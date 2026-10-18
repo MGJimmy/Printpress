@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFor
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { SparePartItemDto } from '../../models/spare-part-item.dto';
 
@@ -30,12 +30,13 @@ export interface AddSparePartLineDialogResult {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatDialogModule
   ],
   templateUrl: './add-spare-part-line-dialog.component.html'
 })
 export class AddSparePartLineDialogComponent {
+  itemOptions: SearchSelectItem[];
   form: FormGroup<{
     sparePartItemId: FormControl<string>;
     quantity: FormControl<number>;
@@ -47,6 +48,7 @@ export class AddSparePartLineDialogComponent {
     public dialogRef: MatDialogRef<AddSparePartLineDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddSparePartLineDialogData
   ) {
+    this.itemOptions = (data.items ?? []).map((item) => ({ value: item.id, label: item.name }));
     this.form = this.fb.group({
       sparePartItemId: this.fb.control('', Validators.required),
       quantity: this.fb.control(0, [Validators.required, Validators.min(0.01)]),

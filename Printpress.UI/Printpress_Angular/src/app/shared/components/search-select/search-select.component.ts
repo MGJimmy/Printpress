@@ -1,10 +1,12 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  forwardRef,
+  Output,
   ViewChild,
+  forwardRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -20,9 +22,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
 
+export type SearchSelectValue = string | number | boolean | null;
+
 export interface SearchSelectItem {
-  id: string;
-  name: string;
+  value: SearchSelectValue;
+  label: string;
+  disabled?: boolean;
+}
+
+export function normalizeSearchText(value: string): string {
+  return (value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه');
 }
 
 @Component({
@@ -38,6 +53,7 @@ export interface SearchSelectItem {
     MatButtonModule,
   ],
   templateUrl: './search-select.component.html',
+  styles: [':host { display: block; }'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -48,28 +64,32 @@ export interface SearchSelectItem {
 })
 export class SearchSelectComponent implements ControlValueAccessor, OnInit, OnDestroy {
   private _items: SearchSelectItem[] = [];
-  private _pendingValue: string | null = null;
+  private currentValue: SearchSelectValue = null;
 
   @Input() set items(value: SearchSelectItem[]) {
     this._items = value ?? [];
-    // Re-apply current query so an in-progress search is not wiped out
-    const query = this.searchCtrl?.value ?? '';
-    this.filteredItems = (query && !this.selectedItem)
-      ? this.filter(query)
-      : [...this._items];
-    // Resolve a value that arrived before the items list was populated
-    if (this._pendingValue) {
-      this.writeValue(this._pendingValue);
+    const query = this.searchCtrl.value ?? '';
+    const typing = typeof query === 'string' && query.length > 0 && !this.selectedItem;
+    this.showValue(this.currentValue);
+    if (typing) {
+      this.selectedItem = null;
+      this.searchCtrl.setValue(query, { emitEvent: false });
+      this.filteredItems = this.filter(query);
     }
   }
   get items(): SearchSelectItem[] {
     return this._items;
   }
 
-  @Input() label: string = '';
-  @Input() placeholder: string = 'ابحث...';
-  @Input() required: boolean = false;
-  @Input() allowClear: boolean = true;
+  @Input() label = '';
+  @Input() placeholder = 'ابحث...';
+  @Input() required = false;
+  @Input() allowClear = true;
+  @Input() set disabled(value: boolean) {
+    this.setDisabledState(!!value);
+  }
+
+  @Output() selectionChange = new EventEmitter<SearchSelectValue>();
 
   @ViewChild(MatAutocompleteTrigger) autoTrigger!: MatAutocompleteTrigger;
 
@@ -77,18 +97,19 @@ export class SearchSelectComponent implements ControlValueAccessor, OnInit, OnDe
   filteredItems: SearchSelectItem[] = [];
   selectedItem: SearchSelectItem | null = null;
 
-  private onChange: (value: string | null) => void = () => {};
+  private onChange: (value: SearchSelectValue) => void = () => {};
   onTouched: () => void = () => {};
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
     this.searchCtrl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-      if (typeof value === 'string') {
-        this.filteredItems = this.filter(value);
-        if (this.selectedItem) {
-          this.selectedItem = null;
-          this.onChange(null);
-        }
+      if (typeof value !== 'string') return;
+      this.filteredItems = this.filter(value);
+      if (this.selectedItem && value !== this.selectedItem.label) {
+        this.selectedItem = null;
+        this.currentValue = null;
+        this.onChange(null);
+        this.selectionChange.emit(null);
       }
     });
   }
@@ -99,30 +120,30 @@ export class SearchSelectComponent implements ControlValueAccessor, OnInit, OnDe
   }
 
   private filter(query: string): SearchSelectItem[] {
-    const lower = query.toLowerCase().trim();
-    if (!lower) return [...this.items];
-    return this.items.filter((item) => item.name.toLowerCase().includes(lower));
+    const text = normalizeSearchText(query);
+    if (!text) return [...this.items];
+    return this.items.filter((item) => normalizeSearchText(item.label).includes(text));
   }
 
   onOptionSelected(event: MatAutocompleteSelectedEvent): void {
-    const id = event.option.value as string;
-    const found = this.items.find((i) => i.id === id) ?? null;
+    const found = event.option.value as SearchSelectItem;
+    if (found?.disabled) return;
     this.selectedItem = found;
-    this.searchCtrl.setValue(found?.name ?? '', { emitEvent: false });
+    this.currentValue = found.value;
+    this.searchCtrl.setValue(found.label, { emitEvent: false });
     this.filteredItems = [...this.items];
-    this.onChange(id);
+    this.onChange(found.value);
+    this.selectionChange.emit(found.value);
     this.onTouched();
   }
 
   onSearchClick(): void {
     if (this.searchCtrl.disabled) return;
-    const query = this.searchCtrl.value ?? '';
-    this.filteredItems = this.filter(query);
+    this.filteredItems = this.filter(this.searchCtrl.value ?? '');
     this.autoTrigger?.openPanel();
   }
 
   onEnterKey(event: Event): void {
-    // If autocomplete already has an active option, let it handle the selection
     if (this.autoTrigger?.activeOption) return;
     event.preventDefault();
     this.onSearchClick();
@@ -130,34 +151,20 @@ export class SearchSelectComponent implements ControlValueAccessor, OnInit, OnDe
 
   onClear(): void {
     this.selectedItem = null;
+    this.currentValue = null;
     this.searchCtrl.setValue('', { emitEvent: false });
     this.filteredItems = [...this.items];
     this.onChange(null);
+    this.selectionChange.emit(null);
     this.onTouched();
   }
 
-  // ControlValueAccessor
-
-  writeValue(id: string | null): void {
-    if (id) {
-      const found = this._items.find((i) => i.id === id) ?? null;
-      if (found) {
-        this.selectedItem = found;
-        this.searchCtrl.setValue(found.name, { emitEvent: false });
-        this._pendingValue = null;
-      } else {
-        // Items not loaded yet — store and resolve later in the items setter
-        this._pendingValue = id;
-      }
-    } else {
-      this.selectedItem = null;
-      this.searchCtrl.setValue('', { emitEvent: false });
-      this._pendingValue = null;
-    }
-    this.filteredItems = [...this._items];
+  writeValue(value: SearchSelectValue): void {
+    this.currentValue = value ?? null;
+    this.showValue(this.currentValue);
   }
 
-  registerOnChange(fn: (value: string | null) => void): void {
+  registerOnChange(fn: (value: SearchSelectValue) => void): void {
     this.onChange = fn;
   }
 
@@ -166,6 +173,20 @@ export class SearchSelectComponent implements ControlValueAccessor, OnInit, OnDe
   }
 
   setDisabledState(isDisabled: boolean): void {
-    isDisabled ? this.searchCtrl.disable() : this.searchCtrl.enable();
+    if (isDisabled === this.searchCtrl.disabled) return;
+    if (isDisabled) this.searchCtrl.disable({ emitEvent: false });
+    else this.searchCtrl.enable({ emitEvent: false });
+  }
+
+  private showValue(value: SearchSelectValue): void {
+    const found = this._items.find((item) => item.value === value) ?? null;
+    if (found) {
+      this.selectedItem = found;
+      this.searchCtrl.setValue(found.label, { emitEvent: false });
+    } else if (this._items.length > 0 || value === null || value === undefined) {
+      this.selectedItem = null;
+      this.searchCtrl.setValue('', { emitEvent: false });
+    }
+    this.filteredItems = [...this._items];
   }
 }

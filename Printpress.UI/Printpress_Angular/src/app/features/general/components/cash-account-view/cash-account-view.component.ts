@@ -9,7 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
@@ -38,7 +38,7 @@ import { DialogService } from '../../../../shared/services/dialog.service';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatDialogModule,
     TableTemplateComponent,
   ],
@@ -63,17 +63,17 @@ export class CashAccountViewComponent implements OnInit {
 
   filterDateFrom: Date | null = null;
   filterDateTo: Date | null = null;
-  filterType = '';
-  filterCategory = '';
+  filterType: string | null = null;
+  filterCategory: string | null = null;
 
-  transactionTypeOptions = [
-    { value: '', label: 'الكل' },
+  transactionTypeOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
     { value: 'In', label: 'وارد' },
     { value: 'Out', label: 'صادر' },
   ];
 
-  categoryOptions = [
-    { value: '', label: 'الكل' },
+  categoryOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
     { value: 'Sales', label: 'مبيعات' },
     { value: 'SalesReturn', label: 'مرتجع مبيعات' },
     { value: 'Purchases', label: 'مشتريات' },
@@ -176,8 +176,8 @@ export class CashAccountViewComponent implements OnInit {
   resetFilter(): void {
     this.filterDateFrom = null;
     this.filterDateTo = null;
-    this.filterType = '';
-    this.filterCategory = '';
+    this.filterType = null;
+    this.filterCategory = null;
     this.currentPage = 1;
     this.loadTransactions();
   }

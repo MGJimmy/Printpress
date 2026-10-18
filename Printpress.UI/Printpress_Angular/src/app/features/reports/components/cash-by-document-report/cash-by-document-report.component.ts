@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } f
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -15,7 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { CashAccountService } from '../../../general/services/cash-account.service';
-import { CashAccountDto } from '../../../general/models/cash-account.dto';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { CashByDocumentReportService } from '../../services/cash-by-document-report.service';
 import { CashByDocumentReportDto, CashDocumentGroupDto } from '../../models/cash-by-document-report.dto';
 
@@ -24,7 +23,7 @@ import { CashByDocumentReportDto, CashDocumentGroupDto } from '../../models/cash
   standalone: true,
   imports: [
     CommonModule, RouterLink, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatButtonModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
+    MatButtonModule, MatIconModule, MatDatepickerModule, MatNativeDateModule, SearchSelectComponent,
     MatTableModule, MatProgressSpinnerModule,
   ],
   providers: [provideNativeDateAdapter()],
@@ -32,7 +31,7 @@ import { CashByDocumentReportDto, CashDocumentGroupDto } from '../../models/cash
   styleUrl: './cash-by-document-report.component.scss',
 })
 export class CashByDocumentReportComponent implements OnInit {
-  accounts: CashAccountDto[] = [];
+  accountOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
   report: CashByDocumentReportDto | null = null;
   isLoading = false;
   columns = ['type', 'reference', 'transactionCount', 'totalIn', 'totalOut', 'net'];
@@ -50,7 +49,7 @@ export class CashByDocumentReportComponent implements OnInit {
   };
 
   filterForm: FormGroup<{
-    cashAccountId: FormControl<string>;
+    cashAccountId: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
   }>;
@@ -63,14 +62,21 @@ export class CashByDocumentReportComponent implements OnInit {
   ) {
     const now = new Date();
     this.filterForm = this.fb.group({
-      cashAccountId: this.fb.control(''),
+      cashAccountId: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1)),
       dateTo: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
     });
   }
 
   ngOnInit(): void {
-    this.cashAccountService.getAll().subscribe({ next: (res) => { this.accounts = res.data ?? []; } });
+    this.cashAccountService.getAll().subscribe({
+      next: (res) => {
+        this.accountOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((account) => ({ value: account.id, label: account.name })),
+        ];
+      },
+    });
     this.search();
   }
 
@@ -99,7 +105,7 @@ export class CashByDocumentReportComponent implements OnInit {
   reset(): void {
     const now = new Date();
     this.filterForm.reset({
-      cashAccountId: '',
+      cashAccountId: null,
       dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
       dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
     });

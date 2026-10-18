@@ -4,7 +4,7 @@ import { FormControl, FormGroup, FormsModule, NonNullableFormBuilder, Validators
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { OrderSharedDataService } from '../../services/order-shared-data.service';
@@ -29,7 +29,7 @@ import { isStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/st
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatIconModule,
     MatCardModule,
     ReactiveFormsModule
@@ -38,6 +38,10 @@ import { isStatus, statusBadgeClass, statusI18nKey } from '../../models/enums/st
   styleUrls: ['./item-add-update.component.css'],
 })
 export class ItemAddUpdateComponent implements OnInit {
+  printingFaceOptions: SearchSelectItem[] = [
+    { value: 1, label: 'وجه' },
+    { value: 2, label: 'وجهين' },
+  ];
   isEditMode!: boolean;
   isAddMode!: boolean;
 

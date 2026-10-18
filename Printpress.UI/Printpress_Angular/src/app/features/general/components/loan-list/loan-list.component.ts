@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { TableTemplateComponent } from '../../../../shared/components/table-template/table-template.component';
@@ -15,7 +15,7 @@ import { TableColDefinitionModel } from '../../../../shared/models/table-col-def
 import { PageChangedModel } from '../../../../shared/models/page-changed.model';
 import { AlertService } from '../../../../core/services/alert.service';
 import { LenderService, LoanService } from '../../services/loan.service';
-import { LenderDto, LoanListDto } from '../../models/loan.dto';
+import { LoanListDto } from '../../models/loan.dto';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/constatnt/constant';
 
 @Component({
@@ -23,7 +23,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule, TableTemplateComponent,
+    MatFormFieldModule, MatInputModule, SearchSelectComponent, MatDatepickerModule, MatNativeDateModule, TableTemplateComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './loan-list.component.html',
@@ -31,7 +31,17 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '../../../../shared/const
 })
 export class LoanListComponent implements OnInit {
   loans: Array<LoanListDto & { statusLabel: string }> = [];
-  lenders: LenderDto[] = [];
+  lenderOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  remainingOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: 'true', label: 'عليه متبقي' },
+    { value: 'false', label: 'مسدد / ملغى' },
+  ];
+  voidedOptions: SearchSelectItem[] = [
+    { value: null, label: 'الكل' },
+    { value: 'false', label: 'ساري' },
+    { value: 'true', label: 'ملغى' },
+  ];
   totalCount = 0;
   pageNumber = DEFAULT_PAGE_NUMBER;
   pageSize = DEFAULT_PAGE_SIZE;
@@ -47,9 +57,9 @@ export class LoanListComponent implements OnInit {
   ];
 
   filterForm: FormGroup<{
-    lenderId: FormControl<string>;
-    hasRemaining: FormControl<string>;
-    isVoided: FormControl<string>;
+    lenderId: FormControl<string | null>;
+    hasRemaining: FormControl<string | null>;
+    isVoided: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
   }>;
@@ -62,16 +72,23 @@ export class LoanListComponent implements OnInit {
     private router: Router,
   ) {
     this.filterForm = this.fb.group({
-      lenderId: this.fb.control(''),
-      hasRemaining: this.fb.control(''),
-      isVoided: this.fb.control(''),
+      lenderId: this.fb.control<string | null>(null),
+      hasRemaining: this.fb.control<string | null>(null),
+      isVoided: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(null),
       dateTo: this.fb.control<Date | null>(null),
     });
   }
 
   ngOnInit(): void {
-    this.lenderService.getAll().subscribe({ next: (res) => this.lenders = res.data ?? [] });
+    this.lenderService.getAll().subscribe({
+      next: (res) => {
+        this.lenderOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((lender) => ({ value: lender.id, label: lender.name })),
+        ];
+      },
+    });
     this.load();
   }
 
@@ -87,8 +104,8 @@ export class LoanListComponent implements OnInit {
     const v = this.filterForm.getRawValue();
     this.loanService.getAll(this.pageNumber, this.pageSize, {
       lenderId: v.lenderId || undefined,
-      hasRemaining: v.hasRemaining === '' ? null : v.hasRemaining === 'true',
-      isVoided: v.isVoided === '' ? null : v.isVoided === 'true',
+      hasRemaining: v.hasRemaining === 'true' ? true : v.hasRemaining === 'false' ? false : null,
+      isVoided: v.isVoided === 'true' ? true : v.isVoided === 'false' ? false : null,
       dateFrom: this.toDateParam(v.dateFrom),
       dateTo: this.toDateParam(v.dateTo),
     }).subscribe({

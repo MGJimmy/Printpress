@@ -22,36 +22,31 @@
     </div>
     <form [formGroup]="filterForm">
       <div class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>التصنيف</mat-label>
-          <mat-select formControlName="categoryId">
-            <mat-option [value]="null">الكل</mat-option>
-            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name | inventoryItemCategoryArabic }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>العنصر</mat-label>
-          <mat-select formControlName="itemId" [disabled]="!filterForm.controls.categoryId.value && !filterForm.controls.itemId.value">
-            <mat-option value="">الكل</mat-option>
-            <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>الحالة</mat-label>
-          <mat-select formControlName="status">
-            <mat-option value="">الكل</mat-option>
-            <mat-option value="Open">مفتوح</mat-option>
-            <mat-option value="Completed">مكتمل</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>ملغى</mat-label>
-          <mat-select formControlName="isVoided">
-            <mat-option value="">الكل</mat-option>
-            <mat-option value="false">غير ملغى</mat-option>
-            <mat-option value="true">ملغى</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="categoryId"
+          label="التصنيف"
+          [items]="categoryOptions"
+          [allowClear]="false">
+        </app-search-select>
+        <app-search-select
+          formControlName="itemId"
+          label="العنصر"
+          [items]="itemOptions"
+          [allowClear]="false"
+          [disabled]="!filterForm.controls.categoryId.value && !filterForm.controls.itemId.value">
+        </app-search-select>
+        <app-search-select
+          formControlName="status"
+          label="الحالة"
+          [items]="statusOptions"
+          [allowClear]="false">
+        </app-search-select>
+        <app-search-select
+          formControlName="isVoided"
+          label="ملغى"
+          [items]="voidedOptions"
+          [allowClear]="false">
+        </app-search-select>
         <mat-form-field appearance="outline">
           <mat-label>من تاريخ</mat-label>
           <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />

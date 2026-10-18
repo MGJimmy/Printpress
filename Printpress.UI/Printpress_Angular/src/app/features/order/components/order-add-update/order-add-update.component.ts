@@ -43,6 +43,13 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   public orderServiceColumns: string[] = ['serviceName', 'isCover', 'price'];
   public orderGroupGridDataSource !: MatTableDataSource<OrderGroupGridViewModel>;
   public groupStatusFilter: string = 'all';
+  public groupStatusOptions = [
+    { value: 'all', label: 'الكل' },
+    { value: 'New', label: 'جديد' },
+    { value: 'InProgress', label: 'قيد التنفيذ' },
+    { value: 'Completed', label: 'مكتمل' },
+    { value: 'Delivered', label: 'تم التسليم' },
+  ];
   private allGroupRows: OrderGroupGridViewModel[] = [];
   public get groupStatusLabels(): Record<string, string> {
     return {
@@ -100,6 +107,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
     return statusBadgeClass(status);
   }
   public clients: ClientGetDto[] = [];
+  public clientOptions: { value: string; label: string }[] = [];
   public orderClientId!: string
   public orderName!: string;
   public orderGetDto: OrderGetDto;
@@ -192,6 +200,7 @@ export class OrderAddUpdateComponent implements OnInit, OnDestroy {
   async loadAllClients() {
     let response = await firstValueFrom(this.clientService.getAll())
     this.clients = response.data;
+    this.clientOptions = (response.data ?? []).map((client) => ({ value: client.id, label: client.name }));
   }
 
   protected manageTransactions_Click(): void {

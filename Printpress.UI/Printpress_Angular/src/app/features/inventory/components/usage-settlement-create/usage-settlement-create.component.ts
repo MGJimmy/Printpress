@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFor
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -26,7 +26,7 @@ import { InventoryCategoryItemSelectComponent } from '../inventory-category-item
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatCardModule,
     MatIconModule,
     MatDatepickerModule,
@@ -38,6 +38,11 @@ import { InventoryCategoryItemSelectComponent } from '../inventory-category-item
 })
 export class UsageSettlementCreateComponent {
   selectedItem: InventoryItemDto | null = null;
+  settlementTypeOptions: SearchSelectItem[] = [
+    { value: 'ExtraWaste', label: 'هالك إضافي' },
+    { value: 'Theft', label: 'سرقة / فقد' },
+    { value: 'Other', label: 'أخرى' },
+  ];
   isSaving = false;
   initialItemId: string | null = null;
 

@@ -7,14 +7,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { CashAccountService } from '../../services/cash-account.service';
 import { LenderService, LoanService } from '../../services/loan.service';
-import { CashAccountDto } from '../../models/cash-account.dto';
 import { LenderDto } from '../../models/loan.dto';
 import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
@@ -23,7 +21,7 @@ import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/comp
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule,
+    MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule,
     SearchSelectComponent,
   ],
   providers: [provideNativeDateAdapter()],
@@ -33,7 +31,7 @@ import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/comp
 export class LoanAddComponent implements OnInit {
   isSaving = false;
   lenders: SearchSelectItem[] = [];
-  accounts: CashAccountDto[] = [];
+  accountOptions: SearchSelectItem[] = [];
   form: FormGroup<{
     lenderId: FormControl<string>;
     cashAccountId: FormControl<string>;
@@ -61,10 +59,15 @@ export class LoanAddComponent implements OnInit {
 
   ngOnInit(): void {
     this.lenderService.getAll().subscribe({
-      next: (res) => this.lenders = (res.data ?? []).map((l: LenderDto) => ({ id: l.id, name: l.name })),
+      next: (res) => this.lenders = (res.data ?? []).map((l: LenderDto) => ({ value: l.id, label: l.name })),
     });
     this.cashAccountService.getAll().subscribe({
-      next: (res) => this.accounts = res.data ?? [],
+      next: (res) => {
+        this.accountOptions = (res.data ?? []).map((account) => ({
+          value: account.id,
+          label: `${account.name} (${account.type === 'SpareParts' ? 'قطع الغيار' : 'رئيسية'})`,
+        }));
+      },
     });
   }
 

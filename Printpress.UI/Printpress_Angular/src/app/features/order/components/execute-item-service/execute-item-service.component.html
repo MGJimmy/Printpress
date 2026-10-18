@@ -81,18 +81,13 @@
 
     <form [formGroup]="form">
       <div class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>الخدمة</mat-label>
-          <mat-select formControlName="serviceCategoryId"
-                      (selectionChange)="onServiceSelect($event.value)">
-            <mat-option *ngFor="let svc of itemSummary.serviceProgresses"
-                        [value]="svc.serviceCategoryId"
-                        [disabled]="svc.isCompleted">
-              {{ svc.serviceCategoryName }}{{ svc.isCompleted ? ' (مكتمل)' : '' }}
-            </mat-option>
-          </mat-select>
-          <mat-error>الخدمة مطلوبة</mat-error>
-        </mat-form-field>
+        <app-search-select
+          formControlName="serviceCategoryId"
+          label="الخدمة"
+          [items]="serviceOptions"
+          [required]="true"
+          (selectionChange)="onServiceSelect($event)">
+        </app-search-select>
 
         <mat-form-field appearance="outline">
           <mat-label>تاريخ التنفيذ</mat-label>

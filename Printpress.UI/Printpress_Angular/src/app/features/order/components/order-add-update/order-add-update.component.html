@@ -121,16 +121,13 @@
                     <div class="col-md-8">
                         <div class="row align-items-center">
                             <div class="col-4">
-                                <mat-form-field appearance="outline" class="w-100">
-                                    <mat-label>اسم العميل</mat-label>
-                                    <mat-select [(value)]="orderClientId" 
-                                              panelClass="custom-panel"
-                                              (selectionChange)="onClientSelectChange()">
-                                        <mat-option *ngFor="let client of clients" [value]="client.id">
-                                            {{client.name}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
+                                <app-search-select
+                                    [(ngModel)]="orderClientId"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (selectionChange)="onClientSelectChange()"
+                                    label="اسم العميل"
+                                    [items]="clientOptions">
+                                </app-search-select>
                             </div>
                             <div class="col-4">
                                 <button class="" 
@@ -164,16 +161,15 @@
                     (click)="onAddGroup()">
             إضافة مجموعة جديدة
             </button>
-            <mat-form-field appearance="outline" style="min-width:180px" *ngIf="componentMode.isViewMode">
-                <mat-label>تصفية بالحالة</mat-label>
-                <mat-select [(ngModel)]="groupStatusFilter" [ngModelOptions]="{standalone: true}" (selectionChange)="applyGroupFilter()">
-                    <mat-option value="all">الكل</mat-option>
-                    <mat-option value="New">جديد</mat-option>
-                    <mat-option value="InProgress">قيد التنفيذ</mat-option>
-                    <mat-option value="Completed">مكتمل</mat-option>
-                    <mat-option value="Delivered">تم التسليم</mat-option>
-                </mat-select>
-            </mat-form-field>
+            <app-search-select
+                *ngIf="componentMode.isViewMode"
+                [(ngModel)]="groupStatusFilter"
+                [ngModelOptions]="{standalone: true}"
+                (selectionChange)="applyGroupFilter()"
+                label="تصفية بالحالة"
+                [items]="groupStatusOptions"
+                [allowClear]="false">
+            </app-search-select>
         </div>
     
         <div class="table-responsive gradient-table custom-table"> 

@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } f
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -17,7 +16,8 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryStockBalanceReportService } from '../../services/inventory-stock-balance-report.service';
 import { InventoryStockBalanceReportDto } from '../../models/inventory-stock-balance-report.dto';
 import { InventoryCategoryFilterDto } from '../../models/order-inventory-items-report.dto';
-import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { inventoryItemCategoryArabic } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-inventory-stock-balance-report',
@@ -29,21 +29,20 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-stock-balance-report.component.html',
   styleUrl: './inventory-stock-balance-report.component.scss',
 })
 export class InventoryStockBalanceReportComponent implements OnInit {
-  categories: InventoryCategoryFilterDto[] = [];
+  categoryOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
   report: InventoryStockBalanceReportDto | null = null;
   isLoading = false;
 
@@ -72,7 +71,15 @@ export class InventoryStockBalanceReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.reportService.getInventoryCategories().subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((category: InventoryCategoryFilterDto) => ({
+            value: category.id,
+            label: inventoryItemCategoryArabic(category.name),
+          })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
     this.search();

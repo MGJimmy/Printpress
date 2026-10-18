@@ -93,7 +93,7 @@ export class StockOutComponent implements OnInit {
     this.workerService.getActive().subscribe({
       next: res => {
         this.workers = res.data;
-        this.workerItems = this.workers.map(w => ({ id: w.id, name: w.name }));
+        this.workerItems = this.workers.map(w => ({ value: w.id, label: w.name }));
       }
     });
 

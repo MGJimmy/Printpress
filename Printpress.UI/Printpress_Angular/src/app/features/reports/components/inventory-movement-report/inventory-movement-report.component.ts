@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFor
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -16,8 +15,8 @@ import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryMovementReportService } from '../../services/inventory-movement-report.service';
 import { InventoryMovementReportDto } from '../../models/inventory-movement-report.dto';
-import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
-import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { inventoryItemCategoryArabic } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-inventory-movement-report',
@@ -28,7 +27,7 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -36,15 +35,14 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatTableModule,
     MatProgressSpinnerModule,
     RouterLink,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-movement-report.component.html',
   styleUrl: './inventory-movement-report.component.scss',
 })
 export class InventoryMovementReportComponent implements OnInit {
-  categories: InventoryCategoryFilterDto[] = [];
-  items: InventoryItemFilterDto[] = [];
+  categoryOptions: SearchSelectItem[] = [];
+  itemOptions: SearchSelectItem[] = [];
   report: InventoryMovementReportDto | null = null;
   isLoading = false;
   private hydrating = false;
@@ -75,18 +73,25 @@ export class InventoryMovementReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.reportService.getInventoryCategories().subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = (res.data ?? []).map((category) => ({
+          value: category.id,
+          label: inventoryItemCategoryArabic(category.name),
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
 
     this.filterForm.controls.categoryId.valueChanges.subscribe((categoryId) => {
       if (this.hydrating) return;
-      this.items = [];
+      this.itemOptions = [];
       this.filterForm.controls.inventoryItemId.setValue('');
       this.report = null;
       if (categoryId != null) {
         this.reportService.getItemsByCategory(categoryId).subscribe({
-          next: (res) => { this.items = res.data ?? []; },
+          next: (res) => {
+            this.itemOptions = (res.data ?? []).map((item) => ({ value: item.id, label: item.name }));
+          },
           error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }
@@ -125,7 +130,7 @@ export class InventoryMovementReportComponent implements OnInit {
     this.filterForm.controls.categoryId.setValue(categoryId);
     this.reportService.getItemsByCategory(categoryId).subscribe({
       next: (res) => {
-        this.items = res.data ?? [];
+        this.itemOptions = (res.data ?? []).map((item) => ({ value: item.id, label: item.name }));
         this.filterForm.controls.inventoryItemId.setValue(inventoryItemId);
         this.hydrating = false;
         this.search();
@@ -172,7 +177,7 @@ export class InventoryMovementReportComponent implements OnInit {
 
   reset(): void {
     const now = new Date();
-    this.items = [];
+    this.itemOptions = [];
     this.report = null;
     this.filterForm.reset({
       categoryId: null,

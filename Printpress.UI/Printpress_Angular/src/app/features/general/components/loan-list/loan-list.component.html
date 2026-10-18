@@ -22,29 +22,24 @@
     </div>
     <form [formGroup]="filterForm">
       <div class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>المقرض</mat-label>
-          <mat-select formControlName="lenderId">
-            <mat-option value="">الكل</mat-option>
-            <mat-option *ngFor="let l of lenders" [value]="l.id">{{ l.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>المتبقي</mat-label>
-          <mat-select formControlName="hasRemaining">
-            <mat-option value="">الكل</mat-option>
-            <mat-option value="true">عليه متبقي</mat-option>
-            <mat-option value="false">مسدد / ملغى</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>الحالة</mat-label>
-          <mat-select formControlName="isVoided">
-            <mat-option value="">الكل</mat-option>
-            <mat-option value="false">ساري</mat-option>
-            <mat-option value="true">ملغى</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="lenderId"
+          label="المقرض"
+          [items]="lenderOptions"
+          [allowClear]="false">
+        </app-search-select>
+        <app-search-select
+          formControlName="hasRemaining"
+          label="المتبقي"
+          [items]="remainingOptions"
+          [allowClear]="false">
+        </app-search-select>
+        <app-search-select
+          formControlName="isVoided"
+          label="الحالة"
+          [items]="voidedOptions"
+          [allowClear]="false">
+        </app-search-select>
         <mat-form-field appearance="outline">
           <mat-label>من تاريخ</mat-label>
           <input matInput [matDatepicker]="from" formControlName="dateFrom">

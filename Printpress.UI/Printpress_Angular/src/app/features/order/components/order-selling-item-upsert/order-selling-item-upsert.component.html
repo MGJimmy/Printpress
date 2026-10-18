@@ -23,15 +23,13 @@
 
             <!-- Inventory item DDL -->
             <div class="col-md-6" *ngIf="isInventoryItem">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>اختر عنصر من المخزن</mat-label>
-                    <mat-select formControlName="inventoryItemId" (selectionChange)="onInventoryItemSelect()">
-                        <mat-option *ngFor="let item of inventoryItems" [value]="item.id">
-                            {{ item.name }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="form.get('inventoryItemId')?.errors?.['required']">يجب اختيار عنصر من المخزن</mat-error>
-                </mat-form-field>
+                <app-search-select
+                    formControlName="inventoryItemId"
+                    label="اختر عنصر من المخزن"
+                    [items]="inventoryItemOptions"
+                    [required]="true"
+                    (selectionChange)="onInventoryItemSelect()">
+                </app-search-select>
             </div>
 
             <!-- Quantity -->

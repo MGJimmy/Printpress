@@ -99,21 +99,20 @@
       <form [formGroup]="transactionForm">
         <div class="row g-3">
           <div class="col-md-3">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>دورة الراتب</mat-label>
-              <mat-select formControlName="payrollPeriodId">
-                <mat-option *ngFor="let p of openPeriods" [value]="p.id">{{ p.name }}</mat-option>
-              </mat-select>
-              <mat-error>دورة الراتب مطلوبة</mat-error>
-            </mat-form-field>
+            <app-search-select
+              formControlName="payrollPeriodId"
+              label="دورة الراتب"
+              [items]="periodOptions"
+              [required]="true">
+            </app-search-select>
           </div>
           <div class="col-md-3">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>نوع الحركة</mat-label>
-              <mat-select formControlName="transactionType">
-                <mat-option *ngFor="let t of transactionTypeOptions" [value]="t.value">{{ t.label }}</mat-option>
-              </mat-select>
-            </mat-form-field>
+            <app-search-select
+              formControlName="transactionType"
+              label="نوع الحركة"
+              [items]="transactionTypeOptions"
+              [required]="true">
+            </app-search-select>
           </div>
           <div class="col-md-2">
             <mat-form-field appearance="outline" class="w-100">
@@ -306,22 +305,24 @@
       <!-- Filters -->
       <div class="row g-2 mb-3 align-items-end">
         <div class="col-md-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>الفئة</mat-label>
-            <mat-select [(ngModel)]="invCategoryId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onInvCategoryChange()">
-              <mat-option [value]="null">الكل</mat-option>
-              <mat-option *ngFor="let c of invCategories" [value]="c.id">{{ c.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <app-search-select
+            [(ngModel)]="invCategoryId"
+            [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="onInvCategoryChange()"
+            label="الفئة"
+            [items]="invCategoryOptions"
+            [allowClear]="false">
+          </app-search-select>
         </div>
         <div class="col-md-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>الصنف</mat-label>
-            <mat-select [(ngModel)]="invItemId" [ngModelOptions]="{standalone: true}" [disabled]="!invCategoryId">
-              <mat-option [value]="null">الكل</mat-option>
-              <mat-option *ngFor="let item of invItems" [value]="item.id">{{ item.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <app-search-select
+            [(ngModel)]="invItemId"
+            [ngModelOptions]="{standalone: true}"
+            label="الصنف"
+            [items]="invItemOptions"
+            [allowClear]="false"
+            [disabled]="!invCategoryId">
+          </app-search-select>
         </div>
         <div class="col-md-2">
           <mat-form-field appearance="outline" class="w-100">

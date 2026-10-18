@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFor
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -15,8 +14,9 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrderInventoryItemsReportService } from '../../services/order-inventory-items-report.service';
-import { OrderInventoryItemsReportDto, InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
-import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { OrderInventoryItemsReportDto } from '../../models/order-inventory-items-report.dto';
+import { inventoryItemCategoryArabic } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-order-inventory-items-report',
@@ -27,7 +27,7 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -35,15 +35,14 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatTableModule,
     MatProgressSpinnerModule,
     RouterLink,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './order-inventory-items-report.component.html',
   styleUrl: './order-inventory-items-report.component.scss',
 })
 export class OrderInventoryItemsReportComponent implements OnInit {
-  categories: InventoryCategoryFilterDto[] = [];
-  items: InventoryItemFilterDto[] = [];
+  categoryOptions: SearchSelectItem[] = [];
+  itemOptions: SearchSelectItem[] = [];
   reportResult: OrderInventoryItemsReportDto | null = null;
   isLoading = false;
 
@@ -83,17 +82,24 @@ export class OrderInventoryItemsReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.reportService.getCategories().subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = (res.data ?? []).map((category) => ({
+          value: category.id,
+          label: inventoryItemCategoryArabic(category.name),
+        }));
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
 
     this.filterForm.controls.categoryId.valueChanges.subscribe(categoryId => {
-      this.items = [];
+      this.itemOptions = [];
       this.filterForm.controls.inventoryItemId.setValue('');
       this.reportResult = null;
       if (categoryId != null) {
         this.reportService.getItemsByCategory(categoryId).subscribe({
-          next: (res) => { this.items = res.data ?? []; },
+          next: (res) => {
+            this.itemOptions = (res.data ?? []).map((item) => ({ value: item.id, label: item.name }));
+          },
           error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }
@@ -132,7 +138,7 @@ export class OrderInventoryItemsReportComponent implements OnInit {
 
   reset(): void {
     const now = new Date();
-    this.items = [];
+    this.itemOptions = [];
     this.reportResult = null;
     this.filterForm.reset({
       categoryId: null,

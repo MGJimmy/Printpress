@@ -15,13 +15,12 @@
       <span>تصفية المطابقة</span>
     </div>
     <form [formGroup]="filterForm" class="filter-form">
-      <mat-form-field appearance="outline">
-        <mat-label>الخزينة</mat-label>
-        <mat-select formControlName="cashAccountId">
-          <mat-option value="">الكل</mat-option>
-          <mat-option *ngFor="let a of accounts" [value]="a.id">{{ a.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <app-search-select
+        formControlName="cashAccountId"
+        label="الخزينة"
+        [items]="accountOptions"
+        [allowClear]="false">
+      </app-search-select>
       <mat-form-field appearance="outline">
         <mat-label>من تاريخ</mat-label>
         <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />

@@ -6,8 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -37,8 +36,7 @@ import { TranslationService } from '../../../../core/services/translation.servic
     MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatSelectModule,
-    MatFormFieldModule,
+    SearchSelectComponent,
     MatBadgeModule,
     MatMenuModule,
     MatDialogModule
@@ -50,6 +48,11 @@ export class OrderGroupItemsComponent implements OnInit {
   groupData: OrderGroupItemsResponseDto | null = null;
   filteredItems: ItemWithServiceProgressDto[] = [];
   statusFilter: string = 'all';
+  statusOptions: SearchSelectItem[] = [
+    { value: 'all', label: 'الكل' },
+    { value: 'completed', label: 'مكتمل' },
+    { value: 'notCompleted', label: 'غير مكتمل' },
+  ];
   displayedColumns: string[] = [];
 
   groupStatusLabels = GroupStatusLabels;

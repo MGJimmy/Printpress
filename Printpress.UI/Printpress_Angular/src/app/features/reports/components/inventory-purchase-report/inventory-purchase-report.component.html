@@ -16,20 +16,19 @@
     </div>
     <form [formGroup]="filterForm">
       <div class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>التصنيف</mat-label>
-          <mat-select formControlName="categoryId">
-            <mat-option [value]="null">الكل</mat-option>
-            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name | inventoryItemCategoryArabic }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>العنصر</mat-label>
-          <mat-select formControlName="inventoryItemId" [disabled]="!filterForm.controls.categoryId.value">
-            <mat-option value="">الكل</mat-option>
-            <mat-option *ngFor="let item of items" [value]="item.id">{{ item.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="categoryId"
+          label="التصنيف"
+          [items]="categoryOptions"
+          [allowClear]="false">
+        </app-search-select>
+        <app-search-select
+          formControlName="inventoryItemId"
+          label="العنصر"
+          [items]="itemOptions"
+          [allowClear]="false"
+          [disabled]="!filterForm.controls.categoryId.value">
+        </app-search-select>
         <mat-form-field appearance="outline">
           <mat-label>من تاريخ</mat-label>
           <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />

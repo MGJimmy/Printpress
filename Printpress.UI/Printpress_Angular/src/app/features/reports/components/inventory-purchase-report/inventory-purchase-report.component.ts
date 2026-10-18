@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormGroup, FormControl, NonNullableFormBuilder } f
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -16,8 +15,8 @@ import { finalize } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { InventoryPurchaseReportService } from '../../services/inventory-purchase-report.service';
 import { InventoryPurchaseReportDto } from '../../models/inventory-purchase-report.dto';
-import { InventoryCategoryFilterDto, InventoryItemFilterDto } from '../../models/order-inventory-items-report.dto';
-import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { inventoryItemCategoryArabic } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
 @Component({
   selector: 'app-inventory-purchase-report',
@@ -29,22 +28,21 @@ import { InventoryItemCategoryArabicPipe } from '../../../inventory/pipes/invent
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
-    InventoryItemCategoryArabicPipe,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './inventory-purchase-report.component.html',
   styleUrl: './inventory-purchase-report.component.scss',
 })
 export class InventoryPurchaseReportComponent implements OnInit {
-  categories: InventoryCategoryFilterDto[] = [];
-  items: InventoryItemFilterDto[] = [];
+  categoryOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  itemOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
   report: InventoryPurchaseReportDto | null = null;
   isLoading = false;
 
@@ -55,7 +53,7 @@ export class InventoryPurchaseReportComponent implements OnInit {
 
   filterForm: FormGroup<{
     categoryId: FormControl<number | null>;
-    inventoryItemId: FormControl<string>;
+    inventoryItemId: FormControl<string | null>;
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
   }>;
@@ -68,7 +66,7 @@ export class InventoryPurchaseReportComponent implements OnInit {
     const now = new Date();
     this.filterForm = this.fb.group({
       categoryId: this.fb.control<number | null>(null),
-      inventoryItemId: this.fb.control(''),
+      inventoryItemId: this.fb.control<string | null>(null),
       dateFrom: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1)),
       dateTo: this.fb.control<Date | null>(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
     });
@@ -76,16 +74,29 @@ export class InventoryPurchaseReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.reportService.getInventoryCategories().subscribe({
-      next: (res) => { this.categories = res.data ?? []; },
+      next: (res) => {
+        this.categoryOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((category) => ({
+            value: category.id,
+            label: inventoryItemCategoryArabic(category.name),
+          })),
+        ];
+      },
       error: () => { this.alertService.showError('حدث خطأ أثناء تحميل التصنيفات'); },
     });
 
     this.filterForm.controls.categoryId.valueChanges.subscribe((categoryId) => {
-      this.items = [];
-      this.filterForm.controls.inventoryItemId.setValue('');
+      this.itemOptions = [{ value: null, label: 'الكل' }];
+      this.filterForm.controls.inventoryItemId.setValue(null);
       if (categoryId != null) {
         this.reportService.getItemsByCategory(categoryId).subscribe({
-          next: (res) => { this.items = res.data ?? []; },
+          next: (res) => {
+            this.itemOptions = [
+              { value: null, label: 'الكل' },
+              ...(res.data ?? []).map((item) => ({ value: item.id, label: item.name })),
+            ];
+          },
           error: () => { this.alertService.showError('حدث خطأ أثناء تحميل عناصر المخزون'); },
         });
       }
@@ -119,10 +130,10 @@ export class InventoryPurchaseReportComponent implements OnInit {
 
   reset(): void {
     const now = new Date();
-    this.items = [];
+    this.itemOptions = [{ value: null, label: 'الكل' }];
     this.filterForm.reset({
       categoryId: null,
-      inventoryItemId: '',
+      inventoryItemId: null,
       dateFrom: new Date(now.getFullYear(), now.getMonth(), 1),
       dateTo: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
     });

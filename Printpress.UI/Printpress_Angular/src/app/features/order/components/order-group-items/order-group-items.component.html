@@ -27,14 +27,13 @@
       </button>
     </div>
     <div class="filters">
-      <mat-form-field appearance="outline">
-        <mat-label>تصفية بالحالة</mat-label>
-        <mat-select [(ngModel)]="statusFilter" (selectionChange)="applyFilter()">
-          <mat-option value="all">الكل</mat-option>
-          <mat-option value="completed">مكتمل</mat-option>
-          <mat-option value="notCompleted">غير مكتمل</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <app-search-select
+        [(ngModel)]="statusFilter"
+        (selectionChange)="applyFilter()"
+        label="تصفية بالحالة"
+        [items]="statusOptions"
+        [allowClear]="false">
+      </app-search-select>
     </div>
 
     <p class="hint" *ngIf="groupServicesNames">الخدمات الحالية: {{ groupServicesNames }}</p>

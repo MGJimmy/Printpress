@@ -16,13 +16,12 @@
     </div>
     <form [formGroup]="filterForm">
       <div class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>الخزينة</mat-label>
-          <mat-select formControlName="cashAccountId">
-            <mat-option value="">الكل</mat-option>
-            <mat-option *ngFor="let a of accounts" [value]="a.id">{{ a.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="cashAccountId"
+          label="الخزينة"
+          [items]="accountOptions"
+          [allowClear]="false">
+        </app-search-select>
         <mat-form-field appearance="outline">
           <mat-label>من تاريخ</mat-label>
           <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom" />
@@ -35,18 +34,18 @@
           <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
           <mat-datepicker #pickerTo></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>نوع الحركة</mat-label>
-          <mat-select formControlName="type">
-            <mat-option *ngFor="let t of typeOptions" [value]="t.value">{{ t.label }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>الفئة</mat-label>
-          <mat-select formControlName="category">
-            <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-search-select
+          formControlName="type"
+          label="نوع الحركة"
+          [items]="typeOptions"
+          [allowClear]="false">
+        </app-search-select>
+        <app-search-select
+          formControlName="category"
+          label="الفئة"
+          [items]="categoryOptions"
+          [allowClear]="false">
+        </app-search-select>
         <mat-form-field appearance="outline" class="search-field">
           <mat-label>بحث في الوصف</mat-label>
           <input matInput formControlName="search" />

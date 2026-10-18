@@ -36,14 +36,12 @@
           <input matInput formControlName="address" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>نوع الراتب *</mat-label>
-          <mat-select formControlName="salaryType" required>
-            <mat-option [value]="1">شهري</mat-option>
-            <mat-option [value]="2">يومي</mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.salaryType.hasError('required')">نوع الراتب مطلوب</mat-error>
-        </mat-form-field>
+        <app-search-select
+          formControlName="salaryType"
+          label="نوع الراتب *"
+          [items]="salaryTypeOptions"
+          [required]="true">
+        </app-search-select>
 
         <mat-form-field appearance="outline" *ngIf="showMonthlySalary">
           <mat-label>الراتب الشهري</mat-label>

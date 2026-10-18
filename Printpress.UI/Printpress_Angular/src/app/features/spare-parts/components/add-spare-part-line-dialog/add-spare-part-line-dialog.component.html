@@ -3,15 +3,12 @@
 <mat-dialog-content>
   <form [formGroup]="form" class="dialog-form">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>القطعة</mat-label>
-      <mat-select formControlName="sparePartItemId">
-        <mat-option *ngFor="let item of data.items" [value]="item.id">
-          {{ item.name }}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="form.controls.sparePartItemId.hasError('required')">يجب اختيار القطعة</mat-error>
-    </mat-form-field>
+    <app-search-select
+      formControlName="sparePartItemId"
+      label="القطعة"
+      [items]="itemOptions"
+      [required]="true">
+    </app-search-select>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>الكمية</mat-label>

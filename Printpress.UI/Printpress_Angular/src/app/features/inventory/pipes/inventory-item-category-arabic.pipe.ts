@@ -9,13 +9,17 @@ const LABELS: Record<string, string> = {
   Other: 'أخرى',
 };
 
+export function inventoryItemCategoryArabic(value: string | null | undefined): string {
+  if (!value) return '';
+  return LABELS[value] ?? value;
+}
+
 @Pipe({
   name: 'inventoryItemCategoryArabic',
   standalone: true,
 })
 export class InventoryItemCategoryArabicPipe implements PipeTransform {
   transform(value: string | null | undefined): string {
-    if (!value) return '';
-    return LABELS[value] ?? value;
+    return inventoryItemCategoryArabic(value);
   }
 }

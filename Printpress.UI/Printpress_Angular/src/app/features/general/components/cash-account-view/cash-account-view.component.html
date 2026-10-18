@@ -40,18 +40,18 @@
         <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
         <mat-datepicker #pickerTo></mat-datepicker>
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>نوع الحركة</mat-label>
-        <mat-select [(ngModel)]="filterType">
-          <mat-option *ngFor="let t of transactionTypeOptions" [value]="t.value">{{ t.label }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>الفئة</mat-label>
-        <mat-select [(ngModel)]="filterCategory">
-          <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <app-search-select
+        [(ngModel)]="filterType"
+        label="نوع الحركة"
+        [items]="transactionTypeOptions"
+        [allowClear]="false">
+      </app-search-select>
+      <app-search-select
+        [(ngModel)]="filterCategory"
+        label="الفئة"
+        [items]="categoryOptions"
+        [allowClear]="false">
+      </app-search-select>
     </div>
     <div class="actions">
       <button mat-raised-button color="primary" type="button" (click)="applyFilter()" [disabled]="isLoading">

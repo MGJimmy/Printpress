@@ -9,7 +9,6 @@ import { TableTemplateComponent } from '../../../../shared/components/table-temp
 import { TableColDefinitionModel } from '../../../../shared/models/table-col-definition.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { WorkerService } from '../../services/worker.service';
@@ -18,8 +17,9 @@ import { PayrollPeriodService } from '../../services/payroll-period.service';
 import { InventoryTransactionService } from '../../../inventory/services/inventory-transaction.service';
 import { InventoryService } from '../../../inventory/services/inventory.service';
 import { InventoryServicesUsageReportService } from '../../../reports/services/inventory-services-usage-report.service';
-import { InventoryCategoryFilterDto } from '../../../reports/models/order-inventory-items-report.dto';
 import { InventoryItemDto } from '../../../inventory/models/inventory-item.dto';
+import { inventoryItemCategoryArabic } from '../../../inventory/pipes/inventory-item-category-arabic.pipe';
+import { SearchSelectComponent, SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 import {
   WorkerDetailsDto,
   AddSalaryTransactionDto,
@@ -53,7 +53,7 @@ import { OrderRoutingService } from '../../../order/services/order-routing.servi
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    SearchSelectComponent,
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
@@ -77,9 +77,11 @@ export class WorkerDetailsComponent implements OnInit {
   invPageNumber = DEFAULT_PAGE_NUMBER;
   invCategoryId: number | null = null;
   invItemId: string | null = null;
+  invCategoryOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  invItemOptions: SearchSelectItem[] = [{ value: null, label: 'الكل' }];
+  periodOptions: SearchSelectItem[] = [];
   invDateFrom: Date | null = null;
   invDateTo: Date | null = null;
-  invCategories: InventoryCategoryFilterDto[] = [];
   invItems: InventoryItemDto[] = [];
 
 
@@ -271,7 +273,15 @@ export class WorkerDetailsComponent implements OnInit {
   
   loadInvCategories(): void {
     this.reportService.getInventoryCategories().subscribe({
-      next: (res) => { this.invCategories = res.data; }
+      next: (res) => {
+        this.invCategoryOptions = [
+          { value: null, label: 'الكل' },
+          ...(res.data ?? []).map((category) => ({
+            value: category.id,
+            label: inventoryItemCategoryArabic(category.name),
+          })),
+        ];
+      }
     });
   }
 
@@ -279,6 +289,7 @@ export class WorkerDetailsComponent implements OnInit {
     this.payrollPeriodService.getOpenPeriods().subscribe({
       next: (res) => {
         this.openPeriods = res.data;
+        this.periodOptions = (res.data ?? []).map((period) => ({ value: period.id, label: period.name }));
         this.preselectTodayPeriod();
       },
       error: () => {}
@@ -326,6 +337,7 @@ export class WorkerDetailsComponent implements OnInit {
     this.invCategoryId = null;
     this.invItemId = null;
     this.invItems = [];
+    this.invItemOptions = [{ value: null, label: 'الكل' }];
     this.invDateFrom = null;
     this.invDateTo = null;
     this.invPageNumber = 1;
@@ -511,9 +523,16 @@ export class WorkerDetailsComponent implements OnInit {
     onInvCategoryChange(): void {
     this.invItemId = null;
     this.invItems = [];
+    this.invItemOptions = [{ value: null, label: 'الكل' }];
     if (this.invCategoryId) {
       this.inventoryService.getByCategory(this.invCategoryId).subscribe({
-        next: (res) => { this.invItems = res.data; }
+        next: (res) => {
+          this.invItems = res.data;
+          this.invItemOptions = [
+            { value: null, label: 'الكل' },
+            ...(res.data ?? []).map((item) => ({ value: item.id, label: item.name })),
+          ];
+        }
       });
     }
   }

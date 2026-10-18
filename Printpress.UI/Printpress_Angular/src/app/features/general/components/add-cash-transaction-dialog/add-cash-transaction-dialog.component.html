@@ -5,23 +5,22 @@
     <div class="row g-3">
 
       <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>نوع الحركة</mat-label>
-          <mat-select formControlName="type">
-            <mat-option *ngFor="let t of transactionTypeOptions" [value]="t.value">{{ t.label }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.type.hasError('required')">نوع الحركة مطلوب</mat-error>
-        </mat-form-field>
+        <app-search-select
+          formControlName="type"
+          label="نوع الحركة"
+          [items]="transactionTypeOptions"
+          [required]="true">
+        </app-search-select>
       </div>
 
       <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>الفئة</mat-label>
-          <mat-select formControlName="category" [disabled]="!form.controls.type.value">
-            <mat-option *ngFor="let c of filteredCategories" [value]="c.value">{{ c.label }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.category.hasError('required')">الفئة مطلوبة</mat-error>
-        </mat-form-field>
+        <app-search-select
+          formControlName="category"
+          label="الفئة"
+          [items]="filteredCategories"
+          [disabled]="!form.controls.type.value"
+          [required]="true">
+        </app-search-select>
       </div>
 
       <div class="col-md-6" *ngIf="showOrderSelector">
