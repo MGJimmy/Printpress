@@ -13,6 +13,7 @@ internal sealed class WorkerAttendanceService(
         var worker = await LoadActiveWorkerAsync(workerId);
         var stretch = worker.CheckIn(time);
         stretch.Id = _guidGenerator.NewGuid();
+        _unitOfWork.WorkerRepository.Update(worker);
         await _unitOfWork.SaveChangesAsync(userId);
     }
 
@@ -32,6 +33,7 @@ internal sealed class WorkerAttendanceService(
         var worker = await LoadActiveWorkerAsync(workerId);
         var stretch = worker.AddClosed(arrival, leave);
         stretch.Id = _guidGenerator.NewGuid();
+        _unitOfWork.WorkerRepository.Update(worker);
         await _unitOfWork.SaveChangesAsync(userId);
     }
 

@@ -156,6 +156,7 @@ public static class LocalizationKeys
         public const string StretchOverlaps = "hr.stretch_overlaps";
         public const string AttendanceNotFound = "hr.attendance_not_found";
         public const string AttendanceAlreadyVoided = "hr.attendance_already_voided";
+        public const string StretchAlreadyClosed = "hr.stretch_already_closed";
         public const string VoidReasonMaxLength = "hr.void_reason_max_length";
         public const string InvalidDateRange = "hr.invalid_date_range";
     }

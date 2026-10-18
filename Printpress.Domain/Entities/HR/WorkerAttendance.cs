@@ -31,6 +31,12 @@ public class WorkerAttendance : Entity
 
     public void Close(DateTime checkOutAt)
     {
+        if (IsVoided)
+            throw new BusinessExceptions(LocalizationKeys.HR.AttendanceAlreadyVoided);
+
+        if (CheckOutAt is not null)
+            throw new BusinessExceptions(LocalizationKeys.HR.StretchAlreadyClosed);
+
         if (checkOutAt == default)
             throw new BusinessExceptions(LocalizationKeys.HR.TimeRequired);
 

@@ -73,7 +73,7 @@ namespace Printpress.Domain
             if (Attendance.Any(a => !a.IsVoided && a.CheckOutAt is null))
                 throw new BusinessExceptions(LocalizationKeys.HR.AlreadyCheckedIn);
 
-            EnsureNoOverlap(time, null);
+            EnsureArrivalIsFree(time);
 
             var stretch = new WorkerAttendance(Id, time);
             Attendance.Add(stretch);
@@ -112,17 +112,30 @@ namespace Printpress.Domain
                 throw new InvalidOperationException("Worker.Attendance was not loaded.");
         }
 
+        private void EnsureArrivalIsFree(DateTime time)
+        {
+            var insideAnother = Attendance.Any(a =>
+                !a.IsVoided
+                && a.CheckInAt <= time
+                && time < (a.CheckOutAt ?? DateTime.MaxValue));
+
+            if (insideAnother)
+                throw new BusinessExceptions(LocalizationKeys.HR.StretchOverlaps);
+        }
+
         private void EnsureNoOverlap(DateTime checkInAt, DateTime? checkOutAt, WorkerAttendance self = null)
         {
             var end = checkOutAt ?? DateTime.MaxValue;
             var overlaps = Attendance.Any(a =>
                 !a.IsVoided
-                && (self is null || a != self)
-                && checkInAt < (a.CheckOutAt ?? DateTime.MaxValue)
-                && a.CheckInAt < end);
+                && (self is null || !ReferenceEquals(a, self))
+                && IntervalsOverlap(checkInAt, end, a.CheckInAt, a.CheckOutAt ?? DateTime.MaxValue));
 
             if (overlaps)
                 throw new BusinessExceptions(LocalizationKeys.HR.StretchOverlaps);
         }
+
+        private static bool IntervalsOverlap(DateTime aStart, DateTime aEnd, DateTime bStart, DateTime bEnd)
+            => aStart < bEnd && bStart < aEnd;
     }
 }

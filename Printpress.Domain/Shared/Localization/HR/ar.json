@@ -10,6 +10,7 @@
   "hr.stretch_overlaps": "هذه الفترة تتداخل مع سجل حضور آخر",
   "hr.attendance_not_found": "سجل الحضور غير موجود",
   "hr.attendance_already_voided": "سجل الحضور ملغى مسبقاً",
+  "hr.stretch_already_closed": "هذه الفترة مغلقة مسبقاً",
   "hr.void_reason_max_length": "السبب يجب ألا يتجاوز 500 حرفاً",
   "hr.invalid_date_range": "تاريخ البداية يجب أن يكون قبل تاريخ النهاية"
 }

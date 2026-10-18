@@ -189,7 +189,7 @@ export class WorkerDetailsComponent implements OnInit {
     this.attendanceDateTo = now;
     this.punchAt = this.toLocalInput(now);
     this.closedCheckInAt = this.punchAt;
-    this.closedCheckOutAt = this.punchAt;
+    this.closedCheckOutAt = '';
     this.loadAttendance();
   }
 
@@ -352,11 +352,18 @@ export class WorkerDetailsComponent implements OnInit {
 
   loadAttendance(): void {
     if (!this.workerId) return;
+    const from = this.asDate(this.attendanceDateFrom);
+    const to = this.asDate(this.attendanceDateTo);
+    if (from && to && from > to) {
+      this.alertService.showError('تاريخ البداية يجب أن يكون قبل تاريخ النهاية');
+      return;
+    }
+
     this.isLoadingAttendance = true;
     this.workerService.getAttendance(
       this.workerId,
-      this.attendanceDateFrom ? this.toIsoDate(this.attendanceDateFrom) : undefined,
-      this.attendanceDateTo ? this.toIsoDate(this.attendanceDateTo) : undefined,
+      from ? this.toIsoDate(from) : undefined,
+      to ? this.toIsoDate(to) : undefined,
     ).pipe(
       finalize(() => { this.isLoadingAttendance = false; }),
     ).subscribe({
@@ -374,7 +381,7 @@ export class WorkerDetailsComponent implements OnInit {
 
   onPunch(): void {
     if (!this.worker || this.isSavingPunch) return;
-    const at = this.toIsoFromLocal(this.punchAt);
+    const at = this.toTypedClock(this.punchAt);
     if (!at) {
       this.alertService.showError('الوقت مطلوب');
       return;
@@ -398,10 +405,21 @@ export class WorkerDetailsComponent implements OnInit {
 
   onAddClosedAttendance(): void {
     if (!this.worker || this.isSavingClosed) return;
-    const checkInAt = this.toIsoFromLocal(this.closedCheckInAt);
-    const checkOutAt = this.toIsoFromLocal(this.closedCheckOutAt);
+    const checkInAt = this.toTypedClock(this.closedCheckInAt);
+    const checkOutAt = this.toTypedClock(this.closedCheckOutAt);
     if (!checkInAt || !checkOutAt) {
       this.alertService.showError('وقت الحضور والانصراف مطلوبان');
+      return;
+    }
+
+    const arrival = new Date(checkInAt);
+    const leave = new Date(checkOutAt);
+    if (leave <= arrival) {
+      this.alertService.showError('وقت الانصراف يجب أن يكون بعد وقت الحضور');
+      return;
+    }
+    if (leave.getTime() - arrival.getTime() > 24 * 60 * 60 * 1000) {
+      this.alertService.showError('لا يجوز أن تمتد الفترة أكثر من 24 ساعة');
       return;
     }
 
@@ -411,6 +429,7 @@ export class WorkerDetailsComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.alertService.showSuccess('تم إضافة فترة الحضور');
+        this.closedCheckOutAt = '';
         this.loadAttendance();
       },
     });
@@ -444,10 +463,16 @@ export class WorkerDetailsComponent implements OnInit {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
-  private toIsoFromLocal(value: string): string | null {
+  private toTypedClock(value: string): string | null {
     if (!value) return null;
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(value)) return null;
+    return value.length === 16 ? `${value}:00` : value;
+  }
+
+  private asDate(value: Date | null): Date | null {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 
   private toIsoDate(date: Date): string {

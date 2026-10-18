@@ -10,6 +10,7 @@
   "hr.stretch_overlaps": "This stretch overlaps another attendance record",
   "hr.attendance_not_found": "Attendance record not found",
   "hr.attendance_already_voided": "This attendance record is already voided",
+  "hr.stretch_already_closed": "This stretch is already closed",
   "hr.void_reason_max_length": "The reason must not exceed 500 characters",
   "hr.invalid_date_range": "Start date must be before end date"
 }
