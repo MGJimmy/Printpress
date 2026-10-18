@@ -8,6 +8,7 @@ public class SparePartSellingInvoiceCreateDtoValidator : AbstractValidator<Spare
     {
         RuleFor(x => x.ClientName).NotEmpty().MaximumLength(300);
         RuleFor(x => x.InvoiceDate).NotEmpty();
+        RuleFor(x => x.Notes).MaximumLength(500).When(x => !string.IsNullOrEmpty(x.Notes));
         RuleFor(x => x.Lines).NotEmpty().WithMessage("يجب إضافة سطر واحد على الأقل");
         RuleForEach(x => x.Lines).ChildRules(line =>
         {

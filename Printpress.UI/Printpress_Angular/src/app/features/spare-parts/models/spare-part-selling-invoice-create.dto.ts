@@ -7,5 +7,6 @@ export interface SparePartSellingInvoiceLineCreateDto {
 export interface SparePartSellingInvoiceCreateDto {
   clientName: string;
   invoiceDate: string;
+  notes?: string;
   lines: SparePartSellingInvoiceLineCreateDto[];
 }

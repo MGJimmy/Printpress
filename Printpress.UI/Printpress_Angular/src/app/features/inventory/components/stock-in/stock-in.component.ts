@@ -54,6 +54,7 @@ export class StockInComponent {
   form: FormGroup<{
     invoiceDate: FormControl<Date | null>;
     supplierName: FormControl<string>;
+    notes: FormControl<string>;
     paidNow: FormControl<number>;
     receiveNow: FormControl<boolean>;
   }>;
@@ -89,6 +90,7 @@ export class StockInComponent {
     this.form = this.fb.group({
       invoiceDate: new FormControl<Date | null>(null, Validators.required),
       supplierName: this.fb.control('', Validators.required),
+      notes: this.fb.control('', Validators.maxLength(500)),
       paidNow: this.fb.control(0, [Validators.required, Validators.min(0)]),
       receiveNow: this.fb.control(true),
     });
@@ -187,6 +189,7 @@ export class StockInComponent {
         attachmentFilePath,
         paidNow,
         receiveNow: formValue.receiveNow,
+        notes: formValue.notes || undefined,
         lines: this.lines.map(l => ({
           inventoryItemId: l.inventoryItemId,
           quantity: l.quantity,

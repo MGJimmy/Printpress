@@ -23,6 +23,11 @@ public class PurchaseInvoiceCreateDtoValidator : AbstractValidator<PurchaseInvoi
             .WithMessage(ResponseMessage.MaxLength(nameof(PurchaseInvoiceCreateDto.AttachmentFilePath), 500))
             .When(x => !string.IsNullOrEmpty(x.AttachmentFilePath));
 
+        RuleFor(x => x.Notes)
+            .MaximumLength(500)
+            .WithMessage(ResponseMessage.MaxLength(nameof(PurchaseInvoiceCreateDto.Notes), 500))
+            .When(x => !string.IsNullOrEmpty(x.Notes));
+
         RuleFor(x => x.Lines)
             .NotEmpty()
             .WithMessage(ResponseMessage.Required(nameof(PurchaseInvoiceCreateDto.Lines)));

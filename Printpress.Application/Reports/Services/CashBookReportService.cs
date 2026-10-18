@@ -5,6 +5,7 @@ namespace Printpress.Application;
 internal sealed class CashBookReportService(
     IUnitOfWork _unitOfWork,
     CashReferenceResolver _referenceResolver,
+    IUserDisplayNameService _users,
     ILocalizationService _loc) : ICashBookReportService
 {
     public async Task<CashBookReportDto> GetReportAsync(
@@ -152,6 +153,20 @@ internal sealed class CashBookReportService(
                 line.ReferenceLabel = link.Label;
                 line.ReferenceRoute = link.Route;
             }
+        }
+
+        var distinctUserIds = pagedLines
+            .Select(l => l.CreatedBy)
+            .Where(id => !string.IsNullOrWhiteSpace(id))
+            .Distinct()
+            .ToList();
+        var namesById = new Dictionary<string, string>(distinctUserIds.Count);
+        foreach (var userId in distinctUserIds)
+            namesById[userId] = await _users.GetDisplayNameAsync(userId);
+        foreach (var line in pagedLines)
+        {
+            if (!string.IsNullOrWhiteSpace(line.CreatedBy) && namesById.TryGetValue(line.CreatedBy, out var name))
+                line.CreatedBy = name;
         }
 
         return new CashBookReportDto

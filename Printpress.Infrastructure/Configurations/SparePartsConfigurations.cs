@@ -62,6 +62,9 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.AttachmentFilePath)
                 .HasMaxLength(500);
 
+            entity.Property(x => x.Notes)
+                .HasMaxLength(500);
+
             entity.HasMany(x => x.PurchaseInvoiceLines)
                 .WithOne(x => x.PurchaseInvoice)
                 .HasForeignKey(x => x.PurchaseInvoiceId);
@@ -106,6 +109,9 @@ namespace Printpress.Infrastructure
             entity.Property(x => x.ClientName)
                 .IsRequired()
                 .HasMaxLength(300);
+
+            entity.Property(x => x.Notes)
+                .HasMaxLength(500);
 
             entity.HasMany(x => x.SparePartSellingInvoiceLines)
                 .WithOne(x => x.SellingInvoice)

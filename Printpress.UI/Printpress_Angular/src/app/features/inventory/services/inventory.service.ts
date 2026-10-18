@@ -19,10 +19,18 @@ export interface InventoryItemUpsertDto {
 export class InventoryService {
   constructor(private httpService: HttpService) {}
 
-  getAll(pageSize: number, pageNumber: number): Observable<ApiPagingResponseDto<InventoryItemDto>> {
+  getAll(
+    pageSize: number,
+    pageNumber: number,
+    categoryId?: number | null,
+    itemId?: string
+  ): Observable<ApiPagingResponseDto<InventoryItemDto>> {
+    const params: { [param: string]: string | number | boolean } = { pageSize, pageNumber };
+    if (categoryId != null) params['categoryId'] = categoryId;
+    if (itemId) params['itemId'] = itemId;
     return this.httpService.get<ApiPagingResponseDto<InventoryItemDto>>(
       ApiUrlResource.InventoryAPI.getAll,
-      { pageSize, pageNumber }
+      params
     );
   }
 

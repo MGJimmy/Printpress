@@ -17,6 +17,7 @@ namespace Printpress.Domain
         public decimal PaidAmount { get; private set; }
         public bool IsGoodsReceived { get; private set; }
         public string AttachmentFilePath { get; private set; }
+        public string Notes { get; private set; }
         public bool IsVoided { get; private set; }
         public string VoidReason { get; private set; }
         public DateTime? VoidedAt { get; private set; }
@@ -33,12 +34,14 @@ namespace Printpress.Domain
         public PurchaseInvoice(
             DateTime invoiceDate, 
             string suplierName, 
-            string attachmentFilePath
+            string attachmentFilePath,
+            string notes
             )
         {
             InvoiceDate = invoiceDate;
             SupplierName = suplierName;
             AttachmentFilePath = attachmentFilePath;
+            Notes = NormalizeNotes(notes);
         }
 
         public void AddLine(Guid lineId, Guid inventoryItemId, decimal quantity, decimal unitPrice)
@@ -95,6 +98,14 @@ namespace Printpress.Domain
             VoidedAt = DateTime.UtcNow;
             VoidedBy = userId;
             PaidAmount = 0;
+        }
+
+        private static string NormalizeNotes(string notes)
+        {
+            notes ??= string.Empty;
+            if (notes.Length > 500)
+                throw new BusinessExceptions(LocalizationKeys.Shared.MaxLength, nameof(Notes), 500);
+            return notes;
         }
     }
 }

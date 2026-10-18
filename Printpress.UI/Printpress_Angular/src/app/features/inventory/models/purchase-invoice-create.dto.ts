@@ -10,5 +10,6 @@ export interface PurchaseInvoiceCreateDto {
   attachmentFilePath: string;
   paidNow: number;
   receiveNow: boolean;
+  notes?: string;
   lines: PurchaseInvoiceLineCreateDto[];
 }

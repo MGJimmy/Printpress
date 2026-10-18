@@ -55,6 +55,10 @@
         <span class="void-badge" *ngIf="invoice.isVoided">ملغاة</span>
         <span class="meta-value" *ngIf="!invoice.isVoided">سارية</span>
       </div>
+      <div>
+        <span class="meta-label">ملاحظات</span>
+        <span class="meta-value">{{ invoice.notes || '—' }}</span>
+      </div>
       <div *ngIf="invoice.isVoided">
         <span class="meta-label">سبب الإلغاء</span>
         <span class="meta-value">{{ invoice.voidReason || '—' }}</span>

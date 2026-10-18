@@ -7,6 +7,7 @@ public class SparePartPurchaseInvoiceCreateDto
     public string AttachmentFilePath { get; set; }
     public decimal? PaidNow { get; set; }
     public bool? ReceiveNow { get; set; }
+    public string Notes { get; set; }
     public List<SparePartPurchaseInvoiceLineCreateDto> Lines { get; set; }
 }
 

@@ -89,6 +89,9 @@ namespace Printpress.Infrastructure
                 .IsRequired()
                 .HasMaxLength(500);
 
+            entity.Property(x => x.Notes)
+                .HasMaxLength(500);
+
             entity.Property(x => x.PaidAmount)
                 .IsRequired()
                 .HasDefaultValue(0m);

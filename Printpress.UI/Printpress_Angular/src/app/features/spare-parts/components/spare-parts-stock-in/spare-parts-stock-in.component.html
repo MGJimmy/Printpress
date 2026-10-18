@@ -48,6 +48,13 @@
             </div>
             <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
           </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>ملاحظات (اختياري)</mat-label>
+              <textarea matInput formControlName="notes" rows="2" maxlength="500"></textarea>
+              <mat-error *ngIf="form.controls.notes.hasError('maxlength')">الملاحظات يجب ألا تتجاوز 500 حرف</mat-error>
+            </mat-form-field>
+          </div>
         </div>
 
       <div class="mt-4">

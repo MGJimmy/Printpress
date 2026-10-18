@@ -27,6 +27,7 @@ export interface SparePartPurchaseInvoiceListItemDto {
   remainingAmount: number;
   isGoodsReceived: boolean;
   attachmentFilePath: string;
+  notes?: string | null;
   createdAt: string;
   isVoided: boolean;
   voidReason?: string | null;
@@ -51,6 +52,7 @@ export interface SparePartSellingInvoiceListItemDto {
   invoiceDate: string;
   clientName: string;
   totalAmount: number;
+  notes?: string | null;
   createdAt: string;
   isVoided: boolean;
   voidReason?: string | null;

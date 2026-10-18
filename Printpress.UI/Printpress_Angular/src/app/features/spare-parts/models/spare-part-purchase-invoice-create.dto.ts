@@ -10,5 +10,6 @@ export interface SparePartPurchaseInvoiceCreateDto {
   attachmentFilePath: string;
   paidNow: number;
   receiveNow: boolean;
+  notes?: string;
   lines: SparePartPurchaseInvoiceLineCreateDto[];
 }
