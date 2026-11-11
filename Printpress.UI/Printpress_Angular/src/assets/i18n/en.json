@@ -71,6 +71,7 @@
     "all": "All",
     "issue_invoice": "Issue Invoice",
     "select_invoice_groups": "Select invoice groups",
+    "include_selling_items": "Include selling items in the invoice",
     "error_loading_groups": "Error loading groups",
     "error_loading_group": "Error loading group data",
     "error_deleting_order": "Error deleting order",

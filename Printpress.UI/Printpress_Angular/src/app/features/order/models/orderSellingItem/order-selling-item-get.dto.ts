@@ -3,6 +3,7 @@ import { IObjectState } from '../../../../core/models/i-object-state';
 export interface OrderSellingItemGetDto extends IObjectState {
     id: string;
     name: string;
+    details?: string;
     orderId: string;
     inventoryItemId?: string;
     isInventoryItem: boolean;

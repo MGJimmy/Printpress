@@ -71,6 +71,7 @@
     "all": "الكل",
     "issue_invoice": "إصدار فاتورة",
     "select_invoice_groups": "اختيار مجموعات الفاتورة",
+    "include_selling_items": "تضمين عناصر البيع في الفاتورة",
     "error_loading_groups": "حدث خطأ أثناء تحميل المجموعات",
     "error_loading_group": "حدث خطأ أثناء تحميل بيانات المجموعة",
     "error_deleting_order": "حدث خطأ أثناء حذف الطلبية",

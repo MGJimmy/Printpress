@@ -14,10 +14,15 @@
                 <td mat-cell *matCellDef="let element">{{ element.inventoryItemName || element.name }}</td>
             </ng-container>
 
+            <ng-container matColumnDef="details">
+                <th mat-header-cell *matHeaderCellDef>تفاصيل</th>
+                <td mat-cell *matCellDef="let element" class="selling-item-details">{{ element.details || '—' }}</td>
+            </ng-container>
+
             <ng-container matColumnDef="type">
                 <th mat-header-cell *matHeaderCellDef>النوع</th>
                 <td mat-cell *matCellDef="let element">
-                    <span class="badge" [ngClass]="element.isInventoryItem ? 'badge-primary' : 'badge-secondary'">
+                    <span class="badge selling-item-type" [class.inventory-type]="element.isInventoryItem">
                         {{ element.isInventoryItem ? 'من المخزن' : 'خارجي' }}
                     </span>
                 </td>

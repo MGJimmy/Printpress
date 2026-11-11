@@ -11,11 +11,12 @@
     (keydown.enter)="onEnterKey($event)"
   />
 
+  <span matSuffix class="search-select-actions">
   <!-- Clear button — shown only when an item is selected and allowClear=true -->
   <button
-    matSuffix
     mat-icon-button
     type="button"
+    aria-label="مسح الاختيار"
     *ngIf="selectedItem && allowClear"
     (mousedown)="$event.preventDefault()"
     (click)="onClear()"
@@ -26,15 +27,16 @@
 
   <!-- Search button -->
   <button
-    matSuffix
     mat-icon-button
     type="button"
+    aria-label="بحث"
     (mousedown)="$event.preventDefault()"
     (click)="onSearchClick()"
     [disabled]="searchCtrl.disabled"
   >
     <mat-icon>search</mat-icon>
   </button>
+  </span>
 
   <mat-autocomplete #auto="matAutocomplete" class="search-select-panel" (optionSelected)="onOptionSelected($event)">
     <mat-option *ngFor="let item of filteredItems" [value]="item" [disabled]="!!item.disabled">

@@ -29,6 +29,23 @@ namespace Printpress.Application
             var model = await unitOfWork.OrderRepository.FirstOrDefaultAsync(order => order.Id == id, true, includes);
 
             var isPartial = ApplyGroupFilter(model, queryParams.Get("groupIds"));
+            // Preserve legacy links while allowing the dialog to choose selling items independently.
+            var includeSellingItems = bool.TryParse(queryParams.Get("includeSellingItems"), out var include)
+                ? include
+                : !isPartial;
+            var excludesSellingItems = !includeSellingItems && (model.SellingItems?.Count ?? 0) > 0;
+            if (!includeSellingItems)
+                model.SellingItems = [];
+
+            isPartial |= excludesSellingItems;
+            if (isPartial)
+            {
+                model.TotalPrice = (model.OrderGroups ?? [])
+                    .SelectMany(g => g.Items ?? [])
+                    .Where(i => !i.IsDeleted)
+                    .Sum(i => i.Price * i.Quantity)
+                    + (model.SellingItems ?? []).Sum(i => i.Price * i.Quantity);
+            }
 
             var document = new InvoiceReport(model, configuration, isPartial);
 
@@ -38,7 +55,7 @@ namespace Printpress.Application
 
         private static bool ApplyGroupFilter(Order model, string groupIdsRaw)
         {
-            if (model is null || string.IsNullOrWhiteSpace(groupIdsRaw))
+            if (model is null || groupIdsRaw is null)
                 return false;
 
             var selectedGroupIds = groupIdsRaw
@@ -48,7 +65,7 @@ namespace Printpress.Application
                 .Select(id => id.Value)
                 .ToHashSet();
 
-            if (selectedGroupIds.Count == 0)
+            if (selectedGroupIds.Count == 0 && !string.IsNullOrWhiteSpace(groupIdsRaw))
                 return false;
 
             var originalGroupCount = model.OrderGroups?.Count ?? 0;
@@ -65,17 +82,7 @@ namespace Printpress.Application
                 .Where(s => selectedServiceIds.Contains(s.ServiceId))
                 .ToList();
 
-            var isPartial = model.OrderGroups.Count < originalGroupCount;
-            if (!isPartial)
-                return false;
-
-            model.SellingItems = [];
-            model.TotalPrice = model.OrderGroups
-                .SelectMany(g => g.Items ?? [])
-                .Where(i => !i.IsDeleted)
-                .Sum(i => i.Price * i.Quantity);
-
-            return true;
+            return model.OrderGroups.Count < originalGroupCount;
         }
     }
 }

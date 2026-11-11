@@ -794,6 +794,9 @@ namespace Printpress.Infrastructure.Migrations
 
             modelBuilder.Entity("Printpress.Domain.OrderSellingItem", b =>
                 {
+                    b.Property<string>("Details")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");

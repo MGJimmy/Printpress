@@ -590,7 +590,7 @@ public addOrderServicesDistinct(orderService: OrderServicesGetDTO) {
     return this.filterDeletedObjectArray(items);
   }
 
-  public addUpdateSellingItem(isUpdate: boolean, itemId: string, name: string, inventoryItemId: string | undefined, isInventoryItem: boolean, quantity: number, price: number): void {
+  public addUpdateSellingItem(isUpdate: boolean, itemId: string, name: string, inventoryItemId: string | undefined, isInventoryItem: boolean, quantity: number, price: number, details?: string): void {
     const newObjectState: ObjectStateEnum = isUpdate ? ObjectStateEnum.modified : ObjectStateEnum.added;
 
     let item = this.orderObject.sellingItems.find(x => x.id === itemId);
@@ -610,6 +610,7 @@ public addOrderServicesDistinct(orderService: OrderServicesGetDTO) {
     }
 
     item.name = name;
+    item.details = details;
     item.inventoryItemId = inventoryItemId;
     item.isInventoryItem = isInventoryItem;
     item.quantity = quantity;

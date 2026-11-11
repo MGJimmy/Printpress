@@ -3,6 +3,7 @@
     public class OrderSellingItem : Entity
     {
         public string Name { get; set; }
+        public string Details { get; set; }
         public Guid OrderId { get; set; }
 
         public Guid? InventoryItemId { get; set; }

@@ -5,6 +5,7 @@
 
   <ng-container *ngIf="!isLoading">
     <mat-checkbox
+      *ngIf="groups.length > 0"
       [checked]="allSelected"
       [indeterminate]="someSelected"
       (change)="toggleAll($event.checked)">
@@ -21,6 +22,9 @@
         </mat-checkbox>
       </div>
     </div>
+    <mat-checkbox *ngIf="hasSellingItems" [(ngModel)]="includeSellingItems">
+      {{ _t.t('orders.include_selling_items') }}
+    </mat-checkbox>
   </ng-container>
 </mat-dialog-content>
 

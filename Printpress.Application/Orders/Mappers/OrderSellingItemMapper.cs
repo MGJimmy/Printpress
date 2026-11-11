@@ -14,6 +14,7 @@ internal class OrderSellingItemMapper : BaseMapper<OrderSellingItem, OrderSellin
         {
             Id = destinationEntity.ObjectState == TrackingState.Added ? _guidGenerator.NewGuid() : destinationEntity.Id,
             Name = destinationEntity.Name,
+            Details = destinationEntity.Details,
             InventoryItemId = destinationEntity.InventoryItemId,
             IsInventoryItem = destinationEntity.IsInventoryItem,
             Quantity = destinationEntity.Quantity,

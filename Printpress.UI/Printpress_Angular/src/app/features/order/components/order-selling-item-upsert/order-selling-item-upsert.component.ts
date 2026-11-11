@@ -72,6 +72,7 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       isInventoryItem: [false],
       name: ['', Validators.required],
+      details: [''],
       inventoryItemId: [null],
       quantity: [null, [Validators.required, Validators.min(1)]],
       price: [null, [Validators.required, Validators.min(0)]]
@@ -87,6 +88,7 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
     this.form.patchValue({
       isInventoryItem: item.isInventoryItem,
       name: item.isInventoryItem ? '' : item.name,
+      details: item.details ?? '',
       inventoryItemId: item.inventoryItemId ?? null,
       quantity: item.quantity,
       price: item.price
@@ -152,7 +154,8 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
       this.isInventoryItem ? val.inventoryItemId : undefined,
       this.isInventoryItem,
       val.quantity,
-      val.price
+      val.price,
+      val.details
     );
 
     this.dialogRef.close(true);

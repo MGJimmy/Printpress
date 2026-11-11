@@ -36,7 +36,7 @@ export class OrderSellingItemsComponent implements OnInit {
   @Input() isOrderClosed: boolean = false;
   @Output() delivered = new EventEmitter<OrderGetDto>();
 
-  displayedColumns = ['name', 'type', 'quantity', 'price', 'total', 'actions'];
+  displayedColumns = ['name', 'details', 'type', 'quantity', 'price', 'total', 'actions'];
   dataSource: OrderSellingItemGetDto[] = [];
   isDelivering = false;
 

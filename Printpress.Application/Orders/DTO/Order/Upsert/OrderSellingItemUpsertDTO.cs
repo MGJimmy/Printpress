@@ -7,6 +7,7 @@ public class OrderSellingItemUpsertDTO
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
+    public string Details { get; set; }
     public Guid? InventoryItemId { get; set; }
     public bool IsInventoryItem { get; set; }
     public int Quantity { get; set; }

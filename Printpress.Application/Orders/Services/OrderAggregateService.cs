@@ -542,6 +542,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
     private static bool SellingItemChanged(OrderSellingItem persisted, OrderSellingItemUpsertDTO incoming)
     {
         return !string.Equals(persisted.Name, incoming.Name, StringComparison.Ordinal)
+            || !string.Equals(persisted.Details ?? string.Empty, incoming.Details ?? string.Empty, StringComparison.Ordinal)
             || persisted.InventoryItemId != incoming.InventoryItemId
             || persisted.IsInventoryItem != incoming.IsInventoryItem
             || persisted.Quantity != incoming.Quantity

@@ -1,0 +1,14 @@
+.selling-item-type {
+  color: #374151;
+  background-color: #e5e7eb;
+}
+
+.selling-item-type.inventory-type {
+  color: #1e40af;
+  background-color: #dbeafe;
+}
+.selling-item-details {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 300px;
+}

@@ -53,7 +53,16 @@ export function normalizeSearchText(value: string): string {
     MatButtonModule,
   ],
   templateUrl: './search-select.component.html',
-  styles: [':host { display: block; }'],
+  styles: [`
+    :host { display: block; min-width: 0; }
+    .search-select-actions {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      vertical-align: middle;
+    }
+    .search-select-actions button { flex: 0 0 auto; }
+  `],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

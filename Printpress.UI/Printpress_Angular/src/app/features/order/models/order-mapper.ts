@@ -82,6 +82,7 @@ function mapOrderSellingItemGetToUpsert(item: OrderSellingItemGetDto): OrderSell
     return {
         id: item.id,
         name: item.name,
+        details: item.details,
         inventoryItemId: item.inventoryItemId,
         isInventoryItem: item.isInventoryItem,
         quantity: item.quantity,

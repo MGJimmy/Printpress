@@ -17,7 +17,7 @@ import { OrderStatus } from '../../models/enums/order-status.enum';
 import { isOrderStatus, orderStatusBadgeClass, orderStatusI18nKey } from '../../models/enums/order-status-display';
 import { UserRoleEnum } from '../../../../core/models/user-role.enum';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { InvoiceGroupSelectDialogComponent } from '../invoice-group-select-dialog/invoice-group-select-dialog.component';
+import { InvoiceGroupSelectDialogComponent, InvoiceGroupSelectDialogResult } from '../invoice-group-select-dialog/invoice-group-select-dialog.component';
 import { ClientService } from '../../../client/services/client.service';
 import { SearchSelectItem } from '../../../../shared/components/search-select/search-select.component';
 
@@ -230,19 +230,19 @@ export class OrderListComponent implements OnInit {
   }
 
   protected async generateInvoice_Click(orderId: string) {
-    const selectedIds = await firstValueFrom(
+    const selection = await firstValueFrom(
       this.dialog.open(InvoiceGroupSelectDialogComponent, {
         width: '420px',
         data: { orderId },
         disableClose: true
       }).afterClosed()
-    ) as string[] | undefined;
+    ) as InvoiceGroupSelectDialogResult | undefined;
 
-    if (!selectedIds?.length) {
+    if (!selection) {
       return;
     }
 
-    window.open(`report-viewer?reportName=invoice&id=${orderId}&groupIds=${selectedIds.join(',')}`, '_blank');
+    window.open(`report-viewer?reportName=invoice&id=${orderId}&groupIds=${selection.groupIds.join(',')}&includeSellingItems=${selection.includeSellingItems}`, '_blank');
   }
 
   getStatusBadgeClass(status: OrderStatus | string | number): string {

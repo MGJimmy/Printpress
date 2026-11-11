@@ -15,6 +15,11 @@ export interface InvoiceGroupSelectDialogData {
   orderId: string;
 }
 
+export interface InvoiceGroupSelectDialogResult {
+  groupIds: string[];
+  includeSellingItems: boolean;
+}
+
 interface InvoiceGroupOption {
   id: string;
   name: string;
@@ -38,18 +43,21 @@ interface InvoiceGroupOption {
 export class InvoiceGroupSelectDialogComponent implements OnInit {
   groups: InvoiceGroupOption[] = [];
   isLoading = true;
+  hasSellingItems = false;
+  includeSellingItems = true;
 
   constructor(
     private orderService: OrderService,
     private alertService: AlertService,
     public _t: TranslationService,
-    public dialogRef: MatDialogRef<InvoiceGroupSelectDialogComponent, string[] | undefined>,
+    public dialogRef: MatDialogRef<InvoiceGroupSelectDialogComponent, InvoiceGroupSelectDialogResult | undefined>,
     @Inject(MAT_DIALOG_DATA) public data: InvoiceGroupSelectDialogData
   ) {}
 
   async ngOnInit(): Promise<void> {
     try {
       const response = await firstValueFrom(this.orderService.getOrderById(this.data.orderId));
+      this.hasSellingItems = (response?.data?.sellingItems?.length ?? 0) > 0;
       const orderGroups: OrderGroupGetDto[] = response?.data?.orderGroups ?? [];
       this.groups = orderGroups.map(g => ({
         id: g.id,
@@ -74,7 +82,7 @@ export class InvoiceGroupSelectDialogComponent implements OnInit {
   }
 
   get hasSelection(): boolean {
-    return this.groups.some(g => g.selected);
+    return !this.isLoading && (this.groups.some(g => g.selected) || (this.hasSellingItems && this.includeSellingItems));
   }
 
   toggleAll(checked: boolean): void {
@@ -90,7 +98,10 @@ export class InvoiceGroupSelectDialogComponent implements OnInit {
       return;
     }
 
-    this.dialogRef.close(this.groups.filter(g => g.selected).map(g => g.id));
+    this.dialogRef.close({
+      groupIds: this.groups.filter(g => g.selected).map(g => g.id),
+      includeSellingItems: this.hasSellingItems && this.includeSellingItems
+    });
   }
 
   onCancel(): void {

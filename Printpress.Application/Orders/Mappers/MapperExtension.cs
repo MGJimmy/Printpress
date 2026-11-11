@@ -112,6 +112,7 @@ namespace Printpress.Application
             {
                 Id = item.Id,
                 Name = item.Name,
+                Details = item.Details,
                 OrderId = item.OrderId,
                 InventoryItemId = item.InventoryItemId,
                 IsInventoryItem = item.IsInventoryItem,

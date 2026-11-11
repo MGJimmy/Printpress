@@ -116,7 +116,8 @@ public class InvoiceReport : IDocument
                  .Column(column =>
                  {
 
-                     AddServicesPrices(column, _model.Services);
+                     if (_model.OrderGroups?.Count > 0 && _model.Services?.Count > 0)
+                         AddServicesPrices(column, _model.Services);
 
                      if (_model.SellingItems?.Count > 0)
                          AddSellingItems(column, _model.SellingItems);
@@ -185,7 +186,7 @@ public class InvoiceReport : IDocument
                       {
                           columns.RelativeColumn(); // #
                           columns.RelativeColumn(2); // اسم العنصر
-                          columns.RelativeColumn(); // النوع
+                          columns.RelativeColumn(2); // تفاصيل
                           columns.RelativeColumn(); // الكمية
                           columns.RelativeColumn(); // السعر
                           columns.RelativeColumn(); // الإجمالي
@@ -196,7 +197,7 @@ public class InvoiceReport : IDocument
                           header.Cell().ColumnSpan(6).Element(CellStyle).AlignCenter().Text("عناصر البيع").SemiBold();
                           header.Cell().Element(CellStyle).AlignCenter().Text("#").SemiBold();
                           header.Cell().Element(CellStyle).AlignCenter().Text("اسم العنصر").SemiBold();
-                          header.Cell().Element(CellStyle).AlignCenter().Text("النوع").SemiBold();
+                          header.Cell().Element(CellStyle).AlignCenter().Text("تفاصيل").SemiBold();
                           header.Cell().Element(CellStyle).AlignCenter().Text("الكمية").SemiBold();
                           header.Cell().Element(CellStyle).AlignCenter().Text("السعر").SemiBold();
                           header.Cell().Element(CellStyle).AlignCenter().Text("الإجمالي").SemiBold();
@@ -206,11 +207,10 @@ public class InvoiceReport : IDocument
                       foreach (var item in sellingItems)
                       {
                           var itemName = item.IsInventoryItem ? item.InventoryItem?.Name ?? item.Name : item.Name;
-                          var itemType = item.IsInventoryItem ? "من المخزن" : "خارجي";
 
                           table.Cell().Element(CellStyle).AlignCenter().Text(index.ToString()).FontSize(12);
                           table.Cell().Element(CellStyle).AlignCenter().Text(itemName).FontSize(12);
-                          table.Cell().Element(CellStyle).AlignCenter().Text(itemType).FontSize(12);
+                          table.Cell().Element(CellStyle).AlignCenter().Text(item.Details ?? string.Empty).FontSize(12);
                           table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString()).FontSize(12);
                           table.Cell().Element(CellStyle).AlignCenter().Text(item.Price.ToString()).FontSize(12);
                           table.Cell().Element(CellStyle).AlignCenter().Text((item.Price * item.Quantity).ToString()).FontSize(12);
