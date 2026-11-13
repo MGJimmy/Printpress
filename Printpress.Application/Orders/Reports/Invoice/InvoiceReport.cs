@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Printpress.Domain;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -58,32 +58,10 @@ public class InvoiceReport : IDocument
         {
             column.Item().PaddingHorizontal(40).PaddingVertical(10).Row(row =>
             {
-                row.RelativeItem().AlignRight().Column(col =>
-                {
-                    col.Item().AlignRight().Row(row =>
-                    {
-                        row.AutoItem().Text(text =>
-                        {
-                            text.Span(_companyName).ExtraBold().FontSize(20);
-                        });
-                    });
-                });
-
-
-                row.RelativeItem().AlignLeft().AlignMiddle().Column(col =>
-                {
-                    col.Item().AlignRight().Row(row =>
-                    {
-                        row.AutoItem().Text(text =>
-                        {
-                            
-                            text.Span("ت: " + _companyPhone).SemiBold();
-                        });
-                    });
-                });
-
+                row.Spacing(12);
+                row.RelativeItem(2).Text(_companyName).ExtraBold().FontSize(20);
+                row.RelativeItem().AlignMiddle().Text("ت: " + _companyPhone).SemiBold();
             });
-
 
             // Client Information
             column.Item().PaddingHorizontal(40).PaddingTop(6).Text(text =>
@@ -227,68 +205,42 @@ public class InvoiceReport : IDocument
     {
         column.Item().PaddingHorizontal(30).PaddingTop(30).Border(1).Row(row =>
         {
-            void AddText(string content, int paddingRight = 5, bool isBold = false)
+            void AddTotal(string label, decimal value)
             {
-                var text = row.AutoItem().PaddingVertical(10).PaddingRight(paddingRight).Text(content);
-                if (isBold)
-                    text.ExtraBold();
-                else
-                    text.SemiBold();
+                row.RelativeItem().Padding(8).Column(cell =>
+                {
+                    cell.Item().Text(label).ExtraBold();
+                    cell.Item().PaddingTop(4).Text(value.ToString()).SemiBold();
+                });
             }
 
-            var totalPaid = _model.TotalPaid ?? 0;
-
-            AddText("الأجمالي الكلي  :", 10, true);
-            AddText(_model.TotalPrice.ToString());
+            AddTotal("الإجمالي الكلي", _model.TotalPrice ?? 0);
 
             if (_isPartial)
                 return;
 
-            AddText("المدفوع  :", 40, true);
-            AddText(totalPaid.ToString());
+            var totalPaid = _model.TotalPaid ?? 0;
+            AddTotal("المدفوع", totalPaid);
             var remaining = (_model.TotalPrice ?? 0) - totalPaid;
-            AddText(remaining >= 0 ? "الباقي  :" : "عربون / رصيد  :", 40, true);
-            AddText((remaining >= 0 ? remaining : -remaining).ToString());
+            AddTotal(remaining >= 0 ? "الباقي" : "عربون / رصيد", Math.Abs(remaining));
         });
-
     }
 
     private void AddDeliveryDetails(ColumnDescriptor column)
     {
-        column.Item().PaddingHorizontal(30).PaddingTop(10).Border(1).Row(row =>
-        {
-            void AddText(string content, int paddingRight = 5, bool isBold = false)
-            {
-                var text = row.AutoItem().PaddingVertical(10).PaddingRight(paddingRight).Text(content);
-                if (isBold)
-                    text.ExtraBold();
-                else
-                    text.SemiBold();
-            }
-
-            AddText("اسم المسلم  :", 10, true);
-            AddText("التوقيع  :", 110, true);
-            AddText("التاريخ  :", 110, true);
-        });
-
-        column.Item().PaddingHorizontal(30).PaddingTop(10).Border(1).Row(row =>
-        {
-            void AddText(string content, int paddingRight = 5, bool isBold = false)
-            {
-                var text = row.AutoItem().PaddingVertical(10).PaddingRight(paddingRight).Text(content);
-                if (isBold)
-                    text.ExtraBold();
-                else
-                    text.SemiBold();
-            }
-
-            AddText("اسم المستلم  :", 10, true);
-            AddText("التوقيع  :", 110, true);
-            AddText("التاريخ  :", 110, true);
-        });
-
+        AddSignatureRow(column, "اسم المسلم :");
+        AddSignatureRow(column, "اسم المستلم :");
     }
 
+    private static void AddSignatureRow(ColumnDescriptor column, string nameLabel)
+    {
+        column.Item().PaddingHorizontal(30).PaddingTop(10).Border(1).Row(row =>
+        {
+            row.RelativeItem().Padding(10).Text(nameLabel).ExtraBold();
+            row.RelativeItem().Padding(10).Text("التوقيع :").ExtraBold();
+            row.RelativeItem().Padding(10).Text("التاريخ :").ExtraBold();
+        });
+    }
 
     private void ComposeTable(IContainer container, OrderGroup orderGroup)
     {
