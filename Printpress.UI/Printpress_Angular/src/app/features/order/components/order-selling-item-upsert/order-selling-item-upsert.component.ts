@@ -74,7 +74,7 @@ export class OrderSellingItemUpsertComponent implements OnInit, OnDestroy {
       name: ['', Validators.required],
       details: [''],
       inventoryItemId: [null],
-      quantity: [null, [Validators.required, Validators.min(1)]],
+      quantity: [null, [Validators.required, Validators.min(Number.MIN_VALUE)]],
       price: [null, [Validators.required, Validators.min(0)]]
     });
   }

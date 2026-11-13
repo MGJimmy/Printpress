@@ -36,8 +36,8 @@ public class ConsumptionSellingRowDto
     public Guid Id { get; set; }
     public DateTime OccurredAt { get; set; }
     public string OrderName { get; set; }
-    public int Cartons { get; set; }
-    public int Units { get; set; }
+    public double Cartons { get; set; }
+    public double Units { get; set; }
     public string Notes { get; set; }
     public string ReferenceLabel { get; set; }
     public string ReferenceRoute { get; set; }
@@ -98,7 +98,7 @@ public class DeliveredSellingProjection
     public Guid OrderId { get; set; }
     public string OrderName { get; set; }
     public DateTime DeliveryDate { get; set; }
-    public int Cartons { get; set; }
+    public double Cartons { get; set; }
     public string Name { get; set; }
 }
 

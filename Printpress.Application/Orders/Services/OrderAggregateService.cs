@@ -138,7 +138,7 @@ internal sealed class OrderAggregateService(IUnitOfWork _IUnitOfWork, OrderMappe
             totalOrderPrice += group.Items.NotDeleted().Sum(i => i.Price * i.Quantity);
         }
 
-        totalOrderPrice += (order.SellingItems ?? []).NotDeleted().Sum(i => i.Price * i.Quantity);
+        totalOrderPrice += (order.SellingItems ?? []).NotDeleted().Sum(i => i.Price * (decimal)i.Quantity);
 
         return totalOrderPrice;
     }

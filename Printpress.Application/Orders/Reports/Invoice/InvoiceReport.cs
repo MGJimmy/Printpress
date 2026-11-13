@@ -191,12 +191,12 @@ public class InvoiceReport : IDocument
                           table.Cell().Element(CellStyle).AlignCenter().Text(item.Details ?? string.Empty).FontSize(12);
                           table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString()).FontSize(12);
                           table.Cell().Element(CellStyle).AlignCenter().Text(item.Price.ToString()).FontSize(12);
-                          table.Cell().Element(CellStyle).AlignCenter().Text((item.Price * item.Quantity).ToString()).FontSize(12);
+                          table.Cell().Element(CellStyle).AlignCenter().Text((item.Price * (decimal)item.Quantity).ToString()).FontSize(12);
                           index++;
                       }
 
                       table.Cell().ColumnSpan(5).Element(FooterCellStyle).AlignCenter().Text("إجمالي عناصر البيع");
-                      table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{sellingItems.Sum(i => i.Price * i.Quantity)}");
+                      table.Cell().Element(FooterCellStyle).AlignCenter().Text($"{sellingItems.Sum(i => i.Price * (decimal)i.Quantity)}");
                   });
               });
     }

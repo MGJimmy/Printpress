@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Printpress.Domain;
@@ -44,7 +44,7 @@ namespace Printpress.Application
                     .SelectMany(g => g.Items ?? [])
                     .Where(i => !i.IsDeleted)
                     .Sum(i => i.Price * i.Quantity)
-                    + (model.SellingItems ?? []).Sum(i => i.Price * i.Quantity);
+                    + (model.SellingItems ?? []).Sum(i => i.Price * (decimal)i.Quantity);
             }
 
             var document = new InvoiceReport(model, configuration, isPartial);

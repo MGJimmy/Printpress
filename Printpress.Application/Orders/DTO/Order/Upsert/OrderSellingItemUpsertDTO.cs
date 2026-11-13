@@ -10,7 +10,7 @@ public class OrderSellingItemUpsertDTO
     public string Details { get; set; }
     public Guid? InventoryItemId { get; set; }
     public bool IsInventoryItem { get; set; }
-    public int Quantity { get; set; }
+    public double Quantity { get; set; }
     public decimal Price { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

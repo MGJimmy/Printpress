@@ -116,7 +116,7 @@ internal class ReportRepository : IReportRepository
             .ToList();
     }
 
-    public async Task<int> GetDeliveredSellingCartonsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
+    public async Task<double> GetDeliveredSellingCartonsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)
     {
         return await _context.Set<OrderSellingItem>()
             .Where(i => i.IsInventoryItem
@@ -126,7 +126,7 @@ internal class ReportRepository : IReportRepository
                 && !i.Order.IsDeleted
                 && (dateFrom == null || i.DeliveryDate >= dateFrom)
                 && (dateToExclusive == null || i.DeliveryDate < dateToExclusive))
-            .SumAsync(i => (int?)i.Quantity) ?? 0;
+            .SumAsync(i => (double?)i.Quantity) ?? 0;
     }
 
     public async Task<int> GetConversionUnitsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive)

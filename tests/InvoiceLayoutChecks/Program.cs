@@ -3,6 +3,7 @@ using Printpress.Application;
 using Printpress.Domain;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
+using System.Text.Json;
 
 // Run with: dotnet run --project tests/InvoiceLayoutChecks -- <optional image output directory>
 QuestPDF.Settings.License = LicenseType.Community;
@@ -34,6 +35,25 @@ var unpaid = CreateOrder();
 unpaid.TotalPaid = 0;
 scenarios.Add(("unpaid", unpaid, false, configuration));
 scenarios.Add(("partial", CreateOrder(), true, configuration));
+var fractional = CreateOrder();
+fractional.SellingItems = [];
+foreach (var quantity in new[] { 13.5, 1.5, 0.5 })
+{
+    var payload = JsonSerializer.Serialize(new OrderSellingItemUpsertDTO { Quantity = quantity });
+    var parsed = JsonSerializer.Deserialize<OrderSellingItemUpsertDTO>(payload);
+    if (parsed?.Quantity != quantity)
+        throw new Exception("Fractional quantity was lost in the API payload.");
+    var item = new OrderSellingItem { Name = "كمية كسرية", Quantity = parsed.Quantity, Price = 10m };
+    var mapper = typeof(InvoiceReport).Assembly.GetType("Printpress.Application.MapperExtension")!
+        .GetMethod("MapToOrderSellingItemGetDTO")!;
+    var readDto = (OrderSellingItemGetDTO)mapper.Invoke(null, [item])!;
+    if (readDto.Quantity != quantity)
+        throw new Exception("Fractional quantity was lost in the read DTO.");
+    fractional.SellingItems.Add(item);
+}
+fractional.TotalPrice = fractional.SellingItems.Sum(i => i.Price * (decimal)i.Quantity);
+fractional.TotalPaid = 0;
+scenarios.Add(("fractional-selling-quantities", fractional, false, configuration));
 var large = CreateOrder();
 large.TotalPrice = 123456789012345678.12m;
 large.TotalPaid = 234567890123456789.34m;

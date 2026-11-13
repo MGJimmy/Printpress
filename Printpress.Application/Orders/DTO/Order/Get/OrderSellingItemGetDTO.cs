@@ -10,7 +10,7 @@ public class OrderSellingItemGetDTO : TrackedDTO
     public Guid OrderId { get; set; }
     public Guid? InventoryItemId { get; set; }
     public bool IsInventoryItem { get; set; }
-    public int Quantity { get; set; }
+    public double Quantity { get; set; }
     public decimal Price { get; set; }
     public string? InventoryItemName { get; set; }
     public bool IsDelivered { get; set; }

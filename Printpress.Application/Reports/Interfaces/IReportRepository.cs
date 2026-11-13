@@ -7,7 +7,7 @@ public interface IReportRepository
     Task<int> GetInventorycartonsOutAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo);
     Task<int> GetUsageSettlementUnitsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
     Task<List<OrderItemUsageProjection>> GetOrderItemsUsageAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateTo);
-    Task<int> GetDeliveredSellingCartonsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
+    Task<double> GetDeliveredSellingCartonsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
     Task<int> GetConversionUnitsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
     Task<List<InventoryOutMovementProjection>> GetConsumptionOutRowsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);
     Task<List<ConsumptionExecuteProjection>> GetConsumptionExecuteRowsAsync(Guid inventoryItemId, DateTime? dateFrom, DateTime? dateToExclusive);

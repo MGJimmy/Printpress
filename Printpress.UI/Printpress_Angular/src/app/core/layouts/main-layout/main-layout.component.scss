@@ -15,4 +15,10 @@
 
 .sidebar {
   width: auto;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  flex-shrink: 0;
+  height: 100vh;
+  height: 100dvh;
 }

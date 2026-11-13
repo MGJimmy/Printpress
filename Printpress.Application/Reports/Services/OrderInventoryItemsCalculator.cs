@@ -32,9 +32,14 @@ internal static class OrderInventoryItemsCalculator
         return Math.Round((decimal)(item.Quantity * item.NumberOfPages) / faces, 2);
     }
 
-    public static decimal CalculateConsumption(decimal paperUsed, int deliveredSellingUnits)
+    public static double CalculateUnitsFromCartons(double cartonsCount, int unitsPerCarton)
     {
-        return paperUsed + deliveredSellingUnits;
+        return cartonsCount * (unitsPerCarton > 0 ? unitsPerCarton : 1);
+    }
+
+    public static decimal CalculateConsumption(decimal paperUsed, double deliveredSellingUnits)
+    {
+        return paperUsed + (decimal)deliveredSellingUnits;
     }
 
     public static decimal CalculateExpectedWaste(decimal paperUsed, int wastePercent)

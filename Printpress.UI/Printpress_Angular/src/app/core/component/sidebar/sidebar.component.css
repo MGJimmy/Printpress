@@ -1,6 +1,7 @@
 #sidebar-wrapper {
   width: 300px;
   height: 100vh;
+  height: 100dvh;
   background-color: var(--color-primary);
   display: flex;
   flex-direction: row;
